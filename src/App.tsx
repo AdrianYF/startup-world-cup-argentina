@@ -1,11 +1,12 @@
 import './index.css'
+import Navbar from './components/Navbar'
+import Hero from './components/Hero'
 
 function App() {
   return (
     <div className="bg-black text-white min-h-screen">
-      <h1 className="text-4xl font-bold text-center py-10">
-        Startup World Cup Argentina 2026
-      </h1>
+      <Navbar />
+      <Hero />
     </div>
   )
 }
