@@ -6,6 +6,9 @@ import PitchBattle from './components/PitchBattle'
 import BuildersArena from './components/BuildersArena'
 import Tickets from './components/Tickets'
 import Partners from './components/Partners'
+import Apoyan from './components/Apoyan'
+import FAQ from './components/FAQ'
+import Footer from './components/Footer'
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
       <BuildersArena />
       <Tickets />
       <Partners />
+      <Apoyan />
+      <FAQ />
+      <Footer />
     </div>
   )
 }
