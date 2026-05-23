@@ -4,6 +4,7 @@ import Hero from './components/Hero'
 import RutaEvolucion from './components/RutaEvolucion'
 import PitchBattle from './components/PitchBattle'
 import BuildersArena from './components/BuildersArena'
+import Tickets from './components/Tickets'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <RutaEvolucion />
       <PitchBattle />
       <BuildersArena />
+      <Tickets />
     </div>
   )
 }
