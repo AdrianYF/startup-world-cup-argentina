@@ -5,6 +5,7 @@ import RutaEvolucion from './components/RutaEvolucion'
 import PitchBattle from './components/PitchBattle'
 import BuildersArena from './components/BuildersArena'
 import Tickets from './components/Tickets'
+import Partners from './components/Partners'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <PitchBattle />
       <BuildersArena />
       <Tickets />
+      <Partners />
     </div>
   )
 }
