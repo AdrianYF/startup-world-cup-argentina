@@ -1,0 +1,19 @@
+[
+  {
+    "slug": "adrian-vilas",
+    "nombre": "Adrian Vilas",
+    "rol": "Emprendedor · TitoFree",
+    "image": "/speakers/adrian-vilas.jpg",
+    "thumb": "/speakers/adrian-vilas-sm.jpg",
+    "linkedin": "",
+    "bio": "Fundador de múltiples ventures tecnológicos y referente de StartupLink Argentina."
+  },
+  { "slug": "speaker-2", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-2.jpg", "thumb": "/speakers/speaker-2.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-3", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-3.jpg", "thumb": "/speakers/speaker-3.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-4", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-4.jpg", "thumb": "/speakers/speaker-4.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-5", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-5.jpg", "thumb": "/speakers/speaker-5.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-6", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-6.jpg", "thumb": "/speakers/speaker-6.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-7", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-7.jpg", "thumb": "/speakers/speaker-7.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-8", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-8.jpg", "thumb": "/speakers/speaker-8.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." },
+  { "slug": "speaker-9", "nombre": "Próximamente", "rol": "Speaker confirmado", "image": "/speakers/speaker-9.jpg", "thumb": "/speakers/speaker-9.jpg", "linkedin": "", "bio": "Próximo speaker — revelamos pronto." }
+]

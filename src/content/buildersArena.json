@@ -1,0 +1,23 @@
+[
+  {
+    "icon": "⚡",
+    "categoria": "Momento Ideación",
+    "titulo": "Spark Sessions",
+    "descripcion": "Sesiones intensivas para validar tu idea, encontrar co-founders y definir tu propuesta de valor en tiempo récord.",
+    "popup": "Las Spark Sessions son bloques de 90 minutos donde equipos de hasta 4 personas trabajan con un mentor especializado para validar su idea de negocio, identificar su mercado objetivo y definir su propuesta de valor única. Al finalizar, cada equipo presenta sus conclusiones al grupo."
+  },
+  {
+    "icon": "👥",
+    "categoria": "Networking Pro",
+    "titulo": "Matchmaking Digital",
+    "descripcion": "Algoritmo de conexión inteligente entre founders, inversores y corporaciones. Cada reunión tiene un propósito.",
+    "popup": "Nuestro sistema de Matchmaking Digital analiza el perfil de cada participante y genera reuniones 1:1 estratégicas entre founders, inversores y corporaciones. Cada conexión está diseñada para generar valor real, no networking vacío. Se agendarán hasta 5 reuniones por participante durante el evento."
+  },
+  {
+    "icon": "🎯",
+    "categoria": "Conexiones con Intención",
+    "titulo": "Deal Flow Arena",
+    "descripcion": "Espacio exclusivo donde startups se conectan directamente con fondos de inversión y corporaciones en busca de innovación.",
+    "popup": "El Deal Flow Arena es un espacio curado donde las startups seleccionadas presentan su traction y modelo de negocio directamente a fondos de inversión y corporaciones. A diferencia del Pitch Battle, aquí el foco está en generar conversaciones de inversión y alianzas estratégicas en un formato más íntimo."
+  }
+]

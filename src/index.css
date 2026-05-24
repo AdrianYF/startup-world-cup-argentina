@@ -1,1 +1,103 @@
 @import "tailwindcss";
+
+@theme {
+  /* Paleta extraída de startupworldcupargentina.com */
+  --color-swc-primary: #6c5ce7;
+  --color-swc-primary-dark: #5848c4;
+  --color-swc-primary-soft: #a89cf0;
+  --color-swc-accent: #ff7675;
+  --color-swc-accent-soft: #ffb3b2;
+  --color-swc-orange: #f05100;
+  --color-swc-bg: #020618;
+  --color-swc-surface: #0f172b;
+  --color-swc-muted: #62748e;
+  --color-swc-muted-soft: #90a1b9;
+
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html, body {
+  background-color: var(--color-swc-bg);
+  font-family: var(--font-sans);
+}
+
+/* Glass card — efecto frosted del sitio original */
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Carrusel infinito (marquee) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* Fade-in al entrar viewport */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Modal entrance */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Respeto prefers-reduced-motion (Don Norman: constraints) */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .fade-in-up,
+  *[class*="animate-"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus ring global — visible para keyboard users (Don Norman: visibility) */
+*:focus {
+  outline: none;
+}
+*:focus-visible {
+  outline: 2px solid var(--color-swc-primary, #6c5ce7);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Active state global para interactivos — feedback táctil */
+button:active,
+a[href]:active {
+  transform: translateY(1px);
+}
+
+/* Skip-link visible solo al hacer focus por teclado */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 200;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-swc-primary, #6c5ce7);
+  color: white;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
