@@ -125,7 +125,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
   if (variant === 'compact') {
     return (
       <div className="inline-flex items-stretch font-mono select-none drop-shadow-lg">
-        <div className="relative bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#75AADB] rounded-l-lg px-4 py-2 border-2 border-r-0 border-[#75AADB] overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#75AADB] rounded-l-lg px-4 py-2 border border-r-0 border-[#75AADB] overflow-hidden">
           <GuillochePattern />
           <div className="relative flex items-center gap-3">
             <HolographicSeal size={32} />
@@ -140,13 +140,13 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
           </div>
         </div>
 
-        <div className="relative w-3 bg-[#75AADB] border-2 border-[#75AADB] border-l-0 border-r-0">
+        <div className="relative w-3 bg-[#75AADB] border border-[#75AADB] border-l-0 border-r-0">
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px border-l border-dashed border-[#0f172b]/50" />
           <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
         </div>
 
-        <div className="bg-gradient-to-br from-[#75AADB] to-[#ffffff] rounded-r-lg px-3 py-2 border-2 border-l-0 border-[#75AADB] flex items-center justify-center">
+        <div className="bg-gradient-to-br from-[#75AADB] to-[#ffffff] rounded-r-lg px-3 py-2 border border-l-0 border-[#75AADB] flex items-center justify-center">
           <span className="text-[#0f172b] text-sm font-black tracking-widest">AR·26</span>
         </div>
       </div>
@@ -162,7 +162,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#75AADB]/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#75AADB]/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-[#75AADB] shadow-[0_25px_70px_-15px_rgba(117,170,219,0.6)] overflow-hidden">
+      <div className="relative rounded-xl sm:rounded-2xl border border-[#75AADB] shadow-[0_25px_70px_-15px_rgba(117,170,219,0.6)] overflow-hidden">
 
         {/* Fondo celeste */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#ffffff]" />
