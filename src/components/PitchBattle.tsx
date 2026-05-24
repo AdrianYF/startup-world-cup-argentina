@@ -23,7 +23,7 @@ function PitchBattle() {
               La batalla final donde las 10 mejores startups pre-seleccionadas de Argentina se enfrentarán ante un jurado internacional. El ganador obtendrá un pase directo a la gran final en Silicon Valley para ser el próximo unicornio.
             </p>
 
-            <div className="flex flex-col gap-3 mb-8">
+            <div className="flex flex-col gap-3">
               {stats.map((stat, i) => (
                 <button
                   key={i}
@@ -38,17 +38,18 @@ function PitchBattle() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="relative flex flex-col items-center gap-8">
+            <WorldCupTicket variant="full" />
 
             <button
               onClick={() => openStartupForm()}
-              className="inline-block bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer"
+              aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
+              className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40"
             >
-              Aplicá como Startup
+              Aplicá como Startup <span aria-hidden>↗</span>
             </button>
-          </div>
-
-          <div className="relative">
-            <WorldCupTicket variant="full" />
           </div>
 
         </div>
