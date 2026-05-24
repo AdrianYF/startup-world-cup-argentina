@@ -30,18 +30,18 @@ const rarityStyles: Record<NonNullable<VolunteerCardProps['rarity']>, {
 }> = {
   crew: {
     label: 'CREW · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#ff7675] via-[#e85e5d] to-[#7a2625]',
-    ring: 'from-[#ffb3b2] via-[#ff7675] to-[#7a2625]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#5a93c5]',
+    ring: 'from-[#bcd5ea] via-[#75AADB] to-[#5a93c5]',
   },
   lead: {
     label: 'TEAM LEAD · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#f05100] via-[#c63d00] to-[#5c1f00]',
-    ring: 'from-[#ff9966] via-[#f05100] to-[#5c1f00]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#5a93c5]',
+    ring: 'from-[#75AADB] via-[#75AADB] to-[#5a93c5]',
   },
   mentor: {
     label: 'MENTOR · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#6c5ce7] via-[#5848c4] to-[#2a1d6e]',
-    ring: 'from-[#a89cf0] via-[#6c5ce7] to-[#2a1d6e]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#020618]',
+    ring: 'from-[#bcd5ea] via-[#75AADB] to-[#020618]',
   },
 }
 
@@ -71,7 +71,7 @@ export function VolunteerCard({
           className="absolute inset-0 animate-[spin_12s_linear_infinite]"
           style={{
             background:
-              'conic-gradient(from 90deg, #fda4af 0%, #fde68a 15%, #67e8f9 30%, #c4b5fd 45%, #fda4af 60%, #fde68a 75%, #fda4af 100%)',
+              'conic-gradient(from 90deg, #75AADB 0%, #75AADB 15%, #75AADB 30%, #75AADB 45%, #75AADB 60%, #75AADB 75%, #75AADB 100%)',
           }}
         />
       </div>

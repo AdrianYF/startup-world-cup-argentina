@@ -1,20 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta extraída de startupworldcupargentina.com */
-  --color-swc-primary: #6c5ce7;
-  --color-swc-primary-dark: #5848c4;
-  --color-swc-primary-soft: #a89cf0;
-  --color-swc-accent: #ff7675;
-  --color-swc-accent-soft: #ffb3b2;
-  --color-swc-orange: #f05100;
-  --color-swc-bg: #020618;
-  --color-swc-surface: #0f172b;
-  --color-swc-muted: #62748e;
-  --color-swc-muted-soft: #90a1b9;
+  /* Argentina · celeste y blanco. 5 colores totales. */
+  --color-swc-light: #ffffff;       /* blanco — dominante */
+  --color-swc-accent: #75AADB;      /* celeste argentino — único accent */
+  --color-swc-accent-dark: #5a93c5; /* celeste hover */
+  --color-swc-bg: #020618;          /* dark bg para secciones de contraste */
+  --color-swc-surface: #0f172b;     /* dark surface secundaria */
+  --color-swc-muted: #9ca3af;       /* gray-400 muted text */
 
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 html, body {

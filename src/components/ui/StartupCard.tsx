@@ -36,18 +36,18 @@ const rarityStyles: Record<NonNullable<StartupCardProps['rarity']>, {
 }> = {
   rookie: {
     label: 'ROOKIE · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#6c5ce7] via-[#5848c4] to-[#3d2c8f]',
-    ring: 'from-[#a89cf0] via-[#6c5ce7] to-[#3d2c8f]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#75AADB]',
+    ring: 'from-[#bcd5ea] via-[#75AADB] to-[#75AADB]',
   },
   rare: {
     label: 'RARE · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#ff7675] via-[#e85e5d] to-[#a83a39]',
-    ring: 'from-[#ffb3b2] via-[#ff7675] to-[#a83a39]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#5a93c5]',
+    ring: 'from-[#bcd5ea] via-[#75AADB] to-[#5a93c5]',
   },
   legend: {
     label: 'LEGEND · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#fbbf24] via-[#f59e0b] to-[#7c2d12]',
-    ring: 'from-[#fde68a] via-[#fbbf24] to-[#7c2d12]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#75AADB] to-[#5a93c5]',
+    ring: 'from-[#75AADB] via-[#75AADB] to-[#5a93c5]',
   },
 }
 
@@ -84,7 +84,7 @@ export function StartupCard({
           className="absolute inset-0 animate-[spin_12s_linear_infinite]"
           style={{
             background:
-              'conic-gradient(from 0deg, #f0abfc 0%, #fde68a 15%, #67e8f9 30%, #fda4af 45%, #c4b5fd 60%, #fde68a 75%, #f0abfc 100%)',
+              'conic-gradient(from 0deg, #75AADB 0%, #75AADB 15%, #75AADB 30%, #75AADB 45%, #75AADB 60%, #75AADB 75%, #75AADB 100%)',
           }}
         />
       </div>

@@ -105,7 +105,7 @@ export function Modal({ onClose, children, titleId, ariaLabel, size = 'md' }: Pr
         aria-label={!titleId ? ariaLabel : undefined}
         tabIndex={-1}
         onClick={e => e.stopPropagation()}
-        className={`bg-[#0f172b] border border-[#6c5ce7]/40 rounded-2xl p-8 w-full ${sizeClasses[size]} shadow-2xl shadow-[#6c5ce7]/20 animate-[modal-in_0.25s_cubic-bezier(0.16,1,0.3,1)] outline-none`}
+        className={`bg-[#0f172b] border border-[#75AADB]/40 rounded-2xl p-8 w-full ${sizeClasses[size]} shadow-2xl shadow-[#75AADB]/20 animate-[modal-in_0.25s_cubic-bezier(0.16,1,0.3,1)] outline-none`}
       >
         {children}
       </div>

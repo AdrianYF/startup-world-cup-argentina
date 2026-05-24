@@ -71,7 +71,7 @@ export function VolunteerCardCycler() {
             onClick={() => { setCurrent(i); setPaused(true) }}
             className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
               i === current
-                ? 'bg-[#ff7675] w-6'
+                ? 'bg-[#75AADB] w-6'
                 : 'bg-white/20 hover:bg-white/40 w-1.5'
             }`}
             aria-label={`Ver voluntari@ ${i + 1} de ${voluntariosDemo.length}`}

@@ -6,7 +6,7 @@ function RutaEvolucion() {
   return (
     <section id="ruta" className="relative py-24 bg-[#020618]">
 
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6c5ce7] to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4">
 
@@ -24,25 +24,25 @@ function RutaEvolucion() {
           {etapas.map((etapa, i) => (
             <div
               key={etapa.numero}
-              className="relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#6c5ce7]/50 transition-all group"
+              className="relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-[#75AADB]/50 transition-all group"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-[#6c5ce7]/20 text-[#6c5ce7] font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                <div className="bg-[#75AADB]/20 text-[#75AADB] font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
                   {etapa.numero}
                 </div>
-                <span className="text-[#6c5ce7] text-xs font-bold uppercase tracking-widest">
+                <span className="text-[#75AADB] text-xs font-bold uppercase tracking-widest">
                   {etapa.potential}
                 </span>
               </div>
 
               <div className="h-1 bg-white/10 rounded-full mb-4 overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#6c5ce7] to-[#ff7675] rounded-full transition-all"
+                  className="h-full bg-[#75AADB] rounded-full transition-all"
                   style={{ width: etapa.potential }}
                 />
               </div>
 
-              <h3 className="text-white font-black text-lg mb-2 group-hover:text-[#6c5ce7] transition-colors">
+              <h3 className="text-white font-black text-lg mb-2 group-hover:text-[#75AADB] transition-colors">
                 {etapa.titulo}
               </h3>
 
@@ -52,7 +52,7 @@ function RutaEvolucion() {
 
               {i < etapas.length - 1 && (
                 <div className="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 z-10">
-                  <div className="text-[#6c5ce7] text-lg">→</div>
+                  <div className="text-[#75AADB] text-lg">→</div>
                 </div>
               )}
             </div>
@@ -60,7 +60,7 @@ function RutaEvolucion() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6c5ce7] to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
     </section>
   )
 }

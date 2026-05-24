@@ -44,8 +44,8 @@ function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(108,92,231,0.25)_0%,_transparent_70%)]" />
 
       <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6c5ce7] to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6c5ce7] to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 pt-28 lg:pt-32 pb-12 w-full">
@@ -54,7 +54,7 @@ function Hero() {
           {/* Columna izquierda */}
           <div>
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8">
-              <span className="w-2 h-2 rounded-full bg-[#6c5ce7] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#75AADB] animate-pulse" />
               <span className="text-sm font-semibold text-white">{content.config.evento.fechas}</span>
             </div>
 
@@ -76,7 +76,7 @@ function Hero() {
             {/* PREMIO — bloque hero, el que tiene que pegar */}
             <div className="relative mb-6">
               {/* Halo */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-[#6c5ce7]/30 via-[#75AADB]/20 to-[#ff7675]/30 blur-2xl rounded-3xl pointer-events-none" />
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-2xl rounded-3xl pointer-events-none" />
 
               <div className="relative">
                 <div className="text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/70 mb-1">
@@ -88,7 +88,7 @@ function Hero() {
                     className="text-6xl lg:text-8xl font-black leading-none tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                     style={{
                       backgroundImage:
-                        'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #6c5ce7 100%)',
+                        'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
                     }}
                   >
                     1.000.000
@@ -106,7 +106,7 @@ function Hero() {
             </p>
 
             <div className="mb-8">
-              <span className="text-[#6c5ce7] font-black text-4xl">{content.config.evento.ciudadesCompitiendo}</span>
+              <span className="text-[#75AADB] font-black text-4xl">{content.config.evento.ciudadesCompitiendo}</span>
               <span className="text-gray-400 text-sm ml-2 uppercase tracking-widest">Ciudades compitiendo</span>
             </div>
 
@@ -114,14 +114,14 @@ function Hero() {
               <button
                 onClick={() => openStartupForm()}
                 aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
-                className="bg-[#6c5ce7] hover:bg-[#5848c4] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#6c5ce7]/40"
+                className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#75AADB]/40"
               >
                 {content.config.hero.ctaPrimario} <span aria-hidden>↗</span>
               </button>
               <button
                 onClick={() => openPartnerForm()}
                 aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
-                className="border border-white/30 hover:border-[#6c5ce7] active:scale-95 text-white font-bold text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
+                className="border border-white/30 hover:border-[#75AADB] active:scale-95 text-white font-bold text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
               >
                 {content.config.hero.ctaSecundario}
               </button>
@@ -144,7 +144,7 @@ function Hero() {
                 { val: timeLeft.mins, label: 'MINS' },
                 { val: timeLeft.segs, label: 'SEGS' },
               ].map(({ val, label }) => (
-                <div key={label} className="bg-white/5 border border-[#5848c4]/30 rounded-xl p-4 text-center backdrop-blur-sm">
+                <div key={label} className="bg-white/5 border border-[#5a93c5]/30 rounded-xl p-4 text-center backdrop-blur-sm">
                   <div className="text-3xl font-black text-white tabular-nums">{String(val).padStart(2, '0')}</div>
                   <div className="text-xs text-gray-400 mt-1 tracking-widest">{label}</div>
                 </div>
