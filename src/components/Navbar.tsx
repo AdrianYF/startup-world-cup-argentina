@@ -88,7 +88,7 @@ function Navbar() {
             <img
               src="/SGBA-logo.png"
               alt="Startup Grind Buenos Aires"
-              className={`w-auto transition-all duration-300 ${scrolled ? 'h-6' : 'h-7'}`}
+              className={`w-auto transition-all duration-300 ${scrolled ? 'h-8' : 'h-10'}`}
               style={{ filter: 'brightness(0) invert(1)' }}
             />
           </a>
