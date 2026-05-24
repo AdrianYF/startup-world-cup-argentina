@@ -53,13 +53,21 @@ function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
 
-        <a href="#top" className="flex items-center gap-3" aria-label="Ir al inicio">
-          <img
-            src="/SWC-logo.png"
-            alt="Startup World Cup Argentina"
-            className={`w-auto transition-all duration-300 ${scrolled ? 'h-8' : 'h-10'}`}
-            style={{ filter: 'brightness(0) invert(1)' }}
-          />
+        <a
+          href="#top"
+          aria-label="Startup World Cup Argentina — ir al inicio"
+          className="flex items-baseline gap-2 group"
+        >
+          <span
+            className={`font-black text-white leading-none tracking-tight transition-all duration-300 ${scrolled ? 'text-xl' : 'text-2xl'}`}
+          >
+            SWC
+          </span>
+          <span
+            className={`font-bold text-[#75AADB] uppercase tracking-[0.2em] leading-none transition-all duration-300 ${scrolled ? 'text-[10px]' : 'text-xs'}`}
+          >
+            Argentina·26
+          </span>
         </a>
 
         {/* Desktop links */}
