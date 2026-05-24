@@ -58,6 +58,7 @@ function Navbar() {
             src="/SWC-logo.png"
             alt="Startup World Cup Argentina"
             className={`w-auto transition-all duration-300 ${scrolled ? 'h-8' : 'h-10'}`}
+            style={{ filter: 'brightness(0) invert(1)' }}
           />
         </a>
 
