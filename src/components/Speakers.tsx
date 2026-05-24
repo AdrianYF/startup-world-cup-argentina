@@ -22,9 +22,6 @@ function Speakers() {
     return (
       <section id="speakers" className="relative py-16 sm:py-24 text-center" style={{ backgroundColor: BG }}>
         <div className="max-w-2xl mx-auto px-4">
-          <span className="inline-block border border-white/20 text-gray-400 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            En el escenario
-          </span>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">SPEAKERS</span>
           </h2>
@@ -44,9 +41,6 @@ function Speakers() {
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <span className="inline-block border border-white/20 text-gray-400 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            En el escenario
-          </span>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">SPEAKERS</span>
           </h2>
