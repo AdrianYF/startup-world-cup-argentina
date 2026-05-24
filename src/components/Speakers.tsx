@@ -5,7 +5,7 @@ import { Modal } from './ui/Modal'
 import type { Speaker } from '../lib/content'
 
 /**
- * Speakers — paleta reducida a 5 colores y tipografía alineada con el resto del sitio.
+ * Speakers - paleta reducida a 5 colores y tipografía alineada con el resto del sitio.
  * Mobile: muestra solo 3 + botón "Ver más" que lleva a /speakers.
  * Desktop: muestra todos.
  */
@@ -143,7 +143,7 @@ function Speakers() {
   )
 }
 
-/* Speaker tile reutilizable — usado en Speakers (landing) y SpeakersAll (página) */
+/* Speaker tile reutilizable - usado en Speakers (landing) y SpeakersAll (página) */
 export function SpeakerTile({
   speaker,
   onOpen,

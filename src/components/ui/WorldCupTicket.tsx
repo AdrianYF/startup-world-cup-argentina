@@ -187,7 +187,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
               Startup World Cup · Argentina 2026
             </div>
 
-            {/* Premio — protagonista */}
+            {/* Premio - protagonista */}
             <div className="relative border-y-2 border-dashed border-[#0f172b]/40 py-3 sm:py-5 my-1 sm:my-2">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <SolDeMayo size={180} opacity={0.22} />

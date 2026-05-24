@@ -56,7 +56,7 @@ function Navbar() {
         <div className="flex items-center gap-3 sm:gap-4">
           <a
             href="#top"
-            aria-label="Startup World Cup Argentina — ir al inicio"
+            aria-label="Startup World Cup Argentina - ir al inicio"
             className="flex items-baseline gap-2"
           >
             <span

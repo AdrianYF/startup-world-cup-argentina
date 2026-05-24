@@ -101,7 +101,7 @@ function Agenda() {
         </div>
 
         <p className="text-center text-gray-500 text-xs mt-8 italic">
-          * Agenda preliminar — sujeta a cambios.
+          * Agenda preliminar - sujeta a cambios.
         </p>
       </div>
     </section>

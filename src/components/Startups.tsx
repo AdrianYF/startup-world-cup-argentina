@@ -47,7 +47,7 @@ function Startups() {
             </button>
           </div>
 
-          {/* Figurita estilo Ultimate Team — preview */}
+          {/* Figurita estilo Ultimate Team - preview */}
           <div className="relative max-w-sm mx-auto w-full">
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-4 uppercase tracking-widest justify-center">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

@@ -4,7 +4,7 @@ import { content } from '../lib/content'
  * Bloque de estadísticas estilo Token2049.
  * Números masivos como social proof tras el Hero.
  * El stat con highlight: true recibe el mismo tratamiento que el premio US$1M
- * del Hero — gradient text white→celeste + drop-shadow violeta + halo blur.
+ * del Hero - gradient text white→celeste + drop-shadow violeta + halo blur.
  */
 function Stats() {
   const stats = content.config.stats ?? []
@@ -27,7 +27,7 @@ function Stats() {
                 i < stats.length - 1 ? 'sm:border-r sm:border-white/10 sm:pr-4' : ''
               }`}
             >
-              {/* Halo blur — solo en el stat highlighted */}
+              {/* Halo blur - solo en el stat highlighted */}
               {s.highlight && (
                 <div
                   aria-hidden

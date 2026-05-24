@@ -58,7 +58,7 @@ function SpeakersAll() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {speakers.length === 0 ? (
           <p className="text-center text-gray-400 italic py-24">
-            Estamos confirmando speakers — vuelve en unos días.
+            Estamos confirmando speakers - vuelve en unos días.
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">

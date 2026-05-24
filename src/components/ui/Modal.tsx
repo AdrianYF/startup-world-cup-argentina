@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { useEscape } from '../../lib/useEscape'
 
 /**
- * Modal primitivo único — reemplaza los popups duplicados en PitchBattle,
+ * Modal primitivo único - reemplaza los popups duplicados en PitchBattle,
  * BuildersArena y Partners. Aplica los principios de Don Norman:
  *  - Error recovery: ESC + click outside + botón Cerrar (3 caminos para salir)
  *  - Visibility: foco visible (heredado de :focus-visible global)
@@ -10,7 +10,7 @@ import { useEscape } from '../../lib/useEscape'
  *  - Feedback: animación entrada/salida + aria-modal
  *  - Consistency: misma API en todos los call sites
  *
- * Convención: render condicional — el caller decide cuándo montar.
+ * Convención: render condicional - el caller decide cuándo montar.
  */
 
 const FOCUSABLE_SELECTOR =

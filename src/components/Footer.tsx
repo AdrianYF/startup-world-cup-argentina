@@ -34,7 +34,7 @@ function Footer() {
   return (
     <footer className="relative bg-[#020618] text-white">
 
-      {/* Separador celeste — coherente con el resto de secciones del sitio */}
+      {/* Separador celeste - coherente con el resto de secciones del sitio */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
       {/* ═══ FINAL CTA STRIP ═══ */}

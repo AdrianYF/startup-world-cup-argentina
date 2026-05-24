@@ -67,7 +67,7 @@ function Hero() {
           {/* Columna izquierda */}
           <div className="text-center lg:text-left">
 
-            {/* Logo + título — stack vertical en mobile, horizontal en lg */}
+            {/* Logo + título - stack vertical en mobile, horizontal en lg */}
             <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-10 mb-8 lg:mb-10">
               <img
                 src="/SWC-logo.png"
@@ -136,7 +136,7 @@ function Hero() {
           {/* Columna derecha */}
           <div className="flex flex-col items-center gap-6 sm:gap-8 mt-4 lg:mt-0">
 
-            {/* En partnership with Pegasus — entrada ease-in con scale + blur */}
+            {/* En partnership with Pegasus - entrada ease-in con scale + blur */}
             <div className="pegasus-entrance flex flex-col items-center gap-3 sm:gap-4">
               <p className="text-[10px] sm:text-xs font-black tracking-[0.35em] uppercase text-white/70 whitespace-nowrap">
                 En partnership with
@@ -146,7 +146,7 @@ function Hero() {
                 {/* Halo blur de fondo */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#75AADB]/40 via-[#75AADB]/25 to-[#75AADB]/40 blur-3xl rounded-full pointer-events-none" />
 
-                {/* Rotación entre logos — solo uno visible a la vez, crossfade con scale */}
+                {/* Rotación entre logos - solo uno visible a la vez, crossfade con scale */}
                 {PARTNERS.map((p, i) => (
                   <img
                     key={p.src}

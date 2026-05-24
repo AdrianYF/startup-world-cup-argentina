@@ -24,7 +24,7 @@ export function VolunteerCardCycler() {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
 
-  // Don Norman: respetar prefers-reduced-motion — no autoplay si el sistema lo pide
+  // Don Norman: respetar prefers-reduced-motion - no autoplay si el sistema lo pide
   const reducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -78,7 +78,7 @@ export function VolunteerCardCycler() {
             aria-current={i === current ? 'true' : undefined}
           />
         ))}
-        {/* Indicador de pausa — feedback visual cuando hover */}
+        {/* Indicador de pausa - feedback visual cuando hover */}
         {paused && !reducedMotion && (
           <span
             className="ml-2 text-[9px] uppercase tracking-widest text-white/50 font-bold opacity-0 group-hover:opacity-100 transition-opacity"

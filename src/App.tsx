@@ -17,7 +17,7 @@ import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
 
 function App() {
-  // Hero queda sin FadeIn — debe verse desde el primer paint (above-the-fold).
+  // Hero queda sin FadeIn - debe verse desde el primer paint (above-the-fold).
   const sections = [
     Stats,
     RutaEvolucion,
