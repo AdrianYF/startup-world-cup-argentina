@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
+import { content } from '../lib/content'
+import { openStartupForm, openPartnerForm } from '../lib/ticketing'
+import { PartnershipBadge } from './ui/PartnershipBadge'
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
 
   useEffect(() => {
-    const target = new Date('2026-08-05T09:00:00')
+    const target = new Date(content.config.evento.fechaInicioISO)
     const interval = setInterval(() => {
       const now = new Date()
       const diff = target.getTime() - now.getTime()
@@ -21,31 +24,45 @@ function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-zinc-900 to-black">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(202,138,4,0.15)_0%,_transparent_70%)]" />
+
+      {/* Video de fondo */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/video.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        poster="/SWC-header.png"
+        aria-hidden
+      />
+
+      {/* Overlays para legibilidad */}
+      <div className="absolute inset-0 bg-[#020618]/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020618]/40 via-[#020618]/60 to-[#020618]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(108,92,231,0.25)_0%,_transparent_70%)]" />
+
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6c5ce7] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#6c5ce7] to-transparent" />
       </div>
 
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-20 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-28 lg:pt-32 pb-12 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
+
           {/* Columna izquierda */}
           <div>
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-              <span className="text-sm font-semibold text-white">5 · 6 · 7 DE AGOSTO 2026 · VEDIA, BS AS</span>
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8">
+              <span className="w-2 h-2 rounded-full bg-[#6c5ce7] animate-pulse" />
+              <span className="text-sm font-semibold text-white">{content.config.evento.fechas}</span>
             </div>
 
-            <div className="flex items-center gap-4 mb-4">
-              <img 
-                src="/Logo-White-246x300.png" 
-                alt="Startup World Cup" 
-                className="h-28 w-auto"
+            <div className="flex items-center gap-6 lg:gap-10 mb-10">
+              <img
+                src="/SWC-logo.png"
+                alt="Startup World Cup"
+                className="h-44 lg:h-56 w-auto drop-shadow-[0_8px_32px_rgba(108,92,231,0.4)]"
               />
               <div>
                 <h1 className="text-5xl lg:text-6xl font-black leading-none uppercase">
@@ -56,60 +73,79 @@ function Hero() {
               </div>
             </div>
 
-            <p className="text-yellow-400 font-bold text-xl mb-2 tracking-widest uppercase">
-              Silicon Valley · $1.000.000 USD
-            </p>
+            {/* PREMIO — bloque hero, el que tiene que pegar */}
+            <div className="relative mb-6">
+              {/* Halo */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-[#6c5ce7]/30 via-[#75AADB]/20 to-[#ff7675]/30 blur-2xl rounded-3xl pointer-events-none" />
 
-            <p className="text-gray-300 text-lg mb-6">
+              <div className="relative">
+                <div className="text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/70 mb-1">
+                  Premio Final · Silicon Valley
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl lg:text-4xl font-black text-white/80 leading-none">US$</span>
+                  <span
+                    className="text-6xl lg:text-8xl font-black leading-none tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #6c5ce7 100%)',
+                    }}
+                  >
+                    1.000.000
+                  </span>
+                </div>
+                <div className="text-sm lg:text-base font-bold uppercase tracking-[0.25em] text-white/60 mt-1">
+                  Un millón de dólares
+                </div>
+              </div>
+            </div>
+
+            <p className="text-gray-300 text-lg mb-6 leading-relaxed max-w-xl">
               La competencia de startups más grande del mundo llega a Argentina.
+              Conectando el talento más disruptivo con el capital más estratégico de la región.
             </p>
 
             <div className="mb-8">
-              <span className="text-yellow-400 font-black text-4xl">+100</span>
+              <span className="text-[#6c5ce7] font-black text-4xl">{content.config.evento.ciudadesCompitiendo}</span>
               <span className="text-gray-400 text-sm ml-2 uppercase tracking-widest">Ciudades compitiendo</span>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#tickets" className="bg-yellow-500 hover:bg-yellow-400 text-black font-black text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide">
-                Aplicá como Startup →
-              </a>
-              <a href="#partners" className="border border-white/30 hover:border-yellow-500 text-white font-bold text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide">
-                Quiero ser Partner
-              </a>
+              <button
+                onClick={() => openStartupForm()}
+                aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
+                className="bg-[#6c5ce7] hover:bg-[#5848c4] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#6c5ce7]/40"
+              >
+                {content.config.hero.ctaPrimario} <span aria-hidden>↗</span>
+              </button>
+              <button
+                onClick={() => openPartnerForm()}
+                aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
+                className="border border-white/30 hover:border-[#6c5ce7] active:scale-95 text-white font-bold text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
+              >
+                {content.config.hero.ctaSecundario}
+              </button>
             </div>
           </div>
 
           {/* Columna derecha */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-center gap-8">
 
-            {/* Card partners */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-              <p className="text-gray-400 text-xs uppercase tracking-widest mb-5 text-center">En partnership con</p>
-              <div className="flex items-center justify-around gap-4">
-                <img 
-                  src="/sg-stacked-whitepink.png" 
-                  alt="Startup Grind" 
-                  className="h-16 w-auto"
-                />
-                <div className="w-px h-12 bg-white/20" />
-                <img 
-                  src="/pegasus-logo.png" 
-                  alt="Pegasus Tech Ventures" 
-                  className="h-20 w-auto"
-                />
-              </div>
+            {/* Badge circular de partnership — idéntico al sitio original */}
+            <div className="flex justify-center">
+              <PartnershipBadge />
             </div>
 
             {/* Countdown */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-4 gap-3 w-full max-w-md">
               {[
                 { val: timeLeft.dias, label: 'DÍAS' },
                 { val: timeLeft.horas, label: 'HORAS' },
                 { val: timeLeft.mins, label: 'MINS' },
                 { val: timeLeft.segs, label: 'SEGS' },
               ].map(({ val, label }) => (
-                <div key={label} className="bg-white/5 border border-yellow-600/30 rounded-xl p-4 text-center backdrop-blur-sm">
-                  <div className="text-3xl font-black text-white">{String(val).padStart(2, '0')}</div>
+                <div key={label} className="bg-white/5 border border-[#5848c4]/30 rounded-xl p-4 text-center backdrop-blur-sm">
+                  <div className="text-3xl font-black text-white tabular-nums">{String(val).padStart(2, '0')}</div>
                   <div className="text-xs text-gray-400 mt-1 tracking-widest">{label}</div>
                 </div>
               ))}
