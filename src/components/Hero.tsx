@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { content } from '../lib/content'
 import { openStartupForm, openPartnerForm } from '../lib/ticketing'
-import { PartnershipBadge } from './ui/PartnershipBadge'
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
@@ -123,8 +122,20 @@ function Hero() {
           {/* Columna derecha */}
           <div className="flex flex-col items-center gap-6 sm:gap-8 mt-4 lg:mt-0">
 
-            <div className="flex justify-center">
-              <PartnershipBadge />
+            {/* Pegasus logo con glow — mismo halo + drop-shadow que el premio US$1M */}
+            <div className="relative flex justify-center items-center py-6 sm:py-10">
+              {/* Halo blur de fondo */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-3xl rounded-full pointer-events-none" />
+
+              <p className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] sm:text-[10px] font-black tracking-[0.3em] uppercase text-white/70 whitespace-nowrap z-10">
+                En partnership con
+              </p>
+
+              <img
+                src="/pegasus-logo.png"
+                alt="Pegasus Tech Ventures"
+                className="relative h-32 sm:h-44 lg:h-56 w-auto drop-shadow-[0_4px_24px_rgba(117,170,219,0.6)]"
+              />
             </div>
 
             {/* Countdown */}
