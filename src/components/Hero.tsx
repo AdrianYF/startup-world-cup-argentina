@@ -101,12 +101,7 @@ function Hero() {
               Conectando el talento más disruptivo con el capital más estratégico de la región.
             </p>
 
-            <div className="mb-8">
-              <span className="text-[#75AADB] font-black text-3xl sm:text-4xl">{content.config.evento.ciudadesCompitiendo}</span>
-              <span className="text-gray-400 text-xs sm:text-sm ml-2 uppercase tracking-widest">Ciudades compitiendo</span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-8">
               <button
                 onClick={() => openStartupForm()}
                 aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
@@ -121,6 +116,11 @@ function Hero() {
               >
                 {content.config.hero.ctaSecundario}
               </button>
+            </div>
+
+            <div>
+              <span className="text-[#75AADB] font-black text-3xl sm:text-4xl">{content.config.evento.ciudadesCompitiendo}</span>
+              <span className="text-gray-400 text-xs sm:text-sm ml-2 uppercase tracking-widest">Ciudades compitiendo</span>
             </div>
           </div>
 
