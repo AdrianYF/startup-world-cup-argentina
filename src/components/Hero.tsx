@@ -106,7 +106,7 @@ function Hero() {
                 aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
                 className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base sm:text-lg px-6 sm:px-8 py-3 min-h-[48px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#75AADB]/40"
               >
-                {content.config.hero.ctaPrimario} <span aria-hidden>↗</span>
+                {content.config.hero.ctaPrimario}
               </button>
               <button
                 onClick={() => openPartnerForm()}

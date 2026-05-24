@@ -53,7 +53,7 @@ function Tickets() {
                 aria-label={`Conseguir ticket ${plan.nombre} (abre Startup Grind en una nueva pestaña)`}
                 className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all cursor-pointer active:scale-95 ${plan.badge ? 'bg-[#75AADB] hover:bg-[#5a93c5] text-white' : 'border border-white/30 hover:border-[#75AADB] text-white'}`}
               >
-                Conseguir Ticket <span aria-hidden>↗</span>
+                Conseguir Ticket
               </button>
               </div>
             </div>

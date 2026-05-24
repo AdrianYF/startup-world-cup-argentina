@@ -36,7 +36,7 @@ function BuildersArena() {
                 {card.descripcion}
               </p>
               <span className="text-white text-sm inline-flex items-center gap-1 transition-transform group-hover:translate-x-1">
-                Ver más <span aria-hidden>→</span>
+                Ver más
               </span>
             </button>
           ))}

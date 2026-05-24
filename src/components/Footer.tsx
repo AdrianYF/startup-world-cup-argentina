@@ -53,7 +53,7 @@ function Footer() {
                 aria-label="Aplicá tu Startup (abre formulario en una nueva pestaña)"
                 className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
               >
-                Aplicá Startup <span aria-hidden>↗</span>
+                Aplicá Startup
               </button>
               <button
                 onClick={() => openPartnerForm()}
@@ -116,7 +116,7 @@ function Footer() {
                   className="inline-flex items-center gap-2 text-[#75AADB] hover:text-white text-[15px] font-bold transition-colors duration-200 cursor-pointer"
                 >
                   Comprar tickets
-                  <span aria-hidden>↗</span>
+                 
                 </button>
               </li>
             </ul>

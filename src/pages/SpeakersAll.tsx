@@ -34,7 +34,7 @@ function SpeakersAll() {
             to="/#speakers"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-[#75AADB] text-sm font-bold uppercase tracking-widest transition-colors mb-8"
           >
-            <span aria-hidden>←</span>
+           
             Volver al sitio
           </Link>
 
@@ -73,7 +73,7 @@ function SpeakersAll() {
             to="/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-bold uppercase tracking-wide text-sm transition-[transform,background-color]"
           >
-            <span aria-hidden>←</span>
+           
             Volver al sitio
           </Link>
         </div>

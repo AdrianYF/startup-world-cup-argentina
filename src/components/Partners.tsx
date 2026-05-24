@@ -99,7 +99,7 @@ function Partners() {
                     </li>
                   ))}
                   {p.features.length > 3 && (
-                    <li className="text-[#75AADB] text-xs font-bold mt-1">+{p.features.length - 3} más →</li>
+                    <li className="text-[#75AADB] text-xs font-bold mt-1">+{p.features.length - 3} más</li>
                   )}
                 </ul>
               </div>
@@ -125,7 +125,7 @@ function Partners() {
             aria-label="Quiero ser Partner (contactanos por mail)"
             className="inline-block bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black px-8 py-3 rounded-full uppercase tracking-wide cursor-pointer transition-all"
           >
-            Quiero ser Partner →
+            Quiero ser Partner
           </button>
         </div>
       </div>
@@ -149,7 +149,7 @@ function Partners() {
               aria-label="Contactar para ser partner"
               className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black px-6 py-2 rounded-full transition-all text-sm cursor-pointer"
             >
-              Contactar →
+              Contactar
             </button>
             <button
               onClick={() => setPopup(null)}

@@ -34,7 +34,6 @@ function PitchBattle() {
                     <p className="text-white font-black">{stat.titulo}</p>
                     <p className="text-white/85 font-bold text-sm">{stat.subtitulo}</p>
                   </div>
-                  <span className="text-white text-sm transition-transform group-hover:translate-x-1" aria-hidden>→</span>
                 </button>
               ))}
             </div>
@@ -48,7 +47,7 @@ function PitchBattle() {
               aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
               className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40"
             >
-              Aplicá como Startup <span aria-hidden>↗</span>
+              Aplicá como Startup
             </button>
           </div>
 

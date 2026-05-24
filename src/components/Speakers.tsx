@@ -83,7 +83,6 @@ function Speakers() {
                 className="group inline-flex items-center justify-center gap-2 mt-2 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base px-6 py-3 min-h-[48px] rounded-full uppercase tracking-wide transition-[transform,background-color] duration-200"
               >
                 Ver los {speakers.length} speakers
-                <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
             )}
           </div>

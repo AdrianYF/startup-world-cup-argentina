@@ -119,7 +119,7 @@ function Navbar() {
             aria-label="Conseguir tickets (abre en una nueva pestaña)"
             className={`bg-[#75AADB] text-white rounded-full hover:bg-[#5a93c5] active:scale-95 transition-all cursor-pointer font-black ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
-            Tickets <span aria-hidden>↗</span>
+            Tickets
           </button>
         </div>
 
@@ -169,7 +169,7 @@ function Navbar() {
               aria-label="Conseguir tickets (abre en una nueva pestaña)"
               className="mt-3 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
-              Conseguir Tickets <span aria-hidden>↗</span>
+              Conseguir Tickets
             </button>
           </div>
         </div>
