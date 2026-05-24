@@ -23,7 +23,7 @@ function Voluntarios() {
               Sumate al equipo
             </span>
 
-            <h2 className="text-5xl lg:text-6xl font-black uppercase mb-6">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-6">
               <span className="text-[#020618]">SÉ </span>
               <span className="text-[#75AADB]">VOLUNTARI@</span>
             </h2>

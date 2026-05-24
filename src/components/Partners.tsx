@@ -37,7 +37,7 @@ function Partners() {
 
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-black uppercase mb-3">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-3">
             <span className="text-white">QUIERO SER </span>
             <span className="text-[#75AADB]">PARTNER</span>
           </h2>

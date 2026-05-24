@@ -7,7 +7,7 @@ function Apoyan() {
     <section id="apoyan" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-4">
             <span className="text-[#020618]">QUIENES NOS </span>
             <span className="text-[#75AADB]">APOYAN</span>
           </h2>

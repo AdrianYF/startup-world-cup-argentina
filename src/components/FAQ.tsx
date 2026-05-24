@@ -9,7 +9,7 @@ function FAQ() {
     <section id="faq" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-3xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-4">
             <span className="text-[#020618]">PREGUNTAS </span>
             <span className="text-[#75AADB]">FRECUENTES</span>
           </h2>

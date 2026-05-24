@@ -23,7 +23,7 @@ function Agenda() {
     <section id="agenda" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-5xl lg:text-6xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-[#020618]">AGENDA </span>
             <span className="text-[#75AADB]">3 DÍAS</span>
           </h2>

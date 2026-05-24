@@ -7,7 +7,7 @@ function Tickets() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-5xl lg:text-6xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">ELEGÍ TU </span>
             <span className="text-[#75AADB]">PUERTA </span>
             <span className="text-white">DE </span>
@@ -17,7 +17,7 @@ function Tickets() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {content.tickets.map((plan) => (
-            <div key={plan.id} className={`relative rounded-2xl p-8 border transition-all ${plan.badge ? 'bg-white/10 border-[#75AADB]/50 scale-105' : 'bg-white/5 border-white/10 hover:border-[#75AADB]/30'}`}>
+            <div key={plan.id} className={`relative rounded-2xl p-6 sm:p-8 border transition-all ${plan.badge ? 'bg-white/10 border-[#75AADB]/50 sm:scale-105 mt-4 sm:mt-0' : 'bg-white/5 border-white/10 hover:border-[#75AADB]/30'}`}>
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="bg-[#75AADB] text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{plan.badge}</span>

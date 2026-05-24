@@ -14,7 +14,7 @@ function Startups() {
               Aplicación abierta
             </span>
 
-            <h2 className="text-5xl lg:text-6xl font-black uppercase mb-6">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-6">
               <span className="text-white">APLICÁ </span>
               <span className="text-[#75AADB]">TU STARTUP</span>
             </h2>

@@ -10,7 +10,7 @@ function BuildersArena() {
     <section id="builders" className="relative py-16 sm:py-24 bg-[#020618] text-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-5xl lg:text-7xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black uppercase mb-4">
             <span className="text-white">BUILDERS </span>
             <span className="text-[#75AADB]">ARENA</span>
           </h2>

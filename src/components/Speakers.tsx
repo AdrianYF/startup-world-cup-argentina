@@ -25,7 +25,7 @@ function Speakers() {
           <span className="inline-block border border-white/20 text-gray-400 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             En el escenario
           </span>
-          <h2 className="text-5xl lg:text-6xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">SPEAKERS</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -47,7 +47,7 @@ function Speakers() {
           <span className="inline-block border border-white/20 text-gray-400 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             En el escenario
           </span>
-          <h2 className="text-5xl lg:text-6xl font-black uppercase mb-4">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">SPEAKERS</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
