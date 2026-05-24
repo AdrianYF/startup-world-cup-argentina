@@ -79,7 +79,7 @@ function Speakers() {
                 onClick={() => setOpenIndex(i)}
                 aria-label={`Ver speaker ${s.nombre}`}
                 className="group relative overflow-hidden rounded-sm border border-white/10 cursor-pointer text-left will-change-transform transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/30 hover:-translate-y-0.5 focus-visible:-translate-y-0.5 active:scale-[0.98]"
-                style={{ aspectRatio: '1 / 1' }}
+                style={{ aspectRatio: '3 / 4' }}
               >
                 <img
                   src={s.thumb || PLACEHOLDER_IMG}
