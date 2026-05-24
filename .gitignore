@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Planning docs (RFC, SDD, ADRs, backlog) — local-only por ahora
+docs/
