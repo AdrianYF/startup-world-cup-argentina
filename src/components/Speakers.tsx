@@ -63,10 +63,10 @@ function Speakers() {
         </svg>
       </div>
 
-      {/* Grilla 5x4 */}
+      {/* Lista 1 columna */}
       <div className="relative -mt-24 md:-mt-32 z-10 pb-24">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
+        <div className="max-w-md mx-auto px-4">
+          <div className="grid grid-cols-1 gap-6">
             {speakers.map((s, i) => (
               <button
                 key={s.slug}
