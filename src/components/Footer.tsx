@@ -32,10 +32,13 @@ function Footer() {
   const hasSocial = Boolean(links.linkedin || links.instagram || links.twitter)
 
   return (
-    <footer className="bg-[#020618] text-white">
+    <footer className="relative bg-[#020618] text-white">
+
+      {/* Separador celeste — coherente con el resto de secciones del sitio */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
       {/* ═══ FINAL CTA STRIP ═══ */}
-      <div className="border-y border-white/10">
+      <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-10 sm:py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-2xl sm:text-3xl font-black uppercase leading-tight text-center md:text-left">
