@@ -1,6 +1,7 @@
 import './index.css'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import Stats from './components/Stats'
 import RutaEvolucion from './components/RutaEvolucion'
 import PitchBattle from './components/PitchBattle'
 import BuildersArena from './components/BuildersArena'
@@ -18,6 +19,7 @@ import { FadeInSection } from './components/ui/FadeInSection'
 function App() {
   // Hero queda sin FadeIn — debe verse desde el primer paint (above-the-fold).
   const sections = [
+    Stats,
     RutaEvolucion,
     PitchBattle,
     BuildersArena,

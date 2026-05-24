@@ -118,10 +118,6 @@ function Hero() {
               </button>
             </div>
 
-            <div>
-              <span className="text-[#75AADB] font-black text-3xl sm:text-4xl">{content.config.evento.ciudadesCompitiendo}</span>
-              <span className="text-gray-400 text-xs sm:text-sm ml-2 uppercase tracking-widest">Ciudades compitiendo</span>
-            </div>
           </div>
 
           {/* Columna derecha */}
