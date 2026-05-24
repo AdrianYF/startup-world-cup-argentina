@@ -17,7 +17,24 @@ function Tickets() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {content.tickets.map((plan) => (
-            <div key={plan.id} className={`relative rounded-2xl p-6 sm:p-8 border transition-all ${plan.badge ? 'bg-white/10 border-[#75AADB]/50 sm:scale-105 mt-4 sm:mt-0' : 'bg-white/5 border-white/10 hover:border-[#75AADB]/30'}`}>
+            <div key={plan.id} className="relative">
+              {/* Halo mundialista celeste — más intenso en el plan popular */}
+              <div
+                aria-hidden
+                className={`absolute -inset-4 rounded-3xl blur-3xl pointer-events-none ${
+                  plan.badge
+                    ? 'bg-gradient-to-br from-[#75AADB]/50 via-[#75AADB]/35 to-[#75AADB]/50'
+                    : 'bg-gradient-to-br from-[#75AADB]/25 via-[#75AADB]/15 to-[#75AADB]/25'
+                }`}
+              />
+
+              <div
+                className={`relative rounded-2xl p-6 sm:p-8 border transition-all ${
+                  plan.badge
+                    ? 'bg-white/10 border-[#75AADB] sm:scale-105 mt-4 sm:mt-0 shadow-[0_0_24px_rgba(117,170,219,0.7),_0_0_60px_rgba(117,170,219,0.4),_0_25px_70px_-15px_rgba(117,170,219,0.5)]'
+                    : 'bg-white/5 border-[#75AADB]/40 hover:border-[#75AADB]/80 shadow-[0_0_20px_rgba(117,170,219,0.35),_0_0_50px_rgba(117,170,219,0.18),_0_15px_50px_-15px_rgba(117,170,219,0.3)] hover:shadow-[0_0_24px_rgba(117,170,219,0.5),_0_0_60px_rgba(117,170,219,0.3),_0_20px_60px_-15px_rgba(117,170,219,0.4)]'
+                }`}
+              >
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="bg-[#75AADB] text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{plan.badge}</span>
@@ -48,6 +65,7 @@ function Tickets() {
               >
                 Conseguir Ticket <span aria-hidden>↗</span>
               </button>
+              </div>
             </div>
           ))}
         </div>
