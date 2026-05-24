@@ -19,10 +19,10 @@ function Tickets() {
           {content.tickets.map((plan) => (
             <div key={plan.id} className="relative">
               <div
-                className={`relative rounded-2xl p-6 sm:p-8 border transition-all ${
+                className={`relative rounded-2xl p-6 sm:p-8 border-[0.5px] transition-all ${
                   plan.badge
-                    ? 'bg-white/10 border-[#75AADB]/60 sm:scale-105 mt-4 sm:mt-0 shadow-[0_0_24px_-4px_rgba(117,170,219,0.25)]'
-                    : 'bg-white/5 border-[#75AADB]/15 hover:border-[#75AADB]/40 shadow-[0_0_16px_-6px_rgba(117,170,219,0.12)] hover:shadow-[0_0_20px_-4px_rgba(117,170,219,0.2)]'
+                    ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 mt-4 sm:mt-0 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
+                    : 'bg-white/5 border-[#75AADB]/10 hover:border-[#75AADB]/25 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]'
                 }`}
               >
               {plan.badge && (
