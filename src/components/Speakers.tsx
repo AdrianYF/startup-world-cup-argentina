@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { content } from '../lib/content'
 import { Modal } from './ui/Modal'
+import type { Speaker } from '../lib/content'
 
 /**
  * Speakers — paleta reducida a 5 colores y tipografía alineada con el resto del sitio.
- * Colores: bg #020618 · surface #0f172b · white · gray-400 · accent #75AADB (celeste).
- * Estructura: badge → h2 uppercase → subtítulo → wave divider → grilla 5-col.
+ * Mobile: muestra solo 3 + botón "Ver más" que lleva a /speakers.
+ * Desktop: muestra todos.
  */
 
 const SURFACE = '#0f172b'
@@ -13,6 +15,8 @@ const BG = '#020618'
 const ACCENT = '#75AADB'
 const PLACEHOLDER_IMG =
   'https://grupobcc.com/wp/wp-content/uploads/2015/10/Steve-Wozniak-speaker-apple-conferencias-technology-940x660.jpg'
+
+const MOBILE_PREVIEW = 3
 
 function Speakers() {
   const speakers = content.speakers
@@ -63,39 +67,31 @@ function Speakers() {
         </svg>
       </div>
 
-      {/* Lista 1 columna */}
+      {/* Lista */}
       <div className="relative -mt-24 md:-mt-32 z-10 pb-24">
         <div className="max-w-md mx-auto px-4">
-          <div className="grid grid-cols-1 gap-6">
-            {speakers.map((s, i) => (
-              <button
-                key={s.slug}
-                onClick={() => setOpenIndex(i)}
-                aria-label={`Ver speaker ${s.nombre}`}
-                className="group relative overflow-hidden rounded-sm border border-white/10 cursor-pointer text-left will-change-transform transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/30 hover:-translate-y-0.5 focus-visible:-translate-y-0.5 active:scale-[0.98]"
-                style={{ aspectRatio: '3 / 4' }}
+
+          {/* Mobile (preview de MOBILE_PREVIEW) */}
+          <div className="grid grid-cols-1 gap-6 sm:hidden">
+            {speakers.slice(0, MOBILE_PREVIEW).map((s, i) => (
+              <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
+            ))}
+            {speakers.length > MOBILE_PREVIEW && (
+              <Link
+                to="/speakers"
+                className="group flex items-center justify-center gap-2 mt-2 py-4 px-6 rounded-sm border border-[#75AADB]/40 hover:border-[#75AADB] text-white hover:text-[#75AADB] font-bold uppercase tracking-widest text-sm transition-colors duration-200"
+                aria-label={`Ver los ${speakers.length} speakers`}
               >
-                <img
-                  src={s.thumb || PLACEHOLDER_IMG}
-                  onError={e => { (e.currentTarget as HTMLImageElement).src = PLACEHOLDER_IMG }}
-                  alt={s.nombre}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover will-change-transform transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-                />
+                Ver los {speakers.length} speakers
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+            )}
+          </div>
 
-                {/* Vignette para legibilidad del título */}
-                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#020618] via-[#020618]/60 to-transparent pointer-events-none" />
-
-                {/* Título + rol */}
-                <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
-                  <h3 className="text-white text-sm md:text-base font-black leading-tight">
-                    {s.nombre}
-                  </h3>
-                  <p className="text-gray-400 text-[10px] uppercase tracking-widest mt-1 truncate">
-                    {s.rol}
-                  </p>
-                </div>
-              </button>
+          {/* Desktop (todos) */}
+          <div className="hidden sm:grid grid-cols-1 gap-6">
+            {speakers.map((s, i) => (
+              <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
             ))}
           </div>
 
@@ -145,6 +141,43 @@ function Speakers() {
         </Modal>
       )}
     </section>
+  )
+}
+
+/* Speaker tile reutilizable — usado en Speakers (landing) y SpeakersAll (página) */
+export function SpeakerTile({
+  speaker,
+  onOpen,
+}: {
+  speaker: Speaker
+  onOpen: () => void
+}) {
+  return (
+    <button
+      onClick={onOpen}
+      aria-label={`Ver speaker ${speaker.nombre}`}
+      className="group relative overflow-hidden rounded-sm border border-white/10 cursor-pointer text-left will-change-transform transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-white/30 hover:-translate-y-0.5 focus-visible:-translate-y-0.5 active:scale-[0.98]"
+      style={{ aspectRatio: '3 / 4' }}
+    >
+      <img
+        src={speaker.thumb || PLACEHOLDER_IMG}
+        onError={e => { (e.currentTarget as HTMLImageElement).src = PLACEHOLDER_IMG }}
+        alt={speaker.nombre}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover will-change-transform transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+      />
+
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#020618] via-[#020618]/60 to-transparent pointer-events-none" />
+
+      <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
+        <h3 className="text-white text-sm md:text-base font-black leading-tight">
+          {speaker.nombre}
+        </h3>
+        <p className="text-gray-400 text-[10px] uppercase tracking-widest mt-1 truncate">
+          {speaker.rol}
+        </p>
+      </div>
+    </button>
   )
 }
 
