@@ -22,11 +22,11 @@ function Apoyan() {
               <p className="text-center text-gray-500 text-xs uppercase tracking-[0.3em] font-bold mb-8">
                 {cat.titulo}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-0.5 gap-y-1 sm:gap-x-1 items-center justify-items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-0 gap-y-0.5 items-center justify-items-center">
                 {cat.logos.map((logo, j) => (
                   <div
                     key={j}
-                    className="flex items-center justify-center w-full h-32 sm:h-40"
+                    className="flex items-center justify-center w-full h-28 sm:h-32"
                   >
                     {logo.img ? (
                       <img
