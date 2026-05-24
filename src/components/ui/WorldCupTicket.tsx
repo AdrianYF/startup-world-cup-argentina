@@ -162,7 +162,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#75AADB]/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#75AADB]/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative rounded-2xl border-[3px] border-[#0f172b]/90 shadow-[0_25px_70px_-15px_rgba(12,46,74,0.7)] overflow-hidden">
+      <div className="relative rounded-xl sm:rounded-2xl border-2 sm:border-[3px] border-[#0f172b]/90 shadow-[0_25px_70px_-15px_rgba(12,46,74,0.7)] overflow-hidden">
 
         {/* Fondo celeste */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#ffffff]" />
@@ -174,32 +174,32 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
         <GuillochePattern />
 
         {/* Franjas blancas (bandera argentina) */}
-        <div className="absolute top-0 left-0 right-28 h-1.5 bg-white" />
-        <div className="absolute bottom-0 left-0 right-28 h-1.5 bg-white" />
+        <div className="absolute top-0 left-0 right-16 sm:right-28 h-1 sm:h-1.5 bg-white" />
+        <div className="absolute bottom-0 left-0 right-16 sm:right-28 h-1 sm:h-1.5 bg-white" />
 
         <div className="relative flex items-stretch text-[#0f172b]">
 
           {/* === CUERPO PRINCIPAL === */}
-          <div className="flex-1 p-7 pt-8">
+          <div className="flex-1 p-4 sm:p-7 pt-5 sm:pt-8 min-w-0">
 
             {/* Header */}
-            <div className="text-[10px] font-black tracking-[0.3em] uppercase opacity-80 mb-6">
+            <div className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-80 mb-3 sm:mb-6">
               Startup World Cup · Argentina 2026
             </div>
 
             {/* Premio — protagonista */}
-            <div className="relative border-y-2 border-dashed border-[#0f172b]/40 py-5 my-2">
+            <div className="relative border-y-2 border-dashed border-[#0f172b]/40 py-3 sm:py-5 my-1 sm:my-2">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <SolDeMayo size={180} opacity={0.22} />
               </div>
 
               <div className="relative">
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] opacity-70 mb-1">
+                <div className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] opacity-70 mb-1">
                   Premio Final
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black opacity-70 leading-none">US$</span>
-                  <span className="text-6xl lg:text-7xl font-black tracking-tight leading-none drop-shadow-[0_2px_0_rgba(255,255,255,0.5)]">
+                <div className="flex items-baseline gap-1 sm:gap-2 flex-wrap">
+                  <span className="text-xl sm:text-3xl font-black opacity-70 leading-none">US$</span>
+                  <span className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none drop-shadow-[0_2px_0_rgba(255,255,255,0.5)]">
                     {formatUSD}
                   </span>
                 </div>
@@ -207,38 +207,44 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
             </div>
 
             {/* Fecha + Venue */}
-            <div className="flex items-start justify-between mt-5">
-              <div>
-                <div className="text-[9px] font-black uppercase tracking-[0.25em] opacity-60">Fecha</div>
-                <div className="text-sm font-black mt-0.5">05·08·2026</div>
+            <div className="flex items-start justify-between mt-3 sm:mt-5 gap-2">
+              <div className="min-w-0">
+                <div className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] opacity-60">Fecha</div>
+                <div className="text-xs sm:text-sm font-black mt-0.5 truncate">05·08·2026</div>
               </div>
-              <div className="text-right">
-                <div className="text-[9px] font-black uppercase tracking-[0.25em] opacity-60">Venue</div>
-                <div className="text-sm font-black mt-0.5">VEDIA · BS AS</div>
+              <div className="text-right min-w-0">
+                <div className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] opacity-60">Venue</div>
+                <div className="text-xs sm:text-sm font-black mt-0.5 truncate">VEDIA · BS AS</div>
               </div>
             </div>
           </div>
 
           {/* === PERFORACIÓN === */}
-          <div className="relative w-5 bg-[#75AADB] border-l-2 border-dashed border-[#0f172b]/50">
-            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-[#0f172b] rounded-full" />
-            <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-[#0f172b] rounded-full" />
+          <div className="relative w-3 sm:w-5 bg-[#75AADB] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
+            <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
+            <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
           </div>
 
           {/* === STUB === */}
-          <div className="relative w-28 bg-gradient-to-b from-[#75AADB] via-[#75AADB] to-[#ffffff] flex flex-col items-center justify-center p-4 text-center gap-4">
+          <div className="relative w-16 sm:w-28 bg-gradient-to-b from-[#75AADB] via-[#75AADB] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0">
             <GuillochePattern />
 
-            <div className="relative">
+            <div className="relative sm:hidden">
+              <HolographicSeal size={32} />
+            </div>
+            <div className="relative hidden sm:block">
               <HolographicSeal size={52} />
             </div>
 
-            <div className="relative bg-white p-1 rounded border border-[#0f172b]/40">
+            <div className="relative bg-white p-0.5 sm:p-1 rounded border border-[#0f172b]/40 sm:hidden">
+              <QRCode size={28} />
+            </div>
+            <div className="relative bg-white p-1 rounded border border-[#0f172b]/40 hidden sm:block">
               <QRCode size={44} />
             </div>
 
             <div className="relative">
-              <div className="text-base font-black tracking-widest">AR · 26</div>
+              <div className="text-[10px] sm:text-base font-black tracking-widest">AR · 26</div>
             </div>
           </div>
         </div>
