@@ -3,7 +3,8 @@ import { content } from '../lib/content'
 /**
  * Bloque de estadísticas estilo Token2049.
  * Números masivos como social proof tras el Hero.
- * Layout: grid 2x2 en mobile → 4 columnas en sm+. Cero ornamento.
+ * El stat con highlight: true recibe el mismo tratamiento que el premio US$1M
+ * del Hero — gradient text white→celeste + drop-shadow violeta + halo blur.
  */
 function Stats() {
   const stats = content.config.stats ?? []
@@ -22,18 +23,36 @@ function Stats() {
           {stats.map((s, i) => (
             <div
               key={i}
-              className={`text-center sm:text-left ${
+              className={`relative text-center sm:text-left ${
                 i < stats.length - 1 ? 'sm:border-r sm:border-white/10 sm:pr-4' : ''
               }`}
             >
+              {/* Halo blur — solo en el stat highlighted */}
+              {s.highlight && (
+                <div
+                  aria-hidden
+                  className="absolute -inset-4 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-2xl rounded-3xl pointer-events-none"
+                />
+              )}
+
               <div
-                className={`font-black leading-none tracking-tighter tabular-nums ${
-                  s.highlight ? 'text-[#75AADB]' : 'text-white'
-                } text-5xl sm:text-6xl lg:text-7xl xl:text-8xl`}
+                className={`relative font-black leading-none tracking-tighter tabular-nums text-5xl sm:text-6xl lg:text-7xl xl:text-8xl ${
+                  s.highlight
+                    ? 'bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]'
+                    : 'text-white'
+                }`}
+                style={
+                  s.highlight
+                    ? {
+                        backgroundImage:
+                          'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
+                      }
+                    : undefined
+                }
               >
                 {s.valor}
               </div>
-              <div className="text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] text-gray-400 mt-3 sm:mt-4 leading-snug font-bold">
+              <div className="relative text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] text-gray-400 mt-3 sm:mt-4 leading-snug font-bold">
                 {s.label}
               </div>
             </div>
