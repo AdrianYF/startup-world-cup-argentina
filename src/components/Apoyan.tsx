@@ -24,12 +24,15 @@ function Apoyan() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-center justify-items-center">
                 {cat.logos.map((logo, j) => (
-                  <div key={j} className="flex items-center justify-center w-full py-4">
+                  <div
+                    key={j}
+                    className="flex items-center justify-center w-full h-20 sm:h-24"
+                  >
                     {logo.img ? (
                       <img
                         src={logo.img}
                         alt={logo.nombre}
-                        className="h-16 w-auto object-contain grayscale contrast-150 brightness-50 hover:filter-none hover:contrast-100 hover:brightness-100 transition-[filter] duration-300"
+                        className="max-h-12 sm:max-h-14 max-w-[180px] w-auto object-contain grayscale contrast-150 brightness-50 hover:filter-none hover:contrast-100 hover:brightness-100 transition-[filter] duration-300"
                       />
                     ) : (
                       <span className="text-gray-700 font-black text-2xl uppercase tracking-wide hover:text-[#020618] transition-colors">
