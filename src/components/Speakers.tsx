@@ -79,8 +79,8 @@ function Speakers() {
             {speakers.length > MOBILE_PREVIEW && (
               <Link
                 to="/speakers"
-                className="group flex items-center justify-center gap-2 mt-2 py-4 px-6 rounded-sm border border-[#75AADB]/40 hover:border-[#75AADB] text-white hover:text-[#75AADB] font-bold uppercase tracking-widest text-sm transition-colors duration-200"
                 aria-label={`Ver los ${speakers.length} speakers`}
+                className="group inline-flex items-center justify-center gap-2 mt-2 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base px-6 py-3 min-h-[48px] rounded-full uppercase tracking-wide transition-[transform,background-color] duration-200"
               >
                 Ver los {speakers.length} speakers
                 <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
