@@ -162,7 +162,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#75AADB]/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#75AADB]/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative rounded-xl sm:rounded-2xl border border-[#75AADB] shadow-[0_25px_70px_-15px_rgba(117,170,219,0.6)] overflow-hidden">
+      <div className="relative rounded-xl sm:rounded-2xl border border-[#75AADB] shadow-[0_0_24px_rgba(117,170,219,0.7),_0_0_60px_rgba(117,170,219,0.4),_0_25px_70px_-15px_rgba(117,170,219,0.5)] overflow-hidden">
 
         {/* Fondo celeste */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#ffffff]" />
