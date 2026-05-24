@@ -22,6 +22,30 @@ html, body {
   font-family: var(--font-sans);
 }
 
+/* Scroll snap nativo — proximity es gentil: solo "ayuda" al usuario,
+ * no fuerza el snap si está scrolleando lejos de los puntos.
+ * Cada <section> queda como snap target. La navbar fixed no entra al cálculo
+ * porque está fuera del scroll container.
+ */
+html {
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 4rem; /* compensa la navbar fixed para que el title no quede tapado */
+  scroll-behavior: smooth;
+}
+
+main > section,
+main > div > section {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+  }
+}
+
 /* Glass card — efecto frosted del sitio original */
 .glass-card {
   background-color: rgba(255, 255, 255, 0.03);
