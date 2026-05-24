@@ -14,10 +14,6 @@ function PitchBattle() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           <div>
-            <span className="inline-block border border-gray-300 text-gray-500 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              Competencia Principal
-            </span>
-
             <h2 className="text-6xl lg:text-7xl font-black uppercase mb-6">
               <span className="text-[#75AADB]">PITCH</span>
               <span className="text-[#020618]"> BATTLE</span>
