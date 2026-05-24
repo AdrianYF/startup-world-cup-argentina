@@ -16,26 +16,25 @@ function Apoyan() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-16">
           {categorias.map((cat, i) => (
             <div key={i}>
-              <p className="text-center text-gray-500 text-xs uppercase tracking-widest mb-6">
+              <p className="text-center text-gray-500 text-xs uppercase tracking-[0.3em] font-bold mb-8">
                 {cat.titulo}
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-center justify-items-center">
                 {cat.logos.map((logo, j) => (
-                  <div
-                    key={j}
-                    className="bg-white border border-gray-200 rounded-xl px-8 py-6 flex items-center justify-center min-w-36 hover:border-[#75AADB]/50 transition-colors duration-300"
-                  >
+                  <div key={j} className="flex items-center justify-center w-full py-4">
                     {logo.img ? (
                       <img
                         src={logo.img}
                         alt={logo.nombre}
-                        className="h-12 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-[filter,opacity] duration-300"
+                        className="h-16 w-auto object-contain grayscale contrast-150 brightness-50 hover:filter-none hover:contrast-100 hover:brightness-100 transition-[filter] duration-300"
                       />
                     ) : (
-                      <span className="text-[#020618] font-bold text-lg">{logo.nombre}</span>
+                      <span className="text-gray-700 font-black text-2xl uppercase tracking-wide hover:text-[#020618] transition-colors">
+                        {logo.nombre}
+                      </span>
                     )}
                   </div>
                 ))}
