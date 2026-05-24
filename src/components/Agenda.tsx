@@ -21,6 +21,7 @@ function Agenda() {
 
   return (
     <section id="agenda" className="relative py-16 sm:py-24 bg-white text-[#020618]">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
