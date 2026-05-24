@@ -45,7 +45,9 @@ function App() {
           </FadeInSection>
         ))}
       </main>
-      <Footer />
+      <FadeInSection>
+        <Footer />
+      </FadeInSection>
     </div>
   )
 }
