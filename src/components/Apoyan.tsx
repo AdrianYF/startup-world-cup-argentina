@@ -28,14 +28,24 @@ function Apoyan() {
                     key={j}
                     className="flex items-center justify-center w-full h-28 sm:h-32"
                   >
-                    {logo.img ? (
-                      <img
-                        src={logo.img}
-                        alt={logo.nombre}
-                        style={'scale' in logo && typeof logo.scale === 'number' ? { transform: `scale(${logo.scale})` } : undefined}
-                        className="max-h-24 sm:max-h-32 max-w-[280px] sm:max-w-[320px] w-auto object-contain grayscale contrast-150 brightness-50 hover:filter-none hover:contrast-100 hover:brightness-100 transition-[filter] duration-300"
-                      />
-                    ) : (
+                    {logo.img ? (() => {
+                      const scale = 'scale' in logo && typeof logo.scale === 'number' ? logo.scale : undefined
+                      const brightness = 'brightness' in logo && typeof logo.brightness === 'number' ? logo.brightness : 0.5
+                      const baseFilter = `grayscale(1) contrast(1.5) brightness(${brightness})`
+                      return (
+                        <img
+                          src={logo.img}
+                          alt={logo.nombre}
+                          style={{
+                            transform: scale ? `scale(${scale})` : undefined,
+                            filter: baseFilter,
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.filter = 'none' }}
+                          onMouseLeave={e => { e.currentTarget.style.filter = baseFilter }}
+                          className="max-h-24 sm:max-h-32 max-w-[280px] sm:max-w-[320px] w-auto object-contain transition-[filter] duration-300"
+                        />
+                      )
+                    })() : (
                       <span className="text-gray-700 font-black text-3xl sm:text-4xl uppercase tracking-wide hover:text-[#020618] transition-colors">
                         {logo.nombre}
                       </span>
