@@ -5,6 +5,7 @@ function Apoyan() {
 
   return (
     <section id="apoyan" className="relative py-16 sm:py-24 bg-white text-[#020618]">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-4">
