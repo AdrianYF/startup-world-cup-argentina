@@ -2,8 +2,14 @@ import { useState, useEffect } from 'react'
 import { content } from '../lib/content'
 import { openStartupForm, openPartnerForm } from '../lib/ticketing'
 
+const PARTNERS = [
+  { src: '/pegasus-logo.png', alt: 'Pegasus Tech Ventures' },
+  { src: '/SGBA-logo.png', alt: 'Startup Grind Buenos Aires' },
+]
+
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
+  const [partnerIdx, setPartnerIdx] = useState(0)
 
   useEffect(() => {
     const target = new Date(content.config.evento.fechaInicioISO)
@@ -19,6 +25,14 @@ function Hero() {
       })
     }, 1000)
     return () => clearInterval(interval)
+  }, [])
+
+  // Rotación entre los dos logos de partnership (Pegasus ↔ SGBA)
+  useEffect(() => {
+    const id = setInterval(() => {
+      setPartnerIdx(i => (i + 1) % PARTNERS.length)
+    }, 4000)
+    return () => clearInterval(id)
   }, [])
 
   return (
@@ -128,15 +142,24 @@ function Hero() {
                 En partnership with
               </p>
 
-              <div className="relative flex justify-center items-center py-2 sm:py-4">
+              <div className="relative flex justify-center items-center py-2 sm:py-4 h-32 sm:h-44 lg:h-56 w-full max-w-md">
                 {/* Halo blur de fondo */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#75AADB]/40 via-[#75AADB]/25 to-[#75AADB]/40 blur-3xl rounded-full pointer-events-none" />
 
-                <img
-                  src="/pegasus-logo.png"
-                  alt="Pegasus Tech Ventures"
-                  className="pegasus-breathe relative h-32 sm:h-44 lg:h-56 w-auto drop-shadow-[0_4px_24px_rgba(117,170,219,0.6)]"
-                />
+                {/* Rotación entre logos — solo uno visible a la vez, crossfade con scale */}
+                {PARTNERS.map((p, i) => (
+                  <img
+                    key={p.src}
+                    src={p.src}
+                    alt={p.alt}
+                    aria-hidden={i !== partnerIdx}
+                    className={`absolute h-32 sm:h-44 lg:h-56 w-auto max-w-full object-contain drop-shadow-[0_4px_24px_rgba(117,170,219,0.6)] transition-all duration-700 ease-in ${
+                      i === partnerIdx
+                        ? 'opacity-100 scale-100'
+                        : 'opacity-0 scale-90'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
 
