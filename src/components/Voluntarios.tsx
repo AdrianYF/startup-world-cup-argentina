@@ -3,7 +3,7 @@ import { VolunteerCardCycler } from './ui/VolunteerCardCycler'
 
 function Voluntarios() {
   return (
-    <section id="voluntarios" className="relative py-24 bg-white text-[#020618]">
+    <section id="voluntarios" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 

@@ -6,7 +6,7 @@ function FAQ() {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="relative py-24 bg-white text-[#020618]">
+    <section id="faq" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-3xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-black uppercase mb-4">

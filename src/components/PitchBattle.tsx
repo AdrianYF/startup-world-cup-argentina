@@ -9,7 +9,7 @@ function PitchBattle() {
   const stats = content.pitchBattle
 
   return (
-    <section id="pitch" className="relative py-24 bg-white text-[#020618]">
+    <section id="pitch" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 

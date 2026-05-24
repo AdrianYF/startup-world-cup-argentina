@@ -20,7 +20,7 @@ function Agenda() {
   const filtered = filter ? slots.filter(s => s.categoria === filter) : slots
 
   return (
-    <section id="agenda" className="relative py-24 bg-white text-[#020618]">
+    <section id="agenda" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-5xl lg:text-6xl font-black uppercase mb-4">

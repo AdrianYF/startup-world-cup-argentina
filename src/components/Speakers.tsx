@@ -20,7 +20,7 @@ function Speakers() {
 
   if (!speakers.length) {
     return (
-      <section id="speakers" className="relative py-24 text-center" style={{ backgroundColor: BG }}>
+      <section id="speakers" className="relative py-16 sm:py-24 text-center" style={{ backgroundColor: BG }}>
         <div className="max-w-2xl mx-auto px-4">
           <span className="inline-block border border-white/20 text-gray-400 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             En el escenario

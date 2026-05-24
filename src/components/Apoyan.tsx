@@ -4,7 +4,7 @@ function Apoyan() {
   const categorias = content.apoyan
 
   return (
-    <section id="apoyan" className="relative py-24 bg-white text-[#020618]">
+    <section id="apoyan" className="relative py-16 sm:py-24 bg-white text-[#020618]">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-black uppercase mb-4">

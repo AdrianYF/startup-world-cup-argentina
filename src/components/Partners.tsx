@@ -32,7 +32,7 @@ function Partners() {
   const translateX = -(offset * (cardWidth + CARD_GAP)) + (viewportWidth / 2) - (cardWidth / 2)
 
   return (
-    <section id="partners" className="relative py-24 bg-[#020618] overflow-hidden">
+    <section id="partners" className="relative py-16 sm:py-24 bg-[#020618] overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4">

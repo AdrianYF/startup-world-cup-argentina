@@ -7,7 +7,7 @@ function BuildersArena() {
   const [popupIndex, setPopupIndex] = useState<number | null>(null)
 
   return (
-    <section id="builders" className="relative py-24 bg-[#020618] text-white">
+    <section id="builders" className="relative py-16 sm:py-24 bg-[#020618] text-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-5xl lg:text-7xl font-black uppercase mb-4">

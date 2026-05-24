@@ -3,7 +3,7 @@ import { openTicketing } from '../lib/ticketing'
 
 function Tickets() {
   return (
-    <section id="tickets" className="relative py-24 bg-[#020618]">
+    <section id="tickets" className="relative py-16 sm:py-24 bg-[#020618]">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
