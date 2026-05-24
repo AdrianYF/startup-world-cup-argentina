@@ -153,7 +153,7 @@ function Hero() {
                     src={p.src}
                     alt={p.alt}
                     aria-hidden={i !== partnerIdx}
-                    className={`absolute h-32 sm:h-44 lg:h-56 w-auto max-w-full object-contain drop-shadow-[0_4px_24px_rgba(117,170,219,0.6)] transition-all duration-700 ease-in ${
+                    className={`absolute h-32 sm:h-44 lg:h-56 w-auto max-w-full object-contain drop-shadow-[0_4px_24px_rgba(117,170,219,0.6)] transition-all duration-700 ease-in-out ${
                       i === partnerIdx
                         ? 'opacity-100 scale-100'
                         : 'opacity-0 scale-90'
