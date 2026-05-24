@@ -2,8 +2,8 @@
   {
     "titulo": "PRESENTING PARTNERS",
     "logos": [
-      { "nombre": "Startup World Cup", "img": "/SWC-logo.png" },
-      { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png" },
+      { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85 },
+      { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "scale": 1.2 },
       { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png" }
     ]
   },

@@ -1,20 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta extraída de startupworldcupargentina.com */
-  --color-swc-primary: #6c5ce7;
-  --color-swc-primary-dark: #5848c4;
-  --color-swc-primary-soft: #a89cf0;
-  --color-swc-accent: #ff7675;
-  --color-swc-accent-soft: #ffb3b2;
-  --color-swc-orange: #f05100;
-  --color-swc-bg: #020618;
-  --color-swc-surface: #0f172b;
-  --color-swc-muted: #62748e;
-  --color-swc-muted-soft: #90a1b9;
+  /* Argentina · celeste y blanco. 5 colores totales. */
+  --color-swc-light: #ffffff;       /* blanco — dominante */
+  --color-swc-accent: #75AADB;      /* celeste argentino — único accent */
+  --color-swc-accent-dark: #5a93c5; /* celeste hover */
+  --color-swc-bg: #020618;          /* dark bg para secciones de contraste */
+  --color-swc-surface: #0f172b;     /* dark surface secundaria */
+  --color-swc-muted: #9ca3af;       /* gray-400 muted text */
 
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 html, body {
@@ -81,6 +76,38 @@ main > div > section {
 @keyframes modal-in {
   from { opacity: 0; transform: translateY(12px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Pegasus entrance — transform ease-in con scale + glow buildup */
+@keyframes pegasus-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+.pegasus-entrance {
+  animation: pegasus-in 1.4s ease-in both;
+  animation-delay: 0.4s;
+}
+
+/* Pulsación sutil continua tras la entrada — respiración */
+@keyframes pegasus-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+.pegasus-breathe {
+  animation: pegasus-breathe 5s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 /* Respeto prefers-reduced-motion (Don Norman: constraints) */
