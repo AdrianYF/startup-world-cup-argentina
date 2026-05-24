@@ -53,10 +53,6 @@ function Hero() {
 
           {/* Columna izquierda */}
           <div className="text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 mb-6 sm:mb-8 max-w-full">
-              <span className="w-2 h-2 rounded-full bg-[#75AADB] animate-pulse flex-shrink-0" />
-              <span className="text-[11px] sm:text-sm font-semibold text-white truncate">{content.config.evento.fechas}</span>
-            </div>
 
             {/* Logo + título — stack vertical en mobile, horizontal en lg */}
             <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-10 mb-8 lg:mb-10">
