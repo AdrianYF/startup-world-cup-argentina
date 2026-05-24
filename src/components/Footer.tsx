@@ -179,11 +179,8 @@ function Footer() {
           </div>
         </div>
 
-        {/* ═══ NEWSLETTER ═══ */}
-        <NewsletterSignup />
-
         {/* ═══ COPYRIGHT + LEGAL ═══ */}
-        <div className="pt-6 mt-10 text-xs text-gray-400 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="pt-6 text-xs text-gray-400 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p>© 2026 Startup World Cup Argentina · Todos los derechos reservados</p>
           <ul className="flex flex-wrap items-center gap-4 sm:gap-6">
             {LEGAL_LINKS.map(l => (
@@ -200,66 +197,6 @@ function Footer() {
         </div>
       </div>
     </footer>
-  )
-}
-
-function NewsletterSignup() {
-  // Handler placeholder hasta que integremos Mailchimp/Loops
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const data = new FormData(e.currentTarget)
-    const email = data.get('email')
-    if (typeof email === 'string' && email.includes('@')) {
-      e.currentTarget.reset()
-      const status = e.currentTarget.querySelector('[data-status]') as HTMLElement | null
-      if (status) {
-        status.textContent = '✓ Te avisamos cuando haya novedades.'
-        setTimeout(() => { if (status) status.textContent = '' }, 6000)
-      }
-    }
-  }
-
-  return (
-    <div className="border-t border-white/10 pt-10 mb-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-        <div>
-          <h4 className="text-white text-lg sm:text-xl font-black uppercase tracking-tight leading-tight">
-            Suscribite al newsletter
-          </h4>
-          <p className="text-gray-400 text-sm mt-1">
-            Novedades del evento, fechas de aplicación y anuncios de speakers.
-          </p>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-2 w-full"
-          aria-label="Suscripción al newsletter"
-        >
-          <label className="flex-1 relative">
-            <span className="sr-only">Email</span>
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="tu@email.com"
-              className="w-full bg-white/5 border border-white/15 focus:border-[#75AADB] focus:bg-white/10 rounded-full px-5 py-3 text-sm text-white placeholder:text-gray-500 outline-none transition-[border-color,background-color] duration-200"
-            />
-          </label>
-          <button
-            type="submit"
-            className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-bold text-sm px-6 py-3 rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
-          >
-            Recibí novedades
-          </button>
-        </form>
-      </div>
-      <p
-        data-status
-        aria-live="polite"
-        className="text-[#75AADB] text-xs mt-3 min-h-[1em] font-bold"
-      />
-    </div>
   )
 }
 
