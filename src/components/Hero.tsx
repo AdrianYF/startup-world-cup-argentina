@@ -49,7 +49,7 @@ function Hero() {
           <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
 
             {/* H1 */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.95] uppercase tracking-wide mb-10 lg:mb-12">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[0.95] uppercase tracking-wide mb-10 lg:mb-12">
               <span className="text-white">STARTUP WORLD CUP </span>
               <span className="text-[#75AADB]">ARGENTINA</span>
             </h1>
@@ -64,7 +64,7 @@ function Hero() {
                 </div>
                 <h2 className="text-center lg:text-left leading-[0.95]">
                   <span
-                    className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                    className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                     style={{
                       backgroundImage:
                         'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
@@ -72,7 +72,7 @@ function Hero() {
                   >
                     1 Million
                   </span>
-                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80 ml-2 sm:ml-3 align-baseline">USD</span>
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-white/80 ml-2 sm:ml-3 align-baseline">USD</span>
                 </h2>
               </div>
             </div>
