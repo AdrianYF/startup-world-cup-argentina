@@ -123,26 +123,44 @@ function Hero() {
               </button>
             </div>
 
-            {/* Countdown — 4 boxes compactos debajo de los CTAs */}
-            <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full max-w-md mx-auto lg:mx-0">
-              {[
-                { val: timeLeft.dias, label: 'DÍAS' },
-                { val: timeLeft.horas, label: 'HORAS' },
-                { val: timeLeft.mins, label: 'MIN' },
-                { val: timeLeft.segs, label: 'SEG' },
-              ].map(({ val, label }) => (
-                <div
-                  key={label}
-                  className="bg-white/5 border border-[#5a93c5]/30 rounded-xl p-2 sm:p-3 text-center backdrop-blur-sm"
-                >
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tabular-nums leading-none">
-                    {String(val).padStart(2, '0')}
+            {/* Countdown — formato gradient + ":" separadores (matching Countdown.tsx del sitio) */}
+            <div className="w-full">
+              <div className="text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-[#75AADB] text-center lg:text-left mb-4">
+                Empieza en
+              </div>
+              <div className="flex items-start justify-center lg:justify-start gap-1 sm:gap-2">
+                {[
+                  { val: timeLeft.dias, label: 'DÍAS' },
+                  { val: timeLeft.horas, label: 'HORAS' },
+                  { val: timeLeft.mins, label: 'MIN' },
+                  { val: timeLeft.segs, label: 'SEG' },
+                ].map(({ val, label }, i, arr) => (
+                  <div key={label} className="flex items-start gap-1 sm:gap-2">
+                    <div className="flex flex-col items-center min-w-[2.5rem] sm:min-w-[3.5rem] lg:min-w-[4rem]">
+                      <span
+                        className="text-3xl sm:text-4xl lg:text-5xl font-black leading-none tabular-nums bg-clip-text text-transparent"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(135deg, #ffffff 0%, #75AADB 100%)',
+                        }}
+                      >
+                        {String(val).padStart(2, '0')}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55 mt-2 sm:mt-3">
+                        {label}
+                      </span>
+                    </div>
+                    {i < arr.length - 1 && (
+                      <span
+                        className="text-[#75AADB]/40 text-2xl sm:text-3xl lg:text-4xl font-thin leading-none mt-0.5 sm:mt-1"
+                        aria-hidden
+                      >
+                        :
+                      </span>
+                    )}
                   </div>
-                  <div className="text-[9px] sm:text-[10px] text-gray-400 mt-1.5 tracking-widest uppercase">
-                    {label}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
           </div>
