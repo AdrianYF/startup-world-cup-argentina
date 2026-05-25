@@ -69,10 +69,10 @@ function Speakers() {
 
       {/* Lista */}
       <div className="relative -mt-24 md:-mt-32 z-10 pb-24">
-        <div className="max-w-md mx-auto px-4">
 
-          {/* Mobile (preview de MOBILE_PREVIEW) */}
-          <div className="grid grid-cols-1 gap-6 sm:hidden">
+        {/* Mobile (preview de MOBILE_PREVIEW + boton ver mas) */}
+        <div className="sm:hidden max-w-md mx-auto px-4">
+          <div className="grid grid-cols-1 gap-6">
             {speakers.slice(0, MOBILE_PREVIEW).map((s, i) => (
               <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
             ))}
@@ -86,18 +86,23 @@ function Speakers() {
               </Link>
             )}
           </div>
-
-          {/* Desktop (todos) */}
-          <div className="hidden sm:grid grid-cols-1 gap-6">
-            {speakers.map((s, i) => (
-              <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
-            ))}
-          </div>
-
           <p className="text-center text-gray-400 text-xs mt-10 italic">
             Lista en construcción · se anuncian nuevos cada semana.
           </p>
         </div>
+
+        {/* Desktop (grid completa) */}
+        <div className="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            {speakers.map((s, i) => (
+              <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
+            ))}
+          </div>
+          <p className="text-center text-gray-400 text-xs mt-10 italic">
+            Lista en construcción · se anuncian nuevos cada semana.
+          </p>
+        </div>
+
       </div>
 
       {/* Modal de speaker */}
