@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode, ComponentPropsWithoutRef } from 'react'
+import type { ReactNode, CSSProperties, HTMLAttributes } from 'react'
 
 type Variant = 'brand' | 'data'
 
@@ -9,26 +9,27 @@ const GRADIENTS: Record<Variant, string> = {
   data: 'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
 }
 
-type GradientTextProps<E extends ElementType> = {
-  as?: E
+type GradientTextProps = {
+  as?: 'span' | 'div' | 'h1' | 'h2' | 'h3' | 'p' | 'strong'
   variant?: Variant
   children: ReactNode
-} & Omit<ComponentPropsWithoutRef<E>, 'as' | 'children'>
+  className?: string
+  style?: CSSProperties
+} & Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>
 
 /**
  * Texto con gradient brand (azul→violeta→magenta→coral) o data (blanco→celeste).
  * Usar SOLO para palabras-acento o data destacada. NO usar para body text.
  * Ver /COLORS.md
  */
-export function GradientText<E extends ElementType = 'span'>({
-  as,
+export function GradientText({
+  as: Tag = 'span',
   variant = 'brand',
   children,
   className = '',
   style,
   ...rest
-}: GradientTextProps<E>) {
-  const Tag = (as ?? 'span') as ElementType
+}: GradientTextProps) {
   return (
     <Tag
       {...rest}
