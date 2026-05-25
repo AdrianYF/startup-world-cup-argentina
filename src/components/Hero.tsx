@@ -49,9 +49,9 @@ function Hero() {
           <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
 
             {/* H1 */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[0.95] uppercase tracking-wide mb-10 lg:mb-12">
-              <span className="text-white">STARTUP WORLD CUP </span>
-              <span className="text-[#75AADB]">ARGENTINA</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-10 lg:mb-12">
+              <span className="block text-white">STARTUP WORLD CUP</span>
+              <span className="block text-[#75AADB]">ARGENTINA</span>
             </h1>
 
             {/* H2 — premio (ocupa el ancho de la columna para alinear con H1) */}
@@ -77,8 +77,8 @@ function Hero() {
               </div>
             </div>
 
-            {/* CTAs alineados a la misma orilla del H1 */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center lg:justify-start">
+            {/* CTAs alineados a la misma orilla X del H1 y "1 Million" */}
+            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
               <button
                 onClick={() => openStartupForm()}
                 aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
