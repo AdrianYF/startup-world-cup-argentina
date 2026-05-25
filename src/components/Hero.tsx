@@ -55,7 +55,7 @@ function Hero() {
           <div className="flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
 
             {/* Copa arriba */}
-            <div className="relative">
+            <div className="relative self-center">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
               </div>
@@ -67,7 +67,7 @@ function Hero() {
             </div>
 
             {/* 1 Million (premio) abajo de la copa */}
-            <div className="relative">
+            <div className="relative self-center">
               <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/25 via-[#75AADB]/15 to-[#75AADB]/25 blur-3xl rounded-3xl pointer-events-none" />
 
               <div className="relative">
