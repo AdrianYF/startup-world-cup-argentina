@@ -38,7 +38,7 @@ function Hero() {
         />
 
         {/* === ENTIDAD 1: Brand === */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.95] uppercase mb-20 sm:mb-28 lg:mb-36">
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.95] uppercase mb-10 sm:mb-12 lg:mb-16">
           <span className="text-white">STARTUP WORLD CUP </span>
           <span className="text-[#75AADB]">ARGENTINA</span>
         </h1>
@@ -55,7 +55,7 @@ function Hero() {
             </div>
             <h2 className="flex items-baseline gap-2 sm:gap-3 justify-center flex-wrap leading-[0.95]">
               <span
-                className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                 style={{
                   backgroundImage:
                     'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
@@ -63,7 +63,7 @@ function Hero() {
               >
                 1 Million
               </span>
-              <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80">USD</span>
+              <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-white/80">USD</span>
             </h2>
           </div>
         </div>
