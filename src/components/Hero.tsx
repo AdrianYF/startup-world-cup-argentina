@@ -72,8 +72,8 @@ function Hero() {
 
           </div>
 
-          {/* === Columna derecha: H1 + CTAs, alineada al top para matchear la copa === */}
-          <div className="flex flex-col items-stretch text-center lg:text-left justify-start">
+          {/* === Columna derecha: H1 + CTAs (tal cual) === */}
+          <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
 
             {/* H1 */}
             <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-10 lg:mb-12">
