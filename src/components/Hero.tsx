@@ -37,14 +37,16 @@ function Hero() {
           className="h-28 sm:h-36 lg:h-44 w-auto mb-6 sm:mb-8 drop-shadow-[0_8px_32px_rgba(108,92,231,0.4)]"
         />
 
-        {/* Título */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.95] uppercase mb-10 sm:mb-12 lg:mb-14">
+        {/* === ENTIDAD 1: Brand === */}
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.95] uppercase mb-20 sm:mb-28 lg:mb-36">
           <span className="text-white">STARTUP WORLD CUP </span>
           <span className="text-[#75AADB]">ARGENTINA</span>
         </h1>
 
-        {/* PREMIO — bloque hero */}
-        <div className="relative mb-8 sm:mb-10">
+        {/* === ENTIDAD 2: Premio + tagline (visualmente separada, un toque menor) === */}
+
+        {/* PREMIO */}
+        <div className="relative mb-6 sm:mb-8">
           <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-3xl rounded-3xl pointer-events-none" />
 
           <div className="relative">
@@ -53,7 +55,7 @@ function Hero() {
             </div>
             <div className="flex items-baseline gap-2 sm:gap-3 justify-center flex-wrap">
               <span
-                className="text-6xl sm:text-7xl lg:text-9xl font-black leading-none tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                className="text-4xl sm:text-5xl lg:text-7xl font-black leading-none tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                 style={{
                   backgroundImage:
                     'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
@@ -61,13 +63,13 @@ function Hero() {
               >
                 1 Million
               </span>
-              <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-white/80 leading-none">USD</span>
+              <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80 leading-none">USD</span>
             </div>
           </div>
         </div>
 
         {/* Tagline */}
-        <p className="text-gray-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl mb-10 sm:mb-12">
+        <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mb-8 sm:mb-10">
           La competencia de startups más grande del mundo llega a Argentina.
         </p>
 
