@@ -32,10 +32,10 @@ function Hero() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
 
-          {/* === Columna izquierda: copa arriba (mitad de tamaño) + 1 Million abajo === */}
-          <div className="flex flex-col items-center lg:items-end justify-start gap-8 lg:gap-12 text-center lg:text-right">
+          {/* === Columna izquierda: copa arriba + 1 Million abajo, alineado a la izquierda === */}
+          <div className="flex flex-col items-center lg:items-start justify-start gap-8 lg:gap-12 text-center lg:text-left">
 
-            {/* Copa arriba — la mitad de tamaño */}
+            {/* Copa arriba */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
@@ -43,7 +43,7 @@ function Hero() {
               <img
                 src="/SWC-logo.png"
                 alt="Startup World Cup"
-                className="relative h-32 sm:h-40 md:h-44 lg:h-48 xl:h-56 w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
+                className="relative h-40 sm:h-48 md:h-52 lg:h-60 xl:h-72 w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
               />
             </div>
 
