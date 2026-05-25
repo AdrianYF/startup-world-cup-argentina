@@ -32,37 +32,30 @@ function Hero() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
 
-          {/* === Columna izquierda: copa centrada vertical === */}
-          <div className="flex justify-center lg:justify-end items-center relative">
-            {/* Halo celeste detrás de la copa */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
+          {/* === Columna izquierda: copa arriba (mitad de tamaño) + 1 Million abajo === */}
+          <div className="flex flex-col items-center lg:items-end justify-start gap-8 lg:gap-12 text-center lg:text-right">
+
+            {/* Copa arriba — la mitad de tamaño */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
+              </div>
+              <img
+                src="/SWC-logo.png"
+                alt="Startup World Cup"
+                className="relative h-32 sm:h-40 md:h-44 lg:h-48 xl:h-56 w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
+              />
             </div>
-            <img
-              src="/SWC-logo.png"
-              alt="Startup World Cup"
-              className="relative h-56 sm:h-72 md:h-80 lg:h-[24rem] xl:h-[28rem] w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
-            />
-          </div>
 
-          {/* === Columna derecha: todos los elementos alineados a la misma orilla === */}
-          <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
-
-            {/* H1 */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-10 lg:mb-12">
-              <span className="block text-white">STARTUP WORLD CUP</span>
-              <span className="block text-[#75AADB]">ARGENTINA</span>
-            </h1>
-
-            {/* H2 — premio (ocupa el ancho de la columna para alinear con H1) */}
-            <div className="relative mb-10 lg:mb-12">
+            {/* 1 Million (premio) abajo de la copa */}
+            <div className="relative">
               <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/25 via-[#75AADB]/15 to-[#75AADB]/25 blur-3xl rounded-3xl pointer-events-none" />
 
               <div className="relative">
                 <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-2 sm:mb-3">
                   Premio Final · Silicon Valley
                 </div>
-                <h2 className="text-center lg:text-left leading-[0.95]">
+                <h2 className="leading-[0.95]">
                   <span
                     className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                     style={{
@@ -77,7 +70,18 @@ function Hero() {
               </div>
             </div>
 
-            {/* CTAs alineados a la misma orilla X del H1 y "1 Million" */}
+          </div>
+
+          {/* === Columna derecha: H1 + CTAs (tal cual) === */}
+          <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
+
+            {/* H1 */}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-10 lg:mb-12">
+              <span className="block text-white">STARTUP WORLD CUP</span>
+              <span className="block text-[#75AADB]">ARGENTINA</span>
+            </h1>
+
+            {/* CTAs */}
             <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
               <button
                 onClick={() => openStartupForm()}
