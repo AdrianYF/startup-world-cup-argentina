@@ -64,7 +64,11 @@ function Navbar() {
               SWC
             </span>
             <span
-              className={`font-bold text-[#75AADB] uppercase tracking-[0.2em] leading-none transition-all duration-300 ${scrolled ? 'text-[10px]' : 'text-xs'}`}
+              className={`font-bold uppercase tracking-[0.2em] leading-none transition-all duration-300 bg-clip-text text-transparent ${scrolled ? 'text-[10px]' : 'text-xs'}`}
+              style={{
+                backgroundImage:
+                  'linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%)',
+              }}
             >
               Argentina·26
             </span>
