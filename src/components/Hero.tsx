@@ -41,7 +41,7 @@ function Hero() {
             <img
               src="/SWC-logo.png"
               alt="Startup World Cup"
-              className="relative h-56 sm:h-72 md:h-80 lg:h-[24rem] xl:h-[28rem] w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
+              className="relative h-48 sm:h-64 md:h-72 lg:h-[20rem] xl:h-[24rem] w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
             />
           </div>
 
@@ -49,7 +49,7 @@ function Hero() {
           <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
 
             {/* H1 */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-10 lg:mb-12">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.05] uppercase mb-10 lg:mb-12">
               <span className="block text-white">STARTUP WORLD CUP</span>
               <span className="block text-[#75AADB]">ARGENTINA</span>
             </h1>
@@ -64,7 +64,7 @@ function Hero() {
                 </div>
                 <h2 className="text-center lg:text-left leading-[0.95]">
                   <span
-                    className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                    className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                     style={{
                       backgroundImage:
                         'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
@@ -72,7 +72,7 @@ function Hero() {
                   >
                     1 Million
                   </span>
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-white/80 ml-2 sm:ml-3 align-baseline">USD</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80 ml-2 sm:ml-3 align-baseline">USD</span>
                 </h2>
               </div>
             </div>
