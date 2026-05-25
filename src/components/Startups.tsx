@@ -41,7 +41,7 @@ function Startups() {
             <button
               onClick={() => openStartupForm()}
               aria-label="Postular mi Startup (abre formulario en una nueva pestaña)"
-              className="inline-block bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/30 hover:shadow-[#75AADB]/50 hover:scale-105"
+              className="inline-block bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#ff7675]/30 hover:shadow-[#ff7675]/50 hover:scale-105"
             >
               Postular mi Startup
             </button>

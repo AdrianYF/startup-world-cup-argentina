@@ -116,7 +116,7 @@ function Navbar() {
           <button
             onClick={() => openTicketing('navbar')}
             aria-label="Conseguir tickets (abre en una nueva pestaña)"
-            className={`bg-[#75AADB] text-white rounded-full hover:bg-[#5a93c5] active:scale-95 transition-all cursor-pointer font-black ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
+            className={`bg-[#ff7675] text-white rounded-full hover:bg-[#e85e5d] active:scale-95 transition-all cursor-pointer font-black ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
             Tickets
           </button>
@@ -166,7 +166,7 @@ function Navbar() {
             <button
               onClick={() => { setMobileOpen(false); openTicketing('navbar-mobile') }}
               aria-label="Conseguir tickets (abre en una nueva pestaña)"
-              className="mt-3 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
+              className="mt-3 bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
               Conseguir Tickets
             </button>

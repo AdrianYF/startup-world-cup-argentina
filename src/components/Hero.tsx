@@ -51,7 +51,7 @@ function Hero() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
 
-          {/* === Columna izquierda: copa arriba + 1 Million abajo, alineado a la izquierda === */}
+          {/* === Columna izquierda: copa arriba + 1 Million abajo === */}
           <div className="flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
 
             {/* Copa arriba */}
@@ -71,7 +71,7 @@ function Hero() {
               <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/25 via-[#75AADB]/15 to-[#75AADB]/25 blur-3xl rounded-3xl pointer-events-none" />
 
               <div className="relative">
-                <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-2 sm:mb-3">
+                <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-2 sm:mb-3 text-center">
                   Premio Final · Silicon Valley
                 </div>
                 <h2 className="leading-[0.95]">
@@ -111,7 +111,7 @@ function Hero() {
                 <button
                   onClick={() => openStartupForm()}
                   aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
-                  className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#75AADB]/30"
+                  className="bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#ff7675]/30"
                 >
                   {content.config.hero.ctaPrimario}
                 </button>

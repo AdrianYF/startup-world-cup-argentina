@@ -51,7 +51,7 @@ function Footer() {
               <button
                 onClick={() => openStartupForm()}
                 aria-label="Aplicá tu Startup (abre formulario en una nueva pestaña)"
-                className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
+                className="bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
               >
                 Aplicá Startup
               </button>
@@ -87,7 +87,7 @@ function Footer() {
             </p>
 
             {/* Recordatorio fecha + lugar */}
-            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-[#75AADB]">
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-[#ff7675]">
               <CalendarIcon />
               {fechas}
             </div>
@@ -113,7 +113,7 @@ function Footer() {
                 <button
                   onClick={() => openTicketing('footer')}
                   aria-label="Comprar tickets (abre Startup Grind en nueva pestaña)"
-                  className="inline-flex items-center gap-2 text-[#75AADB] hover:text-white text-[15px] font-bold transition-colors duration-200 cursor-pointer"
+                  className="inline-flex items-center gap-2 text-[#ff7675] hover:text-white text-[15px] font-bold transition-colors duration-200 cursor-pointer"
                 >
                   Comprar tickets
                  
