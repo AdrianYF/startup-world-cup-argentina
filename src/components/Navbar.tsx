@@ -117,7 +117,8 @@ function Navbar() {
           <button
             onClick={() => openTicketing('navbar')}
             aria-label="Conseguir tickets (abre en una nueva pestaña)"
-            className={`bg-[#ff7675] text-white rounded-full hover:bg-[#e85e5d] active:scale-95 transition-all cursor-pointer font-black ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
+            style={{ backgroundImage: 'var(--gradient-cta)' }}
+            className={`text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full active:scale-95 transition-all cursor-pointer font-black hover:scale-105 ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
             Tickets
           </button>
@@ -167,7 +168,8 @@ function Navbar() {
             <button
               onClick={() => { setMobileOpen(false); openTicketing('navbar-mobile') }}
               aria-label="Conseguir tickets (abre en una nueva pestaña)"
-              className="mt-3 bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
+              style={{ backgroundImage: 'var(--gradient-cta)' }}
+              className="mt-3 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
               Conseguir Tickets
             </button>

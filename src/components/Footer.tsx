@@ -51,7 +51,8 @@ function Footer() {
               <button
                 onClick={() => openStartupForm()}
                 aria-label="Aplicá tu Startup (abre formulario en una nueva pestaña)"
-                className="bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
+                style={{ backgroundImage: 'var(--gradient-cta)' }}
+                className="active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer whitespace-nowrap hover:scale-105"
               >
                 Aplicá Startup
               </button>
@@ -87,9 +88,14 @@ function Footer() {
             </p>
 
             {/* Recordatorio fecha + lugar */}
-            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-[#ff7675]">
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold">
               <CalendarIcon />
-              {fechas}
+              <span
+                className="bg-clip-text text-transparent"
+                style={{ backgroundImage: 'var(--gradient-cta)' }}
+              >
+                {fechas}
+              </span>
             </div>
           </div>
 
@@ -113,10 +119,14 @@ function Footer() {
                 <button
                   onClick={() => openTicketing('footer')}
                   aria-label="Comprar tickets (abre Startup Grind en nueva pestaña)"
-                  className="inline-flex items-center gap-2 text-[#ff7675] hover:text-white text-[15px] font-bold transition-colors duration-200 cursor-pointer"
+                  className="inline-flex items-center gap-2 text-[15px] font-bold cursor-pointer hover:opacity-80 transition-opacity duration-200"
                 >
-                  Comprar tickets
-                 
+                  <span
+                    className="bg-clip-text text-transparent"
+                    style={{ backgroundImage: 'var(--gradient-cta)' }}
+                  >
+                    Comprar tickets
+                  </span>
                 </button>
               </li>
             </ul>
@@ -224,7 +234,15 @@ function SocialLink({
 
 function CalendarIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="url(#cta-grad-calendar)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <defs>
+        <linearGradient id="cta-grad-calendar" x1="0.047" y1="0.711" x2="0.953" y2="0.289">
+          <stop offset="0%" stopColor="#4F46E5" />
+          <stop offset="30%" stopColor="#6c5ce7" />
+          <stop offset="60%" stopColor="#c084fc" />
+          <stop offset="100%" stopColor="#ff7675" />
+        </linearGradient>
+      </defs>
       <rect x="3" y="4" width="18" height="18" rx="2" />
       <path d="M16 2v4M8 2v4M3 10h18" />
     </svg>
