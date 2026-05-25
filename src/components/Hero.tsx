@@ -30,10 +30,10 @@ function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-20 pb-12 w-full flex-1 flex items-center">
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
 
-          {/* === Columna izquierda: LA COPA gigante === */}
-          <div className="flex justify-center lg:justify-end relative">
+          {/* === Columna izquierda: copa centrada vertical === */}
+          <div className="flex justify-center lg:justify-end items-center relative">
             {/* Halo celeste detrás de la copa */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
@@ -41,15 +41,15 @@ function Hero() {
             <img
               src="/SWC-logo.png"
               alt="Startup World Cup"
-              className="relative h-64 sm:h-80 md:h-[26rem] lg:h-[32rem] xl:h-[36rem] w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
+              className="relative h-56 sm:h-72 md:h-80 lg:h-[24rem] xl:h-[28rem] w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
             />
           </div>
 
-          {/* === Columna derecha: todo el contenido === */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          {/* === Columna derecha: todo centrado vertical para alinear con la copa === */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
 
-            {/* H1 */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.95] uppercase mb-8 lg:mb-10">
+            {/* H1 con más letter-spacing */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[0.95] uppercase tracking-wide mb-10 lg:mb-12">
               <span className="text-white">STARTUP WORLD CUP </span>
               <span className="text-[#75AADB]">ARGENTINA</span>
             </h1>
