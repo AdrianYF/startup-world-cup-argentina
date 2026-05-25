@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import './index.css'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -17,6 +19,18 @@ import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
 
 function App() {
+  // Scroll a la sección cuando llegamos con hash en la URL (ej. /#speakers desde /speakers).
+  const { hash } = useLocation()
+  useEffect(() => {
+    if (!hash) return
+    const id = hash.slice(1)
+    // pequeño delay para que las sections con FadeInSection se monten antes de hacer scroll
+    const t = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 50)
+    return () => clearTimeout(t)
+  }, [hash])
+
   // Hero queda sin FadeIn - debe verse desde el primer paint (above-the-fold).
   const sections = [
     PartnershipWith,

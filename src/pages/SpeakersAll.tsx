@@ -70,10 +70,9 @@ function SpeakersAll() {
 
         <div className="mt-16 text-center">
           <Link
-            to="/"
+            to="/#speakers"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-bold uppercase tracking-wide text-sm transition-[transform,background-color]"
           >
-           
             Volver al sitio
           </Link>
         </div>
