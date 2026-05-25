@@ -4,7 +4,6 @@ import { openTicketing } from '../lib/ticketing'
 const links = [
   { href: '#ruta', label: 'Ruta de Evolución' },
   { href: '#pitch', label: 'Pitch Battle' },
-  { href: '#builders', label: 'Builders Arena' },
   { href: '#agenda', label: 'Agenda' },
   { href: '#startups', label: 'Startups' },
   { href: '#voluntarios', label: 'Voluntarios' },

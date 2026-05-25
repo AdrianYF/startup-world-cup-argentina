@@ -4,7 +4,6 @@ import Hero from './components/Hero'
 import Stats from './components/Stats'
 import RutaEvolucion from './components/RutaEvolucion'
 import PitchBattle from './components/PitchBattle'
-import BuildersArena from './components/BuildersArena'
 import Agenda from './components/Agenda'
 import Tickets from './components/Tickets'
 import Startups from './components/Startups'
@@ -22,7 +21,6 @@ function App() {
     Stats,
     RutaEvolucion,
     PitchBattle,
-    BuildersArena,
     Agenda,
     Tickets,
     Startups,
