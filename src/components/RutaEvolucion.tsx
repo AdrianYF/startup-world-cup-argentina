@@ -13,7 +13,15 @@ function RutaEvolucion() {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">RUTA DE </span>
-            <span className="text-[#75AADB]">EVOLUCIÓN</span>
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage:
+                  'linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%)',
+              }}
+            >
+              EVOLUCIÓN
+            </span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Un camino estructurado de 5 etapas diseñadas para escalar tu startup al máximo potencial global.
