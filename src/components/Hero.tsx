@@ -30,6 +30,14 @@ function Hero() {
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full flex-1 flex flex-col items-center justify-center text-center">
 
+        {/* Chip de fecha + lugar — Norman: visibility de info crítica del evento */}
+        <div className="inline-flex items-center gap-2 bg-white/8 border border-white/15 backdrop-blur-sm rounded-full px-3.5 py-1.5 mb-6 sm:mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#75AADB] animate-pulse flex-shrink-0" aria-hidden />
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/80">
+            5·6·7 AGO 2026 · VEDIA, BS AS
+          </span>
+        </div>
+
         {/* Logo */}
         <img
           src="/SWC-logo.png"
@@ -43,10 +51,9 @@ function Hero() {
           <span className="text-[#75AADB]">ARGENTINA</span>
         </h1>
 
-        {/* === ENTIDAD 2: Premio (H2) + tagline === */}
+        {/* === ENTIDAD 2: Premio (H2) === */}
 
-        {/* PREMIO — H2 semánticamente, un step más chico que el H1 */}
-        <div className="relative mb-6 sm:mb-8">
+        <div className="relative mb-10 sm:mb-12">
           <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-3xl rounded-3xl pointer-events-none" />
 
           <div className="relative">
@@ -68,26 +75,24 @@ function Hero() {
           </div>
         </div>
 
-        {/* Tagline */}
-        <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mb-8 sm:mb-10">
-          La competencia de startups más grande del mundo llega a Argentina.
-        </p>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+        {/* CTAs con jerarquía asimétrica:
+            - Primary: pill grande celeste con shadow + scale hover (acción esperada del 80%)
+            - Secondary: ghost link sutil al lado (acción minoritaria, no compite) */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
           <button
             onClick={() => openStartupForm()}
             aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
-            className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base sm:text-lg px-6 sm:px-8 py-3 min-h-[48px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#75AADB]/40"
+            className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base sm:text-lg lg:text-xl px-8 sm:px-10 py-3.5 sm:py-4 min-h-[52px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-[0_8px_32px_-4px_rgba(117,170,219,0.6)] hover:shadow-[0_12px_40px_-4px_rgba(117,170,219,0.8)]"
           >
             {content.config.hero.ctaPrimario}
           </button>
           <button
             onClick={() => openPartnerForm()}
             aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
-            className="border border-white/30 hover:border-[#75AADB] active:scale-95 text-white font-bold text-base sm:text-lg px-6 sm:px-8 py-3 min-h-[48px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
+            className="text-white/70 hover:text-white active:scale-95 font-bold text-sm sm:text-base uppercase tracking-[0.2em] transition-colors duration-200 cursor-pointer relative group"
           >
             {content.config.hero.ctaSecundario}
+            <span className="absolute -bottom-1 left-0 right-0 h-px bg-white/30 group-hover:bg-white transition-colors" aria-hidden />
           </button>
         </div>
 
