@@ -3,7 +3,7 @@ import { openStartupForm, openPartnerForm } from '../lib/ticketing'
 
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex flex-col overflow-hidden">
 
       {/* Video de fondo */}
       <video
@@ -28,10 +28,11 @@ function Hero() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full flex-1 flex flex-col">
 
-        {/* TOP: 2 columnas en desktop, stack en mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-10 lg:mb-12">
+        {/* TOP: 2 columnas en desktop, ambas alineadas al CENTRO verticalmente
+            para que el premio "1 Million USD" quede al mismo nivel que el título */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center flex-1">
 
           {/* Columna izquierda: logo + título */}
           <div className="flex flex-col items-center lg:items-start gap-4 sm:gap-6 text-center lg:text-left">
@@ -79,8 +80,8 @@ function Hero() {
           </div>
         </div>
 
-        {/* BOTTOM: una sola fila full-width con los 2 CTAs */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+        {/* BOTTOM: CTAs cerca del final del hero (gracias al flex-1 de arriba) */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pt-16 sm:pt-20 lg:pt-24">
           <button
             onClick={() => openStartupForm()}
             aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
