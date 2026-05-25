@@ -52,7 +52,7 @@ function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
 
           {/* === Columna izquierda: copa arriba + 1 Million abajo, alineado a la izquierda === */}
-          <div className="flex flex-col items-center lg:items-start justify-start gap-8 lg:gap-12 text-center lg:text-left">
+          <div className="flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
 
             {/* Copa arriba */}
             <div className="relative">
@@ -91,43 +91,42 @@ function Hero() {
 
           </div>
 
-          {/* === Columna derecha: H1 + CTAs (tal cual) === */}
-          <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
+          {/* === Columna derecha: H1+tagline+CTAs arriba / Countdown abajo (alineado con 1 Million) === */}
+          <div className="flex flex-col items-stretch text-center lg:text-left justify-between gap-8 lg:gap-12">
 
-            {/* H1 */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
-              <span className="block text-white">STARTUP WORLD CUP</span>
-              <span className="block text-[#75AADB]">ARGENTINA</span>
-            </h1>
+            <div>
+              {/* H1 */}
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
+                <span className="block text-white">STARTUP WORLD CUP</span>
+                <span className="block text-[#75AADB]">ARGENTINA</span>
+              </h1>
 
-            {/* Tagline */}
-            <p className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-12">
-              La competencia de startups más grande del mundo llega a Argentina.
-            </p>
+              {/* Tagline */}
+              <p className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-12">
+                La competencia de startups más grande del mundo llega a Argentina.
+              </p>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full mb-10 lg:mb-12">
-              <button
-                onClick={() => openStartupForm()}
-                aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
-                className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#75AADB]/30"
-              >
-                {content.config.hero.ctaPrimario}
-              </button>
-              <button
-                onClick={() => openPartnerForm()}
-                aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
-                className="border border-white/30 hover:border-[#75AADB] hover:bg-white/5 active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
-              >
-                {content.config.hero.ctaSecundario}
-              </button>
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
+                <button
+                  onClick={() => openStartupForm()}
+                  aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
+                  className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#75AADB]/30"
+                >
+                  {content.config.hero.ctaPrimario}
+                </button>
+                <button
+                  onClick={() => openPartnerForm()}
+                  aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
+                  className="border border-white/30 hover:border-[#75AADB] hover:bg-white/5 active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
+                >
+                  {content.config.hero.ctaSecundario}
+                </button>
+              </div>
             </div>
 
-            {/* Countdown — formato gradient + ":" separadores (matching Countdown.tsx del sitio) */}
+            {/* Countdown — alineado al mismo nivel/renglón que el 1 Million de la col 1 */}
             <div className="w-full">
-              <div className="text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-[#75AADB] text-center lg:text-left mb-4">
-                Empieza en
-              </div>
               <div className="flex items-start justify-center lg:justify-start gap-1 sm:gap-2">
                 {[
                   { val: timeLeft.dias, label: 'DÍAS' },
@@ -137,13 +136,7 @@ function Hero() {
                 ].map(({ val, label }, i, arr) => (
                   <div key={label} className="flex items-start gap-1 sm:gap-2">
                     <div className="flex flex-col items-center min-w-[2.5rem] sm:min-w-[3.5rem] lg:min-w-[4rem]">
-                      <span
-                        className="text-3xl sm:text-4xl lg:text-5xl font-black leading-none tabular-nums bg-clip-text text-transparent"
-                        style={{
-                          backgroundImage:
-                            'linear-gradient(135deg, #ffffff 0%, #75AADB 100%)',
-                        }}
-                      >
+                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black leading-none tabular-nums text-white">
                         {String(val).padStart(2, '0')}
                       </span>
                       <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55 mt-2 sm:mt-3">
