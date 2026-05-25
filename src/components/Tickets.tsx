@@ -51,7 +51,8 @@ function Tickets() {
               <button
                 onClick={() => openTicketing(`tickets-${plan.id}`)}
                 aria-label={`Conseguir ticket ${plan.nombre} (abre Startup Grind en una nueva pestaña)`}
-                className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all cursor-pointer active:scale-95 ${plan.badge ? 'bg-[#ff7675] hover:bg-[#e85e5d] text-white' : 'border border-white/30 hover:border-[#ff7675] text-white'}`}
+                style={plan.badge ? { backgroundImage: 'var(--gradient-cta)' } : undefined}
+                className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all cursor-pointer active:scale-95 ${plan.badge ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105' : 'border border-white/30 hover:border-[#ff7675] text-white'}`}
               >
                 Conseguir Ticket
               </button>

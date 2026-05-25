@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { content } from '../lib/content'
 import { openStartupForm, openPartnerForm } from '../lib/ticketing'
-import { GradientText } from './ui/GradientText'
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
@@ -99,7 +98,7 @@ function Hero() {
               {/* H1 */}
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
                 <span className="block text-white">STARTUP WORLD CUP</span>
-                <GradientText as="span" className="block">ARGENTINA</GradientText>
+                <span className="block text-[#75AADB]">ARGENTINA</span>
               </h1>
 
               {/* Tagline */}
@@ -112,16 +111,29 @@ function Hero() {
                 <button
                   onClick={() => openStartupForm()}
                   aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
-                  className="bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#ff7675]/30"
+                  style={{ backgroundImage: 'var(--gradient-cta)' }}
+                  className="active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#6c5ce7]/30"
                 >
                   {content.config.hero.ctaPrimario}
                 </button>
                 <button
                   onClick={() => openPartnerForm()}
                   aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
-                  className="border border-white/30 hover:border-[#75AADB] hover:bg-white/5 active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
+                  className="relative active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105"
                 >
-                  {content.config.hero.ctaSecundario}
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{
+                      padding: '1px',
+                      background: 'var(--gradient-cta)',
+                      WebkitMask:
+                        'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                    }}
+                  />
+                  <span className="relative">{content.config.hero.ctaSecundario}</span>
                 </button>
               </div>
             </div>
