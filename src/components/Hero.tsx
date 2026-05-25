@@ -28,29 +28,32 @@ function Hero() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full flex-1 flex flex-col items-center justify-center text-center">
+      {/* Cascada áurea (φ ≈ 1.618):
+            Logo 160 → H1 96 → H2 60 → USD 36 → Body 22 → Overline 14
+            cada eslabón divide por ~1.618 al siguiente.
+            Spacing vertical sigue Fibonacci: 8 / 13 / 21 / 34 / 55 / 89 / 144 px. */}
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full flex-1 flex flex-col items-center justify-center text-center">
 
-        {/* Logo */}
+        {/* Logo — 160px (φ × H1) */}
         <img
           src="/SWC-logo.png"
           alt="Startup World Cup"
-          className="h-28 sm:h-36 lg:h-44 w-auto mb-6 sm:mb-8 drop-shadow-[0_8px_32px_rgba(108,92,231,0.4)]"
+          className="h-24 sm:h-32 lg:h-40 w-auto mb-[34px] drop-shadow-[0_8px_32px_rgba(108,92,231,0.4)]"
         />
 
-        {/* === ENTIDAD 1: Brand === */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.95] uppercase mb-20 sm:mb-28 lg:mb-36">
+        {/* === ENTIDAD 1: Brand (H1 96px) === */}
+        <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black leading-[0.95] uppercase mb-[144px]">
           <span className="text-white">STARTUP WORLD CUP </span>
           <span className="text-[#75AADB]">ARGENTINA</span>
         </h1>
 
-        {/* === ENTIDAD 2: Premio (H2) + tagline === */}
+        {/* === ENTIDAD 2: Premio (H2 60px = H1 / φ) + tagline === */}
 
-        {/* PREMIO — H2 semánticamente, un step más chico que el H1 */}
-        <div className="relative mb-6 sm:mb-8">
+        <div className="relative mb-[55px]">
           <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-3xl rounded-3xl pointer-events-none" />
 
           <div className="relative">
-            <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/70 mb-2 sm:mb-3">
+            <div className="text-[10px] sm:text-xs lg:text-sm font-black uppercase tracking-[0.3em] text-white/70 mb-[21px]">
               Premio Final · Silicon Valley
             </div>
             <h2 className="flex items-baseline gap-2 sm:gap-3 justify-center flex-wrap leading-none">
@@ -63,13 +66,13 @@ function Hero() {
               >
                 1 Million
               </span>
-              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white/80">USD</span>
+              <span className="text-xl sm:text-2xl lg:text-4xl font-black text-white/80">USD</span>
             </h2>
           </div>
         </div>
 
-        {/* Tagline */}
-        <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mb-8 sm:mb-10">
+        {/* Tagline — 22px (H2 / φ) en lg */}
+        <p className="text-gray-300 text-base sm:text-lg lg:text-[22px] leading-relaxed max-w-xl mb-[55px]">
           La competencia de startups más grande del mundo llega a Argentina.
         </p>
 
