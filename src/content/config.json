@@ -7,6 +7,12 @@
     "premioUSD": 1000000,
     "ciudadesCompitiendo": "+100"
   },
+  "stats": [
+    { "valor": "+100", "label": "Ciudades compitiendo a nivel global" },
+    { "valor": "10", "label": "Startups finalistas en Argentina" },
+    { "valor": "1M USD", "label": "Premio final en Silicon Valley", "highlight": true },
+    { "valor": "3", "label": "Días en Vedia, Buenos Aires" }
+  ],
   "links": {
     "startupGrindUrl": "https://www.startupgrind.com/events/details/startup-grind-buenos-aires-presents-startup-world-cup-argentina/",
     "emailPartners": "partners@startupworldcupargentina.com.ar",

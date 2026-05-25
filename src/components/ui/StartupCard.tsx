@@ -1,5 +1,5 @@
 /**
- * Trading card estilo "Ultimate Team" — NO Panini.
+ * Trading card estilo "Ultimate Team" - NO Panini.
  * Diferencias clave con Panini:
  *  - proporción 4:5 (vertical pero más ancha)
  *  - split diagonal del fondo, no horizontal
@@ -36,18 +36,18 @@ const rarityStyles: Record<NonNullable<StartupCardProps['rarity']>, {
 }> = {
   rookie: {
     label: 'ROOKIE · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#6c5ce7] via-[#5848c4] to-[#3d2c8f]',
-    ring: 'from-[#a89cf0] via-[#6c5ce7] to-[#3d2c8f]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#75AADB]',
+    ring: 'from-[#bcd5ea] via-[#75AADB] to-[#75AADB]',
   },
   rare: {
     label: 'RARE · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#ff7675] via-[#e85e5d] to-[#a83a39]',
-    ring: 'from-[#ffb3b2] via-[#ff7675] to-[#a83a39]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#5a93c5] to-[#5a93c5]',
+    ring: 'from-[#bcd5ea] via-[#75AADB] to-[#5a93c5]',
   },
   legend: {
     label: 'LEGEND · SWC AR 26',
-    bg: 'bg-gradient-to-br from-[#fbbf24] via-[#f59e0b] to-[#7c2d12]',
-    ring: 'from-[#fde68a] via-[#fbbf24] to-[#7c2d12]',
+    bg: 'bg-gradient-to-br from-[#75AADB] via-[#75AADB] to-[#5a93c5]',
+    ring: 'from-[#75AADB] via-[#75AADB] to-[#5a93c5]',
   },
 }
 
@@ -58,7 +58,7 @@ export function StartupCard({
   ovr = 86,
   posicion = 'FOUNDER',
   numero = '001',
-  pitch = 'Acá va tu pitch en una línea — eso que vas a contar en el escenario.',
+  pitch = 'Acá va tu pitch en una línea - eso que vas a contar en el escenario.',
   tags = ['SaaS', 'B2B', 'LATAM'],
   stats = { vis: 88, tec: 91, trc: 82, esc: 84 },
   emoji = '🚀',
@@ -78,13 +78,13 @@ export function StartupCard({
       {/* Halo exterior */}
       <div className={`absolute -inset-4 bg-gradient-to-br ${r.ring} opacity-30 blur-2xl rounded-3xl pointer-events-none`} />
 
-      {/* Holo foil border — animado */}
+      {/* Holo foil border - animado */}
       <div className="absolute -inset-[2px] rounded-2xl overflow-hidden">
         <div
           className="absolute inset-0 animate-[spin_12s_linear_infinite]"
           style={{
             background:
-              'conic-gradient(from 0deg, #f0abfc 0%, #fde68a 15%, #67e8f9 30%, #fda4af 45%, #c4b5fd 60%, #fde68a 75%, #f0abfc 100%)',
+              'conic-gradient(from 0deg, #75AADB 0%, #75AADB 15%, #75AADB 30%, #75AADB 45%, #75AADB 60%, #75AADB 75%, #75AADB 100%)',
           }}
         />
       </div>
@@ -92,7 +92,7 @@ export function StartupCard({
       {/* Carta */}
       <div className={`relative h-full rounded-2xl overflow-hidden ${r.bg}`}>
 
-        {/* Diagonal split — capa secundaria */}
+        {/* Diagonal split - capa secundaria */}
         <div
           className="absolute inset-0 opacity-50"
           style={{
@@ -178,7 +178,7 @@ export function StartupCard({
             </p>
           </div>
 
-          {/* Stats — 4 columnas tipo FIFA UT */}
+          {/* Stats - 4 columnas tipo FIFA UT */}
           <div className="grid grid-cols-4 gap-2 bg-[#020618]/30 backdrop-blur-sm rounded-lg p-2 border border-white/10">
             {statItems.map(s => (
               <div key={s.key} className="text-center">
