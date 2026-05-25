@@ -1,11 +1,7 @@
-import { useState, useEffect, Suspense, lazy } from 'react'
+import { useState, useEffect } from 'react'
 import { content } from '../lib/content'
 import { openStartupForm, openPartnerForm } from '../lib/ticketing'
-
-// Trophy3D se carga lazy para no inflar el bundle inicial — ~280KB gzipped.
-const Trophy3D = lazy(() =>
-  import('./ui/Trophy3D').then(m => ({ default: m.Trophy3D })),
-)
+import { GradientText } from './ui/GradientText'
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
@@ -59,24 +55,16 @@ function Hero() {
           {/* === Columna izquierda: copa arriba + 1 Million abajo === */}
           <div className="flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
 
-            {/* Copa arriba — 3D si /trophy.glb existe, fallback al PNG */}
+            {/* Copa arriba */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
               </div>
-              <div className="relative h-44 sm:h-52 md:h-56 lg:h-64 xl:h-80 aspect-square drop-shadow-[0_12px_48px_rgba(234,179,8,0.55)]">
-                <Suspense
-                  fallback={
-                    <img
-                      src="/gold.png"
-                      alt="Startup World Cup"
-                      className="w-full h-full object-contain"
-                    />
-                  }
-                >
-                  <Trophy3D className="w-full h-full" />
-                </Suspense>
-              </div>
+              <img
+                src="/SWC-logo.png"
+                alt="Startup World Cup"
+                className="relative h-40 sm:h-48 md:h-52 lg:h-60 xl:h-72 w-auto drop-shadow-[0_12px_48px_rgba(108,92,231,0.5)]"
+              />
             </div>
 
             {/* 1 Million (premio) abajo de la copa */}
@@ -111,7 +99,7 @@ function Hero() {
               {/* H1 */}
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
                 <span className="block text-white">STARTUP WORLD CUP</span>
-                <span className="block text-[#75AADB]">ARGENTINA</span>
+                <GradientText as="span" className="block">ARGENTINA</GradientText>
               </h1>
 
               {/* Tagline */}
