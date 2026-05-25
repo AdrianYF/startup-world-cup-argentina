@@ -4,9 +4,19 @@ import { openPartnerForm } from '../lib/ticketing'
 import { Modal } from './ui/Modal'
 
 /**
- * Partners — cards estilo Tickets: grid 1/2/5, sin emojis,
- * primer tier destacado con badge "DESTACADO" y CTA "Ver detalle" por card.
+ * Partners — grid de 5 tiers visible al toque en desktop (sin carousel).
+ * Mobile: stack vertical para no apretar.
+ * Cada card muestra TODOS los features (no "+N más"). Highlight diferenciado por tier.
  */
+
+const TIER_ACCENTS = [
+  // visualmente distinguibles entre sí — uso de opacidad e intensidad de borde celeste
+  { border: 'border-[#75AADB]', bg: 'bg-[#75AADB]/15', label: 'text-[#75AADB]' },
+  { border: 'border-[#75AADB]/70', bg: 'bg-[#75AADB]/10', label: 'text-[#bcd5ea]' },
+  { border: 'border-[#75AADB]/50', bg: 'bg-white/8', label: 'text-[#bcd5ea]' },
+  { border: 'border-[#75AADB]/35', bg: 'bg-white/5', label: 'text-gray-300' },
+  { border: 'border-white/15', bg: 'bg-white/[0.03]', label: 'text-gray-400' },
+]
 
 function Partners() {
   const partners = content.partners
@@ -17,7 +27,7 @@ function Partners() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-3">
             <span className="text-white">QUIERO SER </span>
             <span className="text-[#75AADB]">PARTNER</span>
@@ -27,63 +37,44 @@ function Partners() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 items-start">
+        {/* Grid: 1 col mobile, 2 cols tablet, 5 cols desktop (uno por tier) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
           {partners.map((p, i) => {
-            const isHighlight = i === 0
+            const accent = TIER_ACCENTS[i] ?? TIER_ACCENTS[TIER_ACCENTS.length - 1]
             return (
-              <div key={i} className="relative">
-                <div
-                  className={`relative h-full flex flex-col rounded-2xl p-6 sm:p-7 border-[0.5px] transition-all ${
-                    isHighlight
-                      ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 mt-4 sm:mt-0 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
-                      : 'bg-white/5 border-[#75AADB]/10 hover:border-[#75AADB]/25 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]'
-                  }`}
-                >
-                  {isHighlight && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="bg-[#75AADB] text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest whitespace-nowrap">
-                        Destacado
-                      </span>
-                    </div>
-                  )}
-
-                  <span className="text-[#75AADB] text-[10px] uppercase tracking-widest font-bold block mb-2">
-                    {p.categoria}
-                  </span>
-                  <h3 className="text-white font-black text-xl leading-tight mb-2">
-                    {p.titulo}
-                  </h3>
-                  <p className="text-gray-400 text-sm leading-snug mb-5 min-h-[2.5em]">
-                    {p.descripcion}
-                  </p>
-
-                  <ul className="flex flex-col gap-2 mb-6">
-                    {p.features.map((f, fi) => (
-                      <li key={fi} className="flex items-start gap-2 text-gray-300 text-xs leading-snug">
-                        <span className="text-[#75AADB] flex-shrink-0 mt-0.5" aria-hidden>✓</span>
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button
-                    onClick={() => setPopup(i)}
-                    aria-label={`Ver detalle de ${p.titulo}`}
-                    className={`mt-auto block w-full text-center font-black py-2.5 rounded-full uppercase tracking-wide text-sm transition-all cursor-pointer active:scale-95 ${
-                      isHighlight
-                        ? 'bg-[#75AADB] hover:bg-[#5a93c5] text-white'
-                        : 'border border-white/30 hover:border-[#75AADB] text-white'
-                    }`}
-                  >
-                    Ver detalle
-                  </button>
+              <button
+                key={i}
+                onClick={() => setPopup(i)}
+                aria-label={`Ver detalles de ${p.titulo}`}
+                className={`relative flex flex-col text-left rounded-2xl p-5 border ${accent.border} ${accent.bg} hover:bg-white/15 hover:border-[#75AADB] active:scale-[0.98] transition-[transform,background-color,border-color] duration-300 cursor-pointer`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-2xl" aria-hidden>{p.icon}</span>
                 </div>
-              </div>
+                <span className={`${accent.label} text-[10px] uppercase tracking-widest font-bold block mb-1`}>
+                  {p.categoria}
+                </span>
+                <h3 className="text-white font-black text-base sm:text-lg leading-tight mb-2">
+                  {p.titulo}
+                </h3>
+                <p className="text-gray-400 text-xs leading-snug mb-4 min-h-[2.5em]">
+                  {p.descripcion}
+                </p>
+
+                <ul className="flex flex-col gap-1.5 mt-auto">
+                  {p.features.map((f, fi) => (
+                    <li key={fi} className="flex items-start gap-1.5 text-gray-300 text-[11px] leading-snug">
+                      <span className="text-[#75AADB] flex-shrink-0 mt-0.5">✓</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </button>
             )
           })}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-10">
           <button
             onClick={() => openPartnerForm()}
             aria-label="Quiero ser Partner (contactanos por mail)"
@@ -96,16 +87,13 @@ function Partners() {
 
       {popup !== null && (
         <Modal onClose={() => setPopup(null)} titleId="partner-modal-title">
-          <span className="text-[#75AADB] text-xs uppercase tracking-widest font-bold mb-2 block">
-            {partners[popup].categoria}
-          </span>
-          <h3 id="partner-modal-title" className="text-white font-black text-2xl mb-3">
-            {partners[popup].titulo}
-          </h3>
+          <div className="text-4xl mb-3" aria-hidden>{partners[popup].icon}</div>
+          <span className="text-[#bcd5ea] text-xs uppercase tracking-widest font-bold mb-2 block">{partners[popup].categoria}</span>
+          <h3 id="partner-modal-title" className="text-white font-black text-2xl mb-3">{partners[popup].titulo}</h3>
           <ul className="flex flex-col gap-2 mb-4">
             {partners[popup].features.map((f, i) => (
               <li key={i} className="flex items-start gap-2 text-gray-200 text-sm">
-                <span className="text-[#75AADB] mt-0.5" aria-hidden>✓</span>{f}
+                <span className="text-[#bcd5ea] mt-0.5" aria-hidden>✓</span>{f}
               </li>
             ))}
           </ul>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { openTicketing } from '../lib/ticketing'
+import { GradientText } from './ui/GradientText'
 
 const links = [
   { href: '#ruta', label: 'Ruta de Evolución' },
@@ -63,11 +64,11 @@ function Navbar() {
             >
               SWC
             </span>
-            <span
-              className={`font-bold uppercase tracking-[0.2em] leading-none text-[#75AADB] transition-all duration-300 ${scrolled ? 'text-[10px]' : 'text-xs'}`}
+            <GradientText
+              className={`font-bold uppercase tracking-[0.2em] leading-none transition-all duration-300 ${scrolled ? 'text-[10px]' : 'text-xs'}`}
             >
               Argentina·26
-            </span>
+            </GradientText>
           </a>
 
           <span
