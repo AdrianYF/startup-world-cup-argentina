@@ -42,7 +42,7 @@ function Footer() {
         <div className="max-w-7xl mx-auto px-6 py-10 sm:py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-2xl sm:text-3xl font-black uppercase leading-tight text-center md:text-left">
-              <span className="text-white">¿Listo para el </span>
+              <span className="text-white">¿Lista para el </span>
               <span className="text-[#75AADB]">Mundial</span>
               <span className="text-white">?</span>
             </p>

@@ -119,22 +119,53 @@ function Hero() {
 
           </div>
 
-          {/* Columna derecha - solo countdown ahora (En partnership pasa a section propia) */}
-          <div className="flex flex-col items-center justify-center gap-6 sm:gap-8 mt-4 lg:mt-0">
+          {/* Columna derecha — countdown como su propia mini-división */}
+          <div className="flex flex-col items-center justify-center mt-4 lg:mt-0">
 
-            {/* Countdown */}
-            <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full max-w-md">
-              {[
-                { val: timeLeft.dias, label: 'DÍAS' },
-                { val: timeLeft.horas, label: 'HORAS' },
-                { val: timeLeft.mins, label: 'MINS' },
-                { val: timeLeft.segs, label: 'SEGS' },
-              ].map(({ val, label }) => (
-                <div key={label} className="bg-white/5 border border-[#5a93c5]/30 rounded-xl p-2 sm:p-4 text-center backdrop-blur-sm">
-                  <div className="text-xl sm:text-3xl font-black text-white tabular-nums">{String(val).padStart(2, '0')}</div>
-                  <div className="text-[9px] sm:text-xs text-gray-400 mt-1 tracking-widest">{label}</div>
-                </div>
-              ))}
+            <div className="w-full max-w-md">
+              {/* Top divider — mismo lenguaje que separa las secciones */}
+              <div className="h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent mb-6 sm:mb-8" />
+
+              <div className="text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-[#75AADB] text-center mb-5">
+                Empieza en
+              </div>
+
+              {/* Numerales tipográficos — sin cajas, con separadores ":" */}
+              <div className="flex items-start justify-center gap-1 sm:gap-2">
+                {[
+                  { val: timeLeft.dias, label: 'DÍAS' },
+                  { val: timeLeft.horas, label: 'HORAS' },
+                  { val: timeLeft.mins, label: 'MIN' },
+                  { val: timeLeft.segs, label: 'SEG' },
+                ].map(({ val, label }, i, arr) => (
+                  <div key={label} className="flex items-start gap-1 sm:gap-2">
+                    <div className="flex flex-col items-center min-w-[3.5rem] sm:min-w-[4.5rem]">
+                      <span
+                        className="text-4xl sm:text-5xl lg:text-6xl font-black leading-none tabular-nums bg-clip-text text-transparent"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(135deg, #ffffff 0%, #75AADB 100%)',
+                        }}
+                      >
+                        {String(val).padStart(2, '0')}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55 mt-2 sm:mt-3">
+                        {label}
+                      </span>
+                    </div>
+                    {i < arr.length - 1 && (
+                      <span
+                        className="text-[#75AADB]/40 text-3xl sm:text-4xl lg:text-5xl font-thin leading-none mt-1 sm:mt-2"
+                        aria-hidden
+                      >
+                        :
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent mt-6 sm:mt-8" />
             </div>
 
           </div>
