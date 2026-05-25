@@ -1,5 +1,5 @@
 /**
- * Trading card estilo "Ultimate Team" — NO Panini.
+ * Trading card estilo "Ultimate Team" - NO Panini.
  * Diferencias clave con Panini:
  *  - proporción 4:5 (vertical pero más ancha)
  *  - split diagonal del fondo, no horizontal
@@ -58,7 +58,7 @@ export function StartupCard({
   ovr = 86,
   posicion = 'FOUNDER',
   numero = '001',
-  pitch = 'Acá va tu pitch en una línea — eso que vas a contar en el escenario.',
+  pitch = 'Acá va tu pitch en una línea - eso que vas a contar en el escenario.',
   tags = ['SaaS', 'B2B', 'LATAM'],
   stats = { vis: 88, tec: 91, trc: 82, esc: 84 },
   emoji = '🚀',
@@ -78,7 +78,7 @@ export function StartupCard({
       {/* Halo exterior */}
       <div className={`absolute -inset-4 bg-gradient-to-br ${r.ring} opacity-30 blur-2xl rounded-3xl pointer-events-none`} />
 
-      {/* Holo foil border — animado */}
+      {/* Holo foil border - animado */}
       <div className="absolute -inset-[2px] rounded-2xl overflow-hidden">
         <div
           className="absolute inset-0 animate-[spin_12s_linear_infinite]"
@@ -92,7 +92,7 @@ export function StartupCard({
       {/* Carta */}
       <div className={`relative h-full rounded-2xl overflow-hidden ${r.bg}`}>
 
-        {/* Diagonal split — capa secundaria */}
+        {/* Diagonal split - capa secundaria */}
         <div
           className="absolute inset-0 opacity-50"
           style={{
@@ -178,7 +178,7 @@ export function StartupCard({
             </p>
           </div>
 
-          {/* Stats — 4 columnas tipo FIFA UT */}
+          {/* Stats - 4 columnas tipo FIFA UT */}
           <div className="grid grid-cols-4 gap-2 bg-[#020618]/30 backdrop-blur-sm rounded-lg p-2 border border-white/10">
             {statItems.map(s => (
               <div key={s.key} className="text-center">

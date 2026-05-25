@@ -4,7 +4,6 @@ import { openTicketing } from '../lib/ticketing'
 const links = [
   { href: '#ruta', label: 'Ruta de Evolución' },
   { href: '#pitch', label: 'Pitch Battle' },
-  { href: '#builders', label: 'Builders Arena' },
   { href: '#agenda', label: 'Agenda' },
   { href: '#startups', label: 'Startups' },
   { href: '#voluntarios', label: 'Voluntarios' },
@@ -56,7 +55,7 @@ function Navbar() {
         <div className="flex items-center gap-3 sm:gap-4">
           <a
             href="#top"
-            aria-label="Startup World Cup Argentina — ir al inicio"
+            aria-label="Startup World Cup Argentina - ir al inicio"
             className="flex items-baseline gap-2"
           >
             <span
@@ -65,7 +64,7 @@ function Navbar() {
               SWC
             </span>
             <span
-              className={`font-bold text-[#75AADB] uppercase tracking-[0.2em] leading-none transition-all duration-300 ${scrolled ? 'text-[10px]' : 'text-xs'}`}
+              className={`font-bold uppercase tracking-[0.2em] leading-none text-[#75AADB] transition-all duration-300 ${scrolled ? 'text-[10px]' : 'text-xs'}`}
             >
               Argentina·26
             </span>
@@ -88,7 +87,7 @@ function Navbar() {
             <img
               src="/SGBA-logo.png"
               alt="Startup Grind Buenos Aires"
-              className={`w-auto transition-all duration-300 ${scrolled ? 'h-8' : 'h-10'}`}
+              className={`w-auto transition-all duration-300 ${scrolled ? 'h-12' : 'h-14'}`}
               style={{ filter: 'brightness(0) invert(1)' }}
             />
           </a>
@@ -117,9 +116,9 @@ function Navbar() {
           <button
             onClick={() => openTicketing('navbar')}
             aria-label="Conseguir tickets (abre en una nueva pestaña)"
-            className={`bg-[#75AADB] text-white rounded-full hover:bg-[#5a93c5] active:scale-95 transition-all cursor-pointer font-black ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
+            className={`bg-[#ff7675] text-white rounded-full hover:bg-[#e85e5d] active:scale-95 transition-all cursor-pointer font-black ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
-            Tickets <span aria-hidden>↗</span>
+            Tickets
           </button>
         </div>
 
@@ -167,9 +166,9 @@ function Navbar() {
             <button
               onClick={() => { setMobileOpen(false); openTicketing('navbar-mobile') }}
               aria-label="Conseguir tickets (abre en una nueva pestaña)"
-              className="mt-3 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
+              className="mt-3 bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
-              Conseguir Tickets <span aria-hidden>↗</span>
+              Conseguir Tickets
             </button>
           </div>
         </div>

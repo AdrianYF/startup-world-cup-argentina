@@ -36,9 +36,9 @@
       "subtitulo": "Pitch Battle Final",
       "slots": [
         { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
-        { "hora": "10:00 - 12:30", "titulo": "Pitch Battle — Ronda 1 (Top 10)", "categoria": "Pitch Battle", "sala": "Main Stage" },
+        { "hora": "10:00 - 12:30", "titulo": "Pitch Battle - Ronda 1 (Top 10)", "categoria": "Pitch Battle", "sala": "Main Stage" },
         { "hora": "12:30 - 14:00", "titulo": "Lunch", "categoria": "Networking", "sala": "Expo Zone" },
-        { "hora": "14:00 - 16:00", "titulo": "Pitch Battle — Final (Top 3)", "categoria": "Pitch Battle", "sala": "Main Stage" },
+        { "hora": "14:00 - 16:00", "titulo": "Pitch Battle - Final (Top 3)", "categoria": "Pitch Battle", "sala": "Main Stage" },
         { "hora": "16:00 - 17:00", "titulo": "Anuncio del Ganador 🇦🇷", "categoria": "Keynote", "sala": "Main Stage" },
         { "hora": "17:00 - 18:00", "titulo": "Closing Ceremony", "categoria": "Keynote", "sala": "Main Stage" },
         { "hora": "19:00 - 23:00", "titulo": "After Party", "categoria": "Side Event", "sala": "Rooftop" }

@@ -1,13 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  /* Argentina · celeste y blanco. 5 colores totales. */
-  --color-swc-light: #ffffff;       /* blanco — dominante */
-  --color-swc-accent: #75AADB;      /* celeste argentino — único accent */
+  /* === Paleta de marca === Reglas semánticas completas en /COLORS.md */
+  --color-swc-light: #ffffff;       /* texto primario sobre dark */
+  --color-swc-accent: #75AADB;      /* celeste argentino · separators, micro-accents, glows */
   --color-swc-accent-dark: #5a93c5; /* celeste hover */
-  --color-swc-bg: #020618;          /* dark bg para secciones de contraste */
-  --color-swc-surface: #0f172b;     /* dark surface secundaria */
-  --color-swc-muted: #9ca3af;       /* gray-400 muted text */
+  --color-swc-violet: #6c5ce7;      /* violeta brand · centro del gradient */
+  --color-swc-coral: #ff7675;       /* coral brand · acento alternativo (voluntarios) */
+  --color-swc-bg: #020618;          /* slate-950 · main dark bg */
+  --color-swc-surface: #0f172b;     /* slate-900 · surface levantada / modals */
+  --color-swc-muted: #9ca3af;       /* gray-400 · texto muted */
+
+  /* Gradient brand — usar SOLO para palabra-acento en H1/H2 vía <GradientText /> */
+  --gradient-brand: linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%);
+
+  /* Gradient data — para data numérica destacada (1 Million, countdown) */
+  --gradient-data: linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%);
 
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
 }
@@ -17,7 +25,7 @@ html, body {
   font-family: var(--font-sans);
 }
 
-/* Scroll snap nativo — proximity es gentil: solo "ayuda" al usuario,
+/* Scroll snap nativo - proximity es gentil: solo "ayuda" al usuario,
  * no fuerza el snap si está scrolleando lejos de los puntos.
  * Cada <section> queda como snap target. La navbar fixed no entra al cálculo
  * porque está fuera del scroll container.
@@ -41,7 +49,7 @@ main > div > section {
   }
 }
 
-/* Glass card — efecto frosted del sitio original */
+/* Glass card - efecto frosted del sitio original */
 .glass-card {
   background-color: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
@@ -78,7 +86,7 @@ main > div > section {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Pegasus entrance — transform ease-in con scale + glow buildup */
+/* Pegasus entrance - transform ease-in con scale + glow buildup */
 @keyframes pegasus-in {
   0% {
     opacity: 0;
@@ -100,7 +108,7 @@ main > div > section {
   animation-delay: 0.4s;
 }
 
-/* Pulsación sutil continua tras la entrada — respiración */
+/* Pulsación sutil continua tras la entrada - respiración */
 @keyframes pegasus-breathe {
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.03); }
@@ -120,7 +128,7 @@ main > div > section {
   }
 }
 
-/* Focus ring global — visible para keyboard users (Don Norman: visibility) */
+/* Focus ring global - visible para keyboard users (Don Norman: visibility) */
 *:focus {
   outline: none;
 }
@@ -130,7 +138,7 @@ main > div > section {
   border-radius: 4px;
 }
 
-/* Active state global para interactivos — feedback táctil */
+/* Active state global para interactivos - feedback táctil */
 button:active,
 a[href]:active {
   transform: translateY(1px);

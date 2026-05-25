@@ -134,7 +134,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
                 Premio Final
               </div>
               <div className="text-xl font-black leading-none text-[#0f172b] mt-0.5">
-                US$ {formatUSD}
+                USD {formatUSD}
               </div>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
               Startup World Cup · Argentina 2026
             </div>
 
-            {/* Premio — protagonista */}
+            {/* Premio - protagonista */}
             <div className="relative border-y-2 border-dashed border-[#0f172b]/40 py-3 sm:py-5 my-1 sm:my-2">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <SolDeMayo size={180} opacity={0.22} />
@@ -198,7 +198,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
                   Premio Final
                 </div>
                 <div className="flex items-baseline gap-1 sm:gap-2 flex-wrap">
-                  <span className="text-xl sm:text-3xl font-black opacity-70 leading-none">US$</span>
+                  <span className="text-xl sm:text-3xl font-black opacity-70 leading-none">USD</span>
                   <span className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none drop-shadow-[0_2px_0_rgba(255,255,255,0.5)]">
                     {formatUSD}
                   </span>

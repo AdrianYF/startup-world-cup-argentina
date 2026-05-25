@@ -34,7 +34,7 @@ function SpeakersAll() {
             to="/#speakers"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-[#75AADB] text-sm font-bold uppercase tracking-widest transition-colors mb-8"
           >
-            <span aria-hidden>←</span>
+           
             Volver al sitio
           </Link>
 
@@ -58,7 +58,7 @@ function SpeakersAll() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {speakers.length === 0 ? (
           <p className="text-center text-gray-400 italic py-24">
-            Estamos confirmando speakers — vuelve en unos días.
+            Estamos confirmando speakers - vuelve en unos días.
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -70,10 +70,9 @@ function SpeakersAll() {
 
         <div className="mt-16 text-center">
           <Link
-            to="/"
+            to="/#speakers"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-bold uppercase tracking-wide text-sm transition-[transform,background-color]"
           >
-            <span aria-hidden>←</span>
             Volver al sitio
           </Link>
         </div>

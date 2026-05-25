@@ -1,5 +1,5 @@
 /**
- * Figurita oficial del equipo de voluntarios — anti-Panini, anti-laminated-staff-badge.
+ * Figurita oficial del equipo de voluntarios - anti-Panini, anti-laminated-staff-badge.
  * Comparte el lenguaje visual de StartupCard (proporción 4:5, holo border,
  * split diagonal, sunburst sutil, grid tech), pero el mensaje central es la
  * frase de orgullo "Yo participo", no el rating OVR.
@@ -165,7 +165,7 @@ export function VolunteerCard({
             </p>
           </div>
 
-          {/* Pledge — bloque destacado */}
+          {/* Pledge - bloque destacado */}
           <div className="bg-[#020618]/40 backdrop-blur-sm rounded-lg p-2.5 border border-white/15 mb-2">
             <p className="text-[11px] font-black italic text-center leading-snug drop-shadow-sm">
               "{pledge} <span className="not-italic">🇦🇷</span>"

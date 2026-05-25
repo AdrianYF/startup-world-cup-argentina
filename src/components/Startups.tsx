@@ -41,13 +41,13 @@ function Startups() {
             <button
               onClick={() => openStartupForm()}
               aria-label="Postular mi Startup (abre formulario en una nueva pestaña)"
-              className="inline-block bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/30 hover:shadow-[#75AADB]/50 hover:scale-105"
+              className="inline-block bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#ff7675]/30 hover:shadow-[#ff7675]/50 hover:scale-105"
             >
-              Postular mi Startup <span aria-hidden>↗</span>
+              Postular mi Startup
             </button>
           </div>
 
-          {/* Figurita estilo Ultimate Team — preview */}
+          {/* Figurita estilo Ultimate Team - preview */}
           <div className="relative max-w-sm mx-auto w-full">
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-4 uppercase tracking-widest justify-center">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

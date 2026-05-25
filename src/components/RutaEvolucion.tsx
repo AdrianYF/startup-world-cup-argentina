@@ -51,8 +51,8 @@ function RutaEvolucion() {
               </p>
 
               {i < etapas.length - 1 && (
-                <div className="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 z-10">
-                  <div className="text-[#75AADB] text-lg">→</div>
+                <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 z-10">
+                  <div className="w-3 h-3 rounded-full bg-[#75AADB]/40" aria-hidden />
                 </div>
               )}
             </div>

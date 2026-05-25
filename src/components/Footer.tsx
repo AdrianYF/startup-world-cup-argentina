@@ -34,7 +34,7 @@ function Footer() {
   return (
     <footer className="relative bg-[#020618] text-white">
 
-      {/* Separador celeste — coherente con el resto de secciones del sitio */}
+      {/* Separador celeste - coherente con el resto de secciones del sitio */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
       {/* ═══ FINAL CTA STRIP ═══ */}
@@ -42,7 +42,7 @@ function Footer() {
         <div className="max-w-7xl mx-auto px-6 py-10 sm:py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-2xl sm:text-3xl font-black uppercase leading-tight text-center md:text-left">
-              <span className="text-white">¿Listo para el </span>
+              <span className="text-white">¿Lista para el </span>
               <span className="text-[#75AADB]">Mundial</span>
               <span className="text-white">?</span>
             </p>
@@ -51,9 +51,9 @@ function Footer() {
               <button
                 onClick={() => openStartupForm()}
                 aria-label="Aplicá tu Startup (abre formulario en una nueva pestaña)"
-                className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
+                className="bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer whitespace-nowrap"
               >
-                Aplicá Startup <span aria-hidden>↗</span>
+                Aplicá Startup
               </button>
               <button
                 onClick={() => openPartnerForm()}
@@ -87,7 +87,7 @@ function Footer() {
             </p>
 
             {/* Recordatorio fecha + lugar */}
-            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-[#75AADB]">
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-[#ff7675]">
               <CalendarIcon />
               {fechas}
             </div>
@@ -113,10 +113,10 @@ function Footer() {
                 <button
                   onClick={() => openTicketing('footer')}
                   aria-label="Comprar tickets (abre Startup Grind en nueva pestaña)"
-                  className="inline-flex items-center gap-2 text-[#75AADB] hover:text-white text-[15px] font-bold transition-colors duration-200 cursor-pointer"
+                  className="inline-flex items-center gap-2 text-[#ff7675] hover:text-white text-[15px] font-bold transition-colors duration-200 cursor-pointer"
                 >
                   Comprar tickets
-                  <span aria-hidden>↗</span>
+                 
                 </button>
               </li>
             </ul>

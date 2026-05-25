@@ -1,4 +1,4 @@
-# Contenido editable — Startup World Cup Argentina
+# Contenido editable - Startup World Cup Argentina
 
 Esta carpeta contiene **todo el contenido del sitio** en archivos JSON. Editá estos archivos para actualizar la web sin tocar código.
 
@@ -6,7 +6,7 @@ Esta carpeta contiene **todo el contenido del sitio** en archivos JSON. Editá e
 
 1. Abrí el archivo `.json` que quieras modificar (ver tabla abajo).
 2. Cambiá los textos, precios, links, etc.
-3. Hacé commit y push — el sitio se reconstruye automáticamente.
+3. Hacé commit y push - el sitio se reconstruye automáticamente.
 
 > 💡 Si nunca editaste JSON: respetá comillas dobles `"..."`, comas entre items, y no toques los `{` `}` `[` `]`.
 
@@ -46,11 +46,11 @@ Si dejás `linkedin` vacío, la tarjeta no es clickable. Cuando agregás un segu
 
 ## Links importantes en `config.json`
 
-- `links.startupGrindUrl` — URL del evento en Startup Grind (no cambiar a menos que cambien la URL del evento).
-- `links.formStartup` — URL del Google Form para que aplique una startup (pendiente).
-- `links.formVoluntario` — URL del Google Form para voluntarios (pendiente).
-- `links.formPartner` — URL del Google Form para partners interesados (pendiente).
-- `links.emailPartners` — email de contacto comercial.
+- `links.startupGrindUrl` - URL del evento en Startup Grind (no cambiar a menos que cambien la URL del evento).
+- `links.formStartup` - URL del Google Form para que aplique una startup (pendiente).
+- `links.formVoluntario` - URL del Google Form para voluntarios (pendiente).
+- `links.formPartner` - URL del Google Form para partners interesados (pendiente).
+- `links.emailPartners` - email de contacto comercial.
 
 ## Google Analytics
 

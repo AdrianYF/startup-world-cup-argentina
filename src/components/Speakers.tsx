@@ -5,7 +5,7 @@ import { Modal } from './ui/Modal'
 import type { Speaker } from '../lib/content'
 
 /**
- * Speakers — paleta reducida a 5 colores y tipografía alineada con el resto del sitio.
+ * Speakers - paleta reducida a 5 colores y tipografía alineada con el resto del sitio.
  * Mobile: muestra solo 3 + botón "Ver más" que lleva a /speakers.
  * Desktop: muestra todos.
  */
@@ -17,6 +17,7 @@ const PLACEHOLDER_IMG =
   'https://grupobcc.com/wp/wp-content/uploads/2015/10/Steve-Wozniak-speaker-apple-conferencias-technology-940x660.jpg'
 
 const MOBILE_PREVIEW = 3
+const DESKTOP_PREVIEW = 4
 
 function Speakers() {
   const speakers = content.speakers
@@ -69,36 +70,51 @@ function Speakers() {
 
       {/* Lista */}
       <div className="relative -mt-24 md:-mt-32 z-10 pb-24">
-        <div className="max-w-md mx-auto px-4">
 
-          {/* Mobile (preview de MOBILE_PREVIEW) */}
-          <div className="grid grid-cols-1 gap-6 sm:hidden">
+        {/* Mobile (preview de MOBILE_PREVIEW + boton ver mas) */}
+        <div className="sm:hidden max-w-md mx-auto px-4">
+          <div className="grid grid-cols-1 gap-6">
             {speakers.slice(0, MOBILE_PREVIEW).map((s, i) => (
               <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
             ))}
             {speakers.length > MOBILE_PREVIEW && (
               <Link
                 to="/speakers"
-                aria-label={`Ver los ${speakers.length} speakers`}
+                aria-label="Ver todos los speakers"
                 className="group inline-flex items-center justify-center gap-2 mt-2 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base px-6 py-3 min-h-[48px] rounded-full uppercase tracking-wide transition-[transform,background-color] duration-200"
               >
-                Ver los {speakers.length} speakers
-                <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
+                Ver todos los speakers
               </Link>
             )}
           </div>
-
-          {/* Desktop (todos) */}
-          <div className="hidden sm:grid grid-cols-1 gap-6">
-            {speakers.map((s, i) => (
-              <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
-            ))}
-          </div>
-
           <p className="text-center text-gray-400 text-xs mt-10 italic">
             Lista en construcción · se anuncian nuevos cada semana.
           </p>
         </div>
+
+        {/* Desktop (preview de DESKTOP_PREVIEW + boton ver todos) */}
+        <div className="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
+            {speakers.slice(0, DESKTOP_PREVIEW).map((s, i) => (
+              <SpeakerTile key={s.slug} speaker={s} onOpen={() => setOpenIndex(i)} />
+            ))}
+          </div>
+          {speakers.length > DESKTOP_PREVIEW && (
+            <div className="mt-10 flex justify-center">
+              <Link
+                to="/speakers"
+                aria-label="Ver todos los speakers"
+                className="group inline-flex items-center justify-center gap-2 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-base px-8 py-3 min-h-[48px] rounded-full uppercase tracking-wide transition-[transform,background-color] duration-200"
+              >
+                Ver todos los speakers
+              </Link>
+            </div>
+          )}
+          <p className="text-center text-gray-400 text-xs mt-10 italic">
+            Lista en construcción · se anuncian nuevos cada semana.
+          </p>
+        </div>
+
       </div>
 
       {/* Modal de speaker */}
@@ -144,7 +160,7 @@ function Speakers() {
   )
 }
 
-/* Speaker tile reutilizable — usado en Speakers (landing) y SpeakersAll (página) */
+/* Speaker tile reutilizable - usado en Speakers (landing) y SpeakersAll (página) */
 export function SpeakerTile({
   speaker,
   onOpen,

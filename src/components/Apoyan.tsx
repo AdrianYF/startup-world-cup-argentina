@@ -5,6 +5,7 @@ function Apoyan() {
 
   return (
     <section id="apoyan" className="relative py-16 sm:py-24 bg-white text-[#020618]">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-4">
@@ -16,13 +17,13 @@ function Apoyan() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-16">
+        <div className="flex flex-col gap-4">
           {categorias.map((cat, i) => (
             <div key={i}>
-              <p className="text-center text-gray-500 text-xs uppercase tracking-[0.3em] font-bold mb-8">
+              <p className="text-center text-gray-500 text-xs uppercase tracking-[0.3em] font-bold mb-4">
                 {cat.titulo}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-0 gap-y-0.5 items-center justify-items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-center justify-items-center">
                 {cat.logos.map((logo, j) => (
                   <div
                     key={j}

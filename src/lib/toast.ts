@@ -1,5 +1,5 @@
 /**
- * Toast no bloqueante — reemplaza alert() para feedback de UI (Don Norman §2).
+ * Toast no bloqueante - reemplaza alert() para feedback de UI (Don Norman §2).
  * Imperative API: `toast('mensaje')` desde cualquier handler.
  * Inserta un container en el DOM la primera vez que se llama y reutiliza.
  */
