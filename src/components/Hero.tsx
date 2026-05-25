@@ -62,7 +62,7 @@ function Hero() {
                 <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-2 sm:mb-3">
                   Premio Final · Silicon Valley
                 </div>
-                <h2 className="flex items-baseline gap-2 sm:gap-3 justify-center lg:justify-start flex-wrap leading-[0.95]">
+                <h2 className="text-center lg:text-left leading-[0.95]">
                   <span
                     className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                     style={{
@@ -72,7 +72,7 @@ function Hero() {
                   >
                     1 Million
                   </span>
-                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80">USD</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80 ml-2 sm:ml-3 align-baseline">USD</span>
                 </h2>
               </div>
             </div>
