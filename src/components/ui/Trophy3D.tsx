@@ -28,7 +28,9 @@ const TROPHY_MODEL_URL = '/trophy-v2.glb'
 
 function TrophyModel() {
   const ref = useRef<Group>(null)
-  const { scene } = useGLTF(TROPHY_MODEL_URL)
+  // Args: (path, useDraco, useMeshopt, extendLoader)
+  // useMeshopt=true porque el GLB se comprimió con `gltfpack -cc` (EXT_meshopt_compression)
+  const { scene } = useGLTF(TROPHY_MODEL_URL, undefined, true)
 
   // Material PBR oro pulido — se aplica una vez por scene mount.
   // Preserva la textura embebida del GLB como baseColor map.
@@ -63,7 +65,7 @@ function TrophyModel() {
   return <primitive ref={ref} object={scene} scale={1.3} />
 }
 
-useGLTF.preload(TROPHY_MODEL_URL)
+useGLTF.preload(TROPHY_MODEL_URL, undefined, true)
 
 export function Trophy3D({ className }: { className?: string }) {
   // Memoize gl config para no re-crear el renderer en cada render del parent.
