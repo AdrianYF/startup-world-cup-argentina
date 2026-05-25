@@ -28,16 +28,16 @@ function Hero() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full flex-1 flex flex-col items-center justify-center text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-32 pb-12 w-full flex-1 flex flex-col items-center justify-center text-center">
 
-        {/* H1 — protagonista absoluto, sin imagen ni chip */}
-        <h1 className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-black leading-[0.9] uppercase tracking-tight mb-12 sm:mb-16 lg:mb-20">
+        {/* H1 */}
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-[0.95] uppercase mb-10 sm:mb-12 lg:mb-16">
           <span className="text-white">STARTUP WORLD CUP </span>
           <span className="text-[#75AADB]">ARGENTINA</span>
         </h1>
 
-        {/* H2 — premio, un step menor */}
-        <div className="relative mb-12 sm:mb-16">
+        {/* H2 — premio */}
+        <div className="relative mb-10 sm:mb-12">
           <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/25 via-[#75AADB]/15 to-[#75AADB]/25 blur-3xl rounded-3xl pointer-events-none" />
 
           <div className="relative">
