@@ -1,5 +1,4 @@
 import { content } from '../lib/content'
-import { GradientText } from './ui/GradientText'
 
 function RutaEvolucion() {
   const etapas = content.etapas
@@ -14,7 +13,7 @@ function RutaEvolucion() {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">RUTA DE </span>
-            <GradientText>EVOLUCIÓN</GradientText>
+            <span className="text-[#75AADB]">EVOLUCIÓN</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Un camino estructurado de 5 etapas diseñadas para escalar tu startup al máximo potencial global.
