@@ -1,0 +1,44 @@
+[
+  {
+    "id": "basico",
+    "nombre": "Básico",
+    "precioAnterior": "$71.000",
+    "precio": "$42.000",
+    "descripcion": "Para entusiastas y builders.",
+    "badge": null,
+    "features": [
+      "Acceso general",
+      "Expo & Pitch Battle",
+      "Matchmaking digital"
+    ]
+  },
+  {
+    "id": "basico-plus",
+    "nombre": "Básico Plus",
+    "precioAnterior": "$143.500",
+    "precio": "$85.500",
+    "descripcion": "Experiencia completa.",
+    "badge": "MÁS POPULAR",
+    "features": [
+      "Todo lo del Básico",
+      "Acceso Workshops",
+      "CoWork Zone",
+      "Side Events + Night Drinks"
+    ]
+  },
+  {
+    "id": "pro",
+    "nombre": "Pro",
+    "precioAnterior": "$723.550",
+    "precio": "$578.550",
+    "descripcion": "Foco en inversión y Growth.",
+    "badge": null,
+    "features": [
+      "Todo lo del Básico Plus",
+      "Mesa Inversión 1:1*",
+      "Builders Arena prioritario",
+      "Cocktail Privado",
+      "Acceso Startup Grind International Team"
+    ]
+  }
+]

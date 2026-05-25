@@ -1,0 +1,24 @@
+[
+  {
+    "titulo": "PRESENTING PARTNERS",
+    "logos": [
+      { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85 },
+      { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png" },
+      { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png" }
+    ]
+  },
+  {
+    "titulo": "COMMUNITY PARTNERS",
+    "logos": [
+      { "nombre": "Paisanos", "img": "/Paisanos-logo.png" },
+      { "nombre": "Lovable", "img": "/Lovable-logo.png" }
+    ]
+  },
+  {
+    "titulo": "INSTITUTIONAL PARTNERS",
+    "logos": [
+      { "nombre": "UAI", "img": null },
+      { "nombre": "UNCUYO", "img": null }
+    ]
+  }
+]

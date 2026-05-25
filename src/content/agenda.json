@@ -1,0 +1,48 @@
+{
+  "dias": [
+    {
+      "id": "dia-1",
+      "fecha": "2026-08-05",
+      "label": "Miércoles 5 Ago",
+      "subtitulo": "Opening · Builders Arena",
+      "slots": [
+        { "hora": "09:00 - 10:00", "titulo": "Acreditación y Welcome Coffee", "categoria": "Networking", "sala": "Lobby" },
+        { "hora": "10:00 - 10:30", "titulo": "Opening Ceremony", "categoria": "Keynote", "sala": "Main Stage" },
+        { "hora": "10:30 - 12:30", "titulo": "Spark Sessions", "categoria": "Builders Arena", "sala": "Arena A" },
+        { "hora": "12:30 - 14:00", "titulo": "Lunch & Networking", "categoria": "Networking", "sala": "Expo Zone" },
+        { "hora": "14:00 - 16:00", "titulo": "Workshops Estratégicos", "categoria": "Workshop", "sala": "Salas 1-3" },
+        { "hora": "16:00 - 18:00", "titulo": "Matchmaking Digital 1:1", "categoria": "Networking", "sala": "Arena B" },
+        { "hora": "19:00 - 22:00", "titulo": "Welcome Night Drinks", "categoria": "Side Event", "sala": "Rooftop" }
+      ]
+    },
+    {
+      "id": "dia-2",
+      "fecha": "2026-08-06",
+      "label": "Jueves 6 Ago",
+      "subtitulo": "Deal Flow · Partners Day",
+      "slots": [
+        { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
+        { "hora": "10:00 - 11:30", "titulo": "Reverse Pitches de Partners", "categoria": "Keynote", "sala": "Main Stage" },
+        { "hora": "11:30 - 13:30", "titulo": "Deal Flow Arena", "categoria": "Builders Arena", "sala": "Arena A" },
+        { "hora": "13:30 - 15:00", "titulo": "Lunch & Mesa Inversión", "categoria": "Networking", "sala": "Expo Zone" },
+        { "hora": "15:00 - 17:00", "titulo": "Paneles: Ecosistema LATAM", "categoria": "Keynote", "sala": "Main Stage" },
+        { "hora": "17:00 - 19:00", "titulo": "Expo & Cocktail Privado", "categoria": "Side Event", "sala": "Expo Zone" }
+      ]
+    },
+    {
+      "id": "dia-3",
+      "fecha": "2026-08-07",
+      "label": "Viernes 7 Ago",
+      "subtitulo": "Pitch Battle Final",
+      "slots": [
+        { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
+        { "hora": "10:00 - 12:30", "titulo": "Pitch Battle - Ronda 1 (Top 10)", "categoria": "Pitch Battle", "sala": "Main Stage" },
+        { "hora": "12:30 - 14:00", "titulo": "Lunch", "categoria": "Networking", "sala": "Expo Zone" },
+        { "hora": "14:00 - 16:00", "titulo": "Pitch Battle - Final (Top 3)", "categoria": "Pitch Battle", "sala": "Main Stage" },
+        { "hora": "16:00 - 17:00", "titulo": "Anuncio del Ganador 🇦🇷", "categoria": "Keynote", "sala": "Main Stage" },
+        { "hora": "17:00 - 18:00", "titulo": "Closing Ceremony", "categoria": "Keynote", "sala": "Main Stage" },
+        { "hora": "19:00 - 23:00", "titulo": "After Party", "categoria": "Side Event", "sala": "Rooftop" }
+      ]
+    }
+  ]
+}

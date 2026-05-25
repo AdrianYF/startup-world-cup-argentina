@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { content } from '../lib/content'
+import { openStartupForm, openPartnerForm } from '../lib/ticketing'
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
 
   useEffect(() => {
-    const target = new Date('2026-08-05T09:00:00')
+    const target = new Date(content.config.evento.fechaInicioISO)
     const interval = setInterval(() => {
       const now = new Date()
       const diff = target.getTime() - now.getTime()
@@ -20,103 +22,143 @@ function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-zinc-900 to-black">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(202,138,4,0.15)_0%,_transparent_70%)]" />
+    <section className="relative min-h-screen flex flex-col overflow-hidden">
+
+      {/* Video de fondo — poster pinta inmediato, video bufferiza en background */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/video.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        poster="/SWC-header.png"
+        aria-hidden
+      />
+
+      {/* Overlays originales (commit 56c80e8) — 3 capas, radial morado para feel cinematográfico */}
+      <div className="absolute inset-0 bg-[#020618]/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020618]/40 via-[#020618]/60 to-[#020618]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(108,92,231,0.25)_0%,_transparent_70%)]" />
+
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
       </div>
 
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent" />
-      </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-20 pb-12 w-full flex-1 flex items-center">
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-20 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
-          {/* Columna izquierda */}
-          <div>
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-              <span className="text-sm font-semibold text-white">5 · 6 · 7 DE AGOSTO 2026 · VEDIA, BS AS</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
+
+          {/* === Columna izquierda: copa arriba + 1 Million abajo === */}
+          <div className="flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
+
+            {/* Copa arriba */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-3/4 h-3/4 bg-gradient-to-br from-[#75AADB]/30 via-[#75AADB]/15 to-transparent blur-3xl rounded-full" />
+              </div>
+              <img
+                src="/gold.png"
+                alt="Startup World Cup"
+                className="relative h-44 sm:h-52 md:h-56 lg:h-64 xl:h-80 w-auto drop-shadow-[0_12px_48px_rgba(234,179,8,0.55)]"
+              />
             </div>
 
-            <div className="flex items-center gap-4 mb-4">
-              <img 
-                src="/Logo-White-246x300.png" 
-                alt="Startup World Cup" 
-                className="h-28 w-auto"
-              />
-              <div>
-                <h1 className="text-5xl lg:text-6xl font-black leading-none uppercase">
-                  <span className="text-white">STARTUP</span><br />
-                  <span className="text-white">WORLD CUP</span><br />
-                  <span className="text-[#75AADB]">ARGENTINA</span>
-                </h1>
+            {/* 1 Million (premio) abajo de la copa */}
+            <div className="relative">
+              <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/25 via-[#75AADB]/15 to-[#75AADB]/25 blur-3xl rounded-3xl pointer-events-none" />
+
+              <div className="relative">
+                <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-2 sm:mb-3 text-center">
+                  Premio Final · Silicon Valley
+                </div>
+                <h2 className="leading-[0.95]">
+                  <span
+                    className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
+                    }}
+                  >
+                    1 Million
+                  </span>
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-white/80 ml-2 sm:ml-3 align-baseline">USD</span>
+                </h2>
               </div>
             </div>
 
-            <p className="text-yellow-400 font-bold text-xl mb-2 tracking-widest uppercase">
-              Silicon Valley · $1.000.000 USD
-            </p>
-
-            <p className="text-gray-300 text-lg mb-6">
-              La competencia de startups más grande del mundo llega a Argentina.
-            </p>
-
-            <div className="mb-8">
-              <span className="text-yellow-400 font-black text-4xl">+100</span>
-              <span className="text-gray-400 text-sm ml-2 uppercase tracking-widest">Ciudades compitiendo</span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#tickets" className="bg-yellow-500 hover:bg-yellow-400 text-black font-black text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide">
-                Aplicá como Startup →
-              </a>
-              <a href="#partners" className="border border-white/30 hover:border-yellow-500 text-white font-bold text-lg px-8 py-3 rounded-full transition-all text-center uppercase tracking-wide">
-                Quiero ser Partner
-              </a>
-            </div>
           </div>
 
-          {/* Columna derecha */}
-          <div className="flex flex-col gap-6">
+          {/* === Columna derecha: H1+tagline+CTAs arriba / Countdown abajo (alineado con 1 Million) === */}
+          <div className="flex flex-col items-stretch text-center lg:text-left justify-between gap-8 lg:gap-12">
 
-            {/* Card partners */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-              <p className="text-gray-400 text-xs uppercase tracking-widest mb-5 text-center">En partnership con</p>
-              <div className="flex items-center justify-around gap-4">
-                <img 
-                  src="/sg-stacked-whitepink.png" 
-                  alt="Startup Grind" 
-                  className="h-16 w-auto"
-                />
-                <div className="w-px h-12 bg-white/20" />
-                <img 
-                  src="/pegasus-logo.png" 
-                  alt="Pegasus Tech Ventures" 
-                  className="h-20 w-auto"
-                />
+            <div>
+              {/* H1 */}
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
+                <span className="block text-white">STARTUP WORLD CUP</span>
+                <span className="block text-[#75AADB]">ARGENTINA</span>
+              </h1>
+
+              {/* Tagline */}
+              <p className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-12">
+                La competencia de startups más grande del mundo llega a Argentina.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
+                <button
+                  onClick={() => openStartupForm()}
+                  aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
+                  className="bg-[#ff7675] hover:bg-[#e85e5d] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#ff7675]/30"
+                >
+                  {content.config.hero.ctaPrimario}
+                </button>
+                <button
+                  onClick={() => openPartnerForm()}
+                  aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
+                  className="border border-white/30 hover:border-[#75AADB] hover:bg-white/5 active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer"
+                >
+                  {content.config.hero.ctaSecundario}
+                </button>
               </div>
             </div>
 
-            {/* Countdown */}
-            <div className="grid grid-cols-4 gap-3">
-              {[
-                { val: timeLeft.dias, label: 'DÍAS' },
-                { val: timeLeft.horas, label: 'HORAS' },
-                { val: timeLeft.mins, label: 'MINS' },
-                { val: timeLeft.segs, label: 'SEGS' },
-              ].map(({ val, label }) => (
-                <div key={label} className="bg-white/5 border border-yellow-600/30 rounded-xl p-4 text-center backdrop-blur-sm">
-                  <div className="text-3xl font-black text-white">{String(val).padStart(2, '0')}</div>
-                  <div className="text-xs text-gray-400 mt-1 tracking-widest">{label}</div>
-                </div>
-              ))}
+            {/* Countdown — alineado al mismo nivel/renglón que el 1 Million de la col 1 */}
+            <div className="w-full">
+              <div className="flex items-start justify-center lg:justify-start gap-1 sm:gap-2">
+                {[
+                  { val: timeLeft.dias, label: 'DÍAS' },
+                  { val: timeLeft.horas, label: 'HORAS' },
+                  { val: timeLeft.mins, label: 'MIN' },
+                  { val: timeLeft.segs, label: 'SEG' },
+                ].map(({ val, label }, i, arr) => (
+                  <div key={label} className="flex items-start gap-1 sm:gap-2">
+                    <div className="flex flex-col items-center min-w-[2.5rem] sm:min-w-[3.5rem] lg:min-w-[4rem]">
+                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black leading-none tabular-nums text-white">
+                        {String(val).padStart(2, '0')}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55 mt-2 sm:mt-3">
+                        {label}
+                      </span>
+                    </div>
+                    {i < arr.length - 1 && (
+                      <span
+                        className="text-[#75AADB]/40 text-2xl sm:text-3xl lg:text-4xl font-thin leading-none mt-0.5 sm:mt-1"
+                        aria-hidden
+                      >
+                        :
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
           </div>
         </div>
+
       </div>
     </section>
   )
