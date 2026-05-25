@@ -1,7 +1,26 @@
+import { useState, useEffect } from 'react'
 import { content } from '../lib/content'
 import { openStartupForm, openPartnerForm } from '../lib/ticketing'
 
 function Hero() {
+  const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
+
+  useEffect(() => {
+    const target = new Date(content.config.evento.fechaInicioISO)
+    const interval = setInterval(() => {
+      const now = new Date()
+      const diff = target.getTime() - now.getTime()
+      if (diff <= 0) { clearInterval(interval); return }
+      setTimeLeft({
+        dias: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        horas: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        mins: Math.floor((diff / (1000 * 60)) % 60),
+        segs: Math.floor((diff / 1000) % 60),
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden">
 
@@ -87,7 +106,7 @@ function Hero() {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
+            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full mb-10 lg:mb-12">
               <button
                 onClick={() => openStartupForm()}
                 aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
@@ -102,6 +121,28 @@ function Hero() {
               >
                 {content.config.hero.ctaSecundario}
               </button>
+            </div>
+
+            {/* Countdown — 4 boxes compactos debajo de los CTAs */}
+            <div className="grid grid-cols-4 gap-2 sm:gap-3 w-full max-w-md mx-auto lg:mx-0">
+              {[
+                { val: timeLeft.dias, label: 'DÍAS' },
+                { val: timeLeft.horas, label: 'HORAS' },
+                { val: timeLeft.mins, label: 'MIN' },
+                { val: timeLeft.segs, label: 'SEG' },
+              ].map(({ val, label }) => (
+                <div
+                  key={label}
+                  className="bg-white/5 border border-[#5a93c5]/30 rounded-xl p-2 sm:p-3 text-center backdrop-blur-sm"
+                >
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tabular-nums leading-none">
+                    {String(val).padStart(2, '0')}
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-400 mt-1.5 tracking-widest uppercase">
+                    {label}
+                  </div>
+                </div>
+              ))}
             </div>
 
           </div>
