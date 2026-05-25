@@ -134,7 +134,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
                 Premio Final
               </div>
               <div className="text-xl font-black leading-none text-[#0f172b] mt-0.5">
-                US$ {formatUSD}
+                USD {formatUSD}
               </div>
             </div>
           </div>
@@ -198,7 +198,7 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
                   Premio Final
                 </div>
                 <div className="flex items-baseline gap-1 sm:gap-2 flex-wrap">
-                  <span className="text-xl sm:text-3xl font-black opacity-70 leading-none">US$</span>
+                  <span className="text-xl sm:text-3xl font-black opacity-70 leading-none">USD</span>
                   <span className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none drop-shadow-[0_2px_0_rgba(255,255,255,0.5)]">
                     {formatUSD}
                   </span>

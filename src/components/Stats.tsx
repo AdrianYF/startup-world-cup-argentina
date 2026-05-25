@@ -3,7 +3,7 @@ import { content } from '../lib/content'
 /**
  * Bloque de estadísticas estilo Token2049.
  * Números masivos como social proof tras el Hero.
- * El stat con highlight: true recibe el mismo tratamiento que el premio US$1M
+ * El stat con highlight: true recibe el mismo tratamiento que el premio USD1M
  * del Hero - gradient text white→celeste + drop-shadow violeta + halo blur.
  */
 function Stats() {

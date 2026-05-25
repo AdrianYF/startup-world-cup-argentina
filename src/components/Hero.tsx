@@ -24,7 +24,7 @@ function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden">
 
-      {/* Video de fondo */}
+      {/* Video de fondo — poster pinta inmediato, video bufferiza en background */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         src="/video.mp4"
@@ -37,7 +37,7 @@ function Hero() {
         aria-hidden
       />
 
-      {/* Overlays para legibilidad */}
+      {/* Overlays originales (commit 56c80e8) — 3 capas, radial morado para feel cinematográfico */}
       <div className="absolute inset-0 bg-[#020618]/70" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#020618]/40 via-[#020618]/60 to-[#020618]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(108,92,231,0.25)_0%,_transparent_70%)]" />
