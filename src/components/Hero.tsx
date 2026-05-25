@@ -43,9 +43,9 @@ function Hero() {
           <span className="text-[#75AADB]">ARGENTINA</span>
         </h1>
 
-        {/* === ENTIDAD 2: Premio + tagline (visualmente separada, un toque menor) === */}
+        {/* === ENTIDAD 2: Premio (H2) + tagline === */}
 
-        {/* PREMIO */}
+        {/* PREMIO — H2 semánticamente, un step más chico que el H1 */}
         <div className="relative mb-6 sm:mb-8">
           <div className="absolute -inset-6 bg-gradient-to-r from-[#75AADB]/30 via-[#75AADB]/20 to-[#75AADB]/30 blur-3xl rounded-3xl pointer-events-none" />
 
@@ -53,9 +53,9 @@ function Hero() {
             <div className="text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-[0.3em] text-white/70 mb-2 sm:mb-3">
               Premio Final · Silicon Valley
             </div>
-            <div className="flex items-baseline gap-2 sm:gap-3 justify-center flex-wrap">
+            <h2 className="flex items-baseline gap-2 sm:gap-3 justify-center flex-wrap leading-none">
               <span
-                className="text-4xl sm:text-5xl lg:text-7xl font-black leading-none tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
+                className="text-3xl sm:text-4xl lg:text-6xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                 style={{
                   backgroundImage:
                     'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
@@ -63,8 +63,8 @@ function Hero() {
               >
                 1 Million
               </span>
-              <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-white/80 leading-none">USD</span>
-            </div>
+              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white/80">USD</span>
+            </h2>
           </div>
         </div>
 
