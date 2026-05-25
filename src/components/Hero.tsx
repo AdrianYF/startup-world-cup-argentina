@@ -76,10 +76,15 @@ function Hero() {
           <div className="flex flex-col items-stretch text-center lg:text-left justify-center">
 
             {/* H1 */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-10 lg:mb-12">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
               <span className="block text-white">STARTUP WORLD CUP</span>
               <span className="block text-[#75AADB]">ARGENTINA</span>
             </h1>
+
+            {/* Tagline */}
+            <p className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-12">
+              La competencia de startups más grande del mundo llega a Argentina.
+            </p>
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
