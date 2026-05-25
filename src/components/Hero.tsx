@@ -98,7 +98,15 @@ function Hero() {
               {/* H1 */}
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black leading-[1.05] uppercase tracking-wide mb-6 lg:mb-8">
                 <span className="block text-white">STARTUP WORLD CUP</span>
-                <span className="block text-[#75AADB]">ARGENTINA</span>
+                <span
+                  className="block bg-clip-text text-transparent"
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%)',
+                  }}
+                >
+                  ARGENTINA
+                </span>
               </h1>
 
               {/* Tagline */}
