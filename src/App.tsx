@@ -41,9 +41,9 @@ function App() {
     Tickets,
     Startups,
     Voluntarios,
+    // Speakers, // TODO: re-habilitar cuando se confirmen los speakers
     Partners,
     Apoyan,
-    Speakers,
     FAQ,
   ]
 

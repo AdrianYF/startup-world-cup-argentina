@@ -10,24 +10,12 @@ function Startups() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           <div>
-            <span className="inline-block border border-white/20 text-gray-400 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              Aplicación abierta
-            </span>
-
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-6">
               <span className="text-white">APLICÁ </span>
               <span className="text-[#75AADB]">TU STARTUP</span>
             </h2>
 
-            <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              Buscamos las 10 mejores startups de Argentina. Las seleccionadas competirán en el Pitch Battle frente a un jurado internacional y la ganadora viaja a la final global en Silicon Valley.
-            </p>
-
-            <ul className="flex flex-col gap-2 mb-8">
-              <li className="flex items-start gap-2 text-gray-300 text-sm">
-                <span className="text-[#75AADB] mt-0.5">✓</span>
-                Tu perfil será compartible en redes sociales con OG image personalizada.
-              </li>
+            <ul className="flex flex-col gap-3 mb-8">
               <li className="flex items-start gap-2 text-gray-300 text-sm">
                 <span className="text-[#75AADB] mt-0.5">✓</span>
                 Acceso al Deal Flow Arena y Matchmaking Digital.
@@ -35,6 +23,14 @@ function Startups() {
               <li className="flex items-start gap-2 text-gray-300 text-sm">
                 <span className="text-[#75AADB] mt-0.5">✓</span>
                 Mentoría previa al Pitch Battle.
+              </li>
+              <li className="flex items-start gap-2 text-gray-300 text-sm">
+                <span className="text-[#75AADB] mt-0.5">✓</span>
+                Vertical agnóstica: cualquier industria puede aplicar.
+              </li>
+              <li className="flex items-start gap-2 text-gray-300 text-sm">
+                <span className="text-[#75AADB] mt-0.5">✓</span>
+                Las startups no seleccionadas para el Pitch Battle podrán ser convocadas para presentar el día 6 frente a asistentes locales y virtuales por streaming.
               </li>
             </ul>
 

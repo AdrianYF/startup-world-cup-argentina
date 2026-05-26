@@ -1,17 +1,17 @@
 [
   {
     "icon": "🏆",
-    "titulo": "Inversión Final",
+    "titulo": "Inversión Final*",
     "subtitulo": "USD 1M para el ganador global",
     "subtituloColor": "text-yellow-400",
-    "popup": "El ganador del Pitch Battle Argentina obtiene un pase directo a la gran final global en Silicon Valley, donde competirá por una inversión de USD 1.000.000 del fondo Pegasus Tech Ventures."
+    "popup": "La startup ganadora obtiene su lugar en la gran final global en Silicon Valley, donde competirá por USD 1.000.000 de inversión del grupo Pegasus Tech Ventures."
   },
   {
     "icon": "🌎",
     "titulo": "Jurado Internacional",
-    "subtitulo": "Inversores y referentes de Silicon Valley",
+    "subtitulo": "4 Jurados seleccionados: Directores, C-Levels y Managing Partners",
     "subtituloColor": "text-gray-400",
-    "popup": "El panel de jurados estará compuesto por inversores de venture capital, founders de unicornios y referentes del ecosistema tecnológico global. Cada startup tendrá minutos para presentar y recibir feedback en vivo."
+    "popup": "El panel estará compuesto por C-Levels, Managing Partners de fondos de inversión y directivos de empresas líderes. Cada startup tendrá 5 minutos de pitch con deck para presentar su proyecto y demostrar por qué debe representar a Argentina en Silicon Valley."
   },
   {
     "icon": "🚀",

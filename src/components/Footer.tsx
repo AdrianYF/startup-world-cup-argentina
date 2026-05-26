@@ -158,7 +158,7 @@ function Footer() {
               </li>
               <li className="inline-flex items-center gap-2 text-gray-400 text-[15px] font-medium">
                 <PinIcon />
-                Vedia, Buenos Aires
+                Buenos Aires, Argentina
               </li>
             </ul>
 

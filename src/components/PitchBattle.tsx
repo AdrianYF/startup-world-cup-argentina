@@ -9,9 +9,11 @@ function PitchBattle() {
   const stats = content.pitchBattle
 
   return (
-    <section id="pitch" className="relative py-16 sm:py-24 bg-white text-[#020618]">
+    <section id="pitch" className="relative py-16 sm:py-24 bg-white text-[#020618] overflow-x-clip">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
-      <div className="max-w-7xl mx-auto px-4">
+
+
+      <div className="relative max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
           <div>
@@ -20,8 +22,11 @@ function PitchBattle() {
               <span className="text-[#020618]"> BATTLE</span>
             </h2>
 
-            <p className="text-gray-700 text-lg leading-relaxed mb-8">
-              La batalla final donde las 10 mejores startups pre-seleccionadas de Argentina se enfrentarán ante un jurado internacional. El ganador obtendrá un pase directo a la gran final en Silicon Valley para ser el próximo unicornio.
+            <p className="text-gray-700 text-lg leading-relaxed mb-4">
+              La batalla final donde las 10 mejores startups seleccionadas de Argentina se enfrentarán ante un jurado internacional.
+            </p>
+            <p className="text-gray-900 text-lg leading-relaxed font-bold mb-8">
+              El ganador obtendrá un pase directo a la gran final en Silicon Valley para ser el próximo unicornio.
             </p>
 
             <div className="flex flex-col gap-3">
@@ -46,9 +51,19 @@ function PitchBattle() {
             <button
               onClick={() => openStartupForm()}
               aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
-              className="bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40"
+              className="inline-flex items-center justify-center gap-2 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40"
             >
               Aplicá como Startup
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden
+              >
+                {/* Lucide plane (filled) — pase a Silicon Valley */}
+                <path d="M21.6 2.4a1.5 1.5 0 0 0-1.6-.35l-18 6a1.5 1.5 0 0 0-.13 2.79l6.99 3.3 3.3 6.99a1.5 1.5 0 0 0 2.79-.13l6-18a1.5 1.5 0 0 0-.35-1.6Z" />
+              </svg>
             </button>
           </div>
 
