@@ -210,11 +210,11 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
             <div className="flex items-start justify-between mt-3 sm:mt-5 gap-2">
               <div className="min-w-0">
                 <div className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] opacity-60">Fecha</div>
-                <div className="text-xs sm:text-sm font-black mt-0.5 truncate">05·08·2026</div>
+                <div className="text-xs sm:text-sm font-black mt-0.5 truncate">07·08·2026</div>
               </div>
               <div className="text-right min-w-0">
                 <div className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] opacity-60">Venue</div>
-                <div className="text-xs sm:text-sm font-black mt-0.5 truncate">VEDIA · BS AS</div>
+                <div className="text-xs sm:text-sm font-black mt-0.5 truncate">BUENOS AIRES</div>
               </div>
             </div>
           </div>

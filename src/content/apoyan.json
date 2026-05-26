@@ -2,23 +2,23 @@
   {
     "titulo": "PRESENTING PARTNERS",
     "logos": [
-      { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85 },
-      { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png" },
-      { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png" }
+      { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85, "url": "https://www.startupworldcup.io/" },
+      { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "url": "https://www.startupgrind.com/buenos-aires/" },
+      { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "url": "https://www.pegasustechventures.com/" }
     ]
   },
   {
     "titulo": "COMMUNITY PARTNERS",
     "logos": [
-      { "nombre": "Paisanos", "img": "/Paisanos-logo.png" },
-      { "nombre": "Lovable", "img": "/Lovable-logo.png" }
+      { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
+      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" }
     ]
   },
   {
     "titulo": "INSTITUTIONAL PARTNERS",
     "logos": [
-      { "nombre": "UAI", "img": null },
-      { "nombre": "UNCUYO", "img": null }
+      { "nombre": "UAI", "img": null, "url": "https://www.uai.edu.ar/" },
+      { "nombre": "UNCUYO", "img": null, "url": "https://www.uncuyo.edu.ar/" }
     ]
   }
 ]
