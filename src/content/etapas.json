@@ -1,32 +1,27 @@
 [
   {
     "numero": "01",
-    "potential": "20%",
     "titulo": "Networking Hub",
     "descripcion": "Workshops estratégicos y Side events exclusivos."
   },
   {
     "numero": "02",
-    "potential": "45%",
     "titulo": "Builders Arena",
     "descripcion": "Mesa de Inversión y Matchmaking Digital estructurado."
   },
   {
     "numero": "03",
-    "potential": "70%",
-    "titulo": "Expo & Partners",
-    "descripcion": "Conexión directa con sponsors, corporaciones y fondos."
+    "titulo": "Expo",
+    "descripcion": "Presencia en paneles, visibilidad ante inversores, partners y clientes."
   },
   {
     "numero": "04",
-    "potential": "85%",
-    "titulo": "Competencia Oficial",
-    "descripcion": "Pitch Battle principal con jurado internacional y clasificación global."
+    "titulo": "Partners",
+    "descripcion": "Conexiones con empresas, directivos y fondos 1 a 1."
   },
   {
     "numero": "05",
-    "potential": "100%",
-    "titulo": "Global Reach",
-    "descripcion": "Expansión internacional y acceso a mercados globales."
+    "titulo": "Competencia Oficial",
+    "descripcion": "Pitch Battle principal con jurado internacional y clasificación global."
   }
 ]

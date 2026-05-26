@@ -193,7 +193,7 @@ export function VolunteerCard({
 
           {/* Footer fechas evento */}
           <p className="text-[8px] font-bold tracking-widest opacity-70 text-center mt-3">
-            5 · 6 · 7 AGOSTO 2026 · VEDIA, BA
+            5 · 6 · 7 AGOSTO 2026 · BUENOS AIRES
           </p>
 
         </div>

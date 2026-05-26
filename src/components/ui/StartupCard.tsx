@@ -14,7 +14,7 @@ export type StartupCardProps = {
   nombre?: string
   sector?: string
   ciudad?: string
-  ovr?: number
+  ovr?: number | string
   posicion?: string
   numero?: string
   pitch?: string
@@ -55,7 +55,7 @@ export function StartupCard({
   nombre = 'Tu Startup',
   sector = 'SaaS',
   ciudad = 'Buenos Aires',
-  ovr = 86,
+  ovr = '+200',
   posicion = 'FOUNDER',
   numero = '001',
   pitch = 'Acá va tu pitch en una línea - eso que vas a contar en el escenario.',
@@ -74,23 +74,8 @@ export function StartupCard({
 
   return (
     <div className="relative font-sans select-none" style={{ aspectRatio: '4 / 5' }}>
-
-      {/* Halo exterior */}
-      <div className={`absolute -inset-4 bg-gradient-to-br ${r.ring} opacity-30 blur-2xl rounded-3xl pointer-events-none`} />
-
-      {/* Holo foil border - animado */}
-      <div className="absolute -inset-[2px] rounded-2xl overflow-hidden">
-        <div
-          className="absolute inset-0 animate-[spin_12s_linear_infinite]"
-          style={{
-            background:
-              'conic-gradient(from 0deg, #75AADB 0%, #75AADB 15%, #75AADB 30%, #75AADB 45%, #75AADB 60%, #75AADB 75%, #75AADB 100%)',
-          }}
-        />
-      </div>
-
       {/* Carta */}
-      <div className={`relative h-full rounded-2xl overflow-hidden ${r.bg}`}>
+      <div className={`relative h-full rounded-2xl overflow-hidden border border-[#75AADB]/40 ${r.bg}`}>
 
         {/* Diagonal split - capa secundaria */}
         <div
@@ -137,7 +122,7 @@ export function StartupCard({
             {/* OVR + posición */}
             <div className="flex flex-col items-center">
               <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-white/15 backdrop-blur-sm border border-white/40 shadow-lg">
-                <span className="text-4xl font-black leading-none tracking-tighter">{ovr}</span>
+                <span className={`font-black leading-none tracking-tighter ${String(ovr).length > 2 ? 'text-2xl' : 'text-4xl'}`}>{ovr}</span>
               </div>
               <span className="mt-1.5 text-[10px] font-black tracking-widest opacity-90">{posicion}</span>
             </div>

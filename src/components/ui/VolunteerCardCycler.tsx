@@ -5,7 +5,7 @@ const voluntariosDemo: VolunteerCardProps[] = [
   { nombre: 'Sofía Méndez',    rol: 'PRODUCCIÓN', ciudad: 'Buenos Aires', credencial: 'V·001', emoji: '🎬', rarity: 'crew',   diasDisponibles: ['MIÉ 5', 'JUE 6', 'VIE 7'] },
   { nombre: 'Tomás Pereyra',   rol: 'TECH',       ciudad: 'CABA',         credencial: 'V·002', emoji: '💻', rarity: 'crew',   diasDisponibles: ['MIÉ 5', 'JUE 6']        },
   { nombre: 'Mariana López',   rol: 'MENTORÍA',   ciudad: 'Córdoba',      credencial: 'V·003', emoji: '🧠', rarity: 'mentor', diasDisponibles: ['JUE 6', 'VIE 7']        },
-  { nombre: 'Lucas Romero',    rol: 'LOGÍSTICA',  ciudad: 'Vedia',        credencial: 'V·004', emoji: '📦', rarity: 'crew',   diasDisponibles: ['MIÉ 5', 'JUE 6', 'VIE 7'] },
+  { nombre: 'Lucas Romero',    rol: 'LOGÍSTICA',  ciudad: 'Tigre',        credencial: 'V·004', emoji: '📦', rarity: 'crew',   diasDisponibles: ['MIÉ 5', 'JUE 6', 'VIE 7'] },
   { nombre: 'Valentina Cruz',  rol: 'CONTENIDO',  ciudad: 'Mendoza',      credencial: 'V·005', emoji: '📸', rarity: 'crew',   diasDisponibles: ['MIÉ 5', 'VIE 7']        },
   { nombre: 'Bruno Salinas',   rol: 'TEAM LEAD',  ciudad: 'Rosario',      credencial: 'V·006', emoji: '🎯', rarity: 'lead',   diasDisponibles: ['MIÉ 5', 'JUE 6', 'VIE 7'] },
   { nombre: 'Camila Iturri',   rol: 'DESIGN',     ciudad: 'La Plata',     credencial: 'V·007', emoji: '🎨', rarity: 'crew',   diasDisponibles: ['JUE 6', 'VIE 7']        },
