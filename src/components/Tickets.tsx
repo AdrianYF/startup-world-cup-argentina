@@ -55,35 +55,34 @@ function Tickets() {
           aria-hidden
           className="absolute inset-x-0 -top-8 sm:-top-10 -bottom-4 z-20 rounded-3xl overflow-hidden flex items-center justify-center pointer-events-auto"
         >
-          {/* Backdrop blur nítido sobre tinte oscuro — los boxes detrás se leen como siluetas pero no compiten */}
-          <div className="absolute inset-0 backdrop-blur-xl bg-[#020618]/55" />
+          {/* Backdrop muy translúcido — los boxes detrás casi se leen */}
+          <div className="absolute inset-0 backdrop-blur-md bg-[#020618]/12" />
 
-          {/* Línea sutil arriba (refracción de borde) */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+          {/* Línea sutil arriba */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
           {/* Línea sutil abajo */}
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/6 to-transparent" />
 
           {/* Mensaje minimal */}
           <div className="relative z-10 text-center px-6 py-8">
             <div className="flex items-center justify-center gap-2.5 mb-3">
               <span className="relative flex items-center">
-                <span className="absolute inline-flex h-1.5 w-1.5 rounded-full bg-[#75AADB] opacity-70 animate-ping" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#75AADB]" />
+                <span className="absolute inline-flex h-1.5 w-1.5 rounded-full bg-[#75AADB] opacity-50 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#75AADB]/65" />
               </span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.45em] text-[#75AADB]/90">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.45em] text-[#75AADB]/60">
                 Pre Venta
               </span>
             </div>
-            <p className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-[0.06em] text-white">
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-[0.06em] text-white/75 drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)] [text-shadow:0_2px_8px_rgba(0,0,0,0.4)]">
               Próximamente
             </p>
-            <p className="text-[10px] sm:text-xs font-medium tracking-wider text-white/40 mt-3">
+            <p className="text-[10px] sm:text-xs font-medium tracking-wider text-white/25 mt-3">
               Apertura por anunciar
             </p>
           </div>
         </div>
         </div>
-        <p className="text-center text-gray-400 text-xs mt-8">* Acceso a mesas de inversión sujeto a curación previa de perfil.</p>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
     </section>
