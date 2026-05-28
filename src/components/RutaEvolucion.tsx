@@ -1,6 +1,9 @@
 import { content } from '../lib/content'
 import { GradientText } from './ui/GradientText'
 
+// Todos los boxes en azul SWC #007bff (rgba 0,123,255 al 20%).
+const ETAPA_COLORS = ['#007bff', '#007bff', '#007bff', '#007bff', '#007bff'] as const
+
 function RutaEvolucion() {
   const etapas = content.etapas
 
@@ -22,10 +25,13 @@ function RutaEvolucion() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-6">
-          {etapas.map((etapa, i) => (
+          {etapas.map((etapa, i) => {
+            const color = ETAPA_COLORS[i] ?? ETAPA_COLORS[ETAPA_COLORS.length - 1]
+            return (
             <div
               key={etapa.numero}
-              className="relative bg-white/5 border-[0.5px] border-[#75AADB]/10 hover:border-[#75AADB]/25 rounded-2xl p-6 transition-all group shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]"
+              className="relative border border-white/10 hover:border-white/25 rounded-3xl p-6 transition-all group"
+              style={{ background: `linear-gradient(to bottom, ${color}33, transparent)` }}
             >
               <h3 className="text-white font-black text-lg mb-3 group-hover:text-[#75AADB] transition-colors">
                 {etapa.titulo}
@@ -38,7 +44,7 @@ function RutaEvolucion() {
               {i < etapas.length - 1 && (
                 <div
                   aria-hidden
-                  className="hidden md:flex absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 z-10 w-6 h-6 lg:w-8 lg:h-8 items-center justify-center rounded-full bg-[#020618] border border-[#75AADB]/30 text-white shadow-[0_0_12px_-2px_rgba(117,170,219,0.4)]"
+                  className="hidden md:flex absolute top-1/2 -translate-y-1/2 -right-5 lg:-right-7 z-10 w-6 h-6 lg:w-8 lg:h-8 items-center justify-center rounded-full bg-[#020618] border border-[#75AADB]/30 text-white shadow-[0_0_12px_-2px_rgba(117,170,219,0.4)]"
                 >
                   <svg
                     width="14"
@@ -56,7 +62,8 @@ function RutaEvolucion() {
                 </div>
               )}
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

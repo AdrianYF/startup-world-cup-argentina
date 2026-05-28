@@ -1,5 +1,5 @@
 import { openVolunteerForm } from '../lib/ticketing'
-import { VolunteerCardCycler } from './ui/VolunteerCardCycler'
+import { TiltCard } from './ui/TiltCard'
 
 function Voluntarios() {
   return (
@@ -8,48 +8,45 @@ function Voluntarios() {
       <div className="max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          <div className="relative max-w-sm mx-auto w-full order-2 lg:order-1">
-            <div className="flex items-center gap-2 text-xs text-gray-500 mb-4 uppercase tracking-widest justify-center">
-              <span className="w-2 h-2 bg-[#75AADB] rounded-full animate-pulse" />
-              Tu figurita oficial · preview
-            </div>
-            <VolunteerCardCycler />
-            <p className="text-center text-gray-500 text-[10px] uppercase tracking-widest mt-12">
-              Compartible en LinkedIn · WhatsApp · X
-            </p>
-          </div>
-
+          {/* Text + título + descripción (mobile order 1, lg col derecha) */}
           <div className="order-1 lg:order-2">
-            <span className="inline-block border border-gray-300 text-gray-500 text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              Sumate al equipo
-            </span>
-
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-6">
               <span className="text-[#020618]">SÉ </span>
               <span className="text-[#75AADB]">VOLUNTARI@</span>
             </h2>
 
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              Hacé que la Startup World Cup Argentina pase. Vas a ser parte del equipo que produce el evento de startups más grande del año en LATAM.
+            <p className="text-gray-700 text-lg leading-relaxed mb-8">
+              Sumate al equipo que hace posible el evento de startups más grande del año en LATAM.
             </p>
 
-            <ul className="flex flex-col gap-2 mb-8">
-              {[
-                'Tu figurita oficial compartible en LinkedIn / IG / WhatsApp',
-                'Acceso completo a los 3 días',
-                'Networking con organizadores, inversores y founders',
-                'Certificado + merch oficial',
-              ].map(t => (
-                <li key={t} className="flex items-start gap-2 text-gray-700 text-sm">
-                  <span className="text-[#75AADB] mt-0.5" aria-hidden>·</span>{t}
-                </li>
-              ))}
-            </ul>
-
+            {/* Botón desktop — inline con texto */}
             <button
               onClick={() => openVolunteerForm()}
               aria-label="Quiero ser voluntari@ (abre formulario en una nueva pestaña)"
-              className="inline-block bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer"
+              style={{ backgroundImage: 'var(--gradient-cta)' }}
+              className="hidden lg:inline-block active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#6c5ce7]/30"
+            >
+              Quiero ser voluntari@
+            </button>
+          </div>
+
+          {/* Card — mobile order 2 (después del text), más chica en mobile */}
+          <div className="order-2 lg:order-1 max-w-[260px] sm:max-w-xs lg:max-w-sm mx-auto w-full">
+            <TiltCard
+              src="/official.png"
+              alt="Card oficial Crew — Startup World Cup Argentina 2026"
+              direction="left"
+              frame
+            />
+          </div>
+
+          {/* Botón mobile — debajo de la card */}
+          <div className="order-3 lg:hidden flex justify-center">
+            <button
+              onClick={() => openVolunteerForm()}
+              aria-label="Quiero ser voluntari@ (abre formulario en una nueva pestaña)"
+              style={{ backgroundImage: 'var(--gradient-cta)' }}
+              className="inline-block active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#6c5ce7]/30"
             >
               Quiero ser voluntari@
             </button>

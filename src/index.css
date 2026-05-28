@@ -28,6 +28,28 @@ html, body {
   font-family: var(--font-sans);
 }
 
+/* Scrollbar custom — fino, celeste sobre dark bg. Coherente con el sitio. */
+.swc-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(117, 170, 219, 0.5) transparent;
+}
+.swc-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.swc-scrollbar::-webkit-scrollbar-track {
+  background: rgba(117, 170, 219, 0.06);
+  border-radius: 8px;
+}
+.swc-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(117, 170, 219, 0.6), rgba(90, 147, 197, 0.7));
+  border-radius: 8px;
+  border: 1px solid rgba(117, 170, 219, 0.2);
+}
+.swc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(117, 170, 219, 0.85), rgba(90, 147, 197, 0.95));
+}
+
 /* Scroll snap nativo - proximity es gentil: solo "ayuda" al usuario,
  * no fuerza el snap si está scrolleando lejos de los puntos.
  * Cada <section> queda como snap target. La navbar fixed no entra al cálculo

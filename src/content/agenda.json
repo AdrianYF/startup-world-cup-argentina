@@ -4,7 +4,7 @@
       "id": "dia-1",
       "fecha": "2026-08-05",
       "label": "Miércoles 5 Ago",
-      "subtitulo": "Side Events",
+      "subtitulo": "Amistosos",
       "slots": [
         { "hora": "09:00 - 10:00", "titulo": "Acreditación y Welcome Coffee", "categoria": "Networking", "sala": "Lobby" },
         { "hora": "10:00 - 10:30", "titulo": "Opening Ceremony", "categoria": "Keynote", "sala": "Main Stage" },
@@ -19,7 +19,7 @@
       "id": "dia-2",
       "fecha": "2026-08-06",
       "label": "Jueves 6 Ago",
-      "subtitulo": "Early Stage",
+      "subtitulo": "Semi",
       "slots": [
         { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
         { "hora": "10:00 - 11:30", "titulo": "Reverse Pitches de Partners", "categoria": "Keynote", "sala": "Main Stage" },
@@ -33,7 +33,7 @@
       "id": "dia-3",
       "fecha": "2026-08-07",
       "label": "Viernes 7 Ago",
-      "subtitulo": "Growth",
+      "subtitulo": "Final",
       "slots": [
         { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
         { "hora": "10:00 - 12:30", "titulo": "Pitch Battle - Ronda 1 (Top 10)", "categoria": "Pitch Battle", "sala": "Main Stage" },
