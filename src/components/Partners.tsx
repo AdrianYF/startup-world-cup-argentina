@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { content } from '../lib/content'
 import { openPartnerForm } from '../lib/ticketing'
 import { Modal } from './ui/Modal'
@@ -13,9 +13,24 @@ import { Modal } from './ui/Modal'
 const HIGHLIGHTED_TIER_INDEX = 0
 const HIGHLIGHT_LABEL = 'TOP TIER'
 
+// Color por tier — patrón SWC.com (cada tier tiene su color brand)
+const TIER_COLORS = [
+  { hex: '#ff7675', name: 'coral' },   // Premium / Presenting
+  { hex: '#6c5ce7', name: 'purple' },  // Pro / Premier
+  { hex: '#007bff', name: 'blue' },    // Platinum
+  { hex: '#cbd5e1', name: 'slate' },   // Gold
+] as const
+
 function Partners() {
   const partners = content.partners
   const [popup, setPopup] = useState<number | null>(null)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+
+  function slide(dir: 1 | -1) {
+    const el = scrollerRef.current
+    if (!el) return
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' })
+  }
 
   return (
     <section id="partners" className="relative py-16 sm:py-24 bg-[#020618] overflow-hidden">
@@ -25,64 +40,94 @@ function Partners() {
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-3">
             <span className="text-white">QUIERO SER </span>
-            <span className="text-[#75AADB]">PARTNER</span>
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'var(--gradient-cta)' }}
+            >
+              PARTNER
+            </span>
           </h2>
           <p className="text-gray-400 max-w-xl mx-auto">
             Cada categoría combina visibilidad, innovación abierta y oportunidades reales de negocio.
           </p>
         </div>
 
-        {/* Grid: 1 col mobile, 2 cols tablet, 4 cols desktop (uno por tier) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+        {/* Slider horizontal con snap + arrows */}
+        <div className="relative">
+          {/* Botón prev */}
+          <button
+            type="button"
+            onClick={() => slide(-1)}
+            aria-label="Anterior"
+            className="hidden sm:flex absolute -left-2 lg:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#020618]/80 backdrop-blur-sm border border-[#75AADB]/30 hover:border-[#75AADB]/70 hover:bg-[#020618] text-white items-center justify-center cursor-pointer transition-all active:scale-95 shadow-lg shadow-[#75AADB]/20"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+          {/* Botón next */}
+          <button
+            type="button"
+            onClick={() => slide(1)}
+            aria-label="Siguiente"
+            className="hidden sm:flex absolute -right-2 lg:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#020618]/80 backdrop-blur-sm border border-[#75AADB]/30 hover:border-[#75AADB]/70 hover:bg-[#020618] text-white items-center justify-center cursor-pointer transition-all active:scale-95 shadow-lg shadow-[#75AADB]/20"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+
+          <div
+            ref={scrollerRef}
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
           {partners.map((p, i) => {
             const isHighlighted = i === HIGHLIGHTED_TIER_INDEX
+            const color = (TIER_COLORS[i] ?? TIER_COLORS[TIER_COLORS.length - 1]).hex
             return (
-              <div key={i} className="relative group">
-                {/* Halo coloreado detrás — versión delicada (baja opacidad, fade lento) */}
+              <div
+                key={i}
+                className="relative snap-center shrink-0 w-[85%] sm:w-[48%] lg:w-[400px]"
+              >
                 <div
-                  aria-hidden
-                  className={`absolute -inset-0.5 rounded-2xl bg-gradient-to-br from-[#75AADB]/15 via-[#6c5ce7]/10 to-[#ff7675]/10 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none ${
-                    isHighlighted ? 'lg:scale-105 mt-4 lg:mt-0' : ''
-                  }`}
-                />
-                <div
-                  className={`relative flex flex-col h-full rounded-2xl p-6 sm:p-8 border-[0.5px] transition-all duration-500 ease-out group-hover:border-[#75AADB]/35 group-hover:-translate-y-0.5 ${
-                    isHighlighted
-                      ? 'bg-white/10 border-[#75AADB]/35 lg:scale-105 mt-4 lg:mt-0 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)] group-hover:shadow-[0_6px_24px_-6px_rgba(117,170,219,0.3)] group-hover:bg-white/[0.12]'
-                      : 'bg-white/5 border-[#75AADB]/10 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] group-hover:shadow-[0_6px_20px_-8px_rgba(117,170,219,0.22)] group-hover:bg-white/[0.07]'
-                  }`}
+                  className="relative group flex flex-col justify-between h-full p-6 md:p-10 rounded-3xl border border-white/10 overflow-hidden"
+                  style={{ background: `linear-gradient(to bottom, ${color}33, transparent)` }}
                 >
-                  {isHighlighted && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="bg-[#75AADB] text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
-                        {HIGHLIGHT_LABEL}
-                      </span>
+                <div>
+                  {/* Icon arriba sin box — directo con color del tier */}
+                  <div className="flex justify-between items-start mb-6">
+                    <div style={{ color }}>
+                      <TierIcon name={p.icon} className="w-8 h-8" />
                     </div>
-                  )}
-
-                  <div className="mb-4">
-                    <TierIcon name={p.icon} className="w-8 h-8 text-[#75AADB]" />
                   </div>
 
-                  <span className="text-[#75AADB] text-[10px] uppercase tracking-[0.2em] font-black block mb-1">
-                    {p.categoria}
-                  </span>
-                  <h3 className="text-white font-black text-2xl mb-3">{p.titulo}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-6">{p.descripcion}</p>
+                  {/* Título — usa la categoría en Title Case */}
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 normal-case">
+                    {p.categoria
+                      .toLowerCase()
+                      .replace(/\b\w/g, c => c.toUpperCase())}
+                  </h3>
 
-                  <ul className="flex flex-col gap-3 mb-8">
+                  {p.descripcion && (
+                    <p className="text-slate-400 text-sm leading-relaxed mb-6">{p.descripcion}</p>
+                  )}
+
+                  {/* Features con dots violeta uniformes */}
+                  <ul className="space-y-4 mb-10 text-slate-300">
                     {p.features.map((f, fi) => (
-                      <li key={fi} className="flex items-start gap-2 text-gray-300 text-sm leading-snug">
-                        <span className="text-[#75AADB] flex-shrink-0 mt-0.5">✓</span>
+                      <li key={fi} className="flex items-start gap-3 text-sm leading-snug">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#75AADB] mt-1.5 shrink-0" />
                         <span>{f}</span>
                       </li>
                     ))}
                   </ul>
-
                 </div>
+                </div>
+
               </div>
             )
           })}
+          </div>
         </div>
 
         <div className="text-center mt-10">
