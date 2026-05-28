@@ -9,10 +9,6 @@ import { Modal } from './ui/Modal'
  * Cada card muestra TODOS los features (no "+N más"). Highlight diferenciado por tier.
  */
 
-// El primer tier (Premium) es el highlighted — mismo tratamiento que el plan destacado de Tickets.
-const HIGHLIGHTED_TIER_INDEX = 0
-const HIGHLIGHT_LABEL = 'TOP TIER'
-
 // Color por tier — patrón SWC.com (cada tier tiene su color brand)
 const TIER_COLORS = [
   { hex: '#ff7675', name: 'coral' },   // Premium / Presenting
@@ -82,7 +78,6 @@ function Partners() {
             className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
           {partners.map((p, i) => {
-            const isHighlighted = i === HIGHLIGHTED_TIER_INDEX
             const color = (TIER_COLORS[i] ?? TIER_COLORS[TIER_COLORS.length - 1]).hex
             return (
               <div
