@@ -51,7 +51,8 @@ function PitchBattle() {
             <button
               onClick={() => openStartupForm()}
               aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
-              className="inline-flex items-center justify-center gap-2 bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-[transform,background-color] uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40"
+              style={{ backgroundImage: 'var(--gradient-cta)' }}
+              className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/40 hover:scale-105"
             >
               Aplicá como Startup
               <svg

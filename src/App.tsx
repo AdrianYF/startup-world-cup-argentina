@@ -17,6 +17,7 @@ import Speakers from './components/Speakers'
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
+import { BackToTop } from './components/ui/BackToTop'
 
 function App() {
   // Scroll a la sección cuando llegamos con hash en la URL (ej. /#speakers desde /speakers).
@@ -62,6 +63,7 @@ function App() {
       <FadeInSection>
         <Footer />
       </FadeInSection>
+      <BackToTop />
     </div>
   )
 }

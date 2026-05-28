@@ -74,7 +74,7 @@ function Tickets() {
                 Pre Venta
               </span>
             </div>
-            <p className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-[0.06em] text-white/75 drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)] [text-shadow:0_2px_8px_rgba(0,0,0,0.4)]">
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-[0.06em] text-white drop-shadow-[0_4px_14px_rgba(0,0,0,0.35)] [text-shadow:0_2px_6px_rgba(0,0,0,0.25)]">
               Próximamente
             </p>
             <p className="text-[10px] sm:text-xs font-medium tracking-wider text-white/25 mt-3">

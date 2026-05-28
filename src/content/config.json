@@ -12,15 +12,15 @@
     { "valor": "+100", "label": "Ciudades compitiendo a nivel global" },
     { "valor": "10", "label": "Startups finalistas en Argentina" },
     { "valor": "1", "label": "Viaja a Silicon Valley" },
-    { "valor": "3", "label": "Días en Buenos Aires", "sublabel": "+20 eventos" }
+    { "valor": "+20", "label": "Eventos en Buenos Aires" }
   ],
   "links": {
     "startupGrindUrl": "https://www.startupgrind.com/events/details/startup-grind-buenos-aires-presents-startup-world-cup-argentina/",
-    "emailPartners": "partners@startupworldcupargentina.com.ar",
-    "emailGeneral": "hola@startupworldcupargentina.com.ar",
-    "formStartup": "",
+    "emailPartners": "startupwc.arg@gmail.com",
+    "emailGeneral": "startupwc.arg@gmail.com",
+    "formStartup": "https://docs.google.com/forms/d/e/1FAIpQLSewzcMuNozK2z3EaMgl3q8eSuq345LS50RF2ngAgz6diYRmkg/viewform?pli=1",
     "formVoluntario": "",
-    "formPartner": "",
+    "formPartner": "https://docs.google.com/forms/d/e/1FAIpQLScBOsB9qcRVhIeQxA8NB44FxSElUmB0tOQZPyUBh9l1RZZ8gQ/viewform?usp=sharing&ouid=107262592902668876188",
     "instagram": "",
     "linkedin": "",
     "twitter": ""
