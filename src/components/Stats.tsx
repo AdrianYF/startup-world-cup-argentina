@@ -59,11 +59,6 @@ function Stats() {
               <div className="relative text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] text-gray-400 mt-3 sm:mt-4 leading-snug font-bold">
                 {s.label}
               </div>
-              {'sublabel' in s && s.sublabel && (
-                <div className="relative text-[10px] sm:text-xs font-semibold text-[#75AADB] mt-1 sm:mt-1.5 normal-case tracking-normal leading-snug">
-                  {s.sublabel}
-                </div>
-              )}
             </div>
           ))}
         </div>
