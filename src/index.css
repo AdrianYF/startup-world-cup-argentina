@@ -14,8 +14,11 @@
   /* Gradient brand — usar SOLO para palabra-acento en H1/H2 vía <GradientText /> */
   --gradient-brand: linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%);
 
-  /* Gradient CTA — botones primarios (fill) y secundarios (border). Termina en coral. */
+  /* Gradient CTA — botones secundarios 'Partner' (border). Termina en coral. */
   --gradient-cta: linear-gradient(115deg, #4F46E5 0%, #6c5ce7 30%, #c084fc 60%, #ff7675 100%);
+
+  /* Gradient apply — CTA primario 'Aplicá / Postular' en celeste de marca */
+  --gradient-apply: linear-gradient(115deg, #8ec5e8 0%, #75AADB 50%, #5a93c5 100%);
 
   /* Gradient data — para data numérica destacada (1 Million, countdown) */
   --gradient-data: linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%);
@@ -26,6 +29,11 @@
 html, body {
   background-color: var(--color-swc-bg);
   font-family: var(--font-sans);
+}
+
+/* Títulos principales con Outfit explícito (h1–h6) — evita reset que pierda el font-family. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Scrollbar custom — fino, celeste sobre dark bg. Coherente con el sitio. */

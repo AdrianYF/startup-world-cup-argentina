@@ -112,10 +112,7 @@ function Footer() {
             {/* Wordmark consistente con navbar */}
             <div className="flex items-baseline gap-2 mb-5">
               <span className="font-black text-white text-3xl leading-none tracking-tight">SWC</span>
-              <span
-                className="bg-clip-text text-transparent font-bold uppercase tracking-[0.2em] leading-none text-xs"
-                style={{ backgroundImage: 'var(--gradient-cta)' }}
-              >
+              <span className="text-[#75AADB] font-bold uppercase tracking-[0.2em] leading-none text-xs">
                 Argentina·26
               </span>
             </div>
