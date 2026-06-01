@@ -9,7 +9,7 @@ function PitchBattle() {
   const stats = content.pitchBattle
 
   return (
-    <section id="pitch" className="relative py-16 sm:py-24 bg-white text-[#020618] overflow-x-clip">
+    <section id="pitch" className="relative py-16 sm:py-24 bg-[#eef4fb] text-[#020618] overflow-x-clip">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
 
@@ -34,11 +34,11 @@ function PitchBattle() {
                 <button
                   key={i}
                   onClick={() => setPopupIndex(i)}
-                  className="flex items-center gap-4 bg-[#75AADB] hover:bg-[#5a93c5] border border-[#75AADB] hover:border-[#5a93c5] rounded-xl px-6 py-4 text-left transition-colors cursor-pointer w-full group"
+                  className="flex items-center gap-4 bg-[#dbe9f7] hover:bg-[#cadef2] border border-[#bcd5ea] hover:border-[#a9cae8] rounded-xl px-6 py-4 text-left transition-colors cursor-pointer w-full group"
                 >
                   <div className="flex-1">
-                    <p className="text-white font-black">{stat.titulo}</p>
-                    <p className="text-white/85 font-bold text-sm">{stat.subtitulo}</p>
+                    <p className="text-[#1e3a5f] font-black">{stat.titulo}</p>
+                    <p className="text-[#3f6189] font-bold text-sm">{stat.subtitulo}</p>
                   </div>
                 </button>
               ))}
@@ -51,8 +51,8 @@ function PitchBattle() {
             <button
               onClick={() => openStartupForm()}
               aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
-              style={{ backgroundImage: 'var(--gradient-cta)' }}
-              className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/40 hover:scale-105"
+              style={{ backgroundImage: 'var(--gradient-apply)' }}
+              className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40 hover:scale-105"
             >
               Aplicá como Startup
               <svg

@@ -51,8 +51,8 @@ function Hero() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch w-full">
 
-          {/* === Columna izquierda: copa arriba + 1 Million abajo === */}
-          <div className="flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
+          {/* === Columna izquierda: copa arriba + 1 Million abajo (lg: movida a la derecha) === */}
+          <div className="lg:order-2 flex flex-col items-center lg:items-start justify-between gap-8 lg:gap-12 text-center lg:text-left">
 
             {/* Copa arriba */}
             <div className="relative self-center">
@@ -75,12 +75,6 @@ function Hero() {
                   Premio Final · Silicon Valley
                 </div>
                 <h2 className="leading-[0.95] flex items-center justify-center gap-3 sm:gap-4">
-                  <span
-                    className="flex-shrink-0 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none drop-shadow-[0_4px_16px_rgba(117,170,219,0.4)]"
-                    aria-hidden
-                  >
-                    🏆
-                  </span>
                   <span>
                     <span
                       className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
@@ -102,8 +96,8 @@ function Hero() {
 
           </div>
 
-          {/* === Columna derecha: H1+CTAs arriba (CTAs a altura del trofeo) / Countdown abajo (alineado con 1 Million) === */}
-          <div className="flex flex-col items-stretch text-center lg:text-left justify-between gap-8 lg:gap-12">
+          {/* === Columna derecha: H1+CTAs arriba (CTAs a altura del trofeo) / Countdown abajo (alineado con 1 Million) (lg: movida a la izquierda) === */}
+          <div className="lg:order-1 flex flex-col items-stretch text-center lg:text-left justify-between gap-8 lg:gap-12">
 
             {/* Top group: H1 + CTAs (alineados con el trofeo de col 1) */}
             <div className="flex flex-col gap-8 lg:gap-10">
