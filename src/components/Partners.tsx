@@ -75,7 +75,7 @@ function Partners() {
 
           <div
             ref={scrollerRef}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-2 [justify-content:safe_center] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
           {partners.map((p, i) => {
             const color = (TIER_COLORS[i] ?? TIER_COLORS[TIER_COLORS.length - 1]).hex
