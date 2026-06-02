@@ -116,7 +116,7 @@ function Hero() {
               </div>
 
               {/* CTAs — a la misma altura del trofeo */}
-              <div className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
+              <div className="flex flex-row flex-wrap gap-3 sm:gap-4 justify-start w-full">
                 <button
                   onClick={() => openStartupForm()}
                   aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}
