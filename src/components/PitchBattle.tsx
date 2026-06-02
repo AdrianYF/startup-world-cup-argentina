@@ -45,7 +45,7 @@ function PitchBattle() {
             </div>
           </div>
 
-          <div className="relative flex flex-col items-center gap-8">
+          <div className="relative flex flex-col items-center gap-8 lg:gap-16">
             <WorldCupTicket variant="full" />
 
             <button
