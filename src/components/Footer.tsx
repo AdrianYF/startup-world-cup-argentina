@@ -233,7 +233,7 @@ function Footer() {
   )
 }
 
-function BasesContent({ onClose }: { onClose: () => void }) {
+export function BasesContent({ onClose }: { onClose: () => void }) {
   return (
     <div className="text-gray-200 text-base leading-relaxed">
       <h3 id="bases-modal-title" className="text-white font-black text-2xl sm:text-3xl mb-1">

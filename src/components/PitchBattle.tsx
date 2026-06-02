@@ -3,9 +3,11 @@ import { content } from '../lib/content'
 import { openStartupForm } from '../lib/ticketing'
 import { WorldCupTicket } from './ui/WorldCupTicket'
 import { Modal } from './ui/Modal'
+import { BasesContent } from './Footer'
 
 function PitchBattle() {
   const [popupIndex, setPopupIndex] = useState<number | null>(null)
+  const [basesOpen, setBasesOpen] = useState(false)
   const stats = content.pitchBattle
 
   return (
@@ -48,28 +50,44 @@ function PitchBattle() {
           <div className="relative flex flex-col items-center gap-8 lg:gap-16">
             <WorldCupTicket variant="full" />
 
-            <button
-              onClick={() => openStartupForm()}
-              aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
-              style={{ backgroundImage: 'var(--gradient-apply)' }}
-              className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40 hover:scale-105"
-            >
-              Aplicá como Startup
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={() => openStartupForm()}
+                aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
+                style={{ backgroundImage: 'var(--gradient-apply)' }}
+                className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40 hover:scale-105"
               >
-                {/* Lucide plane (filled) — pase a Silicon Valley */}
-                <path d="M21.6 2.4a1.5 1.5 0 0 0-1.6-.35l-18 6a1.5 1.5 0 0 0-.13 2.79l6.99 3.3 3.3 6.99a1.5 1.5 0 0 0 2.79-.13l6-18a1.5 1.5 0 0 0-.35-1.6Z" />
-              </svg>
-            </button>
+                Aplicá como Startup
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  {/* Lucide plane (filled) — pase a Silicon Valley */}
+                  <path d="M21.6 2.4a1.5 1.5 0 0 0-1.6-.35l-18 6a1.5 1.5 0 0 0-.13 2.79l6.99 3.3 3.3 6.99a1.5 1.5 0 0 0 2.79-.13l6-18a1.5 1.5 0 0 0-.35-1.6Z" />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setBasesOpen(true)}
+                className="text-sm font-bold text-[#5a93c5] hover:text-[#020618] underline underline-offset-4 transition-colors cursor-pointer"
+              >
+                Bases y Condiciones
+              </button>
+            </div>
           </div>
 
         </div>
       </div>
+
+      {basesOpen && (
+        <Modal onClose={() => setBasesOpen(false)} titleId="bases-modal-title" size="3xl">
+          <BasesContent onClose={() => setBasesOpen(false)} />
+        </Modal>
+      )}
 
       {popupIndex !== null && (
         <Modal onClose={() => setPopupIndex(null)} titleId="pitch-modal-title">
