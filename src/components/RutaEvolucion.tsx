@@ -84,7 +84,7 @@ function RutaEvolucion() {
 
         {/* Mobile: las cards colapsan/apilan con el efecto stacked-cards */}
         <div className="md:hidden">
-          <ScrollStack>
+          <ScrollStack gap={16}>
             {etapas.map((etapa, i) => (
               <EtapaCard
                 key={etapa.numero}
