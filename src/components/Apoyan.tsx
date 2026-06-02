@@ -19,12 +19,18 @@ function Apoyan() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {categorias.map((cat, i) => (
+          {categorias.map((cat, i) => {
+            // En desktop, cada categoría usa tantas columnas como logos tenga (una sola fila).
+            const colsClass =
+              ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5' } as Record<number, string>)[
+                cat.logos.length
+              ] ?? 'md:grid-cols-3'
+            return (
             <div key={i}>
               <p className="text-center text-gray-400 text-xs uppercase tracking-[0.3em] font-bold mb-4">
                 {cat.titulo}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-center justify-items-center">
+              <div className={`grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 items-center justify-items-center`}>
                 {cat.logos.map((logo, j) => {
                   const url = 'url' in logo && typeof logo.url === 'string' ? logo.url : undefined
                   const Wrapper = ({ children }: { children: ReactNode }) =>
@@ -79,7 +85,8 @@ function Apoyan() {
                 })}
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
