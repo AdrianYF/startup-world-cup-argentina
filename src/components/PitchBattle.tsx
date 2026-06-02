@@ -34,11 +34,11 @@ function PitchBattle() {
                 <button
                   key={i}
                   onClick={() => setPopupIndex(i)}
-                  className="flex items-center gap-4 bg-[#dbe9f7] hover:bg-[#cadef2] border border-[#bcd5ea] hover:border-[#a9cae8] rounded-xl px-6 py-4 text-left transition-colors cursor-pointer w-full group"
+                  className="flex items-center gap-4 bg-[#75AADB] hover:bg-[#5a93c5] border border-[#75AADB] hover:border-[#5a93c5] rounded-xl px-6 py-4 text-left transition-colors cursor-pointer w-full group"
                 >
                   <div className="flex-1">
-                    <p className="text-[#1e3a5f] font-black">{stat.titulo}</p>
-                    <p className="text-[#3f6189] font-bold text-sm">{stat.subtitulo}</p>
+                    <p className="text-white font-black">{stat.titulo}</p>
+                    <p className="text-white/85 font-bold text-sm">{stat.subtitulo}</p>
                   </div>
                 </button>
               ))}
