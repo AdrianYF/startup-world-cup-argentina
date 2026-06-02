@@ -191,30 +191,22 @@ function Hero() {
                 <div className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-3 sm:mb-4 text-center">
                   Faltan:
                 </div>
-                <div className="flex items-start justify-center gap-1 sm:gap-2">
+                <div className="flex items-start justify-center gap-2 sm:gap-3">
                   {[
                     { val: timeLeft.dias, label: 'DÍAS' },
                     { val: timeLeft.horas, label: 'HORAS' },
                     { val: timeLeft.mins, label: 'MIN' },
                     { val: timeLeft.segs, label: 'SEG' },
-                  ].map(({ val, label }, i, arr) => (
-                    <div key={label} className="flex items-start gap-1 sm:gap-2">
-                      <div className="flex flex-col items-center min-w-[2.5rem] sm:min-w-[3.5rem] lg:min-w-[4rem]">
+                  ].map(({ val, label }) => (
+                    <div key={label} className="flex flex-col items-center gap-2 sm:gap-2.5">
+                      <div className="flex items-center justify-center min-w-[3.25rem] sm:min-w-[4.25rem] lg:min-w-[4.75rem] px-2.5 py-3 sm:py-4 rounded-md border-[0.5px] border-white/10 bg-white/[0.08] backdrop-blur-sm">
                         <span className="text-3xl sm:text-4xl lg:text-5xl font-black leading-none tabular-nums text-white">
                           {String(val).padStart(2, '0')}
                         </span>
-                        <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55 mt-2 sm:mt-3">
-                          {label}
-                        </span>
                       </div>
-                      {i < arr.length - 1 && (
-                        <span
-                          className="text-[#75AADB]/40 text-2xl sm:text-3xl lg:text-4xl font-thin leading-none mt-0.5 sm:mt-1"
-                          aria-hidden
-                        >
-                          :
-                        </span>
-                      )}
+                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55">
+                        {label}
+                      </span>
                     </div>
                   ))}
                 </div>
