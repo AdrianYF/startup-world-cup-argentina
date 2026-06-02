@@ -80,7 +80,7 @@ function Hero() {
                       className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(108,92,231,0.5)]"
                       style={{
                         backgroundImage:
-                          'linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)',
+                          'linear-gradient(135deg, #75AADB 0%, #75AADB 60%, #ffffff 100%)',
                       }}
                     >
                       1 Million

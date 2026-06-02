@@ -16,6 +16,7 @@ import Apoyan from './components/Apoyan'
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
+import { ScrollStack } from './components/ui/ScrollStack'
 import { BackToTop } from './components/ui/BackToTop'
 
 function App() {
@@ -32,20 +33,19 @@ function App() {
   }, [hash])
 
   // Hero queda sin FadeIn - debe verse desde el primer paint (above-the-fold).
-  const sections = [
-    PartnershipWith,
-    Stats,
-    RutaEvolucion,
+  // Las 3 primeras secciones van en stacked-cards (scroll-stack estilo Framer).
+  const stackedSections = [PartnershipWith, Stats, RutaEvolucion]
+  const midSections = [
     PitchBattle,
     Agenda,
     Tickets,
     Startups,
     Voluntarios,
     // Speakers, // TODO: re-habilitar cuando se confirmen los speakers
-    Partners,
-    Apoyan,
-    FAQ,
   ]
+  // Partners + Apoyan comparten el mismo efecto stacked-cards.
+  const partnerStack = [Partners, Apoyan]
+  const tailSections = [FAQ]
 
   return (
     <div id="top" className="bg-[#020618] text-white min-h-screen">
@@ -53,8 +53,23 @@ function App() {
       <Navbar />
       <main id="main" tabIndex={-1}>
         <Hero />
-        {sections.map((Section, i) => (
-          <FadeInSection key={i}>
+        <ScrollStack>
+          {stackedSections.map((Section, i) => (
+            <Section key={i} />
+          ))}
+        </ScrollStack>
+        {midSections.map((Section, i) => (
+          <FadeInSection key={`mid-${i}`}>
+            <Section />
+          </FadeInSection>
+        ))}
+        <ScrollStack>
+          {partnerStack.map((Section, i) => (
+            <Section key={i} />
+          ))}
+        </ScrollStack>
+        {tailSections.map((Section, i) => (
+          <FadeInSection key={`tail-${i}`}>
             <Section />
           </FadeInSection>
         ))}

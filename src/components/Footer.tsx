@@ -125,10 +125,7 @@ function Footer() {
             {/* Recordatorio fecha + lugar */}
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold">
               <CalendarIcon />
-              <span
-                className="bg-clip-text text-transparent"
-                style={{ backgroundImage: 'var(--gradient-cta)' }}
-              >
+              <span className="text-[#75AADB]">
                 {fechas}
               </span>
             </div>
