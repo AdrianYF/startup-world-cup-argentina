@@ -11,7 +11,9 @@
     "titulo": "COMMUNITY PARTNERS",
     "logos": [
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
-      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" }
+      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
+      { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
+      { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.65, "url": "https://titofree.com/" }
     ]
   },
   {
