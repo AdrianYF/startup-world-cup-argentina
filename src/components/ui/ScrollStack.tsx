@@ -11,7 +11,10 @@ const BASE_TOP = 88 // px por debajo de la navbar fija
 const PEEK = 12 // px que asoma el borde superior de cada card apilada
 const MIN_SCALE = 0.9
 
-export function ScrollStack({ children }: PropsWithChildren) {
+export function ScrollStack({
+  children,
+  gap = 0,
+}: PropsWithChildren<{ gap?: number }>) {
   const containerRef = useRef<HTMLDivElement>(null)
   const items = Children.toArray(children)
 
@@ -83,6 +86,7 @@ export function ScrollStack({ children }: PropsWithChildren) {
             zIndex: i + 1,
             transformOrigin: 'center top',
             willChange: 'transform',
+            marginBottom: i < items.length - 1 ? `${gap}px` : undefined,
           }}
         >
           {child}
