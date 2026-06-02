@@ -24,9 +24,17 @@ function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden">
 
-      {/* Video de fondo — poster pinta inmediato, video bufferiza en background */}
-      <video
+      {/* Imagen de fondo base — siempre presente (en mobile es el fondo principal) */}
+      <img
+        src="/SWC-header.png"
+        alt=""
+        aria-hidden
         className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Video de fondo — solo sm+ (en mobile pesa/insegura el autoplay, queda la imagen) */}
+      <video
+        className="hidden sm:block absolute inset-0 w-full h-full object-cover"
         src="/video.mp4"
         autoPlay
         loop
@@ -116,7 +124,7 @@ function Hero() {
               </div>
 
               {/* CTAs — a la misma altura del trofeo */}
-              <div className="flex flex-row flex-wrap gap-3 sm:gap-4 justify-start w-full">
+              <div className="flex flex-row flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
                 <button
                   onClick={() => openStartupForm()}
                   aria-label={`${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`}

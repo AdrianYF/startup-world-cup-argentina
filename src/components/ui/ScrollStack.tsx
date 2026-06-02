@@ -19,8 +19,10 @@ export function ScrollStack({ children }: PropsWithChildren) {
     const container = containerRef.current
     if (!container) return
 
+    // Solo hijos directos: permite anidar ScrollStack dentro de otro sin que el
+    // de afuera capture las cards del de adentro.
     const cards = Array.from(
-      container.querySelectorAll<HTMLElement>('[data-stack-card]'),
+      container.querySelectorAll<HTMLElement>(':scope > [data-stack-card]'),
     )
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -36,7 +38,9 @@ export function ScrollStack({ children }: PropsWithChildren) {
         const card = cards[i]
         const next = cards[i + 1]
         if (!next) {
-          card.style.transform = 'perspective(1200px) scale(1)'
+          // 'none' (no scale(1)) para no crear containing-block que rompa
+          // el position:sticky de cards anidadas dentro de esta card.
+          card.style.transform = 'none'
           continue
         }
         const top = BASE_TOP + i * PEEK // punto donde queda pinneada
