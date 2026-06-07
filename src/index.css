@@ -58,6 +58,38 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, rgba(117, 170, 219, 0.85), rgba(90, 147, 197, 0.95));
 }
 
+/* Oculta la scrollbar (carrusel con flechas propias). */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Banda tipo ticker de mercado: scroll horizontal infinito.
+ * El track contiene la lista DUPLICADA; al desplazarse -50% el loop es perfecto. */
+@keyframes swc-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.swc-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: swc-marquee 38s linear infinite;
+}
+.swc-marquee:hover .swc-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .swc-marquee-track {
+    animation: none;
+  }
+}
+
 /* Scroll snap nativo - proximity es gentil: solo "ayuda" al usuario,
  * no fuerza el snap si está scrolleando lejos de los puntos.
  * Cada <section> queda como snap target. La navbar fixed no entra al cálculo

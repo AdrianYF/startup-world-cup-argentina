@@ -6,6 +6,7 @@ import Hero from './components/Hero'
 import PartnershipWith from './components/PartnershipWith'
 import Stats from './components/Stats'
 import RutaEvolucion from './components/RutaEvolucion'
+import CaminoALaCopa from './components/CaminoALaCopa'
 import PitchBattle from './components/PitchBattle'
 import Agenda from './components/Agenda'
 import Tickets from './components/Tickets'
@@ -43,8 +44,6 @@ function App() {
     Voluntarios,
     // Speakers, // TODO: re-habilitar cuando se confirmen los speakers
   ]
-  // Partners + Apoyan comparten el mismo efecto stacked-cards.
-  const partnerStack = [Partners, Apoyan]
   const tailSections = [FAQ]
 
   return (
@@ -58,16 +57,20 @@ function App() {
             <Section key={i} />
           ))}
         </ScrollStack>
+        <FadeInSection>
+          <CaminoALaCopa />
+        </FadeInSection>
         {midSections.map((Section, i) => (
           <FadeInSection key={`mid-${i}`}>
             <Section />
           </FadeInSection>
         ))}
-        <ScrollStack>
-          {partnerStack.map((Section, i) => (
-            <Section key={i} />
-          ))}
-        </ScrollStack>
+        <FadeInSection>
+          <Partners />
+        </FadeInSection>
+        <FadeInSection>
+          <Apoyan />
+        </FadeInSection>
         {tailSections.map((Section, i) => (
           <FadeInSection key={`tail-${i}`}>
             <Section />
