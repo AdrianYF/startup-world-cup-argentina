@@ -15,11 +15,11 @@ function HolographicSeal({ size = 56 }: { size?: number }) {
         className="absolute inset-0 animate-[spin_8s_linear_infinite]"
         style={{
           background:
-            'conic-gradient(from 0deg, #75AADB, #75AADB, #75AADB, #75AADB, #75AADB, #75AADB, #75AADB)',
+            'conic-gradient(from 0deg, #d4af37, #f3e6b3, #a67c00, #d4af37, #f3e6b3, #a67c00, #d4af37)',
         }}
       />
       <div className="absolute inset-[3px] rounded-full bg-gradient-to-br from-white/40 to-[#0f172b]/30 backdrop-blur-[1px] flex items-center justify-center">
-        <span className="font-black text-[#0f172b]/90" style={{ fontSize: size * 0.32 }}>
+        <span className="font-black text-[#21313f]/90" style={{ fontSize: size * 0.32 }}>
           SWC
         </span>
       </div>
@@ -51,13 +51,13 @@ function SolDeMayo({ size = 240, opacity = 0.18 }: { size?: number; opacity?: nu
           <polygon
             key={i}
             points="50,5 52,40 48,40"
-            fill="#75AADB"
+            fill="#a67c00"
             transform={`rotate(${angle} 50 50)`}
           />
         )
       })}
-      <circle cx="50" cy="50" r="14" fill="#75AADB" />
-      <circle cx="50" cy="50" r="11" fill="#75AADB" />
+      <circle cx="50" cy="50" r="14" fill="#a67c00" />
+      <circle cx="50" cy="50" r="11" fill="#a67c00" />
     </svg>
   )
 }
@@ -125,29 +125,29 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
   if (variant === 'compact') {
     return (
       <div className="inline-flex items-stretch font-mono select-none drop-shadow-lg">
-        <div className="relative bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#75AADB] rounded-l-lg px-4 py-2 border border-r-0 border-[#75AADB] overflow-hidden">
+        <div className="relative bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#d4af37] rounded-l-lg px-4 py-2 border border-r-0 border-[#d4af37] overflow-hidden">
           <GuillochePattern />
           <div className="relative flex items-center gap-3">
             <HolographicSeal size={32} />
             <div>
-              <div className="text-[8px] font-black tracking-[0.2em] uppercase text-[#0f172b]/80">
+              <div className="text-[8px] font-black tracking-[0.2em] uppercase text-[#21313f]/80">
                 Premio Final
               </div>
-              <div className="text-xl font-black leading-none text-[#0f172b] mt-0.5">
+              <div className="text-xl font-black leading-none text-[#21313f] mt-0.5">
                 USD {formatUSD}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative w-3 bg-[#75AADB] border border-[#75AADB] border-l-0 border-r-0">
+        <div className="relative w-3 bg-[#d4af37] border border-[#d4af37] border-l-0 border-r-0">
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px border-l border-dashed border-[#0f172b]/50" />
           <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
         </div>
 
-        <div className="bg-gradient-to-br from-[#75AADB] to-[#ffffff] rounded-r-lg px-3 py-2 border border-l-0 border-[#75AADB] flex items-center justify-center">
-          <span className="text-[#0f172b] text-sm font-black tracking-widest">AR·26</span>
+        <div className="bg-gradient-to-br from-[#d4af37] to-[#ffffff] rounded-r-lg px-3 py-2 border border-l-0 border-[#d4af37] flex items-center justify-center">
+          <span className="text-[#21313f] text-sm font-black tracking-widest">AR·26</span>
         </div>
       </div>
     )
@@ -159,13 +159,13 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
     <div className="relative font-mono select-none">
 
       {/* Halos */}
-      <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#75AADB]/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#75AADB]/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#d4af37]/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#d4af37]/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative rounded-xl sm:rounded-2xl border border-[#75AADB] shadow-[0_0_24px_rgba(117,170,219,0.7),_0_0_60px_rgba(117,170,219,0.4),_0_25px_70px_-15px_rgba(117,170,219,0.5)] overflow-hidden">
+      <div className="relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden">
 
-        {/* Fondo celeste */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#bcd5ea] via-[#75AADB] to-[#ffffff]" />
+        {/* Fondo dorado */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#fff8e6]" />
 
         {/* Sol de Mayo */}
         <SolDeMayo size={320} opacity={0.08} />
@@ -177,14 +177,32 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
         <div className="absolute top-0 left-0 right-16 sm:right-28 h-1 sm:h-1.5 bg-white" />
         <div className="absolute bottom-0 left-0 right-16 sm:right-28 h-1 sm:h-1.5 bg-white" />
 
-        <div className="relative flex items-stretch text-[#0f172b]">
+        <div className="relative flex items-stretch text-[#21313f]">
 
           {/* === CUERPO PRINCIPAL === */}
           <div className="flex-1 p-4 sm:p-7 pt-5 sm:pt-8 min-w-0">
 
             {/* Header */}
-            <div className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-80 mb-3 sm:mb-6">
-              Startup World Cup · Argentina 2026
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-6">
+              <div
+                aria-hidden
+                className="h-7 sm:h-10 opacity-70 shrink-0"
+                style={{
+                  aspectRatio: '318 / 390',
+                  backgroundColor: 'rgb(32 49 63)',
+                  WebkitMaskImage: 'url(/SWC-logo.png)',
+                  maskImage: 'url(/SWC-logo.png)',
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                }}
+              />
+              <div className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase opacity-80">
+                Startup World Cup · Argentina 2026
+              </div>
             </div>
 
             {/* Premio - protagonista */}
@@ -220,13 +238,13 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
           </div>
 
           {/* === PERFORACIÓN === */}
-          <div className="relative w-3 sm:w-5 bg-[#75AADB] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
+          <div className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
           </div>
 
           {/* === STUB === */}
-          <div className="relative w-16 sm:w-28 bg-gradient-to-b from-[#75AADB] via-[#75AADB] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0">
+          <div className="relative w-16 sm:w-28 bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0">
             <GuillochePattern />
 
             <div className="relative sm:hidden">
