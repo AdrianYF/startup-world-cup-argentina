@@ -1,5 +1,6 @@
 import config from '../content/config.json'
 import etapas from '../content/etapas.json'
+import camino from '../content/camino.json'
 import tickets from '../content/tickets.json'
 import pitchBattle from '../content/pitchBattle.json'
 import buildersArena from '../content/buildersArena.json'
@@ -12,6 +13,7 @@ import speakers from '../content/speakers.json'
 export const content = {
   config,
   etapas,
+  camino,
   tickets,
   pitchBattle,
   buildersArena,
