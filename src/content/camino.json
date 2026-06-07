@@ -1,0 +1,47 @@
+[
+  {
+    "etiqueta": "Precalentamiento #0",
+    "fecha": "Miércoles 10 de junio",
+    "fechaCorta": "Mié 10 jun",
+    "dia": "10",
+    "mes": "JUN",
+    "titulo": "Precalentamiento",
+    "url": "https://luma.com/jzmnwnqj",
+    "destacado": true
+  },
+  {
+    "etiqueta": "Amistoso #1",
+    "fecha": "18 de junio",
+    "fechaCorta": "18 jun",
+    "dia": "18",
+    "mes": "JUN",
+    "titulo": "Entrenamiento a puertas abiertas",
+    "url": "https://luma.com/vtas4te4"
+  },
+  {
+    "etiqueta": "Amistoso #2",
+    "fecha": "2 de julio",
+    "fechaCorta": "2 jul",
+    "dia": "02",
+    "mes": "JUL",
+    "titulo": "Conferencia de Prensa"
+  },
+  {
+    "etiqueta": "Amistoso #3",
+    "fecha": "16 de julio",
+    "fechaCorta": "16 jul",
+    "dia": "16",
+    "mes": "JUL",
+    "titulo": "Lista de convocados"
+  },
+  {
+    "etiqueta": "Bonus",
+    "fecha": "Tercer Tiempo",
+    "fechaCorta": "Bonus",
+    "dia": "🍺",
+    "mes": "3T",
+    "titulo": "Tercer Tiempo",
+    "descripcion": "Con un auspiciante de cerveza, algo más relajado.",
+    "bonus": true
+  }
+]

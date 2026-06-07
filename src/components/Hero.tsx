@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { content } from '../lib/content'
 import { openStartupForm, openPartnerForm } from '../lib/ticketing'
+import { EventTicker } from './ui/EventTicker'
 
 function Hero() {
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
@@ -216,6 +217,9 @@ function Hero() {
         </div>
 
       </div>
+
+      {/* Banda ticker de próximos eventos — abajo del todo en el hero */}
+      <EventTicker className="relative z-20 mb-8 sm:mb-10" />
     </section>
   )
 }

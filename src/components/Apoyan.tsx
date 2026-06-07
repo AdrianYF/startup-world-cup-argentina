@@ -51,9 +51,15 @@ function Apoyan() {
                     <Wrapper key={j}>
                     {logo.img ? (() => {
                       const scale = 'scale' in logo && typeof logo.scale === 'number' ? logo.scale : undefined
+                      // muted: mismo estilo que UNCUYO (texto), atenuado por defecto y full blanco + glow en hover.
+                      const muted = 'muted' in logo && (logo as { muted?: boolean }).muted === true
                       // Color con contraste sobre bg azul oscuro: brillo+contraste para que los logos pop, drop-shadow celeste sutil.
                       const baseFilter = `contrast(1.1) saturate(1.15) brightness(1.05) drop-shadow(0 2px 12px rgba(117,170,219,0.15))`
-                      const hoverFilter = `contrast(1.18) saturate(1.3) brightness(1.12) drop-shadow(0 6px 24px rgba(117,170,219,0.55))`
+                      const hoverFilter = muted
+                        ? `drop-shadow(0 4px 16px rgba(117,170,219,0.5))`
+                        : `contrast(1.18) saturate(1.3) brightness(1.12) drop-shadow(0 6px 24px rgba(117,170,219,0.55))`
+                      const baseFilterFinal = muted ? 'none' : baseFilter
+                      const baseOpacity = muted ? 0.8 : 1
                       const baseTransform = scale ? `scale(${scale})` : 'scale(1)'
                       const hoverTransform = scale ? `scale(${scale * 1.05})` : 'scale(1.05)'
                       return (
@@ -62,17 +68,20 @@ function Apoyan() {
                           alt={logo.nombre}
                           style={{
                             transform: baseTransform,
-                            filter: baseFilter,
+                            filter: baseFilterFinal,
+                            opacity: baseOpacity,
                           }}
                           onMouseEnter={e => {
                             e.currentTarget.style.filter = hoverFilter
                             e.currentTarget.style.transform = hoverTransform
+                            e.currentTarget.style.opacity = '1'
                           }}
                           onMouseLeave={e => {
-                            e.currentTarget.style.filter = baseFilter
+                            e.currentTarget.style.filter = baseFilterFinal
                             e.currentTarget.style.transform = baseTransform
+                            e.currentTarget.style.opacity = String(baseOpacity)
                           }}
-                          className="max-h-24 sm:max-h-32 max-w-[280px] sm:max-w-[320px] w-auto object-contain transition-[filter,transform] duration-300 ease-out cursor-pointer"
+                          className="max-h-24 sm:max-h-32 max-w-[280px] sm:max-w-[320px] w-auto object-contain transition-[filter,transform,opacity] duration-300 ease-out cursor-pointer"
                         />
                       )
                     })() : (

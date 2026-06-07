@@ -3,6 +3,7 @@ import { openStartupForm } from '../lib/ticketing'
 
 const links = [
   { href: '#ruta', label: 'Ruta de Evolución' },
+  { href: '#camino', label: 'Camino a la Copa' },
   { href: '#pitch', label: 'Pitch Battle' },
   { href: '#agenda', label: 'Agenda' },
   { href: '#startups', label: 'Startups' },
