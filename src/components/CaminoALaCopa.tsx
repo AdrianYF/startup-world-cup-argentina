@@ -25,7 +25,7 @@ function FixtureRow({ ev }: { ev: Evento }) {
 
   const inner = (
     <div
-      className={`flex items-center gap-3 sm:gap-5 rounded-2xl border bg-white px-4 sm:px-5 py-4 transition-all group ${
+      className={`flex items-center gap-4 sm:gap-5 rounded-2xl border bg-white px-4 sm:px-5 py-4 transition-all group ${
         ev.destacado
           ? 'border-[#75AADB]/50 shadow-[0_10px_30px_-12px_rgba(117,170,219,0.6)]'
           : 'border-[#020618]/10 hover:border-[#75AADB]/50 hover:shadow-[0_10px_30px_-14px_rgba(117,170,219,0.55)]'
@@ -56,11 +56,11 @@ function FixtureRow({ ev }: { ev: Evento }) {
       {/* Acción / estado */}
       {ev.url ? (
         <span
-          className="shrink-0 inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#75AADB] group-hover:bg-[#5a93c5] text-white text-xs sm:text-sm font-black px-3 py-1.5 sm:px-4 sm:py-2 transition-colors"
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#75AADB] group-hover:bg-[#5a93c5] text-white text-sm font-black px-4 py-2 transition-colors"
           style={{ textShadow: '0 1px 2px rgba(0,0,0,0.25)' }}
         >
           Apuntate
-          <svg className="w-3 h-3 sm:w-[15px] sm:h-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </span>
@@ -106,14 +106,14 @@ function CaminoALaCopa() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[5fr_6fr] gap-12 lg:gap-10 items-center">
           {/* Columna 1: fixture */}
-          <div className="min-w-0 flex flex-col gap-3 sm:gap-4 order-2 lg:order-1">
+          <div className="flex flex-col gap-3 sm:gap-4 order-2 lg:order-1">
             {eventos.map((ev, i) => (
               <FixtureRow key={i} ev={ev} />
             ))}
           </div>
 
           {/* Columna 2: la copa en 3D (modelo glb + Three.js, canvas transparente) */}
-          <div className="min-w-0 relative order-1 lg:order-2 flex items-center justify-center">
+          <div className="relative order-1 lg:order-2 flex items-center justify-center">
             {/* halo celeste pegado a la copa */}
             <div aria-hidden className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div
@@ -124,7 +124,7 @@ function CaminoALaCopa() {
                 }}
               />
             </div>
-            <div className="flex flex-col items-center w-full min-w-0">
+            <div className="flex flex-col items-center w-full">
               <div className="relative w-full max-w-[720px] aspect-square">
                 <Suspense
                   fallback={
