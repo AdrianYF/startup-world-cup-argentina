@@ -1,9 +1,4 @@
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from 'react'
+import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
@@ -14,20 +9,10 @@ type Variant = 'compact' | 'full'
 const STUB_W = 64
 
 /**
- * clip-path que le saca al ticket la franja derecha (el stub) con un borde
- * dentado/irregular, para que esa fracción realmente desaparezca y se vea el fondo.
+ * clip-path que le saca al ticket la franja derecha (el stub) con un corte
+ * recto y esquinas redondeadas (look moderno), para que esa fracción desaparezca.
  */
-const TICKET_TEAR = (() => {
-  const pts = ['0% 0%']
-  const n = 9
-  for (let k = 0; k <= n; k++) {
-    const y = ((k / n) * 100).toFixed(1)
-    const off = STUB_W + (k % 2 === 0 ? -5 : 5)
-    pts.push(`calc(100% - ${off}px) ${y}%`)
-  }
-  pts.push('0% 100%')
-  return `polygon(${pts.join(', ')})`
-})()
+const TICKET_TEAR = `inset(0 ${STUB_W}px 0 0 round 0.75rem)`
 
 /**
  * URL real a la que apunta el QR del ticket: la sección oculta "Mystery Box".
@@ -155,26 +140,6 @@ function ScissorsIcon({ size = 16 }: { size?: number }) {
 }
 
 /**
- * Genera el path de un borde "rasgado" (zigzag irregular) vertical, en px,
- * para que el corte no sea una línea recta sino un papel desgarrado.
- */
-function buildTornPath(height: number, width: number) {
-  if (height <= 0) return ''
-  const cx = width / 2
-  const seg = 7 // alto de cada diente
-  const n = Math.max(2, Math.ceil(height / seg))
-  // amplitudes pseudo-aleatorias pero deterministas (sin Math.random)
-  const amp = (i: number) => 2 + ((i * 37) % 5) * 0.6
-  let d = `M ${cx} 0`
-  for (let i = 1; i <= n; i++) {
-    const y = Math.min(i * seg, height)
-    const x = cx + (i % 2 === 0 ? amp(i) : -amp(i))
-    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`
-  }
-  return d
-}
-
-/**
  * Cartelito "NO CORTAR" tipo sticker (reemplaza al QR en mobile).
  * Es solo decorativo/instructivo: la acción real es arrastrar la tijera.
  */
@@ -256,25 +221,9 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
   // Mientras se arrastra no hay transición (la tijera sigue al dedo); al soltar/auto sí.
   const [smooth, setSmooth] = useState(true)
 
-  // Alto de la perforación, para dibujar el borde rasgado a escala real.
-  const [trackH, setTrackH] = useState(0)
-
   const trackRef = useRef<HTMLDivElement>(null)
   const draggingRef = useRef(false)
   const dragStart = useRef({ y: 0, p: 0, moved: false })
-
-  useLayoutEffect(() => {
-    const el = trackRef.current
-    if (!el) return
-    const measure = () => setTrackH(el.clientHeight)
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
-
-  const tornWidth = 14
-  const tornPath = buildTornPath(trackH, tornWidth)
 
   const goToMysteryBox = () => navigate(MYSTERY_BOX_PATH)
 
@@ -446,23 +395,15 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
 
-            {/* Borde rasgado que se revela a medida que baja la tijera (solo mobile) */}
+            {/* Línea de corte limpia que deja la tijera al bajar (solo mobile) */}
             <div
               aria-hidden
-              className="sm:hidden absolute top-0 left-1/2 -translate-x-1/2 overflow-hidden z-10 pointer-events-none"
+              className="sm:hidden absolute top-0 left-1/2 -translate-x-1/2 w-px rounded-full bg-[#0f172b]/70 z-10 pointer-events-none"
               style={{
-                width: tornWidth,
                 height: `calc(${progress} * (100% - 28px) + 14px)`,
                 transition: cutTransition,
               }}
-            >
-              <svg width={tornWidth} height={trackH} viewBox={`0 0 ${tornWidth} ${trackH}`} className="block">
-                {/* realce claro = grosor del papel */}
-                <path d={tornPath} fill="none" stroke="#fff8e6" strokeWidth="2.6" strokeLinejoin="round" strokeOpacity="0.65" />
-                {/* línea del corte */}
-                <path d={tornPath} fill="none" stroke="#0f172b" strokeWidth="1.4" strokeLinejoin="round" />
-              </svg>
-            </div>
+            />
 
             {/* Tijera arrastrable que tijeretea mientras baja (solo mobile) */}
             <button
