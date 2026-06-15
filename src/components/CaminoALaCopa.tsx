@@ -15,6 +15,7 @@ type Evento = {
   descripcion?: string
   destacado?: boolean
   bonus?: boolean
+  cerrado?: boolean
 }
 
 const eventos = content.camino as Evento[]
@@ -26,9 +27,11 @@ function FixtureRow({ ev }: { ev: Evento }) {
   const inner = (
     <div
       className={`flex items-center gap-4 sm:gap-5 rounded-2xl border bg-white px-4 sm:px-5 py-4 transition-all group ${
-        ev.destacado
-          ? 'border-[#75AADB]/50 shadow-[0_10px_30px_-12px_rgba(117,170,219,0.6)]'
-          : 'border-[#020618]/10 hover:border-[#75AADB]/50 hover:shadow-[0_10px_30px_-14px_rgba(117,170,219,0.55)]'
+        ev.cerrado
+          ? 'border-[#020618]/10 opacity-70'
+          : ev.destacado
+            ? 'border-[#75AADB]/50 shadow-[0_10px_30px_-12px_rgba(117,170,219,0.6)]'
+            : 'border-[#020618]/10 hover:border-[#75AADB]/50 hover:shadow-[0_10px_30px_-14px_rgba(117,170,219,0.55)]'
       }`}
     >
       {/* Chip de fecha (estilo fixture) */}
@@ -54,7 +57,11 @@ function FixtureRow({ ev }: { ev: Evento }) {
       </div>
 
       {/* Acción / estado */}
-      {ev.url ? (
+      {ev.cerrado ? (
+        <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#020618]/8 text-[#020618]/55 text-sm font-black px-4 py-2">
+          Fecha cerrada
+        </span>
+      ) : ev.url ? (
         <span
           className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#75AADB] group-hover:bg-[#5a93c5] text-white text-sm font-black px-4 py-2 transition-colors"
           style={{ textShadow: '0 1px 2px rgba(0,0,0,0.25)' }}
@@ -72,7 +79,7 @@ function FixtureRow({ ev }: { ev: Evento }) {
     </div>
   )
 
-  if (ev.url) {
+  if (ev.url && !ev.cerrado) {
     return (
       <a
         href={ev.url}
