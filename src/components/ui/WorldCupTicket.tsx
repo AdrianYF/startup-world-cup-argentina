@@ -1,6 +1,14 @@
+import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
 
 type Variant = 'compact' | 'full'
+
+/**
+ * URL real a la que apunta el QR del ticket: la sección oculta "Mystery Box".
+ * Se usa el origin actual para que funcione en cualquier dominio (deploy/preview).
+ */
+const MYSTERY_BOX_URL =
+  (typeof window !== 'undefined' ? window.location.origin : '') + '/mystery-box'
 
 /* -------- subcomponentes decorativos -------- */
 
@@ -80,37 +88,17 @@ function GuillochePattern() {
   )
 }
 
+/** QR real (escaneable) que lleva a la sección oculta Mystery Box. */
 function QRCode({ size = 56 }: { size?: number }) {
-  const cells = 8
-  const cellSize = size / cells
-  const seed = [
-    [1, 1, 1, 0, 1, 1, 1, 0],
-    [1, 0, 1, 1, 0, 1, 0, 1],
-    [1, 1, 1, 0, 1, 0, 1, 1],
-    [0, 1, 0, 1, 1, 1, 0, 0],
-    [1, 0, 1, 0, 0, 1, 1, 1],
-    [1, 1, 0, 1, 1, 0, 1, 0],
-    [0, 1, 1, 0, 1, 1, 0, 1],
-    [1, 1, 0, 1, 0, 1, 1, 1],
-  ]
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
-      <rect width={size} height={size} fill="#ffffff" />
-      {seed.map((row, y) =>
-        row.map((cell, x) =>
-          cell ? (
-            <rect
-              key={`${x}-${y}`}
-              x={x * cellSize}
-              y={y * cellSize}
-              width={cellSize}
-              height={cellSize}
-              fill="#0f172b"
-            />
-          ) : null,
-        ),
-      )}
-    </svg>
+    <QRCodeSVG
+      value={MYSTERY_BOX_URL}
+      size={size}
+      level="M"
+      marginSize={1}
+      bgColor="#ffffff"
+      fgColor="#0f172b"
+    />
   )
 }
 
