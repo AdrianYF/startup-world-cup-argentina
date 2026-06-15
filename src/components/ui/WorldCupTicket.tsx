@@ -1,7 +1,18 @@
-import { useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import {
+  Suspense,
+  lazy,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
+
+// La escena 3D del corte se carga lazy: el landing no toca WebGL hasta cortar.
+const importTicketCut3D = () => import('./TicketCut3D')
+const TicketCut3D = lazy(importTicketCut3D)
 
 type Variant = 'compact' | 'full'
 
@@ -233,16 +244,29 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
   const tornWidth = 14
   const tornPath = buildTornPath(trackH, tornWidth)
 
+  const goToMysteryBox = () => navigate(MYSTERY_BOX_PATH)
+
   const finishCut = () => {
     setSmooth(true)
     setProgress(1)
+
+    // Con motion reducido, no montamos la escena 3D: navegamos directo.
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      goToMysteryBox()
+      return
+    }
+
     setCut(true)
-    // Esperá a que termine la animación de corte antes de navegar.
-    window.setTimeout(() => navigate(MYSTERY_BOX_PATH), 700)
+    // Red de seguridad por si el chunk 3D no carga: navegá igual.
+    window.setTimeout(goToMysteryBox, 2200)
   }
 
   const onPointerDown = (e: ReactPointerEvent) => {
     if (cut) return
+    importTicketCut3D() // precargá el chunk 3D mientras se arrastra
     draggingRef.current = true
     dragStart.current = { y: e.clientY, p: progress, moved: false }
     setSmooth(false)
@@ -279,6 +303,19 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
 
   return (
     <div className="relative font-mono select-none">
+
+      {/* Overlay 3D del recorte que cae (solo mobile, al cortar). Cubre por debajo
+          del ticket para que el papel caiga fuera de cuadro. */}
+      {cut && (
+        <div
+          className="sm:hidden absolute left-0 right-0 top-0 z-30 pointer-events-none"
+          style={{ height: '240%' }}
+        >
+          <Suspense fallback={null}>
+            <TicketCut3D onDone={goToMysteryBox} />
+          </Suspense>
+        </div>
+      )}
 
       {/* Halos */}
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#d4af37]/40 rounded-full blur-3xl pointer-events-none" />
@@ -413,10 +450,9 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             style={
               cut
                 ? {
-                    // El recorte se desprende y cae con gravedad.
-                    animation: 'ticket-fall 700ms cubic-bezier(.45,.05,.55,.95) forwards',
-                    transformOrigin: 'top center',
-                    boxShadow: '-8px 0 12px -6px rgba(0,0,0,0.35)',
+                    // El stub real desaparece: el recorte que cae lo dibuja la escena 3D.
+                    opacity: 0,
+                    transition: 'opacity 120ms linear',
                   }
                 : {
                     // Mientras se corta, el papel se separa apenas (sin transición durante el drag).
