@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
@@ -131,6 +131,26 @@ function ScissorsIcon({ size = 16 }: { size?: number }) {
 }
 
 /**
+ * Genera el path de un borde "rasgado" (zigzag irregular) vertical, en px,
+ * para que el corte no sea una línea recta sino un papel desgarrado.
+ */
+function buildTornPath(height: number, width: number) {
+  if (height <= 0) return ''
+  const cx = width / 2
+  const seg = 7 // alto de cada diente
+  const n = Math.max(2, Math.ceil(height / seg))
+  // amplitudes pseudo-aleatorias pero deterministas (sin Math.random)
+  const amp = (i: number) => 2 + ((i * 37) % 5) * 0.6
+  let d = `M ${cx} 0`
+  for (let i = 1; i <= n; i++) {
+    const y = Math.min(i * seg, height)
+    const x = cx + (i % 2 === 0 ? amp(i) : -amp(i))
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`
+  }
+  return d
+}
+
+/**
  * Cartelito "NO CORTAR" tipo sticker (reemplaza al QR en mobile).
  * Es solo decorativo/instructivo: la acción real es arrastrar la tijera.
  */
@@ -193,9 +213,25 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
   // Mientras se arrastra no hay transición (la tijera sigue al dedo); al soltar/auto sí.
   const [smooth, setSmooth] = useState(true)
 
+  // Alto de la perforación, para dibujar el borde rasgado a escala real.
+  const [trackH, setTrackH] = useState(0)
+
   const trackRef = useRef<HTMLDivElement>(null)
   const draggingRef = useRef(false)
   const dragStart = useRef({ y: 0, p: 0, moved: false })
+
+  useLayoutEffect(() => {
+    const el = trackRef.current
+    if (!el) return
+    const measure = () => setTrackH(el.clientHeight)
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const tornWidth = 14
+  const tornPath = buildTornPath(trackH, tornWidth)
 
   const finishCut = () => {
     setSmooth(true)
@@ -331,14 +367,25 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
 
-            {/* Línea de corte que avanza con la tijera (solo mobile, llega a su centro) */}
+            {/* Borde rasgado que se revela a medida que baja la tijera (solo mobile) */}
             <div
               aria-hidden
-              className="sm:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] bg-[#0f172b] z-10"
-              style={{ height: `calc(${progress} * (100% - 28px) + 14px)`, transition: cutTransition }}
-            />
+              className="sm:hidden absolute top-0 left-1/2 -translate-x-1/2 overflow-hidden z-10 pointer-events-none"
+              style={{
+                width: tornWidth,
+                height: `calc(${progress} * (100% - 28px) + 14px)`,
+                transition: cutTransition,
+              }}
+            >
+              <svg width={tornWidth} height={trackH} viewBox={`0 0 ${tornWidth} ${trackH}`} className="block">
+                {/* realce claro = grosor del papel */}
+                <path d={tornPath} fill="none" stroke="#fff8e6" strokeWidth="2.6" strokeLinejoin="round" strokeOpacity="0.65" />
+                {/* línea del corte */}
+                <path d={tornPath} fill="none" stroke="#0f172b" strokeWidth="1.4" strokeLinejoin="round" />
+              </svg>
+            </div>
 
-            {/* Tijera arrastrable (solo mobile) */}
+            {/* Tijera arrastrable que tijeretea mientras baja (solo mobile) */}
             <button
               type="button"
               aria-label="Deslizá la tijera para cortar el ticket"
@@ -351,18 +398,32 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
               }`}
               style={{ top: `calc(${progress} * (100% - 28px))`, transition: cutTransition }}
             >
-              <ScissorsIcon size={15} />
+              <span
+                className="grid place-items-center"
+                style={{ animation: progress > 0 ? 'ticket-snip 170ms ease-in-out infinite' : undefined }}
+              >
+                <ScissorsIcon size={15} />
+              </span>
             </button>
           </div>
 
           {/* === STUB === */}
           <div
             className="relative w-16 sm:w-28 bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0"
-            style={{
-              transition: 'transform 550ms cubic-bezier(.4,0,.2,1), opacity 550ms ease',
-              transform: cut ? 'translateX(22px) translateY(12px) rotate(6deg)' : 'none',
-              opacity: cut ? 0 : 1,
-            }}
+            style={
+              cut
+                ? {
+                    // El recorte se desprende y cae con gravedad.
+                    animation: 'ticket-fall 700ms cubic-bezier(.45,.05,.55,.95) forwards',
+                    transformOrigin: 'top center',
+                    boxShadow: '-8px 0 12px -6px rgba(0,0,0,0.35)',
+                  }
+                : {
+                    // Mientras se corta, el papel se separa apenas (sin transición durante el drag).
+                    transform: `translateX(${(progress * 4).toFixed(1)}px)`,
+                    transition: smooth ? 'transform 500ms cubic-bezier(.4,0,.2,1)' : 'none',
+                  }
+            }
           >
             <GuillochePattern />
 

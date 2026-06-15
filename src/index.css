@@ -225,3 +225,22 @@ a[href]:active {
 .skip-link:focus {
   top: 1rem;
 }
+
+/* === Ticket dorado: animaciones del "corte" en mobile === */
+
+/* Tijera tijereteando mientras baja por la perforación */
+@keyframes ticket-snip {
+  0%, 100% { transform: rotate(-7deg); }
+  50% { transform: rotate(7deg); }
+}
+
+/* El stub cortado se desprende y cae con gravedad (ease-in) */
+@keyframes ticket-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  18% { transform: translate(3px, 4px) rotate(-5deg); opacity: 1; }
+  100% { transform: translate(34px, 420px) rotate(34deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes ticket-snip { 0%, 100% { transform: none; } }
+}
