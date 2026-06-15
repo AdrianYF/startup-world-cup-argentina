@@ -1,3 +1,5 @@
+import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
 
@@ -9,6 +11,9 @@ type Variant = 'compact' | 'full'
  */
 const MYSTERY_BOX_URL =
   (typeof window !== 'undefined' ? window.location.origin : '') + '/mystery-box'
+
+/** Ruta interna a la que lleva "cortar" el ticket en mobile. */
+const MYSTERY_BOX_PATH = '/mystery-box'
 
 /* -------- subcomponentes decorativos -------- */
 
@@ -102,46 +107,139 @@ function QRCode({ size = 56 }: { size?: number }) {
   )
 }
 
-/* -------- componente principal -------- */
+/** Ícono de tijera (línea, hereda currentColor). */
+function ScissorsIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </svg>
+  )
+}
 
-export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
-  const premio = content.config.evento.premioUSD
-  const formatUSD = new Intl.NumberFormat('en-US').format(premio)
+/**
+ * Cartelito "NO CORTAR" tipo sticker (reemplaza al QR en mobile).
+ * Es solo decorativo/instructivo: la acción real es arrastrar la tijera.
+ */
+function NoCutSign() {
+  return (
+    <div
+      className="relative -rotate-6 select-none rounded border border-[#0f172b]/50 bg-white/85 px-1.5 py-1 text-center shadow-sm"
+      aria-hidden
+    >
+      <div className="flex items-center justify-center gap-0.5 text-[#b91c1c]">
+        <ScissorsIcon size={11} />
+        <span className="text-[7px] font-black leading-none tracking-tight">NO</span>
+      </div>
+      <div className="text-[8px] font-black leading-none tracking-[0.12em] text-[#0f172b]">
+        CORTAR
+      </div>
+    </div>
+  )
+}
 
-  /* ---------- COMPACT ---------- */
+/* -------- variantes del ticket -------- */
 
-  if (variant === 'compact') {
-    return (
-      <div className="inline-flex items-stretch font-mono select-none drop-shadow-lg">
-        <div className="relative bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#d4af37] rounded-l-lg px-4 py-2 border border-r-0 border-[#d4af37] overflow-hidden">
-          <GuillochePattern />
-          <div className="relative flex items-center gap-3">
-            <HolographicSeal size={32} />
-            <div>
-              <div className="text-[8px] font-black tracking-[0.2em] uppercase text-[#21313f]/80">
-                Premio Final
-              </div>
-              <div className="text-xl font-black leading-none text-[#21313f] mt-0.5">
-                USD {formatUSD}
-              </div>
+function CompactTicket({ formatUSD }: { formatUSD: string }) {
+  return (
+    <div className="inline-flex items-stretch font-mono select-none drop-shadow-lg">
+      <div className="relative bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#d4af37] rounded-l-lg px-4 py-2 border border-r-0 border-[#d4af37] overflow-hidden">
+        <GuillochePattern />
+        <div className="relative flex items-center gap-3">
+          <HolographicSeal size={32} />
+          <div>
+            <div className="text-[8px] font-black tracking-[0.2em] uppercase text-[#21313f]/80">
+              Premio Final
+            </div>
+            <div className="text-xl font-black leading-none text-[#21313f] mt-0.5">
+              USD {formatUSD}
             </div>
           </div>
         </div>
-
-        <div className="relative w-3 bg-[#d4af37] border border-[#d4af37] border-l-0 border-r-0">
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px border-l border-dashed border-[#0f172b]/50" />
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
-        </div>
-
-        <div className="bg-gradient-to-br from-[#d4af37] to-[#ffffff] rounded-r-lg px-3 py-2 border border-l-0 border-[#d4af37] flex items-center justify-center">
-          <span className="text-[#21313f] text-sm font-black tracking-widest">AR·26</span>
-        </div>
       </div>
-    )
+
+      <div className="relative w-3 bg-[#d4af37] border border-[#d4af37] border-l-0 border-r-0">
+        <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px border-l border-dashed border-[#0f172b]/50" />
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#0f172b] rounded-full" />
+      </div>
+
+      <div className="bg-gradient-to-br from-[#d4af37] to-[#ffffff] rounded-r-lg px-3 py-2 border border-l-0 border-[#d4af37] flex items-center justify-center">
+        <span className="text-[#21313f] text-sm font-black tracking-widest">AR·26</span>
+      </div>
+    </div>
+  )
+}
+
+function FullTicket({ formatUSD }: { formatUSD: string }) {
+  const navigate = useNavigate()
+
+  // Progreso del corte (0 = arriba, 1 = abajo del todo) y estado del ticket.
+  const [progress, setProgress] = useState(0)
+  const [cut, setCut] = useState(false)
+  // Mientras se arrastra no hay transición (la tijera sigue al dedo); al soltar/auto sí.
+  const [smooth, setSmooth] = useState(true)
+
+  const trackRef = useRef<HTMLDivElement>(null)
+  const draggingRef = useRef(false)
+  const dragStart = useRef({ y: 0, p: 0, moved: false })
+
+  const finishCut = () => {
+    setSmooth(true)
+    setProgress(1)
+    setCut(true)
+    // Esperá a que termine la animación de corte antes de navegar.
+    window.setTimeout(() => navigate(MYSTERY_BOX_PATH), 700)
   }
 
-  /* ---------- FULL ---------- */
+  const onPointerDown = (e: ReactPointerEvent) => {
+    if (cut) return
+    draggingRef.current = true
+    dragStart.current = { y: e.clientY, p: progress, moved: false }
+    setSmooth(false)
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const onPointerMove = (e: ReactPointerEvent) => {
+    if (!draggingRef.current || cut) return
+    const h = trackRef.current?.clientHeight ?? 1
+    const dy = e.clientY - dragStart.current.y
+    if (Math.abs(dy) > 4) dragStart.current.moved = true
+    const next = Math.max(0, Math.min(1, dragStart.current.p + dy / h))
+    setProgress(next)
+    if (next >= 0.97) {
+      draggingRef.current = false
+      finishCut()
+    }
+  }
+
+  const onPointerUp = () => {
+    if (!draggingRef.current || cut) return
+    draggingRef.current = false
+    if (!dragStart.current.moved) {
+      // Tap simple: corte automático (la tijera baja sola).
+      finishCut()
+    } else if (progress < 0.97) {
+      // Soltó antes de terminar: el ticket "se salva" y vuelve arriba.
+      setSmooth(true)
+      setProgress(0)
+    }
+  }
+
+  const cutTransition = smooth ? 'top 500ms cubic-bezier(.4,0,.2,1), height 500ms cubic-bezier(.4,0,.2,1)' : 'none'
 
   return (
     <div className="relative font-mono select-none">
@@ -226,13 +324,46 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
           </div>
 
           {/* === PERFORACIÓN === */}
-          <div className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
+          <div
+            ref={trackRef}
+            className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0"
+          >
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
+
+            {/* Línea de corte que avanza con la tijera (solo mobile, llega a su centro) */}
+            <div
+              aria-hidden
+              className="sm:hidden absolute top-0 left-1/2 -translate-x-1/2 w-[2px] bg-[#0f172b] z-10"
+              style={{ height: `calc(${progress} * (100% - 28px) + 14px)`, transition: cutTransition }}
+            />
+
+            {/* Tijera arrastrable (solo mobile) */}
+            <button
+              type="button"
+              aria-label="Deslizá la tijera para cortar el ticket"
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
+              className={`sm:hidden absolute left-1/2 -translate-x-1/2 z-20 grid place-items-center w-7 h-7 rounded-full bg-[#0f172b] text-[#f3e6b3] shadow-lg touch-none cursor-grab active:cursor-grabbing ${
+                progress === 0 && !cut ? 'animate-pulse' : ''
+              }`}
+              style={{ top: `calc(${progress} * (100% - 28px))`, transition: cutTransition }}
+            >
+              <ScissorsIcon size={15} />
+            </button>
           </div>
 
           {/* === STUB === */}
-          <div className="relative w-16 sm:w-28 bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0">
+          <div
+            className="relative w-16 sm:w-28 bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0"
+            style={{
+              transition: 'transform 550ms cubic-bezier(.4,0,.2,1), opacity 550ms ease',
+              transform: cut ? 'translateX(22px) translateY(12px) rotate(6deg)' : 'none',
+              opacity: cut ? 0 : 1,
+            }}
+          >
             <GuillochePattern />
 
             <div className="relative sm:hidden">
@@ -242,9 +373,11 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
               <HolographicSeal size={52} />
             </div>
 
-            <div className="relative bg-white p-0.5 sm:p-1 rounded border border-[#0f172b]/40 sm:hidden">
-              <QRCode size={28} />
+            {/* Mobile: cartel "NO CORTAR" (la acción real es arrastrar la tijera) */}
+            <div className="relative sm:hidden">
+              <NoCutSign />
             </div>
+            {/* Desktop: QR escaneable a la Mystery Box */}
             <div className="relative bg-white p-1 rounded border border-[#0f172b]/40 hidden sm:block">
               <QRCode size={44} />
             </div>
@@ -257,6 +390,19 @@ export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
       </div>
     </div>
   )
+}
+
+/* -------- componente principal -------- */
+
+export function WorldCupTicket({ variant = 'full' }: { variant?: Variant }) {
+  const premio = content.config.evento.premioUSD
+  const formatUSD = new Intl.NumberFormat('en-US').format(premio)
+
+  if (variant === 'compact') {
+    return <CompactTicket formatUSD={formatUSD} />
+  }
+
+  return <FullTicket formatUSD={formatUSD} />
 }
 
 export default WorldCupTicket
