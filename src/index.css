@@ -234,7 +234,19 @@ a[href]:active {
   50% { transform: rotate(7deg); }
 }
 
-/* La caída del recorte ahora es 3D (Three.js, ver TicketCut3D.tsx). */
+/* El stub arrancado gira sobre la perforación (bisagra) y se desvanece,
+   como cuando se corta/arranca la talonera de un ticket. */
+@keyframes ticket-tear {
+  0% {
+    transform: rotateY(0deg) rotateZ(0deg) translate(0, 0);
+    opacity: 1;
+  }
+  55% { opacity: 1; }
+  100% {
+    transform: rotateY(-120deg) rotateZ(15deg) translate(16px, 30px);
+    opacity: 0;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   @keyframes ticket-snip { 0%, 100% { transform: none; } }

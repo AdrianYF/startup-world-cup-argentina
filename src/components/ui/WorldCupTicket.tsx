@@ -1,6 +1,4 @@
 import {
-  Suspense,
-  lazy,
   useLayoutEffect,
   useRef,
   useState,
@@ -10,11 +8,26 @@ import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
 
-// La escena 3D del corte se carga lazy: el landing no toca WebGL hasta cortar.
-const importTicketCut3D = () => import('./TicketCut3D')
-const TicketCut3D = lazy(importTicketCut3D)
-
 type Variant = 'compact' | 'full'
+
+/** Ancho del stub en mobile (w-16 = 64px): lo que se "arranca" al cortar. */
+const STUB_W = 64
+
+/**
+ * clip-path que le saca al ticket la franja derecha (el stub) con un borde
+ * dentado/irregular, para que esa fracción realmente desaparezca y se vea el fondo.
+ */
+const TICKET_TEAR = (() => {
+  const pts = ['0% 0%']
+  const n = 9
+  for (let k = 0; k <= n; k++) {
+    const y = ((k / n) * 100).toFixed(1)
+    const off = STUB_W + (k % 2 === 0 ? -5 : 5)
+    pts.push(`calc(100% - ${off}px) ${y}%`)
+  }
+  pts.push('0% 100%')
+  return `polygon(${pts.join(', ')})`
+})()
 
 /**
  * URL real a la que apunta el QR del ticket: la sección oculta "Mystery Box".
@@ -182,6 +195,25 @@ function NoCutSign() {
   )
 }
 
+/**
+ * Cara del stub (mobile) usada por la copia que "se arranca" al cortar.
+ * Replica el contenido del stub real: sello, cartel NO CORTAR y "AR · 26".
+ */
+function StubFace() {
+  return (
+    <div className="relative w-full h-full overflow-hidden bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 text-center gap-2">
+      <GuillochePattern />
+      <div className="relative">
+        <HolographicSeal size={32} />
+      </div>
+      <div className="relative">
+        <NoCutSign />
+      </div>
+      <div className="relative text-[10px] font-black tracking-widest text-[#21313f]">AR · 26</div>
+    </div>
+  )
+}
+
 /* -------- variantes del ticket -------- */
 
 function CompactTicket({ formatUSD }: { formatUSD: string }) {
@@ -250,7 +282,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
     setSmooth(true)
     setProgress(1)
 
-    // Con motion reducido, no montamos la escena 3D: navegamos directo.
+    // Con motion reducido no animamos el arranque: navegamos directo.
     const reduce =
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -260,13 +292,12 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
     }
 
     setCut(true)
-    // Red de seguridad por si el chunk 3D no carga: navegá igual.
-    window.setTimeout(goToMysteryBox, 2200)
+    // Navegá cuando termina la animación de arranque del stub.
+    window.setTimeout(goToMysteryBox, 680)
   }
 
   const onPointerDown = (e: ReactPointerEvent) => {
     if (cut) return
-    importTicketCut3D() // precargá el chunk 3D mientras se arrastra
     draggingRef.current = true
     dragStart.current = { y: e.clientY, p: progress, moved: false }
     setSmooth(false)
@@ -304,16 +335,24 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
   return (
     <div className="relative font-mono select-none">
 
-      {/* Overlay 3D del recorte que cae (solo mobile, al cortar). Cubre por debajo
-          del ticket para que el papel caiga fuera de cuadro. */}
+      {/* Al cortar: una copia del stub gira sobre la perforación (bisagra) y se
+          desvanece, como cuando arrancás la talonera de un ticket. Va en el wrapper
+          externo (sin overflow) para poder girar fuera del recorte del ticket. */}
       {cut && (
         <div
-          className="sm:hidden absolute left-0 right-0 top-0 z-30 pointer-events-none"
-          style={{ height: '240%' }}
+          aria-hidden
+          className="sm:hidden absolute top-0 right-0 h-full z-30 pointer-events-none"
+          style={{ width: STUB_W, perspective: '620px' }}
         >
-          <Suspense fallback={null}>
-            <TicketCut3D onDone={goToMysteryBox} />
-          </Suspense>
+          <div
+            className="absolute inset-0"
+            style={{
+              transformOrigin: 'left center',
+              animation: 'ticket-tear 640ms cubic-bezier(.45,0,.85,.5) forwards',
+            }}
+          >
+            <StubFace />
+          </div>
         </div>
       )}
 
@@ -321,7 +360,10 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#d4af37]/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#d4af37]/30 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden">
+      <div
+        className="relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden"
+        style={cut ? { clipPath: TICKET_TEAR } : undefined}
+      >
 
         {/* Fondo dorado */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#fff8e6]" />
@@ -450,9 +492,9 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             style={
               cut
                 ? {
-                    // El stub real desaparece: el recorte que cae lo dibuja la escena 3D.
+                    // El stub real se elimina (el ticket queda recortado por clip-path);
+                    // la copia que gira y se desvanece dibuja el arranque.
                     opacity: 0,
-                    transition: 'opacity 120ms linear',
                   }
                 : {
                     // Mientras se corta, el papel se separa apenas (sin transición durante el drag).
