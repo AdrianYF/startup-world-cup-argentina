@@ -29,3 +29,6 @@ docs/
 # Skills tooling artifacts (npx skills add)
 .agents/
 skills-lock.json
+
+# Skills tooling artifacts (locks locales)
+.claude/
