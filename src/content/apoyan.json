@@ -16,7 +16,7 @@
       { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
       { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.65, "url": "https://titofree.com/" },
       { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 0.82 },
-      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.42 }
+      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.5 }
     ]
   },
   {
