@@ -186,6 +186,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
         className={`relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden outline-none transition-transform ${
           stamped ? 'cursor-default' : 'cursor-pointer hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#0f172b]/50'
         }`}
+        style={stamped ? { animation: 'ticket-shake 280ms ease-out 230ms both' } : undefined}
       >
 
         {/* Sello tipo pasaporte que se estampa al tocar el ticket */}
@@ -196,9 +197,9 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-1/2 z-40 w-[72%] max-w-[360px]"
             style={{
-              animation: 'stamp-apply 460ms cubic-bezier(.2,.7,.25,1) forwards',
+              animation: 'stamp-apply 540ms cubic-bezier(.3,.85,.35,1) forwards',
               transformOrigin: 'center',
-              willChange: 'transform, opacity',
+              willChange: 'transform, opacity, filter',
             }}
           />
         )}
