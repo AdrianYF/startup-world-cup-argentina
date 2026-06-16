@@ -285,7 +285,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             {!stamped && (
               <span
                 aria-hidden
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-[8px] sm:text-[9px] font-black uppercase tracking-[0.18em] text-[#0f172b]/80 animate-pulse pointer-events-none"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap font-mono font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[8px] sm:text-[9px] text-[#21313f] opacity-70 animate-pulse pointer-events-none"
               >
                 Tocá para sellar tu ticket
               </span>
