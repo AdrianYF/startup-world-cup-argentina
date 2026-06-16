@@ -278,7 +278,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
           </div>
 
           {/* === PERFORACIÓN (decorativa) === */}
-          <div className="relative w-5 sm:w-6 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
+          <div className="relative w-4 sm:w-6 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
 
