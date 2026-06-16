@@ -34,5 +34,9 @@
     "tagline": "La competencia de startups más grande del mundo llega a Argentina.",
     "ctaPrimario": "Aplicá como Startup",
     "ctaSecundario": "Quiero ser Partner"
+  },
+  "mysteryBox": {
+    "perkCode": "SWC-AWS-2026",
+    "claimText": "Guardá este código y escribinos a startupwc.arg@gmail.com (asunto: Mystery Box) para canjear tu perk."
   }
 }

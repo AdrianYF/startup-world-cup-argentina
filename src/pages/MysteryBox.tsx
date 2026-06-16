@@ -2,20 +2,25 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MysteryBoxes3D } from '../components/ui/MysteryBoxes3D'
 import { RewardTicket } from '../components/ui/RewardTicket'
+import { content } from '../lib/content'
+import { trackEvent } from '../lib/analytics'
 
 type Phase = 'idle' | 'opening' | 'revealed'
 
 const randomWinner = () => Math.floor(Math.random() * 3)
 
 /**
- * Sección oculta a la que se llega escaneando el QR del ticket.
- * 3 cajas: una tiene el perk (créditos de AWS), las otras dos están vacías.
+ * Sección oculta a la que se llega sellando el golden ticket.
+ * 3 cajas: una esconde el perk. Al ganar se muestra un código de canje.
  */
 function MysteryBox() {
   const [winnerIndex, setWinnerIndex] = useState(randomWinner)
   const [selected, setSelected] = useState<number | null>(null)
   const [phase, setPhase] = useState<Phase>('idle')
   const [revealShow, setRevealShow] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const { perkCode, claimText } = content.config.mysteryBox
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -40,10 +45,22 @@ function MysteryBox() {
   const reset = () => {
     setPhase('idle')
     setSelected(null)
+    setCopied(false)
     setWinnerIndex(randomWinner())
   }
 
   const won = selected !== null && selected === winnerIndex
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(perkCode)
+      setCopied(true)
+      trackEvent('mystery_box_copy_code', { code: perkCode })
+      window.setTimeout(() => setCopied(false), 2000)
+    } catch {
+      /* clipboard no disponible: el código igual está a la vista */
+    }
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#020618] text-white">
@@ -65,13 +82,13 @@ function MysteryBox() {
           <span className="text-[#75AADB]">BOX</span>
         </h1>
         <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mt-4">
-          Escaneaste el golden ticket. Una de las tres cajas esconde un Perk secreto.
+          Sellaste el golden ticket. Una de las tres cajas esconde un Perk secreto.
           <br />
           ¿Te sientes con suerte?
         </p>
       </div>
 
-      {/* Escena 3D */}
+      {/* Juego (3D) */}
       <div className="relative">
         <MysteryBoxes3D
           className="h-[55vh] sm:h-[60vh] w-full"
@@ -99,12 +116,32 @@ function MysteryBox() {
               {won ? (
                 <>
                   <RewardTicket />
-                  <Link
-                    to="/"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#75AADB] hover:bg-[#5a93c5] text-white font-black px-6 py-3 transition-colors"
-                  >
-                    Reclamar premio
-                  </Link>
+
+                  {/* Código de canje del perk */}
+                  <div className="w-full max-w-md flex flex-col items-center gap-3">
+                    <p className="text-xs uppercase tracking-[0.25em] font-bold text-gray-400">
+                      Tu código de canje
+                    </p>
+                    <div className="flex items-center gap-2 w-full">
+                      <code className="flex-1 text-center rounded-xl border border-[#75AADB]/60 bg-white/5 px-4 py-3 font-mono text-xl sm:text-2xl font-black tracking-[0.18em] text-white">
+                        {perkCode}
+                      </code>
+                      <button
+                        onClick={copyCode}
+                        aria-label="Copiar código"
+                        className="shrink-0 rounded-xl bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black px-4 py-3 transition-[transform,background-color] cursor-pointer"
+                      >
+                        {copied ? '¡Copiado!' : 'Copiar'}
+                      </button>
+                    </div>
+                    <p className="text-gray-400 text-sm text-center">{claimText}</p>
+                    <Link
+                      to="/"
+                      className="mt-1 text-gray-400 hover:text-[#75AADB] text-sm font-bold uppercase tracking-widest transition-colors"
+                    >
+                      Volver al sitio
+                    </Link>
+                  </div>
                 </>
               ) : (
                 <>
