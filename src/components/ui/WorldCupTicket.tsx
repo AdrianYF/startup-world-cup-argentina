@@ -15,8 +15,8 @@ const MYSTERY_BOX_URL =
 /** Ruta interna a la que lleva el ticket sellado. */
 const MYSTERY_BOX_PATH = '/mystery-box'
 
-/** Sello tipo pasaporte que se estampa sobre el ticket. */
-const STAMP_SRC = '/airport.png'
+/** Sello tipo pasaporte (rojo) que se estampa sobre el ticket. */
+const STAMP_SRC = '/airport-red.png'
 
 /* -------- subcomponentes decorativos -------- */
 
