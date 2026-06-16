@@ -160,8 +160,8 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
       return
     }
     setStamped(true)
-    // Navegá cuando termina la estampa del sello.
-    window.setTimeout(goToMysteryBox, 900)
+    // Navegá un toque después de que el sello quedó asentado (deja ver el efecto).
+    window.setTimeout(goToMysteryBox, 1400)
   }
 
   return (
