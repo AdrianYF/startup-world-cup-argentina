@@ -229,19 +229,36 @@ a[href]:active {
 /* === Ticket dorado: sello tipo pasaporte que se estampa al tocar === */
 @keyframes stamp-apply {
   0% {
-    transform: translate(-50%, -50%) scale(2.6) rotate(-14deg);
+    transform: translate(-50%, -50%) scale(2.9) rotate(-17deg);
     opacity: 0;
+    filter: blur(2px);
   }
-  55% {
-    transform: translate(-50%, -50%) scale(0.9) rotate(-9deg);
-    opacity: 0.95;
+  38% {
+    opacity: 0.5;
+    filter: blur(0.6px);
   }
-  70% {
-    transform: translate(-50%, -50%) scale(1.02) rotate(-9deg);
-    opacity: 0.95;
+  46% {
+    /* impacto: baja rápido y "golpea" más chico que el final */
+    transform: translate(-50%, -50%) scale(0.84) rotate(-9deg);
+    opacity: 1;
+    filter: blur(0) drop-shadow(0 3px 5px rgba(15, 23, 43, 0.35));
+  }
+  62% {
+    /* recoil del golpe */
+    transform: translate(-50%, -50%) scale(1.07) rotate(-9deg);
+    opacity: 0.96;
   }
   100% {
     transform: translate(-50%, -50%) scale(1) rotate(-9deg);
     opacity: 0.9;
+    filter: blur(0) drop-shadow(0 2px 4px rgba(15, 23, 43, 0.3));
   }
+}
+
+/* Sacudón del ticket al recibir el golpe del sello (sincronizado al impacto) */
+@keyframes ticket-shake {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  20% { transform: translate3d(0, 2px, 0) rotate(-0.5deg); }
+  45% { transform: translate3d(-1px, -1px, 0) rotate(0.4deg); }
+  70% { transform: translate3d(1px, 1px, 0) rotate(-0.25deg); }
 }

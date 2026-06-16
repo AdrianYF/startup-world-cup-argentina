@@ -15,8 +15,8 @@ const MYSTERY_BOX_URL =
 /** Ruta interna a la que lleva el ticket sellado. */
 const MYSTERY_BOX_PATH = '/mystery-box'
 
-/** Sello tipo pasaporte (rojo) que se estampa sobre el ticket. */
-const STAMP_SRC = '/airport-red.png'
+/** Sello tipo pasaporte (azul) que se estampa sobre el ticket. */
+const STAMP_SRC = '/airport-blue.png'
 
 /* -------- subcomponentes decorativos -------- */
 
@@ -160,8 +160,8 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
       return
     }
     setStamped(true)
-    // Navegá cuando termina la estampa del sello.
-    window.setTimeout(goToMysteryBox, 900)
+    // Navegá un toque después de que el sello quedó asentado (deja ver el efecto).
+    window.setTimeout(goToMysteryBox, 1400)
   }
 
   return (
@@ -186,6 +186,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
         className={`relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden outline-none transition-transform ${
           stamped ? 'cursor-default' : 'cursor-pointer hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#0f172b]/50'
         }`}
+        style={stamped ? { animation: 'ticket-shake 280ms ease-out 230ms both' } : undefined}
       >
 
         {/* Sello tipo pasaporte que se estampa al tocar el ticket */}
@@ -196,20 +197,11 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-1/2 z-40 w-[72%] max-w-[360px]"
             style={{
-              animation: 'stamp-apply 460ms cubic-bezier(.2,.7,.25,1) forwards',
+              animation: 'stamp-apply 540ms cubic-bezier(.3,.85,.35,1) forwards',
               transformOrigin: 'center',
-              willChange: 'transform, opacity',
+              willChange: 'transform, opacity, filter',
             }}
           />
-        )}
-
-        {/* Hint de interacción (desaparece al sellar) */}
-        {!stamped && (
-          <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-30">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0f172b]/85 text-[#f3e6b3] text-[10px] sm:text-xs font-black uppercase tracking-wider px-3 py-1 shadow-md animate-pulse">
-              Tocá para sellar tu ticket
-            </span>
-          </div>
         )}
 
         {/* Fondo dorado */}
@@ -286,9 +278,19 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
           </div>
 
           {/* === PERFORACIÓN (decorativa) === */}
-          <div className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
-            <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
-            <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
+          <div className="relative w-4 sm:w-6 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
+            <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
+            <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
+
+            {/* Hint de interacción: texto rotado 90° sobre la perforación (desaparece al sellar) */}
+            {!stamped && (
+              <span
+                aria-hidden
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap leading-none font-mono font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[8px] sm:text-[9px] text-[#0f172b] antialiased animate-pulse pointer-events-none"
+              >
+                Tocá para sellar tu ticket
+              </span>
+            )}
           </div>
 
           {/* === STUB === */}
