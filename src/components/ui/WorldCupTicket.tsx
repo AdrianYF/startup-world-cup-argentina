@@ -281,16 +281,14 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
 
-            {/* Hint de interacción: texto rotado 90° centrado sobre la perforación (desaparece al sellar) */}
+            {/* Hint de interacción: texto rotado 90° sobre la perforación (desaparece al sellar) */}
             {!stamped && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span
-                  aria-hidden
-                  className="rotate-90 whitespace-nowrap font-mono font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[8px] sm:text-[9px] text-[#21313f] opacity-70 antialiased animate-pulse"
-                >
-                  Tocá para sellar tu ticket
-                </span>
-              </div>
+              <span
+                aria-hidden
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap font-mono font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[8px] sm:text-[9px] text-[#21313f] opacity-70 antialiased animate-pulse pointer-events-none"
+              >
+                Tocá para sellar tu ticket
+              </span>
             )}
           </div>
 
