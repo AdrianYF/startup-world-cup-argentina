@@ -16,6 +16,7 @@ type Evento = {
   destacado?: boolean
   bonus?: boolean
   cerrado?: boolean
+  proximamente?: boolean
 }
 
 const eventos = content.camino as Evento[]
@@ -60,6 +61,10 @@ function FixtureRow({ ev }: { ev: Evento }) {
       {ev.cerrado ? (
         <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#020618]/8 text-[#020618]/55 text-sm font-black px-4 py-2">
           Fecha cerrada
+        </span>
+      ) : ev.proximamente ? (
+        <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#75AADB]/12 text-[#5a93c5] text-sm font-black px-4 py-2">
+          Próximamente
         </span>
       ) : ev.url ? (
         <span
