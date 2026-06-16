@@ -2,31 +2,31 @@
   {
     "titulo": "PRESENTING PARTNERS",
     "logos": [
-      { "nombre": "Startup World Cup", "img": "/logos/norm/swc.png", "url": "https://www.startupworldcup.io/" },
-      { "nombre": "Startup Grind Buenos Aires", "img": "/logos/norm/sgba.png", "url": "https://www.startupgrind.com/buenos-aires/" },
-      { "nombre": "Pegasus Tech Ventures", "img": "/logos/norm/pegasus.png", "url": "https://www.pegasustechventures.com/" },
-      { "nombre": "Workplace", "img": "/logos/norm/workplace.png" }
+      { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85, "url": "https://www.startupworldcup.io/" },
+      { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "url": "https://www.startupgrind.com/buenos-aires/" },
+      { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "scale": 0.85, "url": "https://www.pegasustechventures.com/" },
+      { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "scale": 0.5 }
     ]
   },
   {
     "titulo": "COMMUNITY PARTNERS",
     "logos": [
-      { "nombre": "Paisanos", "img": "/logos/norm/paisanos.png", "url": "https://paisanos.io/" },
-      { "nombre": "Lovable", "img": "/logos/norm/lovable.png", "url": "https://lovable.dev/" },
-      { "nombre": "Omaly", "img": "/logos/norm/omaly.png", "url": "https://omaly.ai/" },
-      { "nombre": "Tito Free", "img": "/logos/norm/tito.png", "url": "https://titofree.com/" },
-      { "nombre": "Networking CriptoWorld", "img": "/logos/norm/networking.png" },
-      { "nombre": "Xplora", "img": "/logos/norm/xplora.png" }
+      { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
+      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
+      { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
+      { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.65, "url": "https://titofree.com/" },
+      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 0.82 },
+      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.5 }
     ]
   },
   {
     "titulo": "INSTITUTIONAL PARTNERS",
     "logos": [
       { "nombre": "UNCUYO", "img": null, "url": "https://www.uncuyo.edu.ar/" },
-      { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "scale": 0.66, "muted": true },
-      { "nombre": "CYTED", "img": "/logos/norm/cyted.png", "muted": true },
-      { "nombre": "Red RIBCi", "img": "/logos/norm/red.png", "muted": true },
-      { "nombre": "UTN", "img": "/logos/norm/utn.png", "muted": true }
+      { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "muted": true },
+      { "nombre": "CYTED", "img": "/logos/cyted-white.png", "scale": 0.5, "muted": true },
+      { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
+      { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true }
     ]
   }
 ]
