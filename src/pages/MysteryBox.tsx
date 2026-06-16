@@ -7,6 +7,9 @@ import { trackEvent } from '../lib/analytics'
 
 type Phase = 'idle' | 'opening' | 'revealed'
 
+/** El juego todavía no está habilitado: muestra "Próximamente". Poner en false para abrir. */
+const COMING_SOON = true
+
 const randomWinner = () => Math.floor(Math.random() * 3)
 
 /**
@@ -82,9 +85,15 @@ function MysteryBox() {
           <span className="text-[#75AADB]">BOX</span>
         </h1>
         <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mt-4">
-          Sellaste el golden ticket. Una de las tres cajas esconde un Perk secreto.
-          <br />
-          ¿Te sientes con suerte?
+          {COMING_SOON ? (
+            <>Sellaste el golden ticket. El juego por un Perk secreto abre muy pronto.</>
+          ) : (
+            <>
+              Sellaste el golden ticket. Una de las tres cajas esconde un Perk secreto.
+              <br />
+              ¿Te sientes con suerte?
+            </>
+          )}
         </p>
       </div>
 
@@ -94,14 +103,47 @@ function MysteryBox() {
           className="h-[55vh] sm:h-[60vh] w-full"
           selected={selected}
           winnerIndex={winnerIndex}
-          onSelect={handleSelect}
+          onSelect={COMING_SOON ? () => {} : handleSelect}
           onRevealReady={() => setPhase('revealed')}
         />
 
-        {phase === 'idle' && (
+        {!COMING_SOON && phase === 'idle' && (
           <p className="absolute bottom-4 left-0 right-0 text-center text-xs sm:text-sm text-gray-500 uppercase tracking-[0.25em] font-bold animate-pulse">
             Tocá una caja
           </p>
+        )}
+
+        {/* Overlay "Próximamente" (mismo efecto que la sección de precios) */}
+        {COMING_SOON && (
+          <div
+            aria-hidden
+            className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden"
+          >
+            {/* Backdrop translúcido — las cajas se intuyen detrás */}
+            <div className="absolute inset-0 backdrop-blur-md bg-[#020618]/35" />
+            {/* Líneas sutiles arriba/abajo */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/6 to-transparent" />
+
+            {/* Mensaje minimal */}
+            <div className="relative z-10 text-center px-6 py-8">
+              <div className="flex items-center justify-center gap-2.5 mb-3">
+                <span className="relative flex items-center">
+                  <span className="absolute inline-flex h-1.5 w-1.5 rounded-full bg-[#75AADB] opacity-50 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#75AADB]/65" />
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.45em] text-[#75AADB]/60">
+                  Mystery Box
+                </span>
+              </div>
+              <p className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[0.06em] text-white drop-shadow-[0_4px_14px_rgba(0,0,0,0.35)] [text-shadow:0_2px_6px_rgba(0,0,0,0.25)]">
+                Próximamente
+              </p>
+              <p className="text-[10px] sm:text-xs font-medium tracking-wider text-white/30 mt-3">
+                Apertura por anunciar
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Reveal */}
