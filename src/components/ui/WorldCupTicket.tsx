@@ -203,15 +203,6 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
           />
         )}
 
-        {/* Hint de interacción (desaparece al sellar) */}
-        {!stamped && (
-          <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-30">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0f172b]/85 text-[#f3e6b3] text-[10px] sm:text-xs font-black uppercase tracking-wider px-3 py-1 shadow-md animate-pulse">
-              Tocá para sellar tu ticket
-            </span>
-          </div>
-        )}
-
         {/* Fondo dorado */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#fff8e6]" />
 
@@ -287,8 +278,18 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
 
           {/* === PERFORACIÓN (decorativa) === */}
           <div className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
-            <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
-            <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
+            <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
+            <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
+
+            {/* Hint de interacción: texto rotado 90° sobre la perforación (desaparece al sellar) */}
+            {!stamped && (
+              <span
+                aria-hidden
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-[8px] sm:text-[9px] font-black uppercase tracking-[0.18em] text-[#0f172b]/80 animate-pulse pointer-events-none"
+              >
+                Tocá para sellar tu ticket
+              </span>
+            )}
           </div>
 
           {/* === STUB === */}
