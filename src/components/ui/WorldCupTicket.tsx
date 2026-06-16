@@ -1,18 +1,9 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { content } from '../../lib/content'
 
 type Variant = 'compact' | 'full'
-
-/** Ancho del stub en mobile (w-16 = 64px): lo que se "arranca" al cortar. */
-const STUB_W = 64
-
-/**
- * clip-path que le saca al ticket la franja derecha (el stub) con un corte
- * recto y esquinas redondeadas (look moderno), para que esa fracción desaparezca.
- */
-const TICKET_TEAR = `inset(0 ${STUB_W}px 0 0 round 0.75rem)`
 
 /**
  * URL real a la que apunta el QR del ticket: la sección oculta "Mystery Box".
@@ -21,8 +12,11 @@ const TICKET_TEAR = `inset(0 ${STUB_W}px 0 0 round 0.75rem)`
 const MYSTERY_BOX_URL =
   (typeof window !== 'undefined' ? window.location.origin : '') + '/mystery-box'
 
-/** Ruta interna a la que lleva "cortar" el ticket en mobile. */
+/** Ruta interna a la que lleva el ticket sellado. */
 const MYSTERY_BOX_PATH = '/mystery-box'
+
+/** Sello tipo pasaporte que se estampa sobre el ticket. */
+const STAMP_SRC = '/airport.png'
 
 /* -------- subcomponentes decorativos -------- */
 
@@ -116,69 +110,6 @@ function QRCode({ size = 56 }: { size?: number }) {
   )
 }
 
-/** Ícono de tijera (línea, hereda currentColor). */
-function ScissorsIcon({ size = 16 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <circle cx="6" cy="6" r="3" />
-      <circle cx="6" cy="18" r="3" />
-      <line x1="20" y1="4" x2="8.12" y2="15.88" />
-      <line x1="14.47" y1="14.48" x2="20" y2="20" />
-      <line x1="8.12" y1="8.12" x2="12" y2="12" />
-    </svg>
-  )
-}
-
-/**
- * Cartelito "NO CORTAR" tipo sticker (reemplaza al QR en mobile).
- * Es solo decorativo/instructivo: la acción real es arrastrar la tijera.
- */
-function NoCutSign() {
-  return (
-    <div
-      className="relative -rotate-6 select-none rounded border border-[#0f172b]/50 bg-white/85 px-1.5 py-1 text-center shadow-sm"
-      aria-hidden
-    >
-      <div className="flex items-center justify-center gap-0.5 text-[#b91c1c]">
-        <ScissorsIcon size={11} />
-        <span className="text-[7px] font-black leading-none tracking-tight">NO</span>
-      </div>
-      <div className="text-[8px] font-black leading-none tracking-[0.12em] text-[#0f172b]">
-        CORTAR
-      </div>
-    </div>
-  )
-}
-
-/**
- * Cara del stub (mobile) usada por la copia que "se arranca" al cortar.
- * Replica el contenido del stub real: sello, cartel NO CORTAR y "AR · 26".
- */
-function StubFace() {
-  return (
-    <div className="relative w-full h-full overflow-hidden bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 text-center gap-2">
-      <GuillochePattern />
-      <div className="relative">
-        <HolographicSeal size={32} />
-      </div>
-      <div className="relative">
-        <NoCutSign />
-      </div>
-      <div className="relative text-[10px] font-black tracking-widest text-[#21313f]">AR · 26</div>
-    </div>
-  )
-}
-
 /* -------- variantes del ticket -------- */
 
 function CompactTicket({ formatUSD }: { formatUSD: string }) {
@@ -214,24 +145,13 @@ function CompactTicket({ formatUSD }: { formatUSD: string }) {
 
 function FullTicket({ formatUSD }: { formatUSD: string }) {
   const navigate = useNavigate()
-
-  // Progreso del corte (0 = arriba, 1 = abajo del todo) y estado del ticket.
-  const [progress, setProgress] = useState(0)
-  const [cut, setCut] = useState(false)
-  // Mientras se arrastra no hay transición (la tijera sigue al dedo); al soltar/auto sí.
-  const [smooth, setSmooth] = useState(true)
-
-  const trackRef = useRef<HTMLDivElement>(null)
-  const draggingRef = useRef(false)
-  const dragStart = useRef({ y: 0, p: 0, moved: false })
+  const [stamped, setStamped] = useState(false)
 
   const goToMysteryBox = () => navigate(MYSTERY_BOX_PATH)
 
-  const finishCut = () => {
-    setSmooth(true)
-    setProgress(1)
-
-    // Con motion reducido no animamos el arranque: navegamos directo.
+  const handleStamp = () => {
+    if (stamped) return
+    // Con motion reducido no animamos el sello: navegamos directo.
     const reduce =
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -239,80 +159,58 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
       goToMysteryBox()
       return
     }
-
-    setCut(true)
-    // Navegá cuando termina la animación de arranque del stub.
-    window.setTimeout(goToMysteryBox, 680)
+    setStamped(true)
+    // Navegá cuando termina la estampa del sello.
+    window.setTimeout(goToMysteryBox, 900)
   }
-
-  const onPointerDown = (e: ReactPointerEvent) => {
-    if (cut) return
-    draggingRef.current = true
-    dragStart.current = { y: e.clientY, p: progress, moved: false }
-    setSmooth(false)
-    e.currentTarget.setPointerCapture(e.pointerId)
-  }
-
-  const onPointerMove = (e: ReactPointerEvent) => {
-    if (!draggingRef.current || cut) return
-    const h = trackRef.current?.clientHeight ?? 1
-    const dy = e.clientY - dragStart.current.y
-    if (Math.abs(dy) > 4) dragStart.current.moved = true
-    const next = Math.max(0, Math.min(1, dragStart.current.p + dy / h))
-    setProgress(next)
-    if (next >= 0.97) {
-      draggingRef.current = false
-      finishCut()
-    }
-  }
-
-  const onPointerUp = () => {
-    if (!draggingRef.current || cut) return
-    draggingRef.current = false
-    if (!dragStart.current.moved) {
-      // Tap simple: corte automático (la tijera baja sola).
-      finishCut()
-    } else if (progress < 0.97) {
-      // Soltó antes de terminar: el ticket "se salva" y vuelve arriba.
-      setSmooth(true)
-      setProgress(0)
-    }
-  }
-
-  const cutTransition = smooth ? 'top 500ms cubic-bezier(.4,0,.2,1), height 500ms cubic-bezier(.4,0,.2,1)' : 'none'
 
   return (
     <div className="relative font-mono select-none">
-
-      {/* Al cortar: una copia del stub gira sobre la perforación (bisagra) y se
-          desvanece, como cuando arrancás la talonera de un ticket. Va en el wrapper
-          externo (sin overflow) para poder girar fuera del recorte del ticket. */}
-      {cut && (
-        <div
-          aria-hidden
-          className="sm:hidden absolute top-0 right-0 h-full z-30 pointer-events-none"
-          style={{ width: STUB_W, perspective: '620px' }}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              transformOrigin: 'left center',
-              animation: 'ticket-tear 640ms cubic-bezier(.45,0,.85,.5) forwards',
-            }}
-          >
-            <StubFace />
-          </div>
-        </div>
-      )}
 
       {/* Halos */}
       <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#d4af37]/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#d4af37]/30 rounded-full blur-3xl pointer-events-none" />
 
       <div
-        className="relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden"
-        style={cut ? { clipPath: TICKET_TEAR } : undefined}
+        role="button"
+        tabIndex={0}
+        aria-label="Sellar el ticket y entrar a la Mystery Box"
+        aria-disabled={stamped}
+        onClick={handleStamp}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleStamp()
+          }
+        }}
+        className={`relative rounded-xl sm:rounded-2xl border border-[#d4af37] overflow-hidden outline-none transition-transform ${
+          stamped ? 'cursor-default' : 'cursor-pointer hover:scale-[1.01] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-[#0f172b]/50'
+        }`}
       >
+
+        {/* Sello tipo pasaporte que se estampa al tocar el ticket */}
+        {stamped && (
+          <img
+            src={STAMP_SRC}
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 z-40 w-[72%] max-w-[360px]"
+            style={{
+              animation: 'stamp-apply 460ms cubic-bezier(.2,.7,.25,1) forwards',
+              transformOrigin: 'center',
+              willChange: 'transform, opacity',
+            }}
+          />
+        )}
+
+        {/* Hint de interacción (desaparece al sellar) */}
+        {!stamped && (
+          <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 z-30">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0f172b]/85 text-[#f3e6b3] text-[10px] sm:text-xs font-black uppercase tracking-wider px-3 py-1 shadow-md animate-pulse">
+              Tocá para sellar tu ticket
+            </span>
+          </div>
+        )}
 
         {/* Fondo dorado */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#f3e6b3] via-[#d4af37] to-[#fff8e6]" />
@@ -387,63 +285,14 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             </div>
           </div>
 
-          {/* === PERFORACIÓN === */}
-          <div
-            ref={trackRef}
-            className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0"
-          >
+          {/* === PERFORACIÓN (decorativa) === */}
+          <div className="relative w-3 sm:w-5 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full" />
-
-            {/* Línea de corte limpia que deja la tijera al bajar (solo mobile) */}
-            <div
-              aria-hidden
-              className="sm:hidden absolute top-0 left-1/2 -translate-x-1/2 w-px rounded-full bg-[#0f172b]/70 z-10 pointer-events-none"
-              style={{
-                height: `calc(${progress} * (100% - 28px) + 14px)`,
-                transition: cutTransition,
-              }}
-            />
-
-            {/* Tijera arrastrable que tijeretea mientras baja (solo mobile) */}
-            <button
-              type="button"
-              aria-label="Deslizá la tijera para cortar el ticket"
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-              onPointerCancel={onPointerUp}
-              className={`sm:hidden absolute left-1/2 -translate-x-1/2 z-20 grid place-items-center w-7 h-7 rounded-full bg-[#0f172b] text-[#f3e6b3] shadow-lg touch-none cursor-grab active:cursor-grabbing ${
-                progress === 0 && !cut ? 'animate-pulse' : ''
-              }`}
-              style={{ top: `calc(${progress} * (100% - 28px))`, transition: cutTransition }}
-            >
-              <span
-                className="grid place-items-center"
-                style={{ animation: progress > 0 ? 'ticket-snip 170ms ease-in-out infinite' : undefined }}
-              >
-                <ScissorsIcon size={15} />
-              </span>
-            </button>
           </div>
 
           {/* === STUB === */}
-          <div
-            className="relative w-16 sm:w-28 bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0"
-            style={
-              cut
-                ? {
-                    // El stub real se elimina (el ticket queda recortado por clip-path);
-                    // la copia que gira y se desvanece dibuja el arranque.
-                    opacity: 0,
-                  }
-                : {
-                    // Mientras se corta, el papel se separa apenas (sin transición durante el drag).
-                    transform: `translateX(${(progress * 4).toFixed(1)}px)`,
-                    transition: smooth ? 'transform 500ms cubic-bezier(.4,0,.2,1)' : 'none',
-                  }
-            }
-          >
+          <div className="relative w-16 sm:w-28 bg-gradient-to-b from-[#d4af37] via-[#d4af37] to-[#ffffff] flex flex-col items-center justify-center p-2 sm:p-4 text-center gap-2 sm:gap-4 flex-shrink-0">
             <GuillochePattern />
 
             <div className="relative sm:hidden">
@@ -453,11 +302,10 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
               <HolographicSeal size={52} />
             </div>
 
-            {/* Mobile: cartel "NO CORTAR" (la acción real es arrastrar la tijera) */}
-            <div className="relative sm:hidden">
-              <NoCutSign />
+            {/* QR escaneable a la Mystery Box */}
+            <div className="relative bg-white p-0.5 sm:p-1 rounded border border-[#0f172b]/40 sm:hidden">
+              <QRCode size={28} />
             </div>
-            {/* Desktop: QR escaneable a la Mystery Box */}
             <div className="relative bg-white p-1 rounded border border-[#0f172b]/40 hidden sm:block">
               <QRCode size={44} />
             </div>

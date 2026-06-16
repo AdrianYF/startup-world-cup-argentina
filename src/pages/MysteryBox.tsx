@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { MysteryBoxes3D } from '../components/ui/MysteryBoxes3D'
 import { RewardTicket } from '../components/ui/RewardTicket'
@@ -7,11 +7,25 @@ type Phase = 'idle' | 'opening' | 'revealed'
 
 const randomWinner = () => Math.floor(Math.random() * 3)
 
+/** Email guardado localmente (gate del juego, sin backend). */
+const EMAIL_KEY = 'swc_mb_email'
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 /**
- * Sección oculta a la que se llega escaneando el QR del ticket.
- * 3 cajas: una tiene el perk (créditos de AWS), las otras dos están vacías.
+ * Sección oculta a la que se llega sellando el golden ticket.
+ * Primero pide el email; luego muestra el juego: 3 cajas, una con el perk.
  */
 function MysteryBox() {
+  const [entered, setEntered] = useState(() => {
+    try {
+      return !!localStorage.getItem(EMAIL_KEY)
+    } catch {
+      return false
+    }
+  })
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
+
   const [winnerIndex, setWinnerIndex] = useState(randomWinner)
   const [selected, setSelected] = useState<number | null>(null)
   const [phase, setPhase] = useState<Phase>('idle')
@@ -20,6 +34,21 @@ function MysteryBox() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  const handleEmailSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    const value = email.trim()
+    if (!EMAIL_RE.test(value)) {
+      setEmailError('Ingresá un email válido.')
+      return
+    }
+    try {
+      localStorage.setItem(EMAIL_KEY, value)
+    } catch {
+      /* localStorage no disponible: igual dejamos entrar */
+    }
+    setEntered(true)
+  }
 
   // Pequeño delay para animar la entrada del reveal.
   useEffect(() => {
@@ -64,14 +93,57 @@ function MysteryBox() {
           <span className="text-white">MYSTERY </span>
           <span className="text-[#75AADB]">BOX</span>
         </h1>
-        <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mt-4">
-          Escaneaste el golden ticket. Una de las tres cajas esconde un Perk secreto.
-          <br />
-          ¿Te sientes con suerte?
-        </p>
+        {entered ? (
+          <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mt-4">
+            Sellaste el golden ticket. Una de las tres cajas esconde un Perk secreto.
+            <br />
+            ¿Te sientes con suerte?
+          </p>
+        ) : (
+          <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mt-4">
+            Sellaste el golden ticket. Dejanos tu email para jugar por un Perk secreto.
+          </p>
+        )}
       </div>
 
-      {/* Escena 3D */}
+      {/* Paso 1: email */}
+      {!entered && (
+        <div className="relative max-w-md mx-auto px-4 pb-20">
+          <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3 text-left">
+            <label htmlFor="mb-email" className="text-xs uppercase tracking-[0.25em] font-bold text-gray-400">
+              Tu email
+            </label>
+            <input
+              id="mb-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={e => {
+                setEmail(e.target.value)
+                if (emailError) setEmailError('')
+              }}
+              placeholder="tunombre@email.com"
+              aria-invalid={!!emailError}
+              className="w-full rounded-xl bg-white/5 border border-white/15 focus:border-[#75AADB] outline-none px-4 py-3 text-white placeholder:text-gray-500 transition-colors"
+            />
+            {emailError && <p className="text-[#ff7675] text-sm font-bold">{emailError}</p>}
+            <button
+              type="submit"
+              className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-black px-6 py-3 transition-[transform,background-color] cursor-pointer"
+            >
+              Jugar
+            </button>
+            <p className="text-gray-500 text-xs text-center mt-1">
+              Lo usamos solo para avisarte si ganás. Sin spam.
+            </p>
+          </form>
+        </div>
+      )}
+
+      {/* Paso 2: juego (3D) — se monta recién después del email */}
+      {entered && (
       <div className="relative">
         <MysteryBoxes3D
           className="h-[55vh] sm:h-[60vh] w-full"
@@ -129,6 +201,7 @@ function MysteryBox() {
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }
