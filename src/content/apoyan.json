@@ -5,8 +5,7 @@
       { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85, "url": "https://www.startupworldcup.io/" },
       { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "url": "https://www.startupgrind.com/buenos-aires/" },
       { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "url": "https://www.pegasustechventures.com/" },
-      { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "scale": 0.68 },
-      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.68 }
+      { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "scale": 0.68 }
     ]
   },
   {
@@ -16,7 +15,8 @@
       { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
       { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
       { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.65, "url": "https://titofree.com/" },
-      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 0.82 }
+      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 0.82 },
+      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.68 }
     ]
   },
   {
