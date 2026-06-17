@@ -20,9 +20,9 @@ const MODEL_URL = '/golden_trophy.glb'
 
 /**
  * Rotación frontal de base del modelo (la cara que mira a la cámara en reposo).
- * El seguimiento del cursor se aplica por ENCIMA de esta pose.
+ * 0 = cara del óvalo de la base hacia la cámara.
  */
-const FRONT_Y = Math.PI
+const FRONT_Y = 0
 
 function TrophyModel() {
   const ref = useRef<Group>(null)
