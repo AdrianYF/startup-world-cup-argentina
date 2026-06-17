@@ -277,8 +277,11 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             </div>
           </div>
 
-          {/* === PERFORACIÓN (decorativa) === */}
-          <div className="relative w-4 sm:w-6 bg-[#d4af37] border-l-2 border-dashed border-[#0f172b]/50 flex-shrink-0">
+          {/* === PERFORACIÓN (gradiente CTA, mismo de "Aplicá"/"Voluntario") === */}
+          <div
+            className="relative w-4 sm:w-6 border-l-2 border-dashed border-[#0f172b]/25 flex-shrink-0"
+            style={{ backgroundImage: 'linear-gradient(180deg, #4F46E5 0%, #6c5ce7 30%, #c084fc 60%, #ff7675 100%)' }}
+          >
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
             <div className="absolute -bottom-1.5 sm:-bottom-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
 
@@ -286,7 +289,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
             {!stamped && (
               <span
                 aria-hidden
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap leading-none font-mono font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[8px] sm:text-[9px] text-[#0f172b] antialiased animate-pulse pointer-events-none"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap leading-none font-mono font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[8px] sm:text-[9px] text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.55)] antialiased animate-pulse pointer-events-none z-20"
               >
                 Tocá para sellar tu ticket
               </span>
