@@ -1,4 +1,4 @@
-import { Suspense, useRef, useMemo, useEffect } from 'react'
+import { Suspense, useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, Environment, ContactShadows, Lightformer, useTexture } from '@react-three/drei'
 import {
@@ -71,24 +71,10 @@ function TrophyModel() {
     return { object: obj, scale: s }
   }, [scene, base, metalMap, roughMap])
 
-  // La copa rota siguiendo el cursor (movimiento del mouse en toda la página).
-  const mouse = useRef({ x: 0, y: 0 })
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1
-      mouse.current.y = (e.clientY / window.innerHeight) * 2 - 1
-    }
-    window.addEventListener('pointermove', onMove)
-    return () => window.removeEventListener('pointermove', onMove)
-  }, [])
-
+  // La copa queda fija de frente; solo una leve flotación vertical (sin rotar).
   useFrame(({ clock }) => {
     if (!ref.current) return
     const t = clock.getElapsedTime()
-    const targetY = mouse.current.x * Math.PI * 0.85
-    const targetX = -mouse.current.y * 0.3
-    ref.current.rotation.y += (targetY - ref.current.rotation.y) * 0.07
-    ref.current.rotation.x += (targetX - ref.current.rotation.x) * 0.07
     ref.current.position.y = 0.74 + Math.sin(t * 0.8) * 0.04
   })
 
