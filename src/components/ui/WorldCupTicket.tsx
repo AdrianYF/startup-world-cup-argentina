@@ -279,7 +279,7 @@ function FullTicket({ formatUSD }: { formatUSD: string }) {
 
           {/* === PERFORACIÓN (gradiente CTA, mismo de "Aplicá"/"Voluntario") === */}
           <div
-            className="relative w-4 sm:w-6 border-l-2 border-dashed border-[#0f172b]/25 flex-shrink-0"
+            className="relative w-3.5 sm:w-5 border-l-2 border-dashed border-[#0f172b]/25 flex-shrink-0"
             style={{ backgroundImage: 'linear-gradient(180deg, #4F46E5 0%, #6c5ce7 30%, #c084fc 60%, #ff7675 100%)' }}
           >
             <div className="absolute -top-1.5 sm:-top-2.5 left-1/2 -translate-x-1/2 w-3 h-3 sm:w-5 sm:h-5 bg-[#0f172b] rounded-full z-10" />
