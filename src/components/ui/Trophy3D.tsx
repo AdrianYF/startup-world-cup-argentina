@@ -1,4 +1,4 @@
-import { Suspense, useRef, useMemo } from 'react'
+import { Suspense, useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, Environment, ContactShadows, Lightformer, useTexture } from '@react-three/drei'
 import {
@@ -71,10 +71,23 @@ function TrophyModel() {
     return { object: obj, scale: s }
   }, [scene, base, metalMap, roughMap])
 
-  // La copa queda fija de frente; solo una leve flotación vertical (sin rotar).
+  // Al scrollear hacia abajo, la copa gira un poco (arranca de frente con el óvalo).
+  const scrollY = useRef(0)
+  useEffect(() => {
+    const onScroll = () => {
+      scrollY.current = window.scrollY
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   useFrame(({ clock }) => {
     if (!ref.current) return
     const t = clock.getElapsedTime()
+    // gira proporcional al scroll, con tope suave (~70°)
+    const target = Math.min(scrollY.current * 0.0006, Math.PI * 0.4)
+    ref.current.rotation.y += (target - ref.current.rotation.y) * 0.08
     ref.current.position.y = 0.74 + Math.sin(t * 0.8) * 0.04
   })
 
