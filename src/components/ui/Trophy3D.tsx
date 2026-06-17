@@ -85,8 +85,8 @@ function TrophyModel() {
   useFrame(({ clock }) => {
     if (!ref.current) return
     const t = clock.getElapsedTime()
-    // gira proporcional al scroll, con tope suave (~70°)
-    const target = Math.min(scrollY.current * 0.0006, Math.PI * 0.4)
+    // gira proporcional al scroll, con tope de 10°
+    const target = Math.min(scrollY.current * 0.0003, (10 * Math.PI) / 180)
     ref.current.rotation.y += (target - ref.current.rotation.y) * 0.08
     ref.current.position.y = 0.74 + Math.sin(t * 0.8) * 0.04
   })
