@@ -18,6 +18,12 @@ import {
  */
 const MODEL_URL = '/golden_trophy.glb'
 
+/**
+ * Rotación frontal de base del modelo (la cara que mira a la cámara en reposo).
+ * El seguimiento del cursor se aplica por ENCIMA de esta pose.
+ */
+const FRONT_Y = Math.PI
+
 function TrophyModel() {
   const ref = useRef<Group>(null)
   const { scene } = useGLTF(MODEL_URL)
@@ -88,7 +94,8 @@ function TrophyModel() {
 
   return (
     <group ref={ref}>
-      <primitive object={object} scale={scale} />
+      {/* Pose frontal de base; el cursor rota el grupo padre por encima */}
+      <primitive object={object} scale={scale} rotation-y={FRONT_Y} />
     </group>
   )
 }
