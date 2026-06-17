@@ -24,7 +24,7 @@ const MODEL_URL = '/golden_trophy.glb'
  */
 const FRONT_Y = 0
 
-function TrophyModel() {
+function TrophyModel({ rotTarget }: { rotTarget: { current: number } }) {
   const ref = useRef<Group>(null)
   const { scene } = useGLTF(MODEL_URL)
   // baseColor original del GLB con el oro recoloreado a amarillo mate (madera intacta).
@@ -71,23 +71,11 @@ function TrophyModel() {
     return { object: obj, scale: s }
   }, [scene, base, metalMap, roughMap])
 
-  // Al scrollear hacia abajo, la copa gira un poco (arranca de frente con el óvalo).
-  const scrollY = useRef(0)
-  useEffect(() => {
-    const onScroll = () => {
-      scrollY.current = window.scrollY
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
+  // Gira suavemente hacia el target (atado al scroll desde el componente padre) + flotación.
   useFrame(({ clock }) => {
     if (!ref.current) return
     const t = clock.getElapsedTime()
-    // gira proporcional al scroll, con tope de 10°
-    const target = Math.min(scrollY.current * 0.0003, (10 * Math.PI) / 180)
-    ref.current.rotation.y += (target - ref.current.rotation.y) * 0.08
+    ref.current.rotation.y += (rotTarget.current - ref.current.rotation.y) * 0.08
     ref.current.position.y = 0.74 + Math.sin(t * 0.8) * 0.04
   })
 
@@ -102,6 +90,29 @@ function TrophyModel() {
 useGLTF.preload(MODEL_URL)
 
 export function Trophy3D({ className }: { className?: string }) {
+  // Rotación atada a la posición del trofeo en el viewport: gira ±10° mientras pasa por pantalla.
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const rotTarget = useRef(0)
+  useEffect(() => {
+    const update = () => {
+      const el = wrapRef.current
+      if (!el) return
+      const r = el.getBoundingClientRect()
+      const vh = window.innerHeight || 1
+      const center = r.top + r.height / 2
+      const p = (vh / 2 - center) / vh // ~ -0.5..0.5 al cruzar el viewport
+      const clamped = Math.max(-1, Math.min(1, p * 2))
+      rotTarget.current = clamped * ((10 * Math.PI) / 180) // ±10°
+    }
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
   const glConfig = useMemo(
     () => ({
       antialias: true,
@@ -113,7 +124,7 @@ export function Trophy3D({ className }: { className?: string }) {
   )
 
   return (
-    <div className={className}>
+    <div className={className} ref={wrapRef}>
       <Canvas
         camera={{ position: [0, 0.2, 5.0], fov: 35, near: 0.1, far: 100 }}
         gl={glConfig}
@@ -126,7 +137,7 @@ export function Trophy3D({ className }: { className?: string }) {
         <directionalLight position={[-4, 2, -3]} intensity={0.4} color="#ffe2a6" />
 
         <Suspense fallback={null}>
-          <TrophyModel />
+          <TrophyModel rotTarget={rotTarget} />
           {/* Estudio CÁLIDO envolvente → el metal refleja dorado (no negro) con brillo */}
           <Environment resolution={256}>
             <Lightformer form="rect" intensity={1.3} color="#ffe9c2" position={[0, 0, -8]} scale={[40, 40, 1]} />
