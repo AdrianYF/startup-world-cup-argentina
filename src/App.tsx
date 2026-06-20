@@ -18,7 +18,7 @@ import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
 import { ScrollStack } from './components/ui/ScrollStack'
-import { BackToTop } from './components/ui/BackToTop'
+import { WhatsAppNews } from './components/ui/WhatsAppNews'
 
 function App() {
   // Scroll a la sección cuando llegamos con hash en la URL (ej. /#speakers desde /speakers).
@@ -80,7 +80,7 @@ function App() {
       <FadeInSection>
         <Footer />
       </FadeInSection>
-      <BackToTop />
+      <WhatsAppNews />
     </div>
   )
 }
