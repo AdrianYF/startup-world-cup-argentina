@@ -3,17 +3,18 @@
     "etiqueta": "Precalentamiento #0",
     "fecha": "Miércoles 10 de junio",
     "fechaCorta": "Mié 10 jun",
+    "iso": "2026-06-10",
     "dia": "10",
     "mes": "JUN",
     "titulo": "Precalentamiento",
     "url": "https://luma.com/jzmnwnqj",
-    "destacado": true,
-    "cerrado": true
+    "destacado": true
   },
   {
     "etiqueta": "Amistoso #1",
     "fecha": "17 de junio",
     "fechaCorta": "17 jun",
+    "iso": "2026-06-17",
     "dia": "17",
     "mes": "JUN",
     "titulo": "Entrenamiento a puertas abiertas",
@@ -23,18 +24,21 @@
     "etiqueta": "Amistoso #2",
     "fecha": "2 de julio",
     "fechaCorta": "2 jul",
+    "iso": "2026-07-02",
     "dia": "02",
     "mes": "JUL",
     "titulo": "Conferencia de Prensa",
-    "proximamente": true
+    "url": "https://luma.com/setkf2bk"
   },
   {
     "etiqueta": "Amistoso #3",
     "fecha": "16 de julio",
     "fechaCorta": "16 jul",
+    "iso": "2026-07-16",
     "dia": "16",
     "mes": "JUL",
-    "titulo": "Lista de convocados"
+    "titulo": "Lista de convocados",
+    "proximamente": true
   },
   {
     "etiqueta": "Bonus",

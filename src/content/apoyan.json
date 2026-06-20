@@ -26,7 +26,8 @@
       { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "muted": true },
       { "nombre": "CYTED", "img": "/logos/cyted-white.png", "scale": 0.5, "muted": true },
       { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
-      { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true }
+      { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
+      { "nombre": "Fundación Empretec Argentina", "img": "/logos/empretec.png", "scale": 0.55, "muted": true }
     ]
   }
 ]
