@@ -8,6 +8,7 @@ type Evento = {
   etiqueta: string
   fecha: string
   fechaCorta: string
+  iso?: string
   dia: string
   mes: string
   titulo: string
@@ -21,14 +22,24 @@ type Evento = {
 
 const eventos = content.camino as Evento[]
 
+/* Una fecha está "cerrada" si ya pasó: hoy (a medianoche) es posterior al día del evento. */
+function esFechaCerrada(iso?: string) {
+  if (!iso) return false
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const [y, m, d] = iso.split('-').map(Number)
+  return hoy > new Date(y, m - 1, d)
+}
+
 /* Fila de fixture: chip de fecha + datos del evento + acción. */
 function FixtureRow({ ev }: { ev: Evento }) {
   const accent = ev.bonus ? '#f0b429' : '#75AADB'
+  const cerrado = ev.cerrado || esFechaCerrada(ev.iso)
 
   const inner = (
     <div
       className={`flex items-center gap-4 sm:gap-5 rounded-2xl border bg-white px-4 sm:px-5 py-4 transition-all group ${
-        ev.cerrado
+        cerrado
           ? 'border-[#020618]/10 opacity-70'
           : ev.destacado
             ? 'border-[#75AADB]/50 shadow-[0_10px_30px_-12px_rgba(117,170,219,0.6)]'
@@ -58,7 +69,7 @@ function FixtureRow({ ev }: { ev: Evento }) {
       </div>
 
       {/* Acción / estado */}
-      {ev.cerrado ? (
+      {cerrado ? (
         <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#020618]/8 text-[#020618]/55 text-sm font-black px-4 py-2">
           Fecha cerrada
         </span>
@@ -66,7 +77,11 @@ function FixtureRow({ ev }: { ev: Evento }) {
         <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#75AADB]/12 text-[#5a93c5] text-sm font-black px-4 py-2">
           Próximamente
         </span>
-      ) : ev.url ? (
+      ) : ev.bonus ? (
+        <span aria-hidden className="shrink-0 text-2xl opacity-60 group-hover:opacity-100 transition-opacity">
+          🍺
+        </span>
+      ) : (
         <span
           className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[#75AADB] group-hover:bg-[#5a93c5] text-white text-sm font-black px-4 py-2 transition-colors"
           style={{ textShadow: '0 1px 2px rgba(0,0,0,0.25)' }}
@@ -76,15 +91,11 @@ function FixtureRow({ ev }: { ev: Evento }) {
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </span>
-      ) : (
-        <span aria-hidden className="shrink-0 text-2xl opacity-60 group-hover:opacity-100 transition-opacity">
-          {ev.bonus ? '🍺' : '⚽'}
-        </span>
       )}
     </div>
   )
 
-  if (ev.url && !ev.cerrado) {
+  if (ev.url && !cerrado) {
     return (
       <a
         href={ev.url}
