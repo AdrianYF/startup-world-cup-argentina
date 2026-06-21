@@ -1,7 +1,7 @@
 import { content } from '../../lib/content'
 
 /**
- * Botón flotante de WhatsApp "Enterate de las novedades" — fixed bottom-right.
+ * Botón flotante de WhatsApp "Enterate antes que nadie" — fixed bottom-right.
  * Por defecto muestra solo el ícono; al hacer hover se expande revelando el texto.
  * Linkea al grupo/canal de WhatsApp (config.links.whatsapp).
  */
@@ -13,7 +13,7 @@ export function WhatsAppNews() {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Enterate de las últimas novedades por WhatsApp"
+      aria-label="Enterate antes que nadie por WhatsApp"
       className="group fixed bottom-6 right-6 z-40 flex items-center rounded-full bg-[#25D366] text-white transition-transform duration-300 ease-out hover:scale-[1.03] active:scale-95"
     >
       <span className="grid place-items-center w-14 h-14 shrink-0">
@@ -22,7 +22,7 @@ export function WhatsAppNews() {
         </svg>
       </span>
       <span className="max-w-0 overflow-hidden whitespace-nowrap font-black text-sm leading-tight tracking-wide [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] pr-0 transition-all duration-300 ease-out group-hover:max-w-[300px] group-hover:pr-5 group-focus-visible:max-w-[300px] group-focus-visible:pr-5">
-        Enterate de las últimas novedades
+        Enterate antes que nadie
       </span>
     </a>
   )
