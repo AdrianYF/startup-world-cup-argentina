@@ -15,6 +15,7 @@ import Voluntarios from './components/Voluntarios'
 import Partners from './components/Partners'
 import Apoyan from './components/Apoyan'
 import FAQ from './components/FAQ'
+import Galeria from './components/Galeria'
 import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
 import { ScrollStack } from './components/ui/ScrollStack'
@@ -76,6 +77,9 @@ function App() {
             <Section />
           </FadeInSection>
         ))}
+        <FadeInSection>
+          <Galeria />
+        </FadeInSection>
       </main>
       <FadeInSection>
         <Footer />
