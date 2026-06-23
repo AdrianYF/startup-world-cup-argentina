@@ -79,6 +79,11 @@ const XIcon = () => (
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 )
+const LinkedInIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 9.5H5.67V18h2.67V9.5zM7 5.75a1.55 1.55 0 1 0 0 3.1 1.55 1.55 0 0 0 0-3.1zM18.34 18v-4.66c0-2.49-1.33-3.65-3.1-3.65-1.43 0-2.07.79-2.43 1.34V9.5h-2.67V18h2.67v-4.39c0-.23.02-.46.09-.63.18-.46.6-.94 1.3-.94.92 0 1.29.7 1.29 1.72V18h2.66z" />
+  </svg>
+)
 const LinkIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
@@ -166,6 +171,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   }
 
   const x = `https://twitter.com/intent/tweet?url=${encodeURIComponent(abs)}&text=${encodeURIComponent(TWEET_TEXT)}`
+  const li = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(abs)}`
 
   const iconBtn =
     'grid place-items-center w-11 h-11 rounded-full transition-colors cursor-pointer'
@@ -210,6 +216,9 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         )}
         <a href={x} target="_blank" rel="noopener noreferrer" aria-label="Compartir en X" title="X" className={`${iconBtn} bg-white/10 hover:bg-white/20 text-white`}>
           <XIcon />
+        </a>
+        <a href={li} target="_blank" rel="noopener noreferrer" aria-label="Compartir en LinkedIn" title="LinkedIn" className={`${iconBtn} bg-[#0A66C2] hover:brightness-110 text-white`}>
+          <LinkedInIcon />
         </a>
         <button type="button" onClick={copyLink} aria-label={copied ? 'Link copiado' : 'Copiar link'} title={copied ? '¡Copiado!' : 'Copiar link'} className={`${iconBtn} ${copied ? 'bg-[#25D366] text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
           {copied ? <CheckIcon /> : <LinkIcon />}
