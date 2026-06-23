@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 /**
  * Galería tipo "afterparty": muro de fotos en filas que scrollean en sentidos
@@ -152,13 +153,15 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   const iconBtn =
     'grid place-items-center w-11 h-11 rounded-full transition-colors cursor-pointer'
 
-  return (
+  // Portal a <body>: el lightbox escapa del stacking context de FadeInSection y
+  // cubre todo (incluido el navbar) — sin eso el navbar queda por encima.
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Foto del evento"
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 py-10 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 py-10 animate-[fade-in_200ms_ease-out]"
     >
       {/* Cerrar */}
       <button
@@ -195,7 +198,8 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
           {copied ? <CheckIcon /> : <LinkIcon />}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
