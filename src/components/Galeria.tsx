@@ -18,6 +18,19 @@ const ROW_C = ALL.slice(third * 2)
 const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
 
+/* -------- short links (sin backend) --------
+ * Codifica el índice de la foto (1-based) en base36 → link corto: /?g=<code>
+ * (ej. foto-49 → "/?g=1d"). Al abrir ese link, la galería abre esa foto. */
+const codeFromSrc = (src: string) => {
+  const i = ALL.indexOf(src)
+  return i >= 0 ? (i + 1).toString(36) : ''
+}
+const srcFromCode = (code: string) => {
+  const i = parseInt(code, 36)
+  return Number.isFinite(i) && i >= 1 && i <= ALL.length ? ALL[i - 1] : null
+}
+const shortLink = (src: string) => `${SITE}/?g=${codeFromSrc(src)}`
+
 /* -------- íconos clásicos -------- */
 const ShareIcon = () => (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -88,7 +101,7 @@ function Strip({
 
 function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false)
-  const abs = SITE + src
+  const abs = shortLink(src)
   const canNativeShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
   useEffect(() => {
@@ -104,18 +117,6 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   }, [onClose])
 
   const shareNative = async () => {
-    try {
-      // Intentar compartir el archivo (mejor en mobile); si no, compartir el link.
-      const res = await fetch(src)
-      const blob = await res.blob()
-      const file = new File([blob], src.split('/').pop() || 'foto.jpg', { type: blob.type })
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], text: SHARE_TEXT })
-        return
-      }
-    } catch {
-      /* sigue al fallback de link */
-    }
     try {
       await navigator.share({ url: abs, text: SHARE_TEXT })
     } catch {
@@ -188,6 +189,19 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
 
 function Galeria() {
   const [open, setOpen] = useState<string | null>(null)
+
+  // Si llegan con un short link (/?g=<code>), abrir esa foto y limpiar la URL.
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get('g')
+    if (!code) return
+    const src = srcFromCode(code)
+    if (!src) return
+    setOpen(src)
+    const url = new URL(window.location.href)
+    url.searchParams.delete('g')
+    window.history.replaceState({}, '', url.pathname + url.search + '#galeria')
+    document.getElementById('galeria')?.scrollIntoView({ block: 'start' })
+  }, [])
 
   return (
     <section id="galeria" className="relative py-20 sm:py-28 bg-[#020618] text-white overflow-hidden">
