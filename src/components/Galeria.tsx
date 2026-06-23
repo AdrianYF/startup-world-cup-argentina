@@ -212,12 +212,23 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
           alt="Foto del evento Startup World Cup Argentina"
           className="block max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
         />
-        <span
+        {/* Marca de agua: logo SWC en blanco translúcido, sin sombra */}
+        <div
           aria-hidden
-          className="pointer-events-none absolute top-3 left-3 sm:top-4 sm:left-4 font-black uppercase tracking-wider text-[10px] sm:text-xs text-white/45 [text-shadow:0_1px_4px_rgba(0,0,0,0.85)]"
-        >
-          Startup World Cup Argentina
-        </span>
+          className="pointer-events-none absolute top-3 left-3 sm:top-4 sm:left-4 h-9 sm:h-12 opacity-50"
+          style={{
+            aspectRatio: '318 / 390',
+            backgroundColor: '#ffffff',
+            WebkitMaskImage: 'url(/SWC-logo.png)',
+            maskImage: 'url(/SWC-logo.png)',
+            WebkitMaskSize: 'contain',
+            maskSize: 'contain',
+            WebkitMaskRepeat: 'no-repeat',
+            maskRepeat: 'no-repeat',
+            WebkitMaskPosition: 'center',
+            maskPosition: 'center',
+          }}
+        />
       </div>
 
       {/* Barra de compartir (íconos) — justo debajo de la foto */}
