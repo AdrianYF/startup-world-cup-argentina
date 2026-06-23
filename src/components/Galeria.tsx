@@ -19,20 +19,31 @@ const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
 
 /* -------- short links (sin backend) --------
- * El código del link es el CRC32 (hex) del path de la foto → /?g=<crc32>
- * (ej. /galeria/foto-49.jpg → "/?g=a1b2c3d4"). Como CRC32 no es reversible,
- * armamos una tabla code→src para resolver el link al abrirlo. */
-function crc32(str: string): number {
-  let crc = ~0
-  for (let i = 0; i < str.length; i++) {
-    crc ^= str.charCodeAt(i)
-    for (let j = 0; j < 8; j++) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1))
+ * Código solo-letras (base26 a–z) del índice de la foto → /?g=<code>
+ * (foto 1 → "a", 27 → "aa", 55 → "bc"). Corto, reversible y sin números. */
+function toLetters(n: number): string {
+  let s = ''
+  while (n > 0) {
+    const r = (n - 1) % 26
+    s = String.fromCharCode(97 + r) + s
+    n = Math.floor((n - 1) / 26)
   }
-  return (~crc) >>> 0
+  return s
 }
-const codeFromSrc = (src: string) => crc32(src).toString(16).padStart(8, '0')
-const SRC_BY_CODE: Record<string, string> = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
-const srcFromCode = (code: string) => SRC_BY_CODE[code] ?? null
+function fromLetters(code: string): number {
+  let n = 0
+  for (const ch of code) {
+    const v = ch.charCodeAt(0) - 96 // 'a' → 1
+    if (v < 1 || v > 26) return NaN
+    n = n * 26 + v
+  }
+  return n
+}
+const codeFromSrc = (src: string) => toLetters(ALL.indexOf(src) + 1)
+const srcFromCode = (code: string) => {
+  const i = fromLetters(code.toLowerCase())
+  return Number.isFinite(i) && i >= 1 && i <= ALL.length ? ALL[i - 1] : null
+}
 const shortLink = (src: string) => `${SITE}/?g=${codeFromSrc(src)}`
 
 /* -------- íconos clásicos -------- */
