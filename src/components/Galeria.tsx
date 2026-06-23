@@ -163,7 +163,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
       aria-modal="true"
       aria-label="Foto del evento"
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 backdrop-blur-sm px-4 pt-24 pb-28 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 pt-20 pb-8 animate-[fade-in_200ms_ease-out]"
     >
       {/* Cerrar */}
       <button
@@ -183,10 +183,10 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         className="max-h-[62vh] max-w-[85vw] sm:max-w-xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
       />
 
-      {/* Barra de compartir (íconos) — flota abajo, no descentra la foto */}
+      {/* Barra de compartir (íconos) — justo debajo de la foto */}
       <div
         onClick={e => e.stopPropagation()}
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-3 rounded-full bg-black/40 backdrop-blur-sm px-3 py-2"
+        className="flex items-center justify-center gap-3 rounded-full bg-black/40 backdrop-blur-sm px-3 py-2"
       >
         {canNativeShare && (
           <button type="button" onClick={shareNative} aria-label="Compartir" title="Compartir" className={`${iconBtn} bg-[#75AADB] hover:bg-[#5a93c5] text-white`}>
