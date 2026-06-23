@@ -34,6 +34,7 @@ const ROW_B = shuffle(R2)
 
 const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
+const TWEET_TEXT = 'Yo también participo de la Startup World Cup Argentina\n@StartupWC_arg @StartupGrindBA'
 
 /* -------- short links (sin backend) --------
  * Hash (FNV-1a) del path → semilla de un PRNG (xorshift32) que emite N letras
@@ -164,7 +165,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
     }
   }
 
-  const x = `https://twitter.com/intent/tweet?url=${encodeURIComponent(abs)}&text=${encodeURIComponent(SHARE_TEXT)}`
+  const x = `https://twitter.com/intent/tweet?url=${encodeURIComponent(abs)}&text=${encodeURIComponent(TWEET_TEXT)}`
 
   const iconBtn =
     'grid place-items-center w-11 h-11 rounded-full transition-colors cursor-pointer'
