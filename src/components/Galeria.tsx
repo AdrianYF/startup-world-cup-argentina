@@ -121,7 +121,7 @@ function Strip({
             alt="Foto del evento Startup World Cup Argentina"
             loading="lazy"
             draggable={false}
-            className="h-52 sm:h-64 lg:h-72 w-auto rounded-2xl select-none shadow-xl shadow-black/40 ring-1 ring-white/5 brightness-90 saturate-[0.95] transition-[transform,filter] duration-300 ease-out hover:brightness-110 hover:saturate-125 hover:scale-[1.04] hover:shadow-2xl hover:shadow-[#75AADB]/20"
+            className="h-52 sm:h-64 lg:h-72 w-auto rounded-2xl select-none shadow-xl shadow-black/40 ring-1 ring-white/5 transition-[transform,filter] duration-300 ease-out hover:brightness-105 hover:scale-[1.04] hover:shadow-2xl hover:shadow-[#75AADB]/20"
           />
         </button>
       ))}
