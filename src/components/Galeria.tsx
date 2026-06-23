@@ -219,7 +219,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         >
           <span className="flex items-baseline gap-1.5">
             <span className="font-black text-white leading-none tracking-tight text-base sm:text-lg">SWC</span>
-            <span className="text-[#75AADB] font-bold uppercase tracking-[0.2em] leading-none text-[8px] sm:text-[10px]">
+            <span className="text-white font-bold uppercase tracking-[0.2em] leading-none text-[8px] sm:text-[10px]">
               Argentina 26
             </span>
           </span>
