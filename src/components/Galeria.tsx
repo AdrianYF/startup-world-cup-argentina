@@ -180,7 +180,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         src={src}
         alt="Foto del evento Startup World Cup Argentina"
         onClick={e => e.stopPropagation()}
-        className="max-h-full max-w-[92vw] w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        className="max-h-[62vh] max-w-[85vw] sm:max-w-xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
       />
 
       {/* Barra de compartir (íconos) — flota abajo, no descentra la foto */}
