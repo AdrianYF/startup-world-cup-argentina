@@ -36,7 +36,7 @@ function Strip({
           aria-hidden
           loading="lazy"
           draggable={false}
-          className="h-44 sm:h-60 lg:h-64 w-auto aspect-[16/11] object-cover rounded-2xl shrink-0 select-none shadow-xl shadow-black/40 ring-1 ring-white/5"
+          className="h-44 sm:h-60 lg:h-64 w-auto rounded-2xl shrink-0 select-none shadow-xl shadow-black/40 ring-1 ring-white/5"
         />
       ))}
     </div>
