@@ -215,7 +215,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         {/* Marca de agua: lockup del navbar (SWC · Argentina 26 · | · Startup Grind), translúcido y sin sombra */}
         <div
           aria-hidden
-          className="pointer-events-none absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2 opacity-60"
+          className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-2 opacity-60"
         >
           <span className="flex items-baseline gap-1.5">
             <span className="font-black text-white leading-none tracking-tight text-base sm:text-lg">SWC</span>
