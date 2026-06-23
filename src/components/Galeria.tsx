@@ -163,7 +163,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
       aria-modal="true"
       aria-label="Foto del evento"
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 backdrop-blur-sm px-4 pt-24 pb-28 animate-[fade-in_200ms_ease-out]"
     >
       {/* Cerrar */}
       <button
@@ -180,7 +180,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         src={src}
         alt="Foto del evento Startup World Cup Argentina"
         onClick={e => e.stopPropagation()}
-        className="max-h-[80vh] max-w-[92vw] w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        className="max-h-full max-w-[92vw] w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
       />
 
       {/* Barra de compartir (íconos) — flota abajo, no descentra la foto */}
