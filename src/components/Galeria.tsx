@@ -48,7 +48,7 @@ function Galeria() {
     <section id="galeria" className="relative py-20 sm:py-28 bg-[#020618] text-white overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-4 text-center mb-12 sm:mb-16">
+      <div className="max-w-7xl mx-auto px-4 text-center mb-20 sm:mb-28">
         <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[0.95]">
           <span className="text-white">LA </span>
           <span className="text-[#75AADB]">GALERÍA</span>
@@ -58,13 +58,11 @@ function Galeria() {
         </p>
       </div>
 
-      {/* Muro inclinado: filas en diagonal, scale para tapar las esquinas de la rotación */}
-      <div className="-rotate-3 sm:-rotate-[4deg] scale-[1.12]">
-        <div className="flex flex-col gap-4 sm:gap-6">
-          <Strip imgs={ROW_A} duration="62s" />
-          <Strip imgs={ROW_B} reverse duration="54s" />
-          <Strip imgs={ROW_C} duration="70s" />
-        </div>
+      {/* Muro de fotos (filas rectas) */}
+      <div className="flex flex-col gap-4 sm:gap-6">
+        <Strip imgs={ROW_A} duration="62s" />
+        <Strip imgs={ROW_B} reverse duration="54s" />
+        <Strip imgs={ROW_C} duration="70s" />
       </div>
 
       {/* fades laterales para que las fotos "entren/salgan" suave */}
