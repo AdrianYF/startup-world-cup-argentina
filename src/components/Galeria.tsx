@@ -214,7 +214,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         />
         <span
           aria-hidden
-          className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 font-black uppercase tracking-wider text-[10px] sm:text-xs text-white/75 [text-shadow:0_1px_4px_rgba(0,0,0,0.85)]"
+          className="pointer-events-none absolute top-3 left-3 sm:top-4 sm:left-4 font-black uppercase tracking-wider text-[10px] sm:text-xs text-white/45 [text-shadow:0_1px_4px_rgba(0,0,0,0.85)]"
         >
           Startup World Cup Argentina
         </span>
