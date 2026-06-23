@@ -8,12 +8,15 @@
 // El mapeo code→foto replica el algoritmo de src/components/Galeria.tsx
 // (FNV-1a → xorshift32 → base26 A–Z, largo 6). Mantener en sync.
 
-const PHOTO_COUNT = 55
+// Mantener en sync con src/components/Galeria.tsx (mismas filas y conteos).
+const ROW1_COUNT = 42
+const ROW2_COUNT = 37
 const CODE_LEN = 6
-const ALL = Array.from(
-  { length: PHOTO_COUNT },
-  (_, i) => `/galeria/foto-${String(i + 1).padStart(2, '0')}.jpg`,
-)
+const pad = (n) => String(n).padStart(2, '0')
+const ALL = [
+  ...Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`),
+  ...Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`),
+]
 
 function fnv1a(str) {
   let h = 0x811c9dc5

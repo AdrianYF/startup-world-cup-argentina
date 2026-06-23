@@ -9,12 +9,14 @@ import { createPortal } from 'react-dom'
  * Fotos reales en /public/galeria (foto-01.jpg … foto-55.jpg).
  */
 
-const PHOTO_COUNT = 55
-const ALL = Array.from({ length: PHOTO_COUNT }, (_, i) => `/galeria/foto-${String(i + 1).padStart(2, '0')}.jpg`)
-const third = Math.ceil(ALL.length / 3)
-const ROW_A = ALL.slice(0, third)
-const ROW_B = ALL.slice(third, third * 2)
-const ROW_C = ALL.slice(third * 2)
+// Dos filas: r1-* (Fotos Seleccionadas 3) arriba, r2-* (Fotos seleccionadas) abajo.
+// Mantener ROW1_COUNT/ROW2_COUNT en sync con /public/galeria y con api/og.js.
+const ROW1_COUNT = 42
+const ROW2_COUNT = 37
+const pad = (n: number) => String(n).padStart(2, '0')
+const ROW_A = Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`)
+const ROW_B = Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`)
+const ALL = [...ROW_A, ...ROW_B]
 
 const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
@@ -105,7 +107,7 @@ function Strip({
             alt="Foto del evento Startup World Cup Argentina"
             loading="lazy"
             draggable={false}
-            className="h-44 sm:h-60 lg:h-64 w-auto rounded-2xl select-none shadow-xl shadow-black/40 ring-1 ring-white/5 transition-transform duration-300 hover:scale-[1.03]"
+            className="h-52 sm:h-64 lg:h-72 w-auto rounded-2xl select-none shadow-xl shadow-black/40 ring-1 ring-white/5 transition-transform duration-300 hover:scale-[1.03]"
           />
         </button>
       ))}
@@ -232,11 +234,10 @@ function Galeria() {
         </p>
       </div>
 
-      {/* Muro de fotos (filas rectas) */}
-      <div className="flex flex-col gap-4 sm:gap-6">
-        <Strip imgs={ROW_A} duration="62s" onOpen={setOpen} />
-        <Strip imgs={ROW_B} reverse duration="54s" onOpen={setOpen} />
-        <Strip imgs={ROW_C} duration="70s" onOpen={setOpen} />
+      {/* Muro de fotos: dos filas en sentidos opuestos */}
+      <div className="flex flex-col gap-5 sm:gap-7">
+        <Strip imgs={ROW_A} duration="80s" onOpen={setOpen} />
+        <Strip imgs={ROW_B} reverse duration="70s" onOpen={setOpen} />
       </div>
 
       {/* fades laterales para que las fotos "entren/salgan" suave */}
