@@ -9,6 +9,7 @@ const links = [
   { href: '#startups', label: 'Startups' },
   { href: '#voluntarios', label: 'Voluntarios' },
   { href: '#partners', label: 'Partners' },
+  { href: '#galeria', label: 'Galería' },
   // { href: '#speakers', label: 'Speakers' }, // disabled hasta confirmar
 ]
 
