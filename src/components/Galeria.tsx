@@ -205,33 +205,14 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         ✕
       </button>
 
-      {/* Foto centrada en el viewport con marca de agua (el click no cierra) */}
-      <div className="relative" onClick={e => e.stopPropagation()}>
-        <img
-          src={src}
-          alt="Foto del evento Startup World Cup Argentina"
-          className="block max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
-        />
-        {/* Marca de agua: lockup del navbar (SWC · Argentina 26 · | · Startup Grind), translúcido y sin sombra */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-2 opacity-60"
-        >
-          <span className="flex items-baseline gap-1.5">
-            <span className="font-black text-white leading-none tracking-tight text-base sm:text-lg">SWC</span>
-            <span className="text-white font-bold uppercase tracking-[0.2em] leading-none text-[8px] sm:text-[10px]">
-              Argentina 26
-            </span>
-          </span>
-          <span className="text-white/40 font-light leading-none text-base sm:text-lg">|</span>
-          <img
-            src="/SGBA-logo.png"
-            alt=""
-            className="h-7 sm:h-9 w-auto"
-            style={{ filter: 'brightness(0) invert(1)' }}
-          />
-        </div>
-      </div>
+      {/* Foto del detalle: versión con la marca de agua horneada (carpeta wm/).
+          El muro usa las fotos limpias; la marca se ve solo acá. (El click no cierra) */}
+      <img
+        src={src.replace('/galeria/', '/galeria/wm/')}
+        alt="Foto del evento Startup World Cup Argentina"
+        onClick={e => e.stopPropagation()}
+        className="block max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+      />
 
       {/* Barra de compartir (íconos) — justo debajo de la foto */}
       <div
