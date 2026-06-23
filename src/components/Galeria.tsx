@@ -11,7 +11,7 @@ import { createPortal } from 'react-dom'
 
 // Dos filas: r1-* (Fotos Seleccionadas 3) arriba, r2-* (Fotos seleccionadas) abajo.
 // Mantener ROW1_COUNT/ROW2_COUNT en sync con /public/galeria y con api/og.js.
-const ROW1_COUNT = 40
+const ROW1_COUNT = 39
 const ROW2_COUNT = 36
 const pad = (n: number) => String(n).padStart(2, '0')
 const R1 = Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`)
