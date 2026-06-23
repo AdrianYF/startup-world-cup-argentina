@@ -2,15 +2,15 @@
  * Galería tipo "afterparty" de START Summit: muro de fotos en filas inclinadas
  * (diagonal) que scrollean solas en sentidos opuestos, fondo oscuro.
  *
- * Las imágenes son PLACEHOLDERS (picsum.photos). Para usar las reales: reemplazar
- * los arrays ROW_* por rutas de /public (ej. '/galeria/foto-1.jpg').
+ * Fotos reales en /public/galeria (foto-01.jpg … foto-55.jpg).
  */
 
-const ph = (seed: string) => `https://picsum.photos/seed/${seed}/640/440`
-
-const ROW_A = ['swc-a1', 'swc-a2', 'swc-a3', 'swc-a4', 'swc-a5', 'swc-a6', 'swc-a7', 'swc-a8'].map(ph)
-const ROW_B = ['swc-b1', 'swc-b2', 'swc-b3', 'swc-b4', 'swc-b5', 'swc-b6', 'swc-b7', 'swc-b8'].map(ph)
-const ROW_C = ['swc-c1', 'swc-c2', 'swc-c3', 'swc-c4', 'swc-c5', 'swc-c6', 'swc-c7', 'swc-c8'].map(ph)
+const PHOTO_COUNT = 55
+const ALL = Array.from({ length: PHOTO_COUNT }, (_, i) => `/galeria/foto-${String(i + 1).padStart(2, '0')}.jpg`)
+const third = Math.ceil(ALL.length / 3)
+const ROW_A = ALL.slice(0, third)
+const ROW_B = ALL.slice(third, third * 2)
+const ROW_C = ALL.slice(third * 2)
 
 function Strip({
   imgs,
