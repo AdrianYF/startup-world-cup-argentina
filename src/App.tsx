@@ -40,6 +40,7 @@ function App() {
   const midSections = [
     PitchBattle,
     Agenda,
+    Galeria,
     Tickets,
     Startups,
     Voluntarios,
@@ -77,9 +78,6 @@ function App() {
             <Section />
           </FadeInSection>
         ))}
-        <FadeInSection>
-          <Galeria />
-        </FadeInSection>
       </main>
       <FadeInSection>
         <Footer />
