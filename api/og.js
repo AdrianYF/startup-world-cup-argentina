@@ -51,7 +51,9 @@ export default function handler(req, res) {
   const photo = SRC_BY_CODE[code] || null
   const image = origin + (photo || '/cup.png')
   const title = 'Startup World Cup Argentina · Galería'
-  const description = 'Viví la experiencia Startup World Cup Argentina.'
+  // LinkedIn (y otras redes) no permiten prellenar el texto del post: muestran la
+  // preview (OG). Por eso ponemos el mismo mensaje que el tweet en la description.
+  const description = 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   const pageUrl = `${origin}/swc/${code}`
   // Humanos → SPA (abre la foto vía ?g=). Bots se quedan con los meta tags.
   const dest = photo ? `/?g=${encodeURIComponent(code)}` : '/#galeria'
