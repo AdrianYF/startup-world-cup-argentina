@@ -32,6 +32,15 @@ function shuffle<T>(arr: T[]): T[] {
 const ROW_A = shuffle(R1)
 const ROW_B = shuffle(R2)
 
+/** Abre una URL en una ventana pop-up centrada (UX típica de "compartir"). */
+function openSharePopup(url: string) {
+  const w = 600
+  const h = 640
+  const left = window.screenX + Math.max(0, (window.outerWidth - w) / 2)
+  const top = window.screenY + Math.max(0, (window.outerHeight - h) / 2)
+  window.open(url, 'compartir', `width=${w},height=${h},left=${left},top=${top},noopener,noreferrer`)
+}
+
 const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
 const TWEET_TEXT = 'Yo también participo de la Startup World Cup Argentina\n@StartupWC_arg @StartupGrindBA'
@@ -217,9 +226,9 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         <a href={x} target="_blank" rel="noopener noreferrer" aria-label="Compartir en X" title="X" className={`${iconBtn} bg-white/10 hover:bg-white/20 text-white`}>
           <XIcon />
         </a>
-        <a href={li} target="_blank" rel="noopener noreferrer" aria-label="Compartir en LinkedIn" title="LinkedIn" className={`${iconBtn} bg-[#0A66C2] hover:brightness-110 text-white`}>
+        <button type="button" onClick={() => openSharePopup(li)} aria-label="Compartir en LinkedIn" title="LinkedIn" className={`${iconBtn} bg-[#0A66C2] hover:brightness-110 text-white`}>
           <LinkedInIcon />
-        </a>
+        </button>
         <button type="button" onClick={copyLink} aria-label={copied ? 'Link copiado' : 'Copiar link'} title={copied ? '¡Copiado!' : 'Copiar link'} className={`${iconBtn} ${copied ? 'bg-[#25D366] text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
           {copied ? <CheckIcon /> : <LinkIcon />}
         </button>
