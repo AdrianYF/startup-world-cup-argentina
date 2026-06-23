@@ -11,12 +11,28 @@ import { createPortal } from 'react-dom'
 
 // Dos filas: r1-* (Fotos Seleccionadas 3) arriba, r2-* (Fotos seleccionadas) abajo.
 // Mantener ROW1_COUNT/ROW2_COUNT en sync con /public/galeria y con api/og.js.
-const ROW1_COUNT = 41
+const ROW1_COUNT = 40
 const ROW2_COUNT = 36
 const pad = (n: number) => String(n).padStart(2, '0')
-const ROW_A = Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`)
-const ROW_B = Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`)
-const ALL = [...ROW_A, ...ROW_B]
+const R1 = Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`)
+const R2 = Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`)
+// Diccionario de short links: el orden no importa (el código sale del path).
+const ALL = [...R1, ...R2]
+
+// Shuffle (Fisher-Yates) una vez por carga: mezcla todas las fotos y las reparte
+// en las dos filas. No afecta los short links (dependen del path, no del orden).
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+const SHUFFLED = shuffle(ALL)
+const HALF = Math.ceil(SHUFFLED.length / 2)
+const ROW_A = SHUFFLED.slice(0, HALF)
+const ROW_B = SHUFFLED.slice(HALF)
 
 const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'

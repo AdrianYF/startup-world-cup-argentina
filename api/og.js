@@ -9,7 +9,7 @@
 // (FNV-1a → xorshift32 → base26 A–Z, largo 6). Mantener en sync.
 
 // Mantener en sync con src/components/Galeria.tsx (mismas filas y conteos).
-const ROW1_COUNT = 41
+const ROW1_COUNT = 40
 const ROW2_COUNT = 36
 const CODE_LEN = 6
 const pad = (n) => String(n).padStart(2, '0')
