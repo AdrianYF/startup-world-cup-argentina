@@ -19,10 +19,10 @@ const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
 
 /* -------- short links (sin backend) --------
- * Hash (FNV-1a) del path de la foto pasado a base26 (solo letras), largo fijo →
- * /?g=<code> (ej. "/?g=kqmra"). Código opaco y solo-texto; como el hash no es
- * reversible, resolvemos con una tabla code→src. */
-const HASH_LEN = 5
+ * Hash (FNV-1a) del path → semilla de un PRNG (xorshift32) que emite N letras
+ * a–z → /?g=<code> (ej. "/?g=qmraktbvdxls"). Código opaco, solo-texto y del
+ * largo que se quiera. Como no es reversible, resolvemos con tabla code→src. */
+const CODE_LEN = 12
 function fnv1a(str: string): number {
   let h = 0x811c9dc5
   for (let i = 0; i < str.length; i++) {
@@ -31,17 +31,21 @@ function fnv1a(str: string): number {
   }
   return h >>> 0
 }
-function toBase26(n: number, len: number): string {
-  let s = ''
-  for (let k = 0; k < len; k++) {
-    s = String.fromCharCode(97 + (n % 26)) + s
-    n = Math.floor(n / 26)
+function codeFromSrc(src: string): string {
+  let h = fnv1a(src) || 1
+  let out = ''
+  for (let i = 0; i < CODE_LEN; i++) {
+    // xorshift32 para más entropía que los 32 bits del hash
+    h ^= h << 13
+    h ^= h >>> 17
+    h ^= h << 5
+    h >>>= 0
+    out += String.fromCharCode(65 + (h % 26)) // A–Z
   }
-  return s
+  return out
 }
-const codeFromSrc = (src: string) => toBase26(fnv1a(src), HASH_LEN)
 const SRC_BY_CODE: Record<string, string> = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
-const srcFromCode = (code: string) => SRC_BY_CODE[code.toLowerCase()] ?? null
+const srcFromCode = (code: string) => SRC_BY_CODE[code.toUpperCase()] ?? null
 const shortLink = (src: string) => `${SITE}/?g=${codeFromSrc(src)}`
 
 /* -------- íconos clásicos -------- */
