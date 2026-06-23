@@ -19,8 +19,8 @@ const R2 = Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1
 // Diccionario de short links: el orden no importa (el código sale del path).
 const ALL = [...R1, ...R2]
 
-// Shuffle (Fisher-Yates) una vez por carga: mezcla todas las fotos y las reparte
-// en las dos filas. No afecta los short links (dependen del path, no del orden).
+// Shuffle (Fisher-Yates) por fila, una vez por carga: cada fila mezcla SUS propias
+// fotos (no se mezclan las carpetas). No afecta los short links (salen del path).
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -29,10 +29,8 @@ function shuffle<T>(arr: T[]): T[] {
   }
   return a
 }
-const SHUFFLED = shuffle(ALL)
-const HALF = Math.ceil(SHUFFLED.length / 2)
-const ROW_A = SHUFFLED.slice(0, HALF)
-const ROW_B = SHUFFLED.slice(HALF)
+const ROW_A = shuffle(R1)
+const ROW_B = shuffle(R2)
 
 const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
