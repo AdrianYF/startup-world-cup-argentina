@@ -19,31 +19,29 @@ const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
 
 /* -------- short links (sin backend) --------
- * Código solo-letras (base26 a–z) del índice de la foto → /?g=<code>
- * (foto 1 → "a", 27 → "aa", 55 → "bc"). Corto, reversible y sin números. */
-function toLetters(n: number): string {
+ * Hash (FNV-1a) del path de la foto pasado a base26 (solo letras), largo fijo →
+ * /?g=<code> (ej. "/?g=kqmra"). Código opaco y solo-texto; como el hash no es
+ * reversible, resolvemos con una tabla code→src. */
+const HASH_LEN = 5
+function fnv1a(str: string): number {
+  let h = 0x811c9dc5
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return h >>> 0
+}
+function toBase26(n: number, len: number): string {
   let s = ''
-  while (n > 0) {
-    const r = (n - 1) % 26
-    s = String.fromCharCode(97 + r) + s
-    n = Math.floor((n - 1) / 26)
+  for (let k = 0; k < len; k++) {
+    s = String.fromCharCode(97 + (n % 26)) + s
+    n = Math.floor(n / 26)
   }
   return s
 }
-function fromLetters(code: string): number {
-  let n = 0
-  for (const ch of code) {
-    const v = ch.charCodeAt(0) - 96 // 'a' → 1
-    if (v < 1 || v > 26) return NaN
-    n = n * 26 + v
-  }
-  return n
-}
-const codeFromSrc = (src: string) => toLetters(ALL.indexOf(src) + 1)
-const srcFromCode = (code: string) => {
-  const i = fromLetters(code.toLowerCase())
-  return Number.isFinite(i) && i >= 1 && i <= ALL.length ? ALL[i - 1] : null
-}
+const codeFromSrc = (src: string) => toBase26(fnv1a(src), HASH_LEN)
+const SRC_BY_CODE: Record<string, string> = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
+const srcFromCode = (code: string) => SRC_BY_CODE[code.toLowerCase()] ?? null
 const shortLink = (src: string) => `${SITE}/?g=${codeFromSrc(src)}`
 
 /* -------- íconos clásicos -------- */
