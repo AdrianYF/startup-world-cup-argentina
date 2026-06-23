@@ -16,6 +16,8 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        {/* Short links de la galería: /g/<CODE> abre esa foto (lo maneja Galeria) */}
+        <Route path="/g/:code" element={<App />} />
         <Route path="/speakers" element={<SpeakersAll />} />
         {/* Sección oculta: se llega escaneando el QR del ticket */}
         <Route

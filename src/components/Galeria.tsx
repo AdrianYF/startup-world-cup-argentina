@@ -46,7 +46,8 @@ function codeFromSrc(src: string): string {
 }
 const SRC_BY_CODE: Record<string, string> = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
 const srcFromCode = (code: string) => SRC_BY_CODE[code.toUpperCase()] ?? null
-const shortLink = (src: string) => `${SITE}/?g=${codeFromSrc(src)}`
+/** Link minimizado con ruta propia: /g/<CODE> (ver ruta en main.tsx). */
+const shortLink = (src: string) => `${SITE}/g/${codeFromSrc(src)}`
 
 /* -------- íconos clásicos -------- */
 const ShareIcon = () => (
@@ -163,7 +164,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
       aria-modal="true"
       aria-label="Foto del evento"
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 py-16 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 py-10 animate-[fade-in_200ms_ease-out]"
     >
       {/* Cerrar */}
       <button
@@ -180,7 +181,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         src={src}
         alt="Foto del evento Startup World Cup Argentina"
         onClick={e => e.stopPropagation()}
-        className="max-h-[62vh] max-w-[85vw] sm:max-w-xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        className="max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
       />
 
       {/* Barra de compartir (íconos) — justo debajo de la foto */}
@@ -210,16 +211,15 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
 function Galeria() {
   const [open, setOpen] = useState<string | null>(null)
 
-  // Si llegan con un short link (/?g=<code>), abrir esa foto y limpiar la URL.
+  // Si llegan con un short link (ruta /g/<code> o ?g=<code>), abrir esa foto y limpiar la URL.
   useEffect(() => {
-    const code = new URLSearchParams(window.location.search).get('g')
+    const fromPath = window.location.pathname.match(/^\/g\/([A-Za-z]+)\/?$/)
+    const code = fromPath ? fromPath[1] : new URLSearchParams(window.location.search).get('g')
     if (!code) return
     const src = srcFromCode(code)
     if (!src) return
     setOpen(src)
-    const url = new URL(window.location.href)
-    url.searchParams.delete('g')
-    window.history.replaceState({}, '', url.pathname + url.search + '#galeria')
+    window.history.replaceState({}, '', '/#galeria')
     document.getElementById('galeria')?.scrollIntoView({ block: 'start' })
   }, [])
 
