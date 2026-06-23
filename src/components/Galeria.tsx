@@ -163,7 +163,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
       aria-modal="true"
       aria-label="Foto del evento"
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 pt-20 pb-8 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 py-16 animate-[fade-in_200ms_ease-out]"
     >
       {/* Cerrar */}
       <button
