@@ -205,13 +205,20 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         ✕
       </button>
 
-      {/* Foto centrada en el viewport (el click no cierra) */}
-      <img
-        src={src}
-        alt="Foto del evento Startup World Cup Argentina"
-        onClick={e => e.stopPropagation()}
-        className="max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
-      />
+      {/* Foto centrada en el viewport con marca de agua (el click no cierra) */}
+      <div className="relative" onClick={e => e.stopPropagation()}>
+        <img
+          src={src}
+          alt="Foto del evento Startup World Cup Argentina"
+          className="block max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute bottom-3 right-3 sm:bottom-4 sm:right-4 font-black uppercase tracking-wider text-[10px] sm:text-xs text-white/75 [text-shadow:0_1px_4px_rgba(0,0,0,0.85)]"
+        >
+          Startup World Cup Argentina
+        </span>
+      </div>
 
       {/* Barra de compartir (íconos) — justo debajo de la foto */}
       <div
