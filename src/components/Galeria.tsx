@@ -19,16 +19,20 @@ const SITE = typeof window !== 'undefined' ? window.location.origin : ''
 const SHARE_TEXT = 'Startup World Cup Argentina'
 
 /* -------- short links (sin backend) --------
- * Codifica el índice de la foto (1-based) en base36 → link corto: /?g=<code>
- * (ej. foto-49 → "/?g=1d"). Al abrir ese link, la galería abre esa foto. */
-const codeFromSrc = (src: string) => {
-  const i = ALL.indexOf(src)
-  return i >= 0 ? (i + 1).toString(36) : ''
+ * El código del link es el CRC32 (hex) del path de la foto → /?g=<crc32>
+ * (ej. /galeria/foto-49.jpg → "/?g=a1b2c3d4"). Como CRC32 no es reversible,
+ * armamos una tabla code→src para resolver el link al abrirlo. */
+function crc32(str: string): number {
+  let crc = ~0
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i)
+    for (let j = 0; j < 8; j++) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1))
+  }
+  return (~crc) >>> 0
 }
-const srcFromCode = (code: string) => {
-  const i = parseInt(code, 36)
-  return Number.isFinite(i) && i >= 1 && i <= ALL.length ? ALL[i - 1] : null
-}
+const codeFromSrc = (src: string) => crc32(src).toString(16).padStart(8, '0')
+const SRC_BY_CODE: Record<string, string> = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
+const srcFromCode = (code: string) => SRC_BY_CODE[code] ?? null
 const shortLink = (src: string) => `${SITE}/?g=${codeFromSrc(src)}`
 
 /* -------- íconos clásicos -------- */
