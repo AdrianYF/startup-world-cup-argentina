@@ -163,7 +163,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
       aria-modal="true"
       aria-label="Foto del evento"
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-5 bg-black/85 backdrop-blur-sm p-4 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-[fade-in_200ms_ease-out]"
     >
       {/* Cerrar */}
       <button
@@ -175,16 +175,19 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         ✕
       </button>
 
-      {/* Foto (centrada; el click no cierra) */}
+      {/* Foto centrada en el viewport (el click no cierra) */}
       <img
         src={src}
         alt="Foto del evento Startup World Cup Argentina"
         onClick={e => e.stopPropagation()}
-        className="max-h-[72vh] max-w-[92vw] w-auto mx-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        className="max-h-[80vh] max-w-[92vw] w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
       />
 
-      {/* Barra de compartir (íconos) */}
-      <div onClick={e => e.stopPropagation()} className="flex items-center justify-center gap-3">
+      {/* Barra de compartir (íconos) — flota abajo, no descentra la foto */}
+      <div
+        onClick={e => e.stopPropagation()}
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-3 rounded-full bg-black/40 backdrop-blur-sm px-3 py-2"
+      >
         {canNativeShare && (
           <button type="button" onClick={shareNative} aria-label="Compartir" title="Compartir" className={`${iconBtn} bg-[#75AADB] hover:bg-[#5a93c5] text-white`}>
             <ShareIcon />
