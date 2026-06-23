@@ -23,7 +23,7 @@ const SHARE_TEXT = 'Startup World Cup Argentina'
  * Hash (FNV-1a) del path → semilla de un PRNG (xorshift32) que emite N letras
  * a–z → /?g=<code> (ej. "/?g=qmraktbvdxls"). Código opaco, solo-texto y del
  * largo que se quiera. Como no es reversible, resolvemos con tabla code→src. */
-const CODE_LEN = 12
+const CODE_LEN = 6
 function fnv1a(str: string): number {
   let h = 0x811c9dc5
   for (let i = 0; i < str.length; i++) {
@@ -47,8 +47,8 @@ function codeFromSrc(src: string): string {
 }
 const SRC_BY_CODE: Record<string, string> = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
 const srcFromCode = (code: string) => SRC_BY_CODE[code.toUpperCase()] ?? null
-/** Link minimizado con ruta propia: /g/<CODE> (ver ruta en main.tsx). */
-const shortLink = (src: string) => `${SITE}/g/${codeFromSrc(src)}`
+/** Link minimizado con ruta propia: /swc/<CODE> (ruta en main.tsx + OG en /api/og). */
+const shortLink = (src: string) => `${SITE}/swc/${codeFromSrc(src)}`
 
 /* -------- íconos clásicos -------- */
 const ShareIcon = () => (
@@ -208,7 +208,7 @@ function Galeria() {
 
   // Si llegan con un short link (ruta /g/<code> o ?g=<code>), abrir esa foto y limpiar la URL.
   useEffect(() => {
-    const fromPath = window.location.pathname.match(/^\/g\/([A-Za-z]+)\/?$/)
+    const fromPath = window.location.pathname.match(/^\/(?:swc|g)\/([A-Za-z]+)\/?$/i)
     const code = fromPath ? fromPath[1] : new URLSearchParams(window.location.search).get('g')
     if (!code) return
     const src = srcFromCode(code)

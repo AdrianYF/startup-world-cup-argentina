@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/swc/(.*)", "destination": "/api/og?code=$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
