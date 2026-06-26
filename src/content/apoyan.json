@@ -22,13 +22,13 @@
   {
     "titulo": "INSTITUTIONAL PARTNERS",
     "logos": [
-      { "nombre": "UNCUYO", "img": null, "url": "https://www.uncuyo.edu.ar/" },
+      { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
+      { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
       { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "muted": true },
+      { "nombre": "UNCUYO", "img": null, "url": "https://www.uncuyo.edu.ar/" },
       { "nombre": "CYTED", "img": "/logos/cyted-white.png", "scale": 0.5, "muted": true },
       { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
-      { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
-      { "nombre": "Fundación Empretec Argentina", "img": "/logos/empretec.png", "scale": 0.55, "muted": true },
-      { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" }
+      { "nombre": "Fundación Empretec Argentina", "img": "/logos/empretec.png", "scale": 0.55, "muted": true }
     ]
   }
 ]
