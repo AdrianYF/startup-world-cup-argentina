@@ -31,7 +31,7 @@
       { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
       { "nombre": "Universidad Nacional de Mar del Plata", "img": "/logos/unmdp-white.png", "scale": 0.75, "muted": true },
       { "nombre": "Centro de Innovación Atlantis", "img": "/logos/atlantis-white.png", "scale": 0.75, "muted": true },
-      { "nombre": "Universidad Abierta Interamericana", "img": "/logos/uai-white.png", "scale": 0.6, "muted": true },
+      { "nombre": "Universidad Abierta Interamericana", "img": "/logos/uai-white.png", "scale": 0.5, "muted": true },
       { "nombre": "UAI Tecnología Informática", "img": "/logos/uai-ti-white.png", "scale": 0.6, "muted": true }
     ]
   }
