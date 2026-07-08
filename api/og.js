@@ -11,11 +11,13 @@
 // Mantener en sync con src/components/Galeria.tsx (mismas filas y conteos).
 const ROW1_COUNT = 39
 const ROW2_COUNT = 36
+const ROW3_COUNT = 15
 const CODE_LEN = 6
 const pad = (n) => String(n).padStart(2, '0')
 const ALL = [
   ...Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`),
   ...Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`),
+  ...Array.from({ length: ROW3_COUNT }, (_, i) => `/galeria/r3-${pad(i + 1)}.jpg`),
 ]
 
 function fnv1a(str) {

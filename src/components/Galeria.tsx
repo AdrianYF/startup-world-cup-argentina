@@ -9,15 +9,17 @@ import { createPortal } from 'react-dom'
  * Fotos reales en /public/galeria (foto-01.jpg … foto-55.jpg).
  */
 
-// Dos filas: r1-* (Fotos Seleccionadas 3) arriba, r2-* (Fotos seleccionadas) abajo.
-// Mantener ROW1_COUNT/ROW2_COUNT en sync con /public/galeria y con api/og.js.
+// Tres filas: r1-* arriba, r2-* al medio, r3-* abajo.
+// Mantener ROW1_COUNT/ROW2_COUNT/ROW3_COUNT en sync con /public/galeria y con api/og.js.
 const ROW1_COUNT = 39
 const ROW2_COUNT = 36
+const ROW3_COUNT = 15
 const pad = (n: number) => String(n).padStart(2, '0')
 const R1 = Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`)
 const R2 = Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`)
+const R3 = Array.from({ length: ROW3_COUNT }, (_, i) => `/galeria/r3-${pad(i + 1)}.jpg`)
 // Diccionario de short links: el orden no importa (el código sale del path).
-const ALL = [...R1, ...R2]
+const ALL = [...R1, ...R2, ...R3]
 
 // Shuffle (Fisher-Yates) por fila, una vez por carga: cada fila mezcla SUS propias
 // fotos (no se mezclan las carpetas). No afecta los short links (salen del path).
@@ -31,6 +33,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 const ROW_A = shuffle(R1)
 const ROW_B = shuffle(R2)
+const ROW_C = shuffle(R3)
 
 /** Abre una URL en una ventana pop-up centrada (UX típica de "compartir"). */
 function openSharePopup(url: string) {
@@ -268,10 +271,11 @@ function Galeria() {
         </p>
       </div>
 
-      {/* Muro de fotos: dos filas en sentidos opuestos */}
+      {/* Muro de fotos: tres filas en sentidos alternados */}
       <div className="flex flex-col gap-5 sm:gap-7">
         <Strip imgs={ROW_A} duration="80s" onOpen={setOpen} />
         <Strip imgs={ROW_B} reverse duration="70s" onOpen={setOpen} />
+        <Strip imgs={ROW_C} duration="90s" onOpen={setOpen} />
       </div>
 
       {/* fades laterales para que las fotos "entren/salgan" suave */}
