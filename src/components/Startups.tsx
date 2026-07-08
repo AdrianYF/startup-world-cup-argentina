@@ -1,20 +1,19 @@
+import { useState } from 'react'
 import { openStartupForm } from '../lib/ticketing'
 import { content } from '../lib/content'
 import { TiltCard } from './ui/TiltCard'
-
-const ArrowRight = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path d="M5 12h14" />
-    <path d="m12 5 7 7-7 7" />
-  </svg>
-)
+import { Modal } from './ui/Modal'
+import { BasesContent } from './Footer'
 
 function Startups() {
+  const [basesOpen, setBasesOpen] = useState(false)
   const abierta = content.config.convocatoria.startupsAbierta
-  const ctaLabel = abierta ? 'Postular mi Startup' : content.config.convocatoria.ctaCerrada
+  const ctaLabel = abierta ? 'Postular mi Startup' : content.config.convocatoria.ctaCerradaStartup
   const ctaAria = abierta
     ? 'Postular mi Startup (abre formulario en una nueva pestaña)'
-    : 'Convocatoria de startups cerrada — ver la agenda del evento'
+    : 'Convocatoria de startups cerrada — ver bases y condiciones'
+  // Convocatoria abierta → abre el formulario. Cerrada → abre las Bases y Condiciones.
+  const onCtaClick = () => (abierta ? openStartupForm() : setBasesOpen(true))
 
   return (
     <section id="startups" className="relative py-16 sm:py-24 bg-[#020618]">
@@ -50,13 +49,12 @@ function Startups() {
 
             {/* Botón desktop — inline con el texto */}
             <button
-              onClick={() => openStartupForm()}
+              onClick={onCtaClick}
               aria-label={ctaAria}
               style={{ backgroundImage: 'var(--gradient-cta)' }}
               className="hidden lg:inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105"
             >
               {ctaLabel}
-              {!abierta && <ArrowRight />}
             </button>
           </div>
 
@@ -72,13 +70,12 @@ function Startups() {
           {/* Botón mobile — debajo de la card */}
           <div className="lg:hidden flex justify-center">
             <button
-              onClick={() => openStartupForm()}
+              onClick={onCtaClick}
               aria-label={ctaAria}
               style={{ backgroundImage: 'var(--gradient-cta)' }}
               className="inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105"
             >
               {ctaLabel}
-              {!abierta && <ArrowRight />}
             </button>
           </div>
 
@@ -86,6 +83,12 @@ function Startups() {
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
+
+      {basesOpen && (
+        <Modal onClose={() => setBasesOpen(false)} titleId="bases-modal-title" size="3xl">
+          <BasesContent onClose={() => setBasesOpen(false)} />
+        </Modal>
+      )}
     </section>
   )
 }
