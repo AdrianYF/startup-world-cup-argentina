@@ -21,7 +21,20 @@ function openExternal(url: string | undefined | null, fallbackMsg: string) {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
 
+export function scrollToAgenda(source: string = 'convocatoria_cerrada') {
+  trackEvent('ver_agenda_click', { source })
+  // defer: si venimos del drawer mobile, dejar que se libere el lock de scroll
+  // (body overflow:hidden) antes de scrollear, sino el scroll queda trabado.
+  setTimeout(() => {
+    document.getElementById('agenda')?.scrollIntoView({ behavior: 'smooth' })
+  }, 0)
+}
+
 export function openStartupForm() {
+  if (!content.config.convocatoria.startupsAbierta) {
+    scrollToAgenda('convocatoria_cerrada')
+    return
+  }
   const url = content.config.links.formStartup
   trackEvent('apply_startup_click', { has_form: Boolean(url) })
   openExternal(url, 'La aplicación de startups abre pronto. Volvé en unos días.')

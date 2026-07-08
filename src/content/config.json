@@ -7,6 +7,11 @@
     "premioUSD": 1000000,
     "ciudadesCompitiendo": "+100"
   },
+  "convocatoria": {
+    "startupsAbierta": false,
+    "ctaCerrada": "Convocatoria cerrada · Ver agenda",
+    "ctaCerradaCorta": "Ver agenda"
+  },
   "stats": [
     { "valor": "1M USD", "label": "Premio final en Silicon Valley", "highlight": true },
     { "valor": "+100", "label": "Ciudades compitiendo a nivel global" },

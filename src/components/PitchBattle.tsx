@@ -53,21 +53,30 @@ function PitchBattle() {
             <div className="flex flex-col items-center gap-2">
               <button
                 onClick={() => openStartupForm()}
-                aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
+                aria-label={content.config.convocatoria.startupsAbierta
+                  ? 'Aplicá como Startup (abre formulario en una nueva pestaña)'
+                  : 'Convocatoria de startups cerrada — ver la agenda del evento'}
                 style={{ backgroundImage: 'var(--gradient-apply)' }}
                 className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40 hover:scale-105"
               >
-                Aplicá como Startup
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden
-                >
-                  {/* Lucide plane (filled) — pase a Silicon Valley */}
-                  <path d="M21.6 2.4a1.5 1.5 0 0 0-1.6-.35l-18 6a1.5 1.5 0 0 0-.13 2.79l6.99 3.3 3.3 6.99a1.5 1.5 0 0 0 2.79-.13l6-18a1.5 1.5 0 0 0-.35-1.6Z" />
-                </svg>
+                {content.config.convocatoria.startupsAbierta ? 'Aplicá como Startup' : content.config.convocatoria.ctaCerrada}
+                {content.config.convocatoria.startupsAbierta ? (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden
+                  >
+                    {/* Lucide plane (filled) — pase a Silicon Valley */}
+                    <path d="M21.6 2.4a1.5 1.5 0 0 0-1.6-.35l-18 6a1.5 1.5 0 0 0-.13 2.79l6.99 3.3 3.3 6.99a1.5 1.5 0 0 0 2.79-.13l6-18a1.5 1.5 0 0 0-.35-1.6Z" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                )}
               </button>
 
               <button

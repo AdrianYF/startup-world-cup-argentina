@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { openStartupForm } from '../lib/ticketing'
+import { content } from '../lib/content'
 
 const links = [
   { href: '#ruta', label: 'Ruta de Evolución' },
@@ -45,6 +46,11 @@ function Navbar() {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
+
+  const convocatoriaAbierta = content.config.convocatoria.startupsAbierta
+  const ctaAria = convocatoriaAbierta
+    ? 'Aplicá como Startup (abre formulario en una nueva pestaña)'
+    : 'Convocatoria de startups cerrada — ver la agenda del evento'
 
   return (
     <nav
@@ -117,11 +123,11 @@ function Navbar() {
           })}
           <button
             onClick={() => openStartupForm()}
-            aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
+            aria-label={ctaAria}
             style={{ backgroundImage: 'var(--gradient-cta)' }}
-            className={`text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full active:scale-95 transition-all cursor-pointer font-black hover:scale-105 ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
+            className={`text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full active:scale-95 transition-all cursor-pointer font-black hover:scale-105 whitespace-nowrap ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
-            Aplicá
+            {convocatoriaAbierta ? 'Aplicá' : content.config.convocatoria.ctaCerradaCorta}
           </button>
         </div>
 
@@ -168,11 +174,11 @@ function Navbar() {
             })}
             <button
               onClick={() => { setMobileOpen(false); openStartupForm() }}
-              aria-label="Aplicá como Startup (abre formulario en una nueva pestaña)"
+              aria-label={ctaAria}
               style={{ backgroundImage: 'var(--gradient-cta)' }}
               className="mt-3 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
-              Aplicá como Startup
+              {convocatoriaAbierta ? 'Aplicá como Startup' : content.config.convocatoria.ctaCerrada}
             </button>
           </div>
         </div>
