@@ -12,6 +12,46 @@ const COMING_SOON = false
 const perks = content.perks as Perk[]
 const rand = (n: number) => Math.floor(Math.random() * n)
 
+// Rate limit: 1 tirada por día, persistido por navegador (localStorage).
+// No hay backend/login, así que es best-effort (se puede saltar borrando storage).
+const STORAGE_KEY = 'swc_mysterybox_v1'
+type PlayRecord = { perkId: string; at: number }
+
+/** ¿La última tirada fue hoy (mismo día calendario local)? */
+function playedToday(rec: PlayRecord): boolean {
+  const d = new Date(rec.at)
+  const n = new Date()
+  return (
+    d.getFullYear() === n.getFullYear() &&
+    d.getMonth() === n.getMonth() &&
+    d.getDate() === n.getDate()
+  )
+}
+
+function loadPlay(): PlayRecord | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? (JSON.parse(raw) as PlayRecord) : null
+  } catch {
+    return null
+  }
+}
+
+function savePlay(perkId: string) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ perkId, at: Date.now() }))
+  } catch {
+    /* storage no disponible (incógnito/bloqueado): la tirada igual funciona */
+  }
+}
+
+/** Perk jugado HOY (si lo hay y sigue siendo válido); si la última tirada fue otro día, null. */
+function initialWon(): Perk | null {
+  const rec = loadPlay()
+  if (!rec || !playedToday(rec)) return null
+  return perks.find((p) => p.id === rec.perkId) ?? null
+}
+
 /** Logo del partner sobre chip blanco; si falla la carga, cae al nombre. */
 function PerkLogo({ perk, className }: { perk: Perk; className?: string }) {
   const [err, setErr] = useState(false)
@@ -26,6 +66,15 @@ function PerkLogo({ perk, className }: { perk: Perk; className?: string }) {
       onError={() => setErr(true)}
       className={className}
     />
+  )
+}
+
+/** Emoji renderizado en blanco (silueta), para que combine con el texto claro. */
+function Emoji({ children }: { children: string }) {
+  return (
+    <span aria-hidden className="inline-block" style={{ filter: 'brightness(0) invert(1)' }}>
+      {children}
+    </span>
   )
 }
 
@@ -56,9 +105,11 @@ function PerkCard({ perk }: { perk: Perk }) {
 function MysteryBox() {
   const [selectedBox, setSelectedBox] = useState<number | null>(null)
   const [winnerBox, setWinnerBox] = useState(0)
-  const [wonPerk, setWonPerk] = useState<Perk | null>(null)
-  const [phase, setPhase] = useState<Phase>('idle')
+  // Init lazy desde localStorage: si ya jugó, arranca en 'revealed' con su perk (bloqueado).
+  const [wonPerk, setWonPerk] = useState<Perk | null>(initialWon)
+  const [phase, setPhase] = useState<Phase>(() => (wonPerk ? 'revealed' : 'idle'))
   const [revealShow, setRevealShow] = useState(false)
+  const [locked, setLocked] = useState(() => wonPerk !== null) // ya usó su tirada de hoy
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -84,21 +135,18 @@ function MysteryBox() {
   }, [phase])
 
   // Juega: elige una caja (o al azar) y un perk al azar; siempre se gana un perk.
+  // Rate limit: 1 tirada por día → si ya jugó hoy (locked), no hace nada.
   const play = (box?: number) => {
-    if (selectedBox !== null) return
+    if (locked || selectedBox !== null) return
     const chosen = box ?? rand(3)
     const perk = perks[rand(perks.length)]
     setWonPerk(perk)
     setWinnerBox(chosen)
     setSelectedBox(chosen)
     setPhase('opening')
+    setLocked(true)
+    savePlay(perk.id)
     trackEvent('mystery_box_play', { perk: perk.id })
-  }
-
-  const reset = () => {
-    setPhase('idle')
-    setSelectedBox(null)
-    setWonPerk(null)
   }
 
   const redeem = () => {
@@ -157,10 +205,10 @@ function MysteryBox() {
                 style={{ backgroundImage: 'var(--gradient-cta)' }}
                 className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-black uppercase tracking-wide text-white shadow-lg shadow-[#6c5ce7]/30 transition-all [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 sm:text-lg"
               >
-                🍀 Voy a tener suerte
+                <Emoji>🍀</Emoji> Voy a tener suerte
               </button>
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-gray-500">
-                o tocá una caja
+                o tocá una caja · 1 tirada por día
               </p>
             </div>
           )}
@@ -190,7 +238,7 @@ function MysteryBox() {
               <div className="absolute inset-0 bg-[#020618]/80 backdrop-blur-sm" />
               <div className="relative flex w-full max-w-md flex-col items-center gap-4 rounded-3xl border border-[#75AADB]/40 bg-white/5 p-6 sm:p-8">
                 <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#75AADB]">
-                  ¡Ganaste un perk! 🎉
+                  ¡Ganaste un perk! <Emoji>🎉</Emoji>
                 </span>
 
                 {/* Logo del perk ganado */}
@@ -218,13 +266,13 @@ function MysteryBox() {
                     Completás un formulario rápido en Startup Grind para recibirlo.
                   </p>
                 )}
+                <p className="-mt-1 text-center text-[11px] italic text-gray-500">
+                  *Sujeto a condiciones particulares del partner.
+                </p>
 
-                <button
-                  onClick={reset}
-                  className="text-sm font-bold uppercase tracking-widest text-gray-400 transition-colors hover:text-[#75AADB]"
-                >
-                  Voy a tener suerte de nuevo
-                </button>
+                <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-500">
+                  <Emoji>⏳</Emoji> Regresa mañana para probar suerte de nuevo
+                </p>
               </div>
             </div>
           )}
@@ -246,6 +294,9 @@ function MysteryBox() {
                 <PerkCard key={perk.id} perk={perk} />
               ))}
             </div>
+            <p className="mt-6 text-center text-xs italic text-gray-500">
+              *Sujeto a condiciones particulares del partner.
+            </p>
           </div>
         )}
       </div>
