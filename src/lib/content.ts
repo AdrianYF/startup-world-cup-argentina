@@ -9,6 +9,7 @@ import apoyan from '../content/apoyan.json'
 import faqs from '../content/faqs.json'
 import agenda from '../content/agenda.json'
 import speakers from '../content/speakers.json'
+import perks from '../content/perks.json'
 
 export const content = {
   config,
@@ -22,6 +23,7 @@ export const content = {
   faqs,
   agenda,
   speakers,
+  perks,
 }
 
 export type TicketPlan = (typeof tickets)[number]
@@ -29,3 +31,4 @@ export type Partner = (typeof partners)[number]
 export type AgendaSlot = (typeof agenda.dias)[number]['slots'][number]
 export type AgendaDay = (typeof agenda.dias)[number]
 export type Speaker = (typeof speakers)[number]
+export type Perk = (typeof perks)[number]
