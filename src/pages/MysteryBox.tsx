@@ -202,8 +202,8 @@ function MysteryBox() {
             <div className="mt-2 flex flex-col items-center gap-3">
               <button
                 onClick={() => play()}
-                style={{ backgroundImage: 'var(--gradient-cta)' }}
-                className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-black uppercase tracking-wide text-white shadow-lg shadow-[#6c5ce7]/30 transition-all [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 sm:text-lg"
+                style={{ backgroundImage: 'var(--gradient-apply)' }}
+                className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-base font-black uppercase tracking-wide text-white shadow-lg shadow-[#75AADB]/40 transition-all [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 sm:text-lg"
               >
                 <Emoji>🍀</Emoji> Voy a tener suerte
               </button>
@@ -238,7 +238,7 @@ function MysteryBox() {
               <div className="absolute inset-0 bg-[#020618]/80 backdrop-blur-sm" />
               <div className="relative flex w-full max-w-md flex-col items-center gap-4 rounded-3xl border border-[#75AADB]/40 bg-white/5 p-6 sm:p-8">
                 <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#75AADB]">
-                  ¡Ganaste un perk! <Emoji>🎉</Emoji>
+                  ¡Desbloqueaste un perk!
                 </span>
 
                 {/* Logo del perk ganado */}
@@ -256,10 +256,10 @@ function MysteryBox() {
 
                 <button
                   onClick={redeem}
-                  style={{ backgroundImage: 'var(--gradient-cta)' }}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-black uppercase tracking-wide text-white shadow-lg shadow-[#6c5ce7]/30 transition-all [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-[1.03] active:scale-95"
+                  style={{ backgroundImage: 'var(--gradient-apply)' }}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-black uppercase tracking-wide text-white shadow-lg shadow-[#75AADB]/40 transition-all [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-[1.03] active:scale-95"
                 >
-                  Redimir mi perk →
+                  Desbloquear mi perk →
                 </button>
                 {wonPerk.gated && (
                   <p className="-mt-1 text-center text-[11px] text-gray-500">
@@ -271,7 +271,7 @@ function MysteryBox() {
                 </p>
 
                 <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-500">
-                  <Emoji>⏳</Emoji> Regresa mañana para probar suerte de nuevo
+                  Regresa mañana para probar suerte de nuevo
                 </p>
               </div>
             </div>
