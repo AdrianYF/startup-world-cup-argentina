@@ -52,12 +52,41 @@ function initialWon(): Perk | null {
   return perks.find((p) => p.id === rec.perkId) ?? null
 }
 
-/** Logo del partner sobre chip blanco; si falla la carga, cae al nombre. */
+/**
+ * Logo del partner sobre chip blanco; si falla la carga, cae al nombre.
+ * Si el perk trae `logoSecondary` (ej. TitoFree: ícono + wordmark) muestra los
+ * dos como un lockup horizontal.
+ */
 function PerkLogo({ perk, className }: { perk: Perk; className?: string }) {
   const [err, setErr] = useState(false)
+  // `logoSecondary` es opcional y sólo lo trae algún perk; el tipo Perk se
+  // infiere del JSON, así que lo leemos de forma segura.
+  const secondary = (perk as { logoSecondary?: string }).logoSecondary
+
   if (err || !perk.logo) {
     return <span className="font-black text-[#020618] text-sm text-center leading-tight px-1">{perk.partner}</span>
   }
+
+  if (secondary) {
+    return (
+      <span className="flex max-w-full items-center justify-center gap-1.5 overflow-hidden">
+        <img
+          src={perk.logo}
+          alt=""
+          loading="lazy"
+          onError={() => setErr(true)}
+          className="h-8 w-auto shrink-0 object-contain sm:h-9"
+        />
+        <img
+          src={secondary}
+          alt={perk.partner}
+          loading="lazy"
+          className="h-4 w-auto max-w-full object-contain sm:h-5"
+        />
+      </span>
+    )
+  }
+
   return (
     <img
       src={perk.logo}
