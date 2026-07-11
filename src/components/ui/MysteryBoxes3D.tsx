@@ -1,11 +1,12 @@
-import { Suspense, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, type ThreeEvent } from '@react-three/fiber'
-import { CanvasTexture, Group, MathUtils, SRGBColorSpace, Vector3 } from 'three'
+import { Box3, CanvasTexture, Group, MathUtils, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneGeometry, SRGBColorSpace, TextureLoader, Vector3 } from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 /**
- * Escena 3D del Mystery Box: 3 cajas celestes flotantes con cintas blancas y
- * un signo de interrogación. Al elegir una, crece, gira y explota en confetti;
- * luego la página revela el resultado (perk ganador o caja vacía).
+ * Escena 3D del Mystery Box: 3 regalos (modelo GLB) flotantes, recoloreados a
+ * celeste (caja) + blanco (cinta/moño). Al elegir uno, crece, gira y explota en
+ * confetti; luego la página revela el resultado.
  *
  * El componente NO sabe de UI: recibe `selected` / `winnerIndex` y avisa con
  * `onSelect` (click) y `onRevealReady` (terminó la explosión).
@@ -20,22 +21,93 @@ const BOX_POSITIONS: [number, number, number][] = [
 const GROW_TIME = 0.45 // s creciendo antes de explotar
 const REVEAL_DELAY = 1.6 // s desde el click hasta revelar
 
-/* Textura de canvas con un "?" — evita depender de fuentes externas. */
-function useQuestionTexture() {
-  return useMemo(() => {
-    const c = document.createElement('canvas')
-    c.width = c.height = 128
-    const ctx = c.getContext('2d')!
-    ctx.clearRect(0, 0, 128, 128)
-    ctx.fillStyle = '#0f172b'
-    ctx.font = 'bold 104px ui-sans-serif, system-ui, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText('?', 64, 72)
-    const tex = new CanvasTexture(c)
-    tex.colorSpace = SRGBColorSpace
-    return tex
+const GIFT_MODEL = '/models/gift.glb'
+const GIFT_BASECOLOR = '/models/gift-basecolor.png' // textura base recoloreada (blanco + celeste)
+
+/** Textura de canvas con un "?" negro (para pegar en las caras de la caja). */
+function makeQuestionTexture() {
+  const c = document.createElement('canvas')
+  c.width = c.height = 256
+  const ctx = c.getContext('2d')!
+  ctx.clearRect(0, 0, 256, 256)
+  ctx.fillStyle = '#020618'
+  ctx.font = 'bold 210px ui-sans-serif, system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('?', 128, 142)
+  const tex = new CanvasTexture(c)
+  tex.colorSpace = SRGBColorSpace
+  return tex
+}
+
+/**
+ * Carga el modelo del regalo (imperativo, sin Suspense), le aplica la textura
+ * base recoloreada (celeste caja / cinta blanca) y lo normaliza (centrado +
+ * escala ~1.6u). Devuelve un Group "template" para clonar (null mientras carga).
+ */
+function useGiftTemplate() {
+  const [template, setTemplate] = useState<Group | null>(null)
+  useEffect(() => {
+    let alive = true
+    Promise.all([
+      new GLTFLoader().loadAsync(GIFT_MODEL),
+      new TextureLoader().loadAsync(GIFT_BASECOLOR),
+    ])
+      .then(([gltf, baseColor]) => {
+        if (!alive) return
+        baseColor.flipY = false // convención de UVs de glTF
+        baseColor.colorSpace = SRGBColorSpace
+        baseColor.anisotropy = 4
+        baseColor.needsUpdate = true
+
+        const model = gltf.scene
+        model.traverse((o) => {
+          const mesh = o as Mesh
+          if (!mesh.isMesh) return
+          mesh.material = new MeshStandardMaterial({ map: baseColor, roughness: 0.5, metalness: 0.08 })
+        })
+
+        model.updateWorldMatrix(true, true)
+        const bbox = new Box3().setFromObject(model)
+        const size = new Vector3()
+        const center = new Vector3()
+        bbox.getSize(size)
+        bbox.getCenter(center)
+        model.position.sub(center)
+
+        const wrap = new Group()
+        wrap.add(model) // model quedó centrado en el origen del wrap (por el sub(center))
+
+        // Signo "?" en las 4 caras laterales de la caja (planos en espacio centrado).
+        const qMat = new MeshBasicMaterial({ map: makeQuestionTexture(), transparent: true })
+        const qGeo = new PlaneGeometry(1, 1)
+        const s = Math.min(size.x, size.z) * 0.42 // tamaño del "?"
+        const yQ = -size.y * 0.12 // un poco por debajo del centro (la caja, no el moño)
+        const dx = (size.x / 2) * 1.01
+        const dz = (size.z / 2) * 1.01
+        const faces: Array<{ pos: [number, number, number]; rot: [number, number, number] }> = [
+          { pos: [0, yQ, dz], rot: [0, 0, 0] },
+          { pos: [0, yQ, -dz], rot: [0, Math.PI, 0] },
+          { pos: [dx, yQ, 0], rot: [0, Math.PI / 2, 0] },
+          { pos: [-dx, yQ, 0], rot: [0, -Math.PI / 2, 0] },
+        ]
+        faces.forEach((f) => {
+          const q = new Mesh(qGeo, qMat)
+          q.scale.set(s, s, 1)
+          q.position.set(...f.pos)
+          q.rotation.set(...f.rot)
+          wrap.add(q)
+        })
+
+        wrap.scale.setScalar(1.6 / Math.max(size.x, size.y, size.z))
+        setTemplate(wrap)
+      })
+      .catch((err) => console.error('[GIFT] error cargando el modelo:', err))
+    return () => {
+      alive = false
+    }
   }, [])
+  return template
 }
 
 function GiftBox({
@@ -45,6 +117,7 @@ function GiftBox({
   dimmed,
   popped,
   onClick,
+  template,
 }: {
   position: [number, number, number]
   phase: number
@@ -52,9 +125,10 @@ function GiftBox({
   dimmed: boolean
   popped: boolean
   onClick: () => void
+  template: Group
 }) {
   const ref = useRef<Group>(null!)
-  const qtex = useQuestionTexture()
+  const model = useMemo(() => template.clone(true), [template])
   const grow = useMemo(() => new Vector3(1.7, 1.7, 1.7), [])
   const tiny = useMemo(() => new Vector3(0.0001, 0.0001, 0.0001), [])
   const normal = useMemo(() => new Vector3(1, 1, 1), [])
@@ -100,44 +174,7 @@ function GiftBox({
       onPointerOver={() => setCursor('pointer')}
       onPointerOut={() => setCursor('auto')}
     >
-      {/* Cuerpo celeste */}
-      <mesh castShadow>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#75AADB" roughness={0.35} metalness={0.1} />
-      </mesh>
-
-      {/* Cintas blancas (cruz en cada cara) */}
-      <mesh>
-        <boxGeometry args={[0.22, 1.04, 1.04]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.4} />
-      </mesh>
-      <mesh>
-        <boxGeometry args={[1.04, 0.22, 1.04]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.4} />
-      </mesh>
-
-      {/* Moño arriba */}
-      <mesh position={[0, 0.6, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.17, 0.07, 10, 20]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.4} />
-      </mesh>
-
-      {/* Signo de interrogación en las 4 caras laterales */}
-      {[
-        { pos: [0, 0, 0.531], rot: [0, 0, 0] },
-        { pos: [0, 0, -0.531], rot: [0, Math.PI, 0] },
-        { pos: [0.531, 0, 0], rot: [0, Math.PI / 2, 0] },
-        { pos: [-0.531, 0, 0], rot: [0, -Math.PI / 2, 0] },
-      ].map((f, i) => (
-        <mesh
-          key={i}
-          position={f.pos as [number, number, number]}
-          rotation={f.rot as [number, number, number]}
-        >
-          <planeGeometry args={[0.62, 0.62]} />
-          <meshBasicMaterial map={qtex} transparent toneMapped={false} />
-        </mesh>
-      ))}
+      <primitive object={model} />
     </group>
   )
 }
@@ -220,6 +257,7 @@ function Scene({
   const start = useRef<number | null>(null)
   const fired = useRef(false)
   const [popped, setPopped] = useState(false)
+  const giftTemplate = useGiftTemplate()
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
@@ -245,17 +283,19 @@ function Scene({
       <directionalLight position={[-5, 2, -3]} intensity={0.5} color="#bcd5ea" />
       <pointLight position={[0, -2, 4]} intensity={0.6} color="#75AADB" />
 
-      {BOX_POSITIONS.map((p, i) => (
-        <GiftBox
-          key={i}
-          position={p}
-          phase={i * 1.7}
-          selected={selected === i}
-          dimmed={selected !== null && selected !== i}
-          popped={popped && selected === i}
-          onClick={() => onSelect(i)}
-        />
-      ))}
+      {giftTemplate &&
+        BOX_POSITIONS.map((p, i) => (
+          <GiftBox
+            key={i}
+            template={giftTemplate}
+            position={p}
+            phase={i * 1.7}
+            selected={selected === i}
+            dimmed={selected !== null && selected !== i}
+            popped={popped && selected === i}
+            onClick={() => onSelect(i)}
+          />
+        ))}
 
       {popped && selected !== null && (
         <Confetti position={BOX_POSITIONS[selected]} win={selected === winnerIndex} />
