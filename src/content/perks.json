@@ -310,5 +310,31 @@
     "logo": "https://mlwdmr8a4b9i.i.optimole.com/llKkcbI-t2-UiswY/w:1024/h:366/q:90/https://partners.startupgrind.com/wp-content/uploads/sites/5/2026/02/Qapita-Logo-Horizontal-1.png",
     "detailUrl": "https://partners.startupgrind.com/partner/qapita/",
     "gated": true
+  },
+  {
+    "id": "titofree",
+    "partner": "TitoFree",
+    "title": "1 año gratis de TitoFree",
+    "offer": "Un año gratis de TitoFree, la app para conseguir personal gastronómico. El premio es transferible.",
+    "value": "1 año gratis",
+    "category": "Gastronomía",
+    "redeemUrl": "https://titofree.com/perk/swc26",
+    "redeemText": "Canjear premio",
+    "logo": "/perks/titofree.png",
+    "detailUrl": "https://titofree.com/perk/swc26",
+    "gated": false
+  },
+  {
+    "id": "omaly",
+    "partner": "Omaly",
+    "title": "Beneficio exclusivo de Omaly",
+    "offer": "Comunicación interna crítica con IA y evidencia auditable. Perk para participantes de la Startup World Cup.",
+    "value": "",
+    "category": "Comunicación",
+    "redeemUrl": "https://docs.google.com/forms/d/e/1FAIpQLScMymDXjWW2nspgWoOp82bHEXjkxQMEqOEfMDypUolzg0rp8Q/viewform?usp=sharing&ouid=112585944035508915026",
+    "redeemText": "Canjear perk",
+    "logo": "/perks/omaly.png",
+    "detailUrl": "https://docs.google.com/forms/d/e/1FAIpQLScMymDXjWW2nspgWoOp82bHEXjkxQMEqOEfMDypUolzg0rp8Q/viewform?usp=sharing&ouid=112585944035508915026",
+    "gated": false
   }
 ]
