@@ -321,6 +321,7 @@
     "redeemUrl": "https://titofree.com/perk/swc26",
     "redeemText": "Canjear premio",
     "logo": "/perks/titofree.png",
+    "logoSecondary": "/perks/titofree-text.png",
     "detailUrl": "https://titofree.com/perk/swc26",
     "gated": false
   },
