@@ -1,11 +1,10 @@
 [
   {
-    "id": "tanda-1",
-    "nombre": "Tanda 1",
-    "precio": "$20.000",
-    "cupos": "30 unidades",
-    "descripcion": "La primera tanda, al precio más bajo.",
-    "estado": "agotado",
+    "id": "basico",
+    "nombre": "Básico",
+    "precioAnterior": "$71.000",
+    "precio": "$42.000",
+    "descripcion": "Para entusiastas y builders.",
     "badge": null,
     "features": [
       "Acceso general",
@@ -14,31 +13,32 @@
     ]
   },
   {
-    "id": "tanda-2",
-    "nombre": "Tanda 2",
-    "precio": "$25.000",
-    "cupos": "30 unidades",
-    "descripcion": "Early Bird: descuento preferencial hasta agotar los primeros 30 cupos.",
-    "estado": "venta",
-    "badge": "A LA VENTA",
+    "id": "basico-plus",
+    "nombre": "Básico Plus",
+    "precioAnterior": "$143.500",
+    "precio": "$85.500",
+    "descripcion": "Experiencia completa.",
+    "badge": "MÁS POPULAR",
     "features": [
-      "Acceso general",
-      "Expo & Pitch Battle",
-      "Matchmaking digital"
+      "Todo lo del Básico",
+      "Acceso Workshops",
+      "CoWork Zone",
+      "Side Events + Night Drinks"
     ]
   },
   {
-    "id": "tanda-3",
-    "nombre": "Tanda 3",
-    "precio": "$30.000",
-    "cupos": "30 unidades",
-    "descripcion": "Early Bird 2nd Round: abre el 20 de julio, hasta agotar los segundos 30 cupos.",
-    "estado": "proximamente",
+    "id": "pro",
+    "nombre": "Pro",
+    "precioAnterior": "$723.550",
+    "precio": "$578.550",
+    "descripcion": "Foco en inversión y Growth.",
     "badge": null,
     "features": [
-      "Acceso general",
-      "Expo & Pitch Battle",
-      "Matchmaking digital"
+      "Todo lo del Básico Plus",
+      "Mesa Inversión 1:1*",
+      "Builders Arena prioritario",
+      "Cocktail Privado",
+      "Acceso Startup Grind International Team"
     ]
   }
 ]
