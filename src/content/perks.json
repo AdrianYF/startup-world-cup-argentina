@@ -350,5 +350,18 @@
     "logo": "/perks/aws.png",
     "detailUrl": "https://docs.google.com/forms/d/e/1FAIpQLScWixA-IG2_S4lK4TaTB_8tJSjaA94NqT5oQ6hXUUpsq7uR_Q/viewform",
     "gated": false
+  },
+  {
+    "id": "lovable",
+    "partner": "Lovable",
+    "title": "Aplicá para acceder a créditos en Lovable",
+    "offer": "Aplicá para acceder a 20% de créditos en Lovable.",
+    "value": "20% de créditos",
+    "category": "AI",
+    "redeemUrl": "https://docs.google.com/forms/d/14hId87qLP59H4yiMvwlCH9grq4L82CJK_lx12tUvj0Y/viewform",
+    "redeemText": "Canjear perk",
+    "logo": "/perks/lovable.png",
+    "detailUrl": "https://docs.google.com/forms/d/14hId87qLP59H4yiMvwlCH9grq4L82CJK_lx12tUvj0Y/viewform",
+    "gated": false
   }
 ]
