@@ -217,7 +217,7 @@ function MysteryBox() {
         </div>
 
         {/* Juego (3D) + botón "Voy a tener suerte" + reveal */}
-        <div className="relative mt-6">
+        <div className="relative mt-12 sm:mt-16">
           <MysteryBoxes3D
             className="h-[46vh] w-full sm:h-[52vh]"
             selected={selectedBox}
