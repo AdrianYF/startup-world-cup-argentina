@@ -39,3 +39,17 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
   window.gtag('event', name, params)
 }
+
+/**
+ * Vista de página en navegación client-side. `gtag('config')` sólo manda el
+ * page_view de la carga inicial, así que sin esto las rutas a las que se llega
+ * navegando (ej. /mystery-box desde la home) no se cuentan.
+ */
+export function trackPageView(path: string) {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
+  window.gtag('event', 'page_view', {
+    page_path: path,
+    page_location: window.location.href,
+    page_title: document.title,
+  })
+}
