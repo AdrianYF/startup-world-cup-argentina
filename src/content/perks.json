@@ -337,5 +337,20 @@
     "logo": "/perks/omaly.png",
     "detailUrl": "https://docs.google.com/forms/d/e/1FAIpQLScMymDXjWW2nspgWoOp82bHEXjkxQMEqOEfMDypUolzg0rp8Q/viewform?usp=sharing&ouid=112585944035508915026",
     "gated": false
+  },
+  {
+    "id": "aws-gcba",
+    "partner": "AWS × Gobierno de la Ciudad",
+    "title": "Beneficio exclusivo de AWS",
+    "offer": "Beneficio exclusivo de AWS y el Gobierno de la Ciudad de Buenos Aires para participantes de la Startup World Cup.",
+    "value": "",
+    "category": "Cloud",
+    "redeemUrl": "https://docs.google.com/forms/d/e/1FAIpQLScWixA-IG2_S4lK4TaTB_8tJSjaA94NqT5oQ6hXUUpsq7uR_Q/viewform",
+    "redeemText": "Canjear perk",
+    "logo": "/perks/aws.png",
+    "logoSecondary": "/perks/gcba.png",
+    "logoLayout": "cobrand",
+    "detailUrl": "https://docs.google.com/forms/d/e/1FAIpQLScWixA-IG2_S4lK4TaTB_8tJSjaA94NqT5oQ6hXUUpsq7uR_Q/viewform",
+    "gated": false
   }
 ]
