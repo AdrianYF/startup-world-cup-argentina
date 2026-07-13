@@ -54,43 +54,17 @@ function initialWon(): Perk | null {
 
 /**
  * Logo del partner sobre chip blanco; si falla la carga, cae al nombre.
- * Con `logoSecondary` muestra los dos como lockup horizontal: por defecto
- * ícono + wordmark de un mismo partner (ej. TitoFree), o con
- * `logoLayout: "cobrand"` dos partners de igual peso separados por una línea
- * (ej. AWS × Gobierno de la Ciudad).
+ * Si el perk trae `logoSecondary` (ej. TitoFree: ícono + wordmark) muestra los
+ * dos como un lockup horizontal.
  */
 function PerkLogo({ perk, className }: { perk: Perk; className?: string }) {
   const [err, setErr] = useState(false)
-  // `logoSecondary` y `logoLayout` son opcionales y sólo los trae algún perk;
-  // el tipo Perk se infiere del JSON, así que los leemos de forma segura.
-  const { logoSecondary: secondary, logoLayout } = perk as {
-    logoSecondary?: string
-    logoLayout?: string
-  }
+  // `logoSecondary` es opcional y sólo lo trae algún perk; el tipo Perk se
+  // infiere del JSON, así que lo leemos de forma segura.
+  const secondary = (perk as { logoSecondary?: string }).logoSecondary
 
   if (err || !perk.logo) {
     return <span className="font-black text-[#020618] text-sm text-center leading-tight px-1">{perk.partner}</span>
-  }
-
-  if (secondary && logoLayout === 'cobrand') {
-    return (
-      <span className="flex max-w-full items-center justify-center gap-2 overflow-hidden sm:gap-2.5">
-        <img
-          src={perk.logo}
-          alt=""
-          loading="lazy"
-          onError={() => setErr(true)}
-          className="h-7 w-auto shrink-0 object-contain sm:h-8"
-        />
-        <span aria-hidden className="h-7 w-px shrink-0 bg-[#020618]/15 sm:h-8" />
-        <img
-          src={secondary}
-          alt={perk.partner}
-          loading="lazy"
-          className="h-7 w-auto shrink-0 object-contain sm:h-8"
-        />
-      </span>
-    )
   }
 
   if (secondary) {

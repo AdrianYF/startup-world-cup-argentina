@@ -314,9 +314,9 @@
   {
     "id": "titofree",
     "partner": "TitoFree",
-    "title": "1 año gratis de TitoFree",
+    "title": "La app para conseguir personal gastronómico",
     "offer": "Un año gratis de TitoFree, la app para conseguir personal gastronómico. El premio es transferible.",
-    "value": "1 año gratis",
+    "value": "1 año gratis, premio transferible",
     "category": "Gastronomía",
     "redeemUrl": "https://titofree.com/perk/swc26",
     "redeemText": "Canjear premio",
@@ -328,9 +328,9 @@
   {
     "id": "omaly",
     "partner": "Omaly",
-    "title": "Beneficio exclusivo de Omaly",
-    "offer": "Comunicación interna crítica con IA y evidencia auditable. Perk para participantes de la Startup World Cup.",
-    "value": "",
+    "title": "Con Omaly comunica igual que las grandes organizaciones",
+    "offer": "Comunicación interna crítica con IA y evidencia auditable. 50% de beneficio en el primer año.",
+    "value": "50% en el primer año",
     "category": "Comunicación",
     "redeemUrl": "https://docs.google.com/forms/d/e/1FAIpQLScMymDXjWW2nspgWoOp82bHEXjkxQMEqOEfMDypUolzg0rp8Q/viewform?usp=sharing&ouid=112585944035508915026",
     "redeemText": "Canjear perk",
@@ -339,18 +339,29 @@
     "gated": false
   },
   {
-    "id": "aws-gcba",
-    "partner": "AWS × Gobierno de la Ciudad",
-    "title": "Beneficio exclusivo de AWS",
-    "offer": "Beneficio exclusivo de AWS y el Gobierno de la Ciudad de Buenos Aires para participantes de la Startup World Cup.",
-    "value": "",
+    "id": "aws",
+    "partner": "AWS",
+    "title": "Ampliable hasta USD 100.000",
+    "offer": "USD 10.000 en créditos de AWS para tu startup, ampliables hasta USD 100.000.",
+    "value": "USD 10.000 en créditos",
     "category": "Cloud",
     "redeemUrl": "https://docs.google.com/forms/d/e/1FAIpQLScWixA-IG2_S4lK4TaTB_8tJSjaA94NqT5oQ6hXUUpsq7uR_Q/viewform",
     "redeemText": "Canjear perk",
     "logo": "/perks/aws.png",
-    "logoSecondary": "/perks/gcba.png",
-    "logoLayout": "cobrand",
     "detailUrl": "https://docs.google.com/forms/d/e/1FAIpQLScWixA-IG2_S4lK4TaTB_8tJSjaA94NqT5oQ6hXUUpsq7uR_Q/viewform",
+    "gated": false
+  },
+  {
+    "id": "lovable",
+    "partner": "Lovable",
+    "title": "Aplicá para acceder a créditos en Lovable",
+    "offer": "Aplicá para acceder a 20% de créditos en Lovable.",
+    "value": "20% de créditos",
+    "category": "AI",
+    "redeemUrl": "https://docs.google.com/forms/d/14hId87qLP59H4yiMvwlCH9grq4L82CJK_lx12tUvj0Y/viewform",
+    "redeemText": "Canjear perk",
+    "logo": "/perks/lovable.png",
+    "detailUrl": "https://docs.google.com/forms/d/14hId87qLP59H4yiMvwlCH9grq4L82CJK_lx12tUvj0Y/viewform",
     "gated": false
   }
 ]
