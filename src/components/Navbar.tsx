@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { openStartupForm } from '../lib/ticketing'
-import { content } from '../lib/content'
+import { openTicketing } from '../lib/ticketing'
 
 const links = [
   { href: '#ruta', label: 'Ruta de Evolución' },
@@ -47,10 +46,7 @@ function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
-  const convocatoriaAbierta = content.config.convocatoria.startupsAbierta
-  const ctaAria = convocatoriaAbierta
-    ? 'Aplicá como Startup (abre formulario en una nueva pestaña)'
-    : 'Convocatoria de startups cerrada — ver la agenda del evento'
+  const ctaAria = 'Conseguir tickets (abre Startup Grind en una nueva pestaña)'
 
   return (
     <nav
@@ -122,12 +118,12 @@ function Navbar() {
             )
           })}
           <button
-            onClick={() => openStartupForm()}
+            onClick={() => openTicketing('navbar')}
             aria-label={ctaAria}
             style={{ backgroundImage: 'var(--gradient-cta)' }}
             className={`text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full active:scale-95 transition-all cursor-pointer font-black hover:scale-105 whitespace-nowrap ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
-            {convocatoriaAbierta ? 'Aplicá' : content.config.convocatoria.ctaCerradaCorta}
+            Tickets
           </button>
         </div>
 
@@ -173,12 +169,12 @@ function Navbar() {
               )
             })}
             <button
-              onClick={() => { setMobileOpen(false); openStartupForm() }}
+              onClick={() => { setMobileOpen(false); openTicketing('navbar-mobile') }}
               aria-label={ctaAria}
               style={{ backgroundImage: 'var(--gradient-cta)' }}
               className="mt-3 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
-              {convocatoriaAbierta ? 'Aplicá como Startup' : content.config.convocatoria.ctaCerrada}
+              Tickets
             </button>
           </div>
         </div>
