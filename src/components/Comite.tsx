@@ -87,8 +87,8 @@ function Comite() {
           )}
         </div>
 
-        {/* Desktop: grid completo */}
-        <div className="hidden sm:grid grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* Desktop/tablet: grilla de 4 columnas (4·4·4·4·3 con los 19 miembros) */}
+        <div className="hidden sm:grid grid-cols-4 gap-6">
           {miembros.map(m => (
             <ComiteTile key={m.slug} miembro={m} onOpen={setOpen} />
           ))}
