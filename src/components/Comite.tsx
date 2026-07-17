@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { content } from '../lib/content'
 import { ShareLightbox } from './ui/ShareLightbox'
-import { slugFromUrl, slugLink } from '../lib/shortlink'
+import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
 
 /**
  * Comité de Selección — grid de figuritas (cards ya renderizadas como imagen).
  * Al clickear una card se abre el lightbox con las opciones de compartir, igual
- * que la galería: cada card tiene su short link /swc/c-<slug> (OG en api/og.js).
+ * que la galería: cada card tiene su short link opaco /swc/<CODE> (OG en api/og.js).
  * Mobile: preview de MOBILE_PREVIEW + "Ver todo". Desktop: grid completo.
  */
 
@@ -15,14 +15,26 @@ const MOBILE_PREVIEW = 6
 
 type Miembro = (typeof content.comite)[number]
 
+// Mismo código opaco que la galería (FNV-1a → xorshift32 → base26), pero sobre la
+// imagen de cada card. No colisiona con los códigos de la galería (verificado).
+const MIEMBRO_POR_CODE = codeTable(content.comite.map(m => m.img))
+
+// Guard de dev: si al sumar un miembro dos imágenes dan el mismo código, uno
+// pisaría al otro en la tabla y su link abriría la card equivocada. Avisar.
+if (import.meta.env.DEV && Object.keys(MIEMBRO_POR_CODE).length !== content.comite.length) {
+  console.warn('[Comite] colisión de códigos entre miembros: revisá los slugs/imágenes en comite.json')
+}
+
 /**
- * Si llegan con un short link (/swc/c-<slug> o ?c=<slug>), la card que hay que abrir.
+ * Si llegan con un short link (/swc/<CODE> o ?c=<CODE>), la card que hay que abrir.
  * Se resuelve una sola vez al cargar el módulo, antes de que el efecto limpie la
  * URL: leerlo más tarde (en un re-mount) ya daría null.
  */
 const MIEMBRO_DEL_LINK: Miembro | null = (() => {
-  const slug = slugFromUrl()
-  return slug ? content.comite.find(m => m.slug === slug) ?? null : null
+  const code = codeFromUrl('c')
+  if (!code) return null
+  const img = MIEMBRO_POR_CODE[code.toUpperCase()]
+  return img ? content.comite.find(m => m.img === img) ?? null : null
 })()
 
 function Comite() {
@@ -88,7 +100,7 @@ function Comite() {
           src={open.img}
           alt={alt(open.nombre)}
           ariaLabel={`Card de ${open.nombre}`}
-          shareUrl={slugLink(open.slug)}
+          shareUrl={shortLink(open.img)}
           shareText={`${open.nombre} — Comité de Selección · Startup World Cup Argentina`}
           tweetText={`${open.nombre} es parte del Comité de Selección de la Startup World Cup Argentina\n@StartupWC_arg @StartupGrindBA`}
           onClose={() => setOpen(null)}

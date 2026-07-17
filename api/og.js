@@ -6,12 +6,14 @@
 // devolvemos un HTML con los meta tags OG apuntando a ESA imagen, y redirigimos
 // a los humanos a la SPA (que la abre en el lightbox).
 //
-// Galería: el mapeo code→foto replica el algoritmo de src/lib/shortlink.ts
-// (FNV-1a → xorshift32 → base26 A–Z, largo 6). Mantener en sync.
+// Galería y comité usan el MISMO código opaco (/swc/<CODE>): el mapeo code→imagen
+// replica el algoritmo de src/lib/shortlink.ts (FNV-1a → xorshift32 → base26 A–Z,
+// largo 6). Mantener en sync.
 //
-// Comité: el link lleva el slug (c-<slug>), así la imagen sale del propio slug y
-// esta función no necesita conocer la lista de miembros. La card ya muestra el
-// nombre, así que el título va genérico.
+// La lista del comité NO se duplica acá: se importa comite.json (el bundler de
+// Vercel sigue el import). El import va protegido: si por lo que sea la lista no
+// está disponible, las previews del comité caen al placeholder pero la galería
+// (que no depende de ese import) sigue intacta.
 
 // Mantener en sync con src/components/Galeria.tsx (mismas filas y conteos).
 const ROW1_COUNT = 39
@@ -24,10 +26,6 @@ const ALL = [
   ...Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`),
   ...Array.from({ length: ROW3_COUNT }, (_, i) => `/galeria/r3-${pad(i + 1)}.jpg`),
 ]
-
-// Solo slugs válidos: evita que un link armado a mano meta cualquier path
-// (../, http://…) en el og:image.
-const SLUG_OK = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 function fnv1a(str) {
   let h = 0x811c9dc5
@@ -51,35 +49,44 @@ function codeFromSrc(src) {
 }
 const SRC_BY_CODE = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
 
+// Comité: code → /comite/<slug>.jpg, derivado de comite.json (sin duplicar la
+// lista). Protegido: si el import falla, queda vacío y solo se pierde la preview
+// del comité — la galería no toca esto.
+let COMITE_BY_CODE = {}
+try {
+  const { default: comite } = await import('../src/content/comite.json', { with: { type: 'json' } })
+  COMITE_BY_CODE = Object.fromEntries(comite.map(m => [codeFromSrc(m.img), m.img]))
+} catch {
+  /* comité sin previews; galería intacta */
+}
+
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
 export default function handler(req, res) {
-  const raw = String((req.query && req.query.code) || '')
+  const code = String((req.query && req.query.code) || '').toUpperCase()
   const proto = req.headers['x-forwarded-proto'] || 'https'
   const host = req.headers['x-forwarded-host'] || req.headers.host || ''
   const origin = `${proto}://${host}`
 
-  // Comité: c-<slug> (la imagen sale del slug). Galería: <CODE> contra la tabla.
-  const slug = raw.toLowerCase().startsWith('c-') ? raw.toLowerCase().slice(2) : null
-  const miembro = slug && SLUG_OK.test(slug) ? slug : null
-  const code = miembro ? '' : raw.toUpperCase()
-  const photo = code ? SRC_BY_CODE[code] || null : null
+  // Mismo código para las dos secciones: probamos galería y, si no, comité.
+  const photo = SRC_BY_CODE[code] || null
+  const card = photo ? null : COMITE_BY_CODE[code] || null
 
-  const image = origin + (photo || (miembro && `/comite/${miembro}.jpg`) || '/cup.png')
+  const image = origin + (photo || card || '/cup.png')
   // La card ya lleva el nombre impreso, así que el título no lo repite.
-  const title = miembro
+  const title = card
     ? 'Comité de Selección · Startup World Cup Argentina'
     : 'Startup World Cup Argentina · Galería'
   // LinkedIn (y otras redes) no permiten prellenar el texto del post: muestran la
   // preview (OG). Por eso ponemos el mismo mensaje que el tweet en la description.
-  const description = miembro
+  const description = card
     ? 'Comité de Selección de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
     : 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
-  const pageUrl = `${origin}/swc/${miembro ? `c-${miembro}` : code}`
+  const pageUrl = `${origin}/swc/${code}`
   // Humanos → SPA (abre la imagen vía ?g= / ?c=). Bots se quedan con los meta tags.
   let dest = '/#galeria'
   if (photo) dest = `/?g=${encodeURIComponent(code)}`
-  else if (miembro) dest = `/?c=${encodeURIComponent(miembro)}`
+  else if (card) dest = `/?c=${encodeURIComponent(code)}`
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
   res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=600')
