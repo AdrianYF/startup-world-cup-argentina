@@ -42,9 +42,23 @@ export function codeTable(srcs: string[]): Record<string, string> {
   return Object.fromEntries(srcs.map(s => [codeFromSrc(s), s]))
 }
 
-/** Código presente en la URL, ya sea por ruta (/swc/CODE, /g/CODE) o query (?g=, ?c=). */
+/** Código presente en la URL, ya sea por ruta (/swc/CODE, /g/CODE) o query (?g=). */
 export function codeFromUrl(queryKey: string): string | null {
   const fromPath = window.location.pathname.match(/^\/(?:swc|g)\/([A-Za-z]+)\/?$/i)
   if (fromPath) return fromPath[1]
   return new URLSearchParams(window.location.search).get(queryKey)
+}
+
+/* -------- links del comité --------
+ * Acá el link lleva el slug en vez de un hash: /swc/c-<slug>. Así api/og.js
+ * deduce la imagen del propio slug y no necesita duplicar la lista de miembros
+ * (se bundlea aparte del front y no comparte el import de comite.json).
+ */
+export const slugLink = (slug: string) => `${SITE}/swc/c-${slug}`
+
+/** Slug del comité en la URL, por ruta (/swc/c-<slug>) o query (?c=<slug>). */
+export function slugFromUrl(): string | null {
+  const fromPath = window.location.pathname.match(/^\/swc\/c-([a-z0-9-]+)\/?$/i)
+  if (fromPath) return fromPath[1].toLowerCase()
+  return new URLSearchParams(window.location.search).get('c')
 }

@@ -1,38 +1,40 @@
 import { useEffect, useState } from 'react'
 import { content } from '../lib/content'
 import { ShareLightbox } from './ui/ShareLightbox'
-import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
+import { slugFromUrl, slugLink } from '../lib/shortlink'
 
 /**
  * Comité de Selección — grid de figuritas (cards ya renderizadas como imagen).
  * Al clickear una card se abre el lightbox con las opciones de compartir, igual
- * que la galería: cada card tiene su short link /swc/<CODE> (OG en api/og.js).
+ * que la galería: cada card tiene su short link /swc/c-<slug> (OG en api/og.js).
  * Mobile: preview de MOBILE_PREVIEW + "Ver todo". Desktop: grid completo.
  */
 
 const BG = '#020618'
 const MOBILE_PREVIEW = 6
 
-const SRC_BY_CODE = codeTable(content.comite.map(m => m.img))
-const miembroFromCode = (code: string) => {
-  const src = SRC_BY_CODE[code.toUpperCase()]
-  return src ? content.comite.find(m => m.img === src) ?? null : null
-}
-
 type Miembro = (typeof content.comite)[number]
+
+/**
+ * Si llegan con un short link (/swc/c-<slug> o ?c=<slug>), la card que hay que abrir.
+ * Se resuelve una sola vez al cargar el módulo, antes de que el efecto limpie la
+ * URL: leerlo más tarde (en un re-mount) ya daría null.
+ */
+const MIEMBRO_DEL_LINK: Miembro | null = (() => {
+  const slug = slugFromUrl()
+  return slug ? content.comite.find(m => m.slug === slug) ?? null : null
+})()
 
 function Comite() {
   const miembros = content.comite
   const [expanded, setExpanded] = useState(false)
-  const [open, setOpen] = useState<Miembro | null>(null)
+  // El link ya trae la card abierta desde el primer render: no hace falta un
+  // efecto que la setee después.
+  const [open, setOpen] = useState<Miembro | null>(MIEMBRO_DEL_LINK)
 
-  // Si llegan con un short link (/swc/<code> o ?c=<code>), abrir esa card y limpiar la URL.
+  // Llegando por short link, la URL se limpia y se baja hasta la sección.
   useEffect(() => {
-    const code = codeFromUrl('c')
-    if (!code) return
-    const miembro = miembroFromCode(code)
-    if (!miembro) return // el código es de otra sección (ej. la galería)
-    setOpen(miembro)
+    if (!MIEMBRO_DEL_LINK) return
     window.history.replaceState({}, '', '/#comite')
     document.getElementById('comite')?.scrollIntoView({ block: 'start' })
   }, [])
@@ -86,7 +88,7 @@ function Comite() {
           src={open.img}
           alt={alt(open.nombre)}
           ariaLabel={`Card de ${open.nombre}`}
-          shareUrl={shortLink(open.img)}
+          shareUrl={slugLink(open.slug)}
           shareText={`${open.nombre} — Comité de Selección · Startup World Cup Argentina`}
           tweetText={`${open.nombre} es parte del Comité de Selección de la Startup World Cup Argentina\n@StartupWC_arg @StartupGrindBA`}
           onClose={() => setOpen(null)}
