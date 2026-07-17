@@ -62,12 +62,17 @@ function Apoyan() {
                       const scale = 'scale' in logo && typeof logo.scale === 'number' ? logo.scale : undefined
                       // muted: mismo estilo que UNCUYO (texto), atenuado por defecto y full blanco + glow en hover.
                       const muted = 'muted' in logo && (logo as { muted?: boolean }).muted === true
+                      // brandStrict: marcas con guía de uso propia (ej. Deloitte). Sin filtro ni
+                      // glow: no se recolorea ni se le agrega nada al logo. Solo escala en hover.
+                      const brandStrict = 'brandStrict' in logo && (logo as { brandStrict?: boolean }).brandStrict === true
                       // Color con contraste sobre bg azul oscuro: brillo+contraste para que los logos pop, drop-shadow celeste sutil.
                       const baseFilter = `contrast(1.1) saturate(1.15) brightness(1.05) drop-shadow(0 2px 12px rgba(117,170,219,0.15))`
-                      const hoverFilter = muted
+                      const hoverFilter = brandStrict
+                        ? 'none'
+                        : muted
                         ? `drop-shadow(0 4px 16px rgba(117,170,219,0.5))`
                         : `contrast(1.18) saturate(1.3) brightness(1.12) drop-shadow(0 6px 24px rgba(117,170,219,0.55))`
-                      const baseFilterFinal = muted ? 'none' : baseFilter
+                      const baseFilterFinal = muted || brandStrict ? 'none' : baseFilter
                       const baseOpacity = muted ? 0.8 : 1
                       const baseTransform = scale ? `scale(${scale})` : 'scale(1)'
                       const hoverTransform = scale ? `scale(${scale * 1.05})` : 'scale(1.05)'

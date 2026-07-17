@@ -5,7 +5,8 @@
       { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85, "scale": 0.85, "url": "https://www.startupworldcup.io/" },
       { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "url": "https://www.startupgrind.com/buenos-aires/" },
       { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "scale": 0.85, "url": "https://www.pegasustechventures.com/" },
-      { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "scale": 0.5 }
+      { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "scale": 0.5 },
+      { "nombre": "Deloitte", "img": "/logos/deloitte-white.png", "scale": 0.72, "brandStrict": true, "url": "https://www.deloitte.com/ar" }
     ]
   },
   {
