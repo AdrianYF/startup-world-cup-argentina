@@ -10,6 +10,7 @@ import faqs from '../content/faqs.json'
 import agenda from '../content/agenda.json'
 import speakers from '../content/speakers.json'
 import perks from '../content/perks.json'
+import comite from '../content/comite.json'
 
 export const content = {
   config,
@@ -24,6 +25,7 @@ export const content = {
   agenda,
   speakers,
   perks,
+  comite,
 }
 
 export type TicketPlan = (typeof tickets)[number]
@@ -32,3 +34,4 @@ export type AgendaSlot = (typeof agenda.dias)[number]['slots'][number]
 export type AgendaDay = (typeof agenda.dias)[number]
 export type Speaker = (typeof speakers)[number]
 export type Perk = (typeof perks)[number]
+export type ComiteMiembro = (typeof comite)[number]

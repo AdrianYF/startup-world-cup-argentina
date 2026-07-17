@@ -22,17 +22,26 @@ function Apoyan() {
           {categorias.map((cat, i) => {
             // En desktop, cada categoría usa tantas columnas como logos tenga (una sola fila).
             const colsClass =
-              ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5' } as Record<number, string>)[
+              ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5', 7: 'md:grid-cols-4' } as Record<number, string>)[
                 cat.logos.length
               ] ?? 'md:grid-cols-3'
+            // centrar: con la grilla, una última fila incompleta se pega a la izquierda.
+            // Flex + wrap la deja centrada (los logos conservan su tamaño: lo fija su
+            // propio max-h/scale, no la celda).
+            const centrar = 'centrar' in cat && (cat as { centrar?: boolean }).centrar === true
+            const contenedorClass = centrar
+              ? 'flex flex-wrap gap-4 items-center justify-center'
+              : `grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 items-center justify-items-center`
             return (
             <div key={i}>
               <p className="text-center text-gray-400 text-xs uppercase tracking-[0.3em] font-bold mb-4">
                 {cat.titulo}
               </p>
-              <div className={`grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 items-center justify-items-center`}>
+              <div className={contenedorClass}>
                 {cat.logos.map((logo, j) => {
                   const url = 'url' in logo && typeof logo.url === 'string' ? logo.url : undefined
+                  // En modo centrado el ancho lo pone cada celda (el grid ya reparte solo).
+                  const anchoClass = centrar ? 'w-full sm:w-72' : 'w-full'
                   const Wrapper = ({ children }: { children: ReactNode }) =>
                     url ? (
                       <a
@@ -40,12 +49,12 @@ function Apoyan() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Visitar ${logo.nombre} (abre en una nueva pestaña)`}
-                        className="flex items-center justify-center w-full h-28 sm:h-32"
+                        className={`flex items-center justify-center ${anchoClass} h-28 sm:h-32`}
                       >
                         {children}
                       </a>
                     ) : (
-                      <div className="flex items-center justify-center w-full h-28 sm:h-32">{children}</div>
+                      <div className={`flex items-center justify-center ${anchoClass} h-28 sm:h-32`}>{children}</div>
                     )
                   return (
                     <Wrapper key={j}>
@@ -85,7 +94,15 @@ function Apoyan() {
                         />
                       )
                     })() : (
-                      <span className="text-white/80 font-black text-3xl sm:text-4xl uppercase tracking-wide hover:text-white hover:drop-shadow-[0_4px_16px_rgba(117,170,219,0.5)] transition-all">
+                      <span
+                        // scale achica el texto igual que en los logos de imagen (sin scale = tamaño por defecto).
+                        style={
+                          'scale' in logo && typeof logo.scale === 'number'
+                            ? { fontSize: `${logo.scale * 2.25}rem` }
+                            : undefined
+                        }
+                        className="text-white/80 font-black text-3xl sm:text-4xl uppercase tracking-wide whitespace-nowrap hover:text-white hover:drop-shadow-[0_4px_16px_rgba(117,170,219,0.5)] transition-all"
+                      >
                         {logo.nombre}
                       </span>
                     )}

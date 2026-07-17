@@ -1,0 +1,21 @@
+[
+  { "slug": "diego-gonzalez", "nombre": "Diego Gonzalez", "img": "/comite/diego-gonzalez.jpg" },
+  { "slug": "francis-perelman", "nombre": "Francis Perelman", "img": "/comite/francis-perelman.jpg" },
+  { "slug": "susana-darin", "nombre": "Susana Darin", "img": "/comite/susana-darin.jpg" },
+  { "slug": "karina-rasic", "nombre": "Karina Rasic", "img": "/comite/karina-rasic.jpg" },
+  { "slug": "claudio-cocconi", "nombre": "Claudio Cocconi", "img": "/comite/claudio-cocconi.jpg" },
+  { "slug": "franco-pagella", "nombre": "Franco Pagella", "img": "/comite/franco-pagella.jpg" },
+  { "slug": "fito-diaz-gramont", "nombre": "Fito Díaz Gramont", "img": "/comite/fito-diaz-gramont.jpg" },
+  { "slug": "lisa-ocampo", "nombre": "Lisa Ocampo", "img": "/comite/lisa-ocampo.jpg" },
+  { "slug": "omar-nievas", "nombre": "Omar Nievas", "img": "/comite/omar-nievas.jpg" },
+  { "slug": "matias-gonzalez", "nombre": "Matias Gonzalez", "img": "/comite/matias-gonzalez.jpg" },
+  { "slug": "lucas-navarro", "nombre": "Lucas Navarro", "img": "/comite/lucas-navarro.jpg" },
+  { "slug": "matias-dellanno-irigoyen", "nombre": "Matias Dellanno Irigoyen", "img": "/comite/matias-dellanno-irigoyen.jpg" },
+  { "slug": "lucas-heine", "nombre": "Lucas Heine", "img": "/comite/lucas-heine.jpg" },
+  { "slug": "celia-alfie", "nombre": "Celia Alfie", "img": "/comite/celia-alfie.jpg" },
+  { "slug": "carla-goglia", "nombre": "Carla Goglia", "img": "/comite/carla-goglia.jpg" },
+  { "slug": "aldo-montefiore", "nombre": "Aldo Montefiore", "img": "/comite/aldo-montefiore.jpg" },
+  { "slug": "ale-bustos", "nombre": "Ale Bustos", "img": "/comite/ale-bustos.jpg" },
+  { "slug": "rocio-minvielle-crocci", "nombre": "Rocío Minvielle Crocci", "img": "/comite/rocio-minvielle-crocci.jpg" },
+  { "slug": "gabriel-aufgang", "nombre": "Gabriel Aufgang", "img": "/comite/gabriel-aufgang.jpg" }
+]

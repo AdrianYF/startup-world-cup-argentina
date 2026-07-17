@@ -12,6 +12,7 @@ import Agenda from './components/Agenda'
 import Tickets from './components/Tickets'
 import Startups from './components/Startups'
 import Voluntarios from './components/Voluntarios'
+import Comite from './components/Comite'
 import Partners from './components/Partners'
 import Apoyan from './components/Apoyan'
 import FAQ from './components/FAQ'
@@ -44,6 +45,7 @@ function App() {
     Tickets,
     Startups,
     Voluntarios,
+    Comite,
     // Speakers, // TODO: re-habilitar cuando se confirmen los speakers
   ]
   const tailSections = [FAQ]
