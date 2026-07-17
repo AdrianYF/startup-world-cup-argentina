@@ -1,11 +1,12 @@
 // Vercel Serverless Function — preview social (Open Graph) para los short links
-// de la galería: /swc/<CODE> (rewrite en vercel.json → /api/og?code=<CODE>).
+// de la galería y del comité de selección: /swc/<CODE>
+// (rewrite en vercel.json → /api/og?code=<CODE>).
 //
 // Los bots de WhatsApp/X/etc NO ejecutan JS: leen el HTML crudo. Por eso acá
-// devolvemos un HTML con los meta tags OG apuntando a ESA foto, y redirigimos a
-// los humanos a la SPA (que abre la foto en el lightbox).
+// devolvemos un HTML con los meta tags OG apuntando a ESA imagen, y redirigimos
+// a los humanos a la SPA (que la abre en el lightbox).
 //
-// El mapeo code→foto replica el algoritmo de src/components/Galeria.tsx
+// El mapeo code→imagen replica el algoritmo de src/lib/shortlink.ts
 // (FNV-1a → xorshift32 → base26 A–Z, largo 6). Mantener en sync.
 
 // Mantener en sync con src/components/Galeria.tsx (mismas filas y conteos).
@@ -18,6 +19,31 @@ const ALL = [
   ...Array.from({ length: ROW1_COUNT }, (_, i) => `/galeria/r1-${pad(i + 1)}.jpg`),
   ...Array.from({ length: ROW2_COUNT }, (_, i) => `/galeria/r2-${pad(i + 1)}.jpg`),
   ...Array.from({ length: ROW3_COUNT }, (_, i) => `/galeria/r3-${pad(i + 1)}.jpg`),
+]
+
+// Mantener en sync con src/content/comite.json (el orden no importa: el código
+// sale del path de la imagen). Va duplicado acá porque esta función se bundlea
+// aparte del front y no comparte el import de JSON.
+const COMITE = [
+  ['diego-gonzalez', 'Diego Gonzalez'],
+  ['francis-perelman', 'Francis Perelman'],
+  ['susana-darin', 'Susana Darin'],
+  ['karina-rasic', 'Karina Rasic'],
+  ['claudio-cocconi', 'Claudio Cocconi'],
+  ['franco-pagella', 'Franco Pagella'],
+  ['fito-diaz-gramont', 'Fito Díaz Gramont'],
+  ['lisa-ocampo', 'Lisa Ocampo'],
+  ['omar-nievas', 'Omar Nievas'],
+  ['matias-gonzalez', 'Matias Gonzalez'],
+  ['lucas-navarro', 'Lucas Navarro'],
+  ['matias-dellanno-irigoyen', 'Matias Dellanno Irigoyen'],
+  ['lucas-heine', 'Lucas Heine'],
+  ['celia-alfie', 'Celia Alfie'],
+  ['carla-goglia', 'Carla Goglia'],
+  ['aldo-montefiore', 'Aldo Montefiore'],
+  ['ale-bustos', 'Ale Bustos'],
+  ['rocio-minvielle-crocci', 'Rocío Minvielle Crocci'],
+  ['gabriel-aufgang', 'Gabriel Aufgang'],
 ]
 
 function fnv1a(str) {
@@ -41,6 +67,12 @@ function codeFromSrc(src) {
   return out
 }
 const SRC_BY_CODE = Object.fromEntries(ALL.map(s => [codeFromSrc(s), s]))
+const COMITE_BY_CODE = Object.fromEntries(
+  COMITE.map(([slug, nombre]) => {
+    const img = `/comite/${slug}.jpg`
+    return [codeFromSrc(img), { img, nombre }]
+  }),
+)
 
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
@@ -50,15 +82,24 @@ export default function handler(req, res) {
   const host = req.headers['x-forwarded-host'] || req.headers.host || ''
   const origin = `${proto}://${host}`
 
+  // Un mismo código puede ser de la galería o del comité: probamos ambas tablas.
   const photo = SRC_BY_CODE[code] || null
-  const image = origin + (photo || '/cup.png')
-  const title = 'Startup World Cup Argentina · Galería'
+  const miembro = photo ? null : COMITE_BY_CODE[code] || null
+
+  const image = origin + (photo || (miembro && miembro.img) || '/cup.png')
+  const title = miembro
+    ? `${miembro.nombre} · Comité de Selección — Startup World Cup Argentina`
+    : 'Startup World Cup Argentina · Galería'
   // LinkedIn (y otras redes) no permiten prellenar el texto del post: muestran la
   // preview (OG). Por eso ponemos el mismo mensaje que el tweet en la description.
-  const description = 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
+  const description = miembro
+    ? `${miembro.nombre} es parte del Comité de Selección de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA`
+    : 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   const pageUrl = `${origin}/swc/${code}`
-  // Humanos → SPA (abre la foto vía ?g=). Bots se quedan con los meta tags.
-  const dest = photo ? `/?g=${encodeURIComponent(code)}` : '/#galeria'
+  // Humanos → SPA (abre la imagen vía ?g= / ?c=). Bots se quedan con los meta tags.
+  let dest = '/#galeria'
+  if (photo) dest = `/?g=${encodeURIComponent(code)}`
+  else if (miembro) dest = `/?c=${encodeURIComponent(code)}`
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
   res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=600')
