@@ -24,7 +24,7 @@
   },
   {
     "titulo": "INSTITUTIONAL PARTNERS",
-    "cols": 4,
+    "centrar": true,
     "logos": [
       { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
       { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
