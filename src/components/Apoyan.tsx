@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { content } from '../lib/content'
+import { LogoProtegido } from './ui/LogoProtegido'
 
 type Categoria = (typeof content.apoyan)[number]
 
@@ -114,6 +115,9 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
       <div ref={ref} className={contenedorClass} style={contenedorStyle}>
         {cat.logos.map((logo, j) => {
           const url = 'url' in logo && typeof logo.url === 'string' ? logo.url : undefined
+          // Marcas con guía de uso estricta (Deloitte, Workplace): componente dedicado
+          // con fondo sólido, área de protección y sin efectos (aislado del spotlight).
+          const esProtegido = 'protegido' in logo && (logo as { protegido?: boolean }).protegido === true
           // En modo centrado el ancho lo pone cada celda (el grid ya reparte solo).
           const anchoClass = centrar ? 'w-full sm:w-72' : 'w-full'
           // spanFull: en grilla, cuando el logo queda huérfano en la fila de 2 (tablet)
@@ -148,7 +152,13 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
             )
           return (
             <Wrapper key={j}>
-              {logo.img ? (() => {
+              {esProtegido && logo.img ? (
+                <LogoProtegido
+                  src={logo.img}
+                  alt={logo.nombre}
+                  sinPadding={'sinPadding' in logo && (logo as { sinPadding?: boolean }).sinPadding === true}
+                />
+              ) : logo.img ? (() => {
                 const scale = 'scale' in logo && typeof logo.scale === 'number' ? logo.scale : undefined
                 // muted: mismo estilo que UNCUYO (texto), atenuado por defecto y full blanco + glow en hover.
                 const muted = 'muted' in logo && (logo as { muted?: boolean }).muted === true
