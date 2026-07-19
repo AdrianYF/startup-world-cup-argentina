@@ -363,5 +363,18 @@
     "logo": "/perks/lovable.png",
     "detailUrl": "https://docs.google.com/forms/d/14hId87qLP59H4yiMvwlCH9grq4L82CJK_lx12tUvj0Y/viewform",
     "gated": false
+  },
+  {
+    "id": "revu",
+    "partner": "Revu",
+    "title": "USD 200 de descuento con el código SWC26",
+    "offer": "USD 200 de descuento en Revu, el Revenue Operating System para ventas predecibles, con el código SWC26.",
+    "value": "USD 200 de descuento",
+    "category": "Ventas",
+    "redeemUrl": "https://revusales.com/",
+    "redeemText": "Canjear perk",
+    "logo": "/perks/revu.png",
+    "detailUrl": "https://revusales.com/",
+    "gated": false
   }
 ]
