@@ -116,6 +116,10 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
           const url = 'url' in logo && typeof logo.url === 'string' ? logo.url : undefined
           // En modo centrado el ancho lo pone cada celda (el grid ya reparte solo).
           const anchoClass = centrar ? 'w-full sm:w-72' : 'w-full'
+          // spanFull: en grilla, cuando el logo queda huérfano en la fila de 2 (tablet)
+          // ocupa el ancho completo y queda centrado; en desktop (5 columnas) vuelve a 1.
+          const spanFull = !centrar && 'spanFull' in logo && (logo as { spanFull?: boolean }).spanFull === true
+          const spanClass = spanFull ? ' sm:col-span-2 md:col-span-1' : ''
           // Reveal escalonado: cada logo entra con fade + subida, desfasado por su índice.
           const revealStyle = reduced
             ? undefined
@@ -132,13 +136,13 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Visitar ${logo.nombre} (abre en una nueva pestaña)`}
-                className={`flex items-center justify-center ${anchoClass} h-28 sm:h-32`}
+                className={`flex items-center justify-center ${anchoClass}${spanClass} h-28 sm:h-32`}
                 style={revealStyle}
               >
                 {children}
               </a>
             ) : (
-              <div className={`flex items-center justify-center ${anchoClass} h-28 sm:h-32`} style={revealStyle}>
+              <div className={`flex items-center justify-center ${anchoClass}${spanClass} h-28 sm:h-32`} style={revealStyle}>
                 {children}
               </div>
             )
