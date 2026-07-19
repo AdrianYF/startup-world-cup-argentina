@@ -12,7 +12,7 @@
   {
     "titulo": "COMMUNITY PARTNERS",
     "centrar": true,
-    "porFila": 2,
+    "porFila": 3,
     "logos": [
       { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
       { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
