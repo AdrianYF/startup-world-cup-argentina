@@ -10,19 +10,6 @@
     ]
   },
   {
-    "titulo": "COMMUNITY PARTNERS",
-    "centrar": true,
-    "porFila": 3,
-    "logos": [
-      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
-      { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
-      { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.65, "url": "https://titofree.com/" },
-      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 0.82 },
-      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.4 },
-      { "nombre": "WIP Club", "img": null, "scale": 0.6, "url": "https://www.wipclub.com.ar" }
-    ]
-  },
-  {
     "titulo": "INSTITUTIONAL PARTNERS",
     "centrar": true,
     "porFila": 4,
@@ -39,6 +26,18 @@
       { "nombre": "Centro de Innovación Atlantis", "img": "/logos/atlantis-white.png", "scale": 0.75, "muted": true },
       { "nombre": "Universidad Abierta Interamericana", "img": "/logos/uai-white.png", "scale": 0.5, "muted": true },
       { "nombre": "UAI Tecnología Informática", "img": "/logos/uai-ti-white.png", "scale": 0.6, "muted": true }
+    ]
+  },
+  {
+    "titulo": "COMMUNITY PARTNERS",
+    "cols": 3,
+    "logos": [
+      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
+      { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.6, "url": "https://omaly.ai/" },
+      { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.82, "url": "https://titofree.com/" },
+      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 1.0 },
+      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.5 },
+      { "nombre": "WIP Club", "img": null, "scale": 0.75, "url": "https://www.wipclub.com.ar" }
     ]
   }
 ]

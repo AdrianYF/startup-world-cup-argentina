@@ -20,11 +20,16 @@ function Apoyan() {
 
         <div className="flex flex-col gap-4">
           {categorias.map((cat, i) => {
-            // En desktop, cada categoría usa tantas columnas como logos tenga (pensado
-            // para una sola fila).
+            // Columnas en desktop (md+): `cols` explícito si la categoría lo define; si
+            // no, tantas como logos tenga (pensado para una sola fila). En grilla, las
+            // columnas reparten el ancho completo, así los logos quedan bien espaciados.
+            const cols =
+              'cols' in cat && typeof (cat as { cols?: number }).cols === 'number'
+                ? (cat as { cols: number }).cols
+                : cat.logos.length
             const colsClass =
-              ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5' } as Record<number, string>)[
-                cat.logos.length
+              ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5', 6: 'md:grid-cols-6' } as Record<number, string>)[
+                cols
               ] ?? 'md:grid-cols-3'
             // centrar: los logos van en flex + wrap con la última fila incompleta
             // centrada, en vez de pegada a la izquierda como hace la grilla.
