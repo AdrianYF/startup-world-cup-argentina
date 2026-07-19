@@ -120,6 +120,10 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
           // ocupa el ancho completo y queda centrado; en desktop (5 columnas) vuelve a 1.
           const spanFull = !centrar && 'spanFull' in logo && (logo as { spanFull?: boolean }).spanFull === true
           const spanClass = spanFull ? ' sm:col-span-2 md:col-span-1' : ''
+          // clearSpace: área de protección (guía Deloitte, regla 3): padding para que
+          // el logo no toque los bordes de su celda y quede aire alrededor.
+          const clearSpace = 'clearSpace' in logo && (logo as { clearSpace?: boolean }).clearSpace === true
+          const clearClass = clearSpace ? ' px-3 py-2 sm:px-5 sm:py-3' : ''
           // Reveal escalonado: cada logo entra con fade + subida, desfasado por su índice.
           const revealStyle = reduced
             ? undefined
@@ -136,13 +140,13 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Visitar ${logo.nombre} (abre en una nueva pestaña)`}
-                className={`flex items-center justify-center ${anchoClass}${spanClass} h-28 sm:h-32`}
+                className={`flex items-center justify-center ${anchoClass}${spanClass}${clearClass} h-28 sm:h-32`}
                 style={revealStyle}
               >
                 {children}
               </a>
             ) : (
-              <div className={`flex items-center justify-center ${anchoClass}${spanClass} h-28 sm:h-32`} style={revealStyle}>
+              <div className={`flex items-center justify-center ${anchoClass}${spanClass}${clearClass} h-28 sm:h-32`} style={revealStyle}>
                 {children}
               </div>
             )
