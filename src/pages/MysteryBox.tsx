@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { MysteryBoxes3D } from '../components/ui/MysteryBoxes3D'
 import { content, type Perk } from '../lib/content'
@@ -57,7 +57,7 @@ function initialWon(): Perk | null {
  * Si el perk trae `logoSecondary` (ej. TitoFree: ícono + wordmark) muestra los
  * dos como un lockup horizontal.
  */
-function PerkLogo({ perk, className }: { perk: Perk; className?: string }) {
+function PerkLogo({ perk, className, style }: { perk: Perk; className?: string; style?: CSSProperties }) {
   const [err, setErr] = useState(false)
   // `logoSecondary` es opcional y sólo lo trae algún perk; el tipo Perk se
   // infiere del JSON, así que lo leemos de forma segura.
@@ -94,6 +94,7 @@ function PerkLogo({ perk, className }: { perk: Perk; className?: string }) {
       loading="lazy"
       onError={() => setErr(true)}
       className={className}
+      style={style}
     />
   )
 }
@@ -109,10 +110,17 @@ function Emoji({ children }: { children: string }) {
 
 /** Card de perk en el pool — solo muestra qué está en juego (sin el link de canje). */
 function PerkCard({ perk }: { perk: Perk }) {
+  // `logoScale` es opcional (sólo lo trae algún perk cuyo wordmark rinde más
+  // grande que el resto, ej. Revu) y sólo achica el logo en la card del pool.
+  const logoScale = (perk as { logoScale?: number }).logoScale
   return (
     <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition-colors hover:border-[#75AADB]/40">
       <div className="flex h-14 items-center justify-center rounded-xl bg-white px-3">
-        <PerkLogo perk={perk} className="max-h-9 max-w-full object-contain" />
+        <PerkLogo
+          perk={perk}
+          className="max-h-9 max-w-full object-contain"
+          style={logoScale ? { transform: `scale(${logoScale})` } : undefined}
+        />
       </div>
       <div className="flex items-center justify-between gap-2">
         <span className="truncate text-sm font-bold text-white">{perk.partner}</span>

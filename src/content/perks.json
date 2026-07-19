@@ -374,6 +374,7 @@
     "redeemUrl": "https://revusales.com/",
     "redeemText": "Canjear perk",
     "logo": "/perks/revu.png",
+    "logoScale": 0.82,
     "detailUrl": "https://revusales.com/",
     "gated": false
   }
