@@ -12,8 +12,8 @@
   {
     "titulo": "COMMUNITY PARTNERS",
     "centrar": true,
+    "porFila": 2,
     "logos": [
-      { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
       { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
       { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.48, "url": "https://omaly.ai/" },
       { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.65, "url": "https://titofree.com/" },
@@ -25,7 +25,9 @@
   {
     "titulo": "INSTITUTIONAL PARTNERS",
     "centrar": true,
+    "porFila": 4,
     "logos": [
+      { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
       { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
       { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
       { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "muted": true },

@@ -26,19 +26,26 @@ function Apoyan() {
               ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5' } as Record<number, string>)[
                 cat.logos.length
               ] ?? 'md:grid-cols-3'
-            // centrar: los logos van en flex + wrap (≈4 por fila en desktop) con la
-            // última fila incompleta centrada, en vez de pegada a la izquierda como
-            // hace la grilla. Lo usan Community e Institutional (7 y 11 logos).
+            // centrar: los logos van en flex + wrap con la última fila incompleta
+            // centrada, en vez de pegada a la izquierda como hace la grilla.
             const centrar = 'centrar' in cat && (cat as { centrar?: boolean }).centrar === true
+            // porFila: en modo centrar, limita el ancho del contenedor para que entren
+            // exactamente N logos por fila (cada uno w-72 = 288px + gap 16px). Así la
+            // categoría se parte en las filas deseadas — ej. 6 logos, 2 por fila → 3 filas.
+            const porFila = (cat as { porFila?: number }).porFila
+            const contenedorStyle =
+              centrar && typeof porFila === 'number'
+                ? { maxWidth: `${porFila * 288 + (porFila - 1) * 16 + 12}px` }
+                : undefined
             const contenedorClass = centrar
-              ? 'flex flex-wrap gap-4 items-center justify-center'
+              ? `flex flex-wrap gap-4 items-center justify-center${porFila ? ' mx-auto' : ''}`
               : `grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 items-center justify-items-center`
             return (
             <div key={i}>
               <p className="text-center text-gray-400 text-xs uppercase tracking-[0.3em] font-bold mb-4">
                 {cat.titulo}
               </p>
-              <div className={contenedorClass}>
+              <div className={contenedorClass} style={contenedorStyle}>
                 {cat.logos.map((logo, j) => {
                   const url = 'url' in logo && typeof logo.url === 'string' ? logo.url : undefined
                   // En modo centrado el ancho lo pone cada celda (el grid ya reparte solo).
