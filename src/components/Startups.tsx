@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { openStartupForm } from '../lib/ticketing'
 import { content } from '../lib/content'
 import { TiltCard } from './ui/TiltCard'
@@ -48,14 +49,22 @@ function Startups() {
             </ul>
 
             {/* Botón desktop — inline con el texto */}
-            <button
-              onClick={onCtaClick}
-              aria-label={ctaAria}
-              style={{ backgroundImage: 'var(--gradient-cta)' }}
-              className="hidden lg:inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105"
-            >
-              {ctaLabel}
-            </button>
+            <div className="hidden lg:flex flex-col items-start gap-3">
+              <button
+                onClick={onCtaClick}
+                aria-label={ctaAria}
+                style={{ backgroundImage: 'var(--gradient-cta)' }}
+                className="inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105"
+              >
+                {ctaLabel}
+              </button>
+              <Link
+                to="/startups"
+                className="inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors"
+              >
+                Ver las startups seleccionadas →
+              </Link>
+            </div>
           </div>
 
           {/* Figurita oficial — card con tilt 3D + scroll parallax (mobile más chica) */}
@@ -68,7 +77,7 @@ function Startups() {
           </div>
 
           {/* Botón mobile — debajo de la card */}
-          <div className="lg:hidden flex justify-center">
+          <div className="lg:hidden flex flex-col items-center gap-3">
             <button
               onClick={onCtaClick}
               aria-label={ctaAria}
@@ -77,6 +86,12 @@ function Startups() {
             >
               {ctaLabel}
             </button>
+            <Link
+              to="/startups"
+              className="inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors"
+            >
+              Ver las startups seleccionadas →
+            </Link>
           </div>
 
         </div>

@@ -60,6 +60,16 @@ try {
   /* comité sin previews; galería intacta */
 }
 
+// Startups: code → /startups/<slug>.jpg, derivado de startups.json (mismo criterio
+// que el comité). El link redirige a la página dedicada /startups?s=<CODE>.
+let STARTUP_BY_CODE = {}
+try {
+  const { default: startups } = await import('../src/content/startups.json', { with: { type: 'json' } })
+  STARTUP_BY_CODE = Object.fromEntries(startups.map(s => [codeFromSrc(s.img), s.img]))
+} catch {
+  /* startups sin previews; el resto intacto */
+}
+
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
 export default function handler(req, res) {
@@ -68,25 +78,27 @@ export default function handler(req, res) {
   const host = req.headers['x-forwarded-host'] || req.headers.host || ''
   const origin = `${proto}://${host}`
 
-  // Mismo código para las dos secciones: probamos galería y, si no, comité.
+  // Mismo código para las tres secciones: probamos galería, comité y startups.
   const photo = SRC_BY_CODE[code] || null
   const card = photo ? null : COMITE_BY_CODE[code] || null
+  const startup = photo || card ? null : STARTUP_BY_CODE[code] || null
 
-  const image = origin + (photo || card || '/cup.png')
+  const image = origin + (photo || card || startup || '/cup.png')
   // La card ya lleva el nombre impreso, así que el título no lo repite.
-  const title = card
-    ? 'Comité de Selección · Startup World Cup Argentina'
-    : 'Startup World Cup Argentina · Galería'
+  let title = 'Startup World Cup Argentina · Galería'
+  if (card) title = 'Comité de Selección · Startup World Cup Argentina'
+  else if (startup) title = 'Startup seleccionada · Startup World Cup Argentina'
   // LinkedIn (y otras redes) no permiten prellenar el texto del post: muestran la
   // preview (OG). Por eso ponemos el mismo mensaje que el tweet en la description.
-  const description = card
-    ? 'Comité de Selección de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
-    : 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
+  let description = 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
+  if (card) description = 'Comité de Selección de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
+  else if (startup) description = 'Startup seleccionada de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   const pageUrl = `${origin}/swc/${code}`
-  // Humanos → SPA (abre la imagen vía ?g= / ?c=). Bots se quedan con los meta tags.
+  // Humanos → SPA (abre la imagen vía ?g= / ?c= / la página /startups). Bots se quedan con los meta tags.
   let dest = '/#galeria'
   if (photo) dest = `/?g=${encodeURIComponent(code)}`
   else if (card) dest = `/?c=${encodeURIComponent(code)}`
+  else if (startup) dest = `/startups?s=${encodeURIComponent(code)}`
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
   res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=600')

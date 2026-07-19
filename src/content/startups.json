@@ -1,0 +1,16 @@
+[
+  { "slug": "beam", "nombre": "Beam", "img": "/startups/beam.jpg" },
+  { "slug": "bioblends", "nombre": "BioBlends", "img": "/startups/bioblends.jpg" },
+  { "slug": "cromodata", "nombre": "Cromodata", "img": "/startups/cromodata.jpg" },
+  { "slug": "delfi", "nombre": "Delfi", "img": "/startups/delfi.jpg" },
+  { "slug": "gameet", "nombre": "Gameet", "img": "/startups/gameet.jpg" },
+  { "slug": "migma", "nombre": "Migma", "img": "/startups/migma.jpg" },
+  { "slug": "rentenials", "nombre": "Rentenials", "img": "/startups/rentenials.jpg" },
+  { "slug": "seedmatriz", "nombre": "SeedMatriz", "img": "/startups/seedmatriz.jpg" },
+  { "slug": "solbay", "nombre": "Solbay", "img": "/startups/solbay.jpg" },
+  { "slug": "spherebio", "nombre": "Spherebio", "img": "/startups/spherebio.jpg" },
+  { "slug": "tucan", "nombre": "Tucan", "img": "/startups/tucan.jpg" },
+  { "slug": "viatik", "nombre": "Viatik", "img": "/startups/viatik.jpg" },
+  { "slug": "vmoov", "nombre": "Vmoov", "img": "/startups/vmoov.jpg" },
+  { "slug": "wealth2b", "nombre": "Wealth2b", "img": "/startups/wealth2b.jpg" }
+]

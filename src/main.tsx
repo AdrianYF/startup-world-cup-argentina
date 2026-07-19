@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import SpeakersAll from './pages/SpeakersAll.tsx'
+import StartupsPage from './pages/StartupsPage.tsx'
 import { initAnalytics, trackPageView } from './lib/analytics'
 
 // Ruta oculta con Three.js → lazy para no inflar el bundle principal.
@@ -42,6 +43,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/swc/:code" element={<App />} />
         <Route path="/g/:code" element={<App />} />
         <Route path="/speakers" element={<SpeakersAll />} />
+        {/* Página dedicada: startups seleccionadas (cards compartibles) */}
+        <Route path="/startups" element={<StartupsPage />} />
         {/* Sección oculta: se llega escaneando el QR del ticket */}
         <Route
           path="/mystery-box"
