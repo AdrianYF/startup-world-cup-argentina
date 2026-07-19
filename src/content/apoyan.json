@@ -14,7 +14,7 @@
   {
     "titulo": "INSTITUTIONAL PARTNERS",
     "centrar": true,
-    "porFila": 4,
+    "porFila": 3,
     "logos": [
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
       { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
