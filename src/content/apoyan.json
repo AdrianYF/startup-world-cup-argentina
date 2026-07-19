@@ -35,7 +35,7 @@
     "centrar": true,
     "porFila": 3,
     "logos": [
-      { "nombre": "Lovable", "img": "/Lovable-logo.png", "url": "https://lovable.dev/" },
+      { "nombre": "Lovable", "img": "/Lovable-logo.png", "scale": 1.1, "url": "https://lovable.dev/" },
       { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.6, "url": "https://omaly.ai/" },
       { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.82, "url": "https://titofree.com/" },
       { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 1.0 },
