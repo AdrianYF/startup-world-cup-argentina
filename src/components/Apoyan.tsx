@@ -122,8 +122,8 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
             : {
                 opacity: visible ? 1 : 0,
                 transform: visible ? 'translateY(0)' : 'translateY(16px)',
-                transition: 'opacity 550ms ease, transform 550ms cubic-bezier(0.22,1,0.36,1)',
-                transitionDelay: visible ? `${j * 70}ms` : '0ms',
+                transition: 'opacity 380ms ease, transform 380ms cubic-bezier(0.22,1,0.36,1)',
+                transitionDelay: visible ? `${j * 40}ms` : '0ms',
               }
           const Wrapper = ({ children }: { children: ReactNode }) =>
             url ? (
