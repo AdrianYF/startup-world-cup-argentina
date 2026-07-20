@@ -56,10 +56,12 @@ type Props = {
   shareText: string
   /** Texto del tweet (X permite prellenarlo; LinkedIn no). */
   tweetText: string
+  /** Bio / descripción opcional que se muestra bajo la imagen al hacer zoom. */
+  descripcion?: string
   onClose: () => void
 }
 
-export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetText, onClose }: Props) {
+export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetText, descripcion, onClose }: Props) {
   const [copied, setCopied] = useState(false)
   const canNativeShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
@@ -123,8 +125,18 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
         src={src}
         alt={alt}
         onClick={e => e.stopPropagation()}
-        className="block max-h-[72vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        className="block max-h-[62vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
       />
+
+      {/* Bio / descripción de la card (al hacer zoom) */}
+      {descripcion && (
+        <p
+          onClick={e => e.stopPropagation()}
+          className="max-w-[90vw] sm:max-w-xl text-center text-gray-200 text-sm sm:text-base leading-relaxed"
+        >
+          {descripcion}
+        </p>
+      )}
 
       {/* Barra de compartir (íconos) — justo debajo de la imagen */}
       <div
