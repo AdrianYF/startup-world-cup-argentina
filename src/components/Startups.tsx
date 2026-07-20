@@ -1,20 +1,50 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { openStartupForm } from '../lib/ticketing'
 import { content } from '../lib/content'
 import { TiltCard } from './ui/TiltCard'
-import { Modal } from './ui/Modal'
-import { BasesContent } from './Footer'
+
+const BTN_CLASS =
+  'inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105'
+const LINK_CLASS =
+  'inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors'
+
+/**
+ * CTA de la sección:
+ * - Convocatoria abierta → "Postular mi Startup" (formulario) + link a las seleccionadas.
+ * - Convocatoria cerrada → "Ver startups seleccionadas" (lleva a /startups).
+ */
+function CtaStartups({ abierta }: { abierta: boolean }) {
+  if (!abierta) {
+    return (
+      <Link
+        to="/startups"
+        aria-label="Ver las startups seleccionadas"
+        style={{ backgroundImage: 'var(--gradient-cta)' }}
+        className={BTN_CLASS}
+      >
+        Ver startups seleccionadas
+      </Link>
+    )
+  }
+  return (
+    <>
+      <button
+        onClick={() => openStartupForm()}
+        aria-label="Postular mi Startup (abre formulario en una nueva pestaña)"
+        style={{ backgroundImage: 'var(--gradient-cta)' }}
+        className={BTN_CLASS}
+      >
+        Postular mi Startup
+      </button>
+      <Link to="/startups" className={LINK_CLASS}>
+        Ver las startups seleccionadas →
+      </Link>
+    </>
+  )
+}
 
 function Startups() {
-  const [basesOpen, setBasesOpen] = useState(false)
   const abierta = content.config.convocatoria.startupsAbierta
-  const ctaLabel = abierta ? 'Postular mi Startup' : content.config.convocatoria.ctaCerradaStartup
-  const ctaAria = abierta
-    ? 'Postular mi Startup (abre formulario en una nueva pestaña)'
-    : 'Convocatoria de startups cerrada — ver bases y condiciones'
-  // Convocatoria abierta → abre el formulario. Cerrada → abre las Bases y Condiciones.
-  const onCtaClick = () => (abierta ? openStartupForm() : setBasesOpen(true))
 
   return (
     <section id="startups" className="relative py-16 sm:py-24 bg-[#020618]">
@@ -48,22 +78,9 @@ function Startups() {
               </li>
             </ul>
 
-            {/* Botón desktop — inline con el texto */}
+            {/* CTA desktop — inline con el texto */}
             <div className="hidden lg:flex flex-col items-start gap-3">
-              <button
-                onClick={onCtaClick}
-                aria-label={ctaAria}
-                style={{ backgroundImage: 'var(--gradient-cta)' }}
-                className="inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105"
-              >
-                {ctaLabel}
-              </button>
-              <Link
-                to="/startups"
-                className="inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors"
-              >
-                Ver las startups seleccionadas →
-              </Link>
+              <CtaStartups abierta={abierta} />
             </div>
           </div>
 
@@ -76,34 +93,15 @@ function Startups() {
             />
           </div>
 
-          {/* Botón mobile — debajo de la card */}
+          {/* CTA mobile — debajo de la card */}
           <div className="lg:hidden flex flex-col items-center gap-3">
-            <button
-              onClick={onCtaClick}
-              aria-label={ctaAria}
-              style={{ backgroundImage: 'var(--gradient-cta)' }}
-              className="inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105"
-            >
-              {ctaLabel}
-            </button>
-            <Link
-              to="/startups"
-              className="inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors"
-            >
-              Ver las startups seleccionadas →
-            </Link>
+            <CtaStartups abierta={abierta} />
           </div>
 
         </div>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
-
-      {basesOpen && (
-        <Modal onClose={() => setBasesOpen(false)} titleId="bases-modal-title" size="3xl">
-          <BasesContent onClose={() => setBasesOpen(false)} />
-        </Modal>
-      )}
     </section>
   )
 }
