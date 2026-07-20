@@ -95,7 +95,6 @@ function Comite() {
             una posición final estable. */}
         <div className="hidden sm:block">
           <DeckGrid
-            images={miembros.map(m => m.img)}
             gridClass="grid grid-cols-4 gap-6"
             columns={{ base: 4 }}
             gap={{ base: 24 }}
@@ -139,7 +138,7 @@ function ComiteTile({ miembro, onOpen }: { miembro: Miembro; onOpen: (m: Miembro
         loading="lazy"
         decoding="async"
         draggable={false}
-        className="w-full h-auto block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
+        className="w-full aspect-[1080/1350] object-cover block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
       />
     </button>
   )

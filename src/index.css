@@ -141,6 +141,20 @@ main > div > section {
   animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Reparto de mazo: cada card sale del centro de la grilla a su celda.
+ * Las vars --dx/--dy/--rot las setea DeckGrid por card (delta a la celda). */
+@keyframes deck-deal {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, 0), var(--dy, 0)) scale(0.72) rotate(var(--rot, 0deg));
+  }
+  60% { opacity: 1; }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
 /* Modal entrance */
 @keyframes fade-in {
   from { opacity: 0; }
