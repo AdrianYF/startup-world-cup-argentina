@@ -1,29 +1,25 @@
-import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from 'react'
-import { type PorBreakpoint, deckHeight, useDeckLayout } from '../../lib/deckLayout'
-
-// El chunk de three.js sólo se descarga si el reparto se va a ejecutar.
-const DeckDeal3D = lazy(() => import('./DeckDeal3D').then(m => ({ default: m.DeckDeal3D })))
+import { Children, useEffect, useRef, useState, type ReactNode } from 'react'
+import { type PorBreakpoint, cardCenter, useDeckLayout } from '../../lib/deckLayout'
 
 /**
- * Grilla de figuritas con reparto de mazo en 3D al entrar en viewport.
+ * Grilla de figuritas con reparto de "mazo" al entrar en viewport.
  *
- * Mientras reparte, el canvas se superpone y la grilla real del DOM queda
- * invisible pero presente: conserva el layout, el foco y el lector de pantalla.
- * Al terminar, el canvas se desmonta y todo el click / hover / lightbox sigue
- * siendo DOM nativo.
+ * Las cards son las imágenes REALES del DOM (no un canvas): salen apiladas del
+ * centro de la grilla y se reparten a su celda con un giro leve, usando sólo
+ * CSS transforms. Así se ven las cartas dándose desde el primer frame — sin
+ * placeholder azul, sin dorsos, sin esperar a que carguen texturas de WebGL.
  *
- * `columns` y `gap` tienen que espejar las clases Tailwind de `gridClass`.
- * Si divergen, las cards aterrizan corridas respecto del DOM de abajo.
+ * `columns` y `gap` tienen que espejar las clases Tailwind de `gridClass`, para
+ * que el punto de partida de cada card (calculado desde el layout) caiga cerca
+ * del centro real de la grilla.
  */
 export function DeckGrid({
-  images,
   gridClass,
   columns,
   gap,
-  stagger,
+  stagger = 0.07,
   children,
 }: {
-  images: string[]
   gridClass: string
   columns: PorBreakpoint
   gap: PorBreakpoint
@@ -33,30 +29,29 @@ export function DeckGrid({
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const layout = useDeckLayout(ref, columns, gap)
+  const [activo, setActivo] = useState(false)
+  const items = Children.toArray(children)
 
-  /**
-   * 'entrega' existe para evitar el parpadeo del final: si el canvas se
-   * desmontara en el mismo momento en que la grilla se vuelve visible, queda
-   * un frame con el área vacía. En 'entrega' los dos están pintados a la vez
-   * — y como la cámara es ortográfica y está mapeada a píxeles, el último
-   * frame del 3D coincide exacto con la grilla, así que el cruce no se nota.
-   */
-  const [fase, setFase] = useState<'espera' | 'repartiendo' | 'entrega' | 'listo'>('espera')
+  const reduce =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // Dispara el reparto cuando la grilla entra en viewport. Mismo rootMargin que
+  // FadeInSection en el resto del sitio.
   useEffect(() => {
-    if (fase !== 'espera') return
+    if (activo) return
     const el = ref.current
     if (!el) return
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setFase('listo')
+    if (reduce) {
+      setActivo(true)
       return
     }
 
     const io = new IntersectionObserver(
       entries => {
         if (entries.some(e => e.isIntersecting)) {
-          setFase('repartiendo')
+          setActivo(true)
           io.disconnect()
         }
       },
@@ -64,65 +59,53 @@ export function DeckGrid({
     )
     io.observe(el)
     return () => io.disconnect()
-  }, [fase])
+  }, [activo, reduce])
 
-  // Red de seguridad: si el reparto no avisa que terminó (WebGL caído, texturas
-  // que no cargan, pestaña en segundo plano que congela el rAF), la grilla se
-  // muestra igual. Nunca puede quedar invisible. El plazo escala con el reparto
-  // (más cards o más stagger = más largo) para no cortar uno legítimo antes de
-  // tiempo, con un piso de 6s.
+  // Red de seguridad: si el observer nunca dispara (medición rara), mostramos
+  // las cards igual. Nunca pueden quedar invisibles.
   useEffect(() => {
-    if (fase !== 'repartiendo') return
-    const ms = Math.max(6000, (stagger ?? 0.07) * images.length * 1000 + 4000)
-    const t = setTimeout(() => setFase('listo'), ms)
+    if (activo) return
+    const t = setTimeout(() => setActivo(true), 4000)
     return () => clearTimeout(t)
-  }, [fase, stagger, images.length])
+  }, [activo])
 
-  // Ya visible la grilla, esperamos dos frames pintados antes de sacar el
-  // canvas. Un solo rAF corre ANTES del paint del commit que la muestra.
-  useEffect(() => {
-    if (fase !== 'entrega') return
-    let id = 0
-    const a = requestAnimationFrame(() => {
-      id = requestAnimationFrame(() => setFase('listo'))
-    })
-    return () => {
-      cancelAnimationFrame(a)
-      cancelAnimationFrame(id)
-    }
-  }, [fase])
-
-  const visible = fase === 'entrega' || fase === 'listo'
-  const repartiendo = (fase === 'repartiendo' || fase === 'entrega') && layout !== null
+  const deckX = layout ? layout.width / 2 : 0
 
   return (
-    <div className="relative">
-      {/* Sin transición de opacidad: el cruce lo cubre el canvas en 'entrega'.
-          Un fade acá reabre el hueco que produce el parpadeo. */}
-      <div
-        ref={ref}
-        className={`${gridClass} ${visible ? 'opacity-100' : 'opacity-0'}`}
-        aria-busy={!visible}
-      >
-        {children}
-      </div>
+    <div ref={ref} className={gridClass}>
+      {items.map((child, i) => {
+        // Delta desde la celda de la card hasta el centro del mazo (su punto de
+        // partida). Sin layout todavía, arranca sin desplazamiento.
+        let dx = 0
+        let dy = 0
+        if (layout) {
+          const c = cardCenter(layout, i)
+          dx = deckX - c.x
+          // El mazo arranca un poco por encima del centro vertical de la grilla.
+          dy = layout.width * 0.25 - c.y
+        }
+        const rot = ((i % 7) - 3) * 3 // abanico leve, determinístico
 
-      {repartiendo && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 pointer-events-none"
-          style={{ height: deckHeight(layout, images.length) }}
-        >
-          <Suspense fallback={null}>
-            <DeckDeal3D
-              images={images}
-              layout={layout}
-              stagger={stagger}
-              onDone={() => setFase('entrega')}
-            />
-          </Suspense>
-        </div>
-      )}
+        const dealing = activo && !reduce
+        const style: React.CSSProperties = dealing
+          ? {
+              // vars que consume el keyframe deck-deal (index.css)
+              ['--dx' as string]: `${dx}px`,
+              ['--dy' as string]: `${dy}px`,
+              ['--rot' as string]: `${rot}deg`,
+              animation: 'deck-deal 0.6s cubic-bezier(0.2,0.75,0.25,1) both',
+              animationDelay: `${i * stagger}s`,
+            }
+          : // Antes del reparto: invisibles (la grilla está fuera de viewport).
+            // Con reduce-motion: visibles al toque, sin animación.
+            { opacity: activo ? 1 : 0 }
+
+        return (
+          <div key={i} style={style}>
+            {child}
+          </div>
+        )
+      })}
     </div>
   )
 }

@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
 
 /**
- * Geometría de la grilla de cards, compartida entre el DOM y el reparto 3D.
- *
- * Vive separado de DeckDeal3D.tsx a propósito: la página necesita estas medidas
- * siempre, pero el chunk de three.js sólo debe descargarse si el reparto se va
- * a ejecutar. Si se importaran del mismo módulo, el import dinámico se anula.
+ * Geometría de la grilla de cards: mide el contenedor y da el centro de cada
+ * celda, para calcular desde dónde arranca el reparto de mazo (ver DeckGrid).
  */
 
 /** Las cards son 1080×1350 uniformes. */
@@ -20,13 +17,6 @@ export type DeckLayout = {
 
 export function cardWidth({ width, columns, gap }: DeckLayout) {
   return (width - gap * (columns - 1)) / columns
-}
-
-/** Alto total que ocupa la grilla con este layout, en píxeles CSS. */
-export function deckHeight(layout: DeckLayout, count: number) {
-  const w = cardWidth(layout)
-  const rows = Math.ceil(count / layout.columns)
-  return rows * w * CARD_ASPECT + (rows - 1) * layout.gap
 }
 
 /** Centro y tamaño de la card i, en píxeles CSS relativos al contenedor. */

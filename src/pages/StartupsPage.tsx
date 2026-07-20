@@ -60,7 +60,7 @@ function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }
         loading="lazy"
         decoding="async"
         draggable={false}
-        className="w-full h-auto block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
+        className="w-full aspect-[1080/1350] object-cover block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
       />
     </button>
   )
@@ -73,12 +73,7 @@ const GRID_GAP = { base: 12, sm: 16 }
 /** Grilla de un grupo, con reparto de mazo en 3D al entrar en viewport. */
 function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Startup) => void }) {
   return (
-    <DeckGrid
-      images={items.map(s => s.img)}
-      gridClass={GRID_CLASS}
-      columns={GRID_COLS}
-      gap={GRID_GAP}
-    >
+    <DeckGrid gridClass={GRID_CLASS} columns={GRID_COLS} gap={GRID_GAP}>
       {items.map(s => (
         <StartupCard key={s.slug} s={s} onOpen={onOpen} />
       ))}
