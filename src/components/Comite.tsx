@@ -99,6 +99,7 @@ function Comite() {
             gridClass="grid grid-cols-4 gap-6"
             columns={{ base: 4 }}
             gap={{ base: 24 }}
+            stagger={0.16}
           >
             {miembros.map(m => (
               <ComiteTile key={m.slug} miembro={m} onOpen={setOpen} />
