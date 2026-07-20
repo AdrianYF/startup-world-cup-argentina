@@ -108,7 +108,7 @@ function StartupsPage() {
         </div>
       </header>
 
-      {/* Grupos: Pitch Battle (7) y Builders Arena (6) */}
+      {/* Grupos: Pitch Battle (10) y Builders Arena (14) */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {GRUPOS.map(g => {
           const items = startups.filter(s => (s as { grupo?: string }).grupo === g.key)
@@ -124,7 +124,7 @@ function StartupsPage() {
                   Startup World Cup · {g.dia}
                 </p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4">
                 {items.map(s => (
                   <StartupCard key={s.slug} s={s} onOpen={setOpen} />
                 ))}
