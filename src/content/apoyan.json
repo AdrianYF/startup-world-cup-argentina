@@ -8,8 +8,7 @@
       { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "url": "https://www.startupgrind.com/buenos-aires/" },
       { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "scale": 0.85, "url": "https://www.pegasustechventures.com/" },
       { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "protegido": true, "sinPadding": true },
-      { "nombre": "Deloitte", "img": "/logos/deloitte-white.png", "protegido": true, "url": "https://www.deloitte.com/ar" },
-      { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.6, "url": "https://kamayventures.com/" }
+      { "nombre": "Deloitte", "img": "/logos/deloitte-white.png", "protegido": true, "url": "https://www.deloitte.com/ar" }
     ]
   },
   {
@@ -17,6 +16,7 @@
     "centrar": true,
     "porFila": 3,
     "logos": [
+      { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.6, "url": "https://kamayventures.com/" },
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
       { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
       { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
