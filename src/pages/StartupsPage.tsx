@@ -16,6 +16,12 @@ const SURFACE = '#0f172b'
 
 type Startup = (typeof content.startups)[number]
 
+// Grupos de la selección, en orden de aparición. Cada startup trae su `grupo`.
+const GRUPOS: { key: string; nombre: string; dia: string }[] = [
+  { key: 'pitch-battle', nombre: 'Pitch Battle', dia: '7 de agosto' },
+  { key: 'builders-arena', nombre: 'Builders Arena', dia: '6 de agosto' },
+]
+
 // Mismo código opaco que la galería y el comité (FNV-1a → xorshift32 → base26),
 // sobre la imagen de cada card. No colisiona con las otras secciones (verificado).
 const STARTUP_POR_CODE = codeTable(content.startups.map(s => s.img))
@@ -37,6 +43,27 @@ const STARTUP_DEL_LINK: Startup | null = (() => {
 })()
 
 const alt = (nombre: string) => `${nombre} — Startup seleccionada · Startup World Cup Argentina 2026`
+
+/** Card (figurita) clickeable que abre el lightbox para compartir. */
+function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(s)}
+      aria-label={`Ver la card de ${s.nombre} y compartirla`}
+      className="block w-full cursor-zoom-in rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-[#75AADB]"
+    >
+      <img
+        src={s.img}
+        alt={alt(s.nombre)}
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        className="w-full h-auto block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
+      />
+    </button>
+  )
+}
 
 function StartupsPage() {
   const startups = content.startups
@@ -81,28 +108,30 @@ function StartupsPage() {
         </div>
       </header>
 
-      {/* Grilla completa */}
+      {/* Grupos: Pitch Battle (7) y Builders Arena (6) */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {startups.map(s => (
-            <button
-              key={s.slug}
-              type="button"
-              onClick={() => setOpen(s)}
-              aria-label={`Ver la card de ${s.nombre} y compartirla`}
-              className="block w-full cursor-zoom-in rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-[#75AADB]"
-            >
-              <img
-                src={s.img}
-                alt={alt(s.nombre)}
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-                className="w-full h-auto block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
-              />
-            </button>
-          ))}
-        </div>
+        {GRUPOS.map(g => {
+          const items = startups.filter(s => (s as { grupo?: string }).grupo === g.key)
+          if (!items.length) return null
+          return (
+            <section key={g.key} className="mb-14 sm:mb-20 last:mb-0">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-2xl sm:text-4xl font-black uppercase leading-tight">
+                  <span className="text-white">Selección </span>
+                  <span className="text-[#75AADB]">{g.nombre}</span>
+                </h2>
+                <p className="text-gray-400 text-sm mt-1 uppercase tracking-widest font-bold">
+                  Startup World Cup · {g.dia}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {items.map(s => (
+                  <StartupCard key={s.slug} s={s} onOpen={setOpen} />
+                ))}
+              </div>
+            </section>
+          )
+        })}
 
         <div className="mt-16 text-center">
           <Link

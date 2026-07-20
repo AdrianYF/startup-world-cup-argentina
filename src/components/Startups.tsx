@@ -18,11 +18,11 @@ function CtaStartups({ abierta }: { abierta: boolean }) {
     return (
       <Link
         to="/startups"
-        aria-label="Ver las startups seleccionadas"
+        aria-label="Conocé a la selección de startups"
         style={{ backgroundImage: 'var(--gradient-cta)' }}
         className={BTN_CLASS}
       >
-        Ver startups seleccionadas
+        Conocé a la Selección
       </Link>
     )
   }
@@ -37,7 +37,7 @@ function CtaStartups({ abierta }: { abierta: boolean }) {
         Postular mi Startup
       </button>
       <Link to="/startups" className={LINK_CLASS}>
-        Ver las startups seleccionadas →
+        Conocé a la Selección →
       </Link>
     </>
   )
