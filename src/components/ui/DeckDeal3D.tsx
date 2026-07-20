@@ -16,9 +16,9 @@ import { type DeckLayout, cardCenter, deckHeight } from '../../lib/deckLayout'
  * sin medir el DOM.
  */
 
-/** Duración del vuelo de cada card y desfase entre una y la siguiente (segundos). */
+/** Duración del vuelo de cada card (segundos) y desfase por defecto entre una y la siguiente. */
 const FLIGHT = 0.9
-const STAGGER = 0.07
+const DEFAULT_STAGGER = 0.07
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
 
@@ -27,6 +27,7 @@ function Card({
   index,
   layout,
   deck,
+  stagger,
   startAt,
 }: {
   url: string
@@ -34,6 +35,7 @@ function Card({
   layout: DeckLayout
   /** Centro del mazo en píxeles CSS relativos al contenedor. */
   deck: { x: number; y: number }
+  stagger: number
   startAt: { current: number }
 }) {
   const ref = useRef<Group>(null)
@@ -50,7 +52,7 @@ function Card({
     const g = ref.current
     if (!g) return
 
-    const elapsed = clock.getElapsedTime() - startAt.current - index * STAGGER
+    const elapsed = clock.getElapsedTime() - startAt.current - index * stagger
     const t = Math.max(0, Math.min(1, elapsed / FLIGHT))
     const e = easeOutCubic(t)
 
@@ -87,10 +89,12 @@ function Card({
 function Deal({
   images,
   layout,
+  stagger,
   onDone,
 }: {
   images: string[]
   layout: DeckLayout
+  stagger: number
   onDone: () => void
 }) {
   const { camera, clock } = useThree()
@@ -121,7 +125,7 @@ function Deal({
   useFrame(({ clock }) => {
     if (!startAt.current) startAt.current = clock.getElapsedTime()
     if (done.current) return
-    const total = FLIGHT + STAGGER * (images.length - 1)
+    const total = FLIGHT + stagger * (images.length - 1)
     if (clock.getElapsedTime() - startAt.current >= total) {
       done.current = true
       onDone()
@@ -135,7 +139,15 @@ function Deal({
   return (
     <>
       {images.map((url, i) => (
-        <Card key={url} url={url} index={i} layout={layout} deck={deck} startAt={startAt} />
+        <Card
+          key={url}
+          url={url}
+          index={i}
+          layout={layout}
+          deck={deck}
+          stagger={stagger}
+          startAt={startAt}
+        />
       ))}
     </>
   )
@@ -144,10 +156,13 @@ function Deal({
 export function DeckDeal3D({
   images,
   layout,
+  stagger = DEFAULT_STAGGER,
   onDone,
 }: {
   images: string[]
   layout: DeckLayout
+  /** Desfase entre una card y la siguiente (segundos). Más alto = reparto más progresivo. */
+  stagger?: number
   onDone: () => void
 }) {
   const height = deckHeight(layout, images.length)
@@ -164,7 +179,7 @@ export function DeckDeal3D({
       style={{ width: '100%', height, background: 'transparent' }}
     >
       <Suspense fallback={null}>
-        <Deal images={images} layout={layout} onDone={onDone} />
+        <Deal images={images} layout={layout} stagger={stagger} onDone={onDone} />
       </Suspense>
     </Canvas>
   )

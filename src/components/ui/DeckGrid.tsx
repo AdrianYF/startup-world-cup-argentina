@@ -20,12 +20,15 @@ export function DeckGrid({
   gridClass,
   columns,
   gap,
+  stagger,
   children,
 }: {
   images: string[]
   gridClass: string
   columns: PorBreakpoint
   gap: PorBreakpoint
+  /** Desfase entre cards (segundos). Más alto = reparto más progresivo. */
+  stagger?: number
   children: ReactNode
 }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -65,12 +68,15 @@ export function DeckGrid({
 
   // Red de seguridad: si el reparto no avisa que terminó (WebGL caído, texturas
   // que no cargan, pestaña en segundo plano que congela el rAF), la grilla se
-  // muestra igual. Nunca puede quedar invisible.
+  // muestra igual. Nunca puede quedar invisible. El plazo escala con el reparto
+  // (más cards o más stagger = más largo) para no cortar uno legítimo antes de
+  // tiempo, con un piso de 6s.
   useEffect(() => {
     if (fase !== 'repartiendo') return
-    const t = setTimeout(() => setFase('listo'), 6000)
+    const ms = Math.max(6000, (stagger ?? 0.07) * images.length * 1000 + 4000)
+    const t = setTimeout(() => setFase('listo'), ms)
     return () => clearTimeout(t)
-  }, [fase])
+  }, [fase, stagger, images.length])
 
   // Ya visible la grilla, esperamos dos frames pintados antes de sacar el
   // canvas. Un solo rAF corre ANTES del paint del commit que la muestra.
@@ -108,7 +114,12 @@ export function DeckGrid({
           style={{ height: deckHeight(layout, images.length) }}
         >
           <Suspense fallback={null}>
-            <DeckDeal3D images={images} layout={layout} onDone={() => setFase('entrega')} />
+            <DeckDeal3D
+              images={images}
+              layout={layout}
+              stagger={stagger}
+              onDone={() => setFase('entrega')}
+            />
           </Suspense>
         </div>
       )}
