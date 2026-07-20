@@ -9,7 +9,7 @@
       { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "scale": 0.85, "url": "https://www.pegasustechventures.com/" },
       { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "protegido": true, "sinPadding": true },
       { "nombre": "Deloitte", "img": "/logos/deloitte-white.png", "protegido": true, "url": "https://www.deloitte.com/ar" },
-      { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "url": "https://kamayventures.com/" }
+      { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.75, "url": "https://kamayventures.com/" }
     ]
   },
   {
