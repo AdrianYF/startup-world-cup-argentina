@@ -134,14 +134,22 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
           className="block max-h-[62vh] max-w-[90vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
         />
 
-        {/* Bio / descripción de la card (al hacer zoom) */}
+        {/* Bio / descripción de la card (al hacer zoom), estilo quote */}
         {descripcion && (
-          <div
+          <blockquote
             onClick={e => e.stopPropagation()}
-            className="w-full max-w-[90vw] sm:w-72 sm:max-w-xs rounded-2xl border border-[#75AADB]/30 bg-white/5 backdrop-blur-sm p-5 text-left text-gray-200 text-sm sm:text-base leading-relaxed"
+            className="relative w-full max-w-[90vw] sm:w-72 sm:max-w-xs px-4 pt-8 text-left"
           >
-            {descripcion}
-          </div>
+            <span
+              aria-hidden
+              className="absolute left-0 top-0 font-serif text-6xl leading-none text-[#75AADB]/50 select-none"
+            >
+              &ldquo;
+            </span>
+            <p className="font-serif italic text-gray-100 text-base sm:text-lg leading-relaxed">
+              {descripcion}
+            </p>
+          </blockquote>
         )}
       </div>
 
