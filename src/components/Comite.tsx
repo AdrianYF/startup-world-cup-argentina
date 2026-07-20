@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { content } from '../lib/content'
 import { ShareLightbox } from './ui/ShareLightbox'
+import { DeckGrid } from './ui/DeckGrid'
 import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
 
 /**
@@ -87,11 +88,22 @@ function Comite() {
           )}
         </div>
 
-        {/* Desktop/tablet: grilla de 4 columnas (4·4·4·4·3 con los 19 miembros) */}
-        <div className="hidden sm:grid grid-cols-4 gap-6">
-          {miembros.map(m => (
-            <ComiteTile key={m.slug} miembro={m} onOpen={setOpen} />
-          ))}
+        {/* Desktop/tablet: grilla de 4 columnas (4·4·4·4·3 con los 19 miembros),
+            con reparto de mazo en 3D al entrar en viewport.
+            En mobile no se reparte: esa grilla arranca recortada y el botón
+            "ver los N" cambia la cantidad de items, así que el mazo no tendría
+            una posición final estable. */}
+        <div className="hidden sm:block">
+          <DeckGrid
+            images={miembros.map(m => m.img)}
+            gridClass="grid grid-cols-4 gap-6"
+            columns={{ base: 4 }}
+            gap={{ base: 24 }}
+          >
+            {miembros.map(m => (
+              <ComiteTile key={m.slug} miembro={m} onOpen={setOpen} />
+            ))}
+          </DeckGrid>
         </div>
       </div>
 

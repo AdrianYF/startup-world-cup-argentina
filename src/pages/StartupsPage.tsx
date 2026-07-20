@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { content } from '../lib/content'
 import { ShareLightbox } from '../components/ui/ShareLightbox'
+import { DeckGrid } from '../components/ui/DeckGrid'
 import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
 
 /**
@@ -65,6 +66,26 @@ function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }
   )
 }
 
+const GRID_CLASS = 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
+const GRID_COLS = { base: 3, sm: 4, md: 5, lg: 6 }
+const GRID_GAP = { base: 12, sm: 16 }
+
+/** Grilla de un grupo, con reparto de mazo en 3D al entrar en viewport. */
+function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Startup) => void }) {
+  return (
+    <DeckGrid
+      images={items.map(s => s.img)}
+      gridClass={GRID_CLASS}
+      columns={GRID_COLS}
+      gap={GRID_GAP}
+    >
+      {items.map(s => (
+        <StartupCard key={s.slug} s={s} onOpen={onOpen} />
+      ))}
+    </DeckGrid>
+  )
+}
+
 function StartupsPage() {
   const startups = content.startups
   const [open, setOpen] = useState<Startup | null>(STARTUP_DEL_LINK)
@@ -92,19 +113,10 @@ function StartupsPage() {
             ← Volver al sitio
           </Link>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase mb-4">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase">
             <span className="text-white">STARTUPS </span>
             <span className="text-[#75AADB]">SELECCIONADAS</span>
           </h1>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl">
-            Las startups elegidas que compiten en la Startup World Cup Argentina.
-            Tocá una card para compartirla.
-          </p>
-
-          <div className="mt-6 flex items-baseline gap-2 text-gray-400 text-xs uppercase tracking-[0.25em] font-bold">
-            <span className="text-2xl sm:text-3xl font-black text-white tabular-nums">{startups.length}</span>
-            <span>startups seleccionadas</span>
-          </div>
         </div>
       </header>
 
@@ -124,11 +136,7 @@ function StartupsPage() {
                   Startup World Cup · {g.dia}
                 </p>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4">
-                {items.map(s => (
-                  <StartupCard key={s.slug} s={s} onOpen={setOpen} />
-                ))}
-              </div>
+              <GrillaConReparto items={items} onOpen={setOpen} />
             </section>
           )
         })}
