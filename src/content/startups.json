@@ -8,5 +8,19 @@
   { "slug": "solbay", "nombre": "Solbay", "img": "/startups/solbay.jpg" },
   { "slug": "spherebio", "nombre": "Spherebio", "img": "/startups/spherebio.jpg" },
   { "slug": "vmoov", "nombre": "Vmoov", "img": "/startups/vmoov.jpg" },
-  { "slug": "wealth2b", "nombre": "Wealth2b", "img": "/startups/wealth2b.jpg" }
+  { "slug": "wealth2b", "nombre": "Wealth2b", "img": "/startups/wealth2b.jpg" },
+  { "slug": "blokenfy", "nombre": "Blokenfy", "img": "/startups/blokenfy.jpg" },
+  { "slug": "cortex", "nombre": "Cortex", "img": "/startups/cortex.jpg" },
+  { "slug": "din", "nombre": "Odin", "img": "/startups/din.jpg" },
+  { "slug": "eiru", "nombre": "Eirú", "img": "/startups/eiru.jpg" },
+  { "slug": "escribano", "nombre": "Escribano", "img": "/startups/escribano.jpg" },
+  { "slug": "gow", "nombre": "GOW", "img": "/startups/gow.jpg" },
+  { "slug": "htrace", "nombre": "h+trace", "img": "/startups/htrace.jpg" },
+  { "slug": "house", "nombre": "House", "img": "/startups/house.jpg" },
+  { "slug": "latamxo", "nombre": "Latamxo", "img": "/startups/latamxo.jpg" },
+  { "slug": "ldp", "nombre": "LDP", "img": "/startups/ldp.jpg" },
+  { "slug": "reason-run", "nombre": "Reason Run", "img": "/startups/reason-run.jpg" },
+  { "slug": "silvaryum", "nombre": "Silvaryum", "img": "/startups/silvaryum.jpg" },
+  { "slug": "welly", "nombre": "Welly", "img": "/startups/welly.jpg" },
+  { "slug": "zula", "nombre": "Zula", "img": "/startups/zula.jpg" }
 ]
