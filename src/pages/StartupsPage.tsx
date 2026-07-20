@@ -18,9 +18,9 @@ const SURFACE = '#0f172b'
 type Startup = (typeof content.startups)[number]
 
 // Grupos de la selección, en orden de aparición. Cada startup trae su `grupo`.
-const GRUPOS: { key: string; nombre: string; dia: string }[] = [
-  { key: 'pitch-battle', nombre: 'Pitch Battle', dia: '7 de agosto' },
-  { key: 'builders-arena', nombre: 'Builders Arena', dia: '6 de agosto' },
+const GRUPOS: { key: string; nombre: string }[] = [
+  { key: 'pitch-battle', nombre: 'Pitch Battle' },
+  { key: 'builders-arena', nombre: 'Builders Arena' },
 ]
 
 // Mismo código opaco que la galería y el comité (FNV-1a → xorshift32 → base26),
@@ -132,9 +132,6 @@ function StartupsPage() {
                   <span className="text-white">Selección </span>
                   <span className="text-[#75AADB]">{g.nombre}</span>
                 </h2>
-                <p className="text-gray-400 text-sm mt-1 uppercase tracking-widest font-bold">
-                  Startup World Cup · {g.dia}
-                </p>
               </div>
               <GrillaConReparto items={items} onOpen={setOpen} />
             </section>
