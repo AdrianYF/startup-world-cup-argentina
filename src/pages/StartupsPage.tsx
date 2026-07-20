@@ -120,7 +120,7 @@ function StartupsPage() {
         </div>
       </header>
 
-      {/* Grupos: Pitch Battle (10) y Builders Arena (14) */}
+      {/* Grupos: Pitch Battle (14) y Builders Arena (14) */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {GRUPOS.map(g => {
           const items = startups.filter(s => (s as { grupo?: string }).grupo === g.key)
