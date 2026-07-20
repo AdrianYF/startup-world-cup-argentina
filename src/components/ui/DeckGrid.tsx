@@ -38,6 +38,11 @@ export function DeckGrid({
 
   // Dispara el reparto cuando la grilla entra en viewport. Mismo rootMargin que
   // FadeInSection en el resto del sitio.
+  //
+  // Antes de repartir precargamos las imágenes de la grilla (son loading=lazy):
+  // si la deck arrancara con imágenes a medio cargar, las cards se repartirían
+  // vacías y la imagen aparecería después (los "espacios vacíos que se cargan
+  // luego"). Esperamos a que decodifiquen, con un tope para no bloquear.
   useEffect(() => {
     if (activo) return
     const el = ref.current
@@ -48,24 +53,41 @@ export function DeckGrid({
       return
     }
 
+    let cancelado = false
+
+    const precargarYRepartir = async () => {
+      const imgs = Array.from(el.querySelectorAll('img'))
+      imgs.forEach(img => {
+        img.loading = 'eager'
+      })
+      await Promise.race([
+        Promise.allSettled(imgs.map(img => (img.decode ? img.decode() : Promise.resolve()))),
+        new Promise(res => setTimeout(res, 2500)), // tope: no esperar imágenes lentas
+      ])
+      if (!cancelado) setActivo(true)
+    }
+
     const io = new IntersectionObserver(
       entries => {
         if (entries.some(e => e.isIntersecting)) {
-          setActivo(true)
           io.disconnect()
+          void precargarYRepartir()
         }
       },
       { rootMargin: '-10% 0px -10% 0px', threshold: 0.05 },
     )
     io.observe(el)
-    return () => io.disconnect()
+    return () => {
+      cancelado = true
+      io.disconnect()
+    }
   }, [activo, reduce])
 
   // Red de seguridad: si el observer nunca dispara (medición rara), mostramos
   // las cards igual. Nunca pueden quedar invisibles.
   useEffect(() => {
     if (activo) return
-    const t = setTimeout(() => setActivo(true), 4000)
+    const t = setTimeout(() => setActivo(true), 6000)
     return () => clearTimeout(t)
   }, [activo])
 
