@@ -5,26 +5,25 @@ import { TiltCard } from './ui/TiltCard'
 
 const BTN_CLASS =
   'inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105'
-const BTN_OUTLINE_CLASS =
-  'inline-flex items-center gap-2 active:scale-95 border-2 border-[#75AADB] text-[#75AADB] hover:bg-[#75AADB] hover:text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer hover:scale-105'
+const BTN_DISABLED_CLASS =
+  'inline-flex items-center gap-2 border border-white/20 bg-white/5 text-gray-400 font-black text-lg px-8 py-3 rounded-full uppercase tracking-wide cursor-not-allowed'
 const LINK_CLASS =
   'inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors'
+const LINK_SELECCION_CLASS =
+  'inline-flex items-center gap-2 text-[#4A90E2] hover:text-white font-black text-lg tracking-wide border-b-2 border-[#4A90E2] pb-1 transition-colors'
 
 /**
  * CTA de la sección:
  * - Convocatoria abierta → "Postular mi Startup" (formulario) + link a las seleccionadas.
- * - Convocatoria cerrada → botón outline "Ver Selección de Startups" (lleva a /startups).
+ * - Convocatoria cerrada → botón inerte "Convocatoria cerrada"; el acceso a las
+ *   seleccionadas queda en el link debajo de la card (ver LinkSeleccion).
  */
 function CtaStartups({ abierta }: { abierta: boolean }) {
   if (!abierta) {
     return (
-      <Link
-        to="/startups"
-        aria-label="Ver la selección de startups"
-        className={BTN_OUTLINE_CLASS}
-      >
+      <span aria-disabled="true" className={BTN_DISABLED_CLASS}>
         {content.config.convocatoria.ctaCerradaStartup}
-      </Link>
+      </span>
     )
   }
   return (
@@ -41,6 +40,20 @@ function CtaStartups({ abierta }: { abierta: boolean }) {
         Conocé a la Selección →
       </Link>
     </>
+  )
+}
+
+/** Acceso a las startups seleccionadas, debajo de la card. Solo con la convocatoria cerrada. */
+function LinkSeleccion() {
+  return (
+    <Link
+      to="/startups"
+      aria-label="Ver la selección de startups"
+      className={LINK_SELECCION_CLASS}
+    >
+      Ver Selección de Startups
+      <span aria-hidden="true">→</span>
+    </Link>
   )
 }
 
@@ -92,11 +105,18 @@ function Startups() {
               alt="Card oficial de Startup — Startup World Cup Argentina 2026"
               direction="right"
             />
+
+            {!abierta && (
+              <div className="hidden lg:flex justify-center mt-8">
+                <LinkSeleccion />
+              </div>
+            )}
           </div>
 
           {/* CTA mobile — debajo de la card */}
-          <div className="lg:hidden flex flex-col items-center gap-3">
+          <div className="lg:hidden flex flex-col items-center gap-6">
             <CtaStartups abierta={abierta} />
+            {!abierta && <LinkSeleccion />}
           </div>
 
         </div>
