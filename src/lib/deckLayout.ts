@@ -43,29 +43,52 @@ export function cardCenter(layout: DeckLayout, i: number) {
   }
 }
 
+/** Valor por breakpoint, espejando las clases responsive de Tailwind. */
+export type PorBreakpoint = { base: number; sm?: number; md?: number; lg?: number }
+
+/** Breakpoints de Tailwind, para resolver PorBreakpoint contra el viewport. */
+function resolver(v: PorBreakpoint, vw: number) {
+  if (vw >= 1024 && v.lg !== undefined) return v.lg
+  if (vw >= 768 && v.md !== undefined) return v.md
+  if (vw >= 640 && v.sm !== undefined) return v.sm
+  return v.base
+}
+
 /**
- * Layout responsive espejando las clases Tailwind de la grilla:
- * grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6, gap-3 sm:gap-4.
+ * Mide el contenedor y resuelve columnas y gap contra el viewport. Los valores
+ * tienen que espejar las clases Tailwind de la grilla real: si divergen, las
+ * cards aterrizan corridas respecto del DOM que queda debajo.
  */
-export function useDeckLayout(ref: React.RefObject<HTMLElement | null>): DeckLayout | null {
+export function useDeckLayout(
+  ref: React.RefObject<HTMLElement | null>,
+  columns: PorBreakpoint,
+  gap: PorBreakpoint,
+): DeckLayout | null {
   const [layout, setLayout] = useState<DeckLayout | null>(null)
+
+  // Serializado: los objetos literales del caller cambian de identidad en cada
+  // render y reinstalarían el ResizeObserver eternamente.
+  const claveCols = JSON.stringify(columns)
+  const claveGap = JSON.stringify(gap)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    const cols = JSON.parse(claveCols) as PorBreakpoint
+    const gaps = JSON.parse(claveGap) as PorBreakpoint
     const measure = () => {
       const vw = window.innerWidth
       setLayout({
         width: el.clientWidth,
-        columns: vw >= 1024 ? 6 : vw >= 768 ? 5 : vw >= 640 ? 4 : 3,
-        gap: vw >= 640 ? 16 : 12,
+        columns: resolver(cols, vw),
+        gap: resolver(gaps, vw),
       })
     }
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(el)
     return () => ro.disconnect()
-  }, [ref])
+  }, [ref, claveCols, claveGap])
 
   return layout
 }

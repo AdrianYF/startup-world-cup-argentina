@@ -1,14 +1,9 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { content } from '../lib/content'
 import { ShareLightbox } from '../components/ui/ShareLightbox'
+import { DeckGrid } from '../components/ui/DeckGrid'
 import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
-import { deckHeight, useDeckLayout } from '../lib/deckLayout'
-
-// El chunk de three.js sólo se descarga si el reparto se va a ejecutar.
-const DeckDeal3D = lazy(() =>
-  import('../components/ui/DeckDeal3D').then(m => ({ default: m.DeckDeal3D })),
-)
 
 /**
  * Página dedicada con las startups seleccionadas. Cada card es una figurita
@@ -72,83 +67,22 @@ function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }
 }
 
 const GRID_CLASS = 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
+const GRID_COLS = { base: 3, sm: 4, md: 5, lg: 6 }
+const GRID_GAP = { base: 12, sm: 16 }
 
-/**
- * Grilla de un grupo con reparto de mazo en 3D.
- *
- * Mientras reparte, el canvas de three.js se superpone y la grilla real del DOM
- * queda invisible pero presente (conserva el layout, el foco y el lector de
- * pantalla). Al terminar, el canvas se desmonta y la grilla aparece: todo el
- * click / hover / lightbox sigue siendo DOM nativo.
- *
- * Si el usuario pidió menos movimiento, se saltea el reparto por completo.
- */
+/** Grilla de un grupo, con reparto de mazo en 3D al entrar en viewport. */
 function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Startup) => void }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const layout = useDeckLayout(ref)
-  const [fase, setFase] = useState<'espera' | 'repartiendo' | 'listo'>('espera')
-
-  useEffect(() => {
-    if (fase !== 'espera') return
-    const el = ref.current
-    if (!el) return
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setFase('listo')
-      return
-    }
-
-    const io = new IntersectionObserver(
-      entries => {
-        if (entries.some(e => e.isIntersecting)) {
-          setFase('repartiendo')
-          io.disconnect()
-        }
-      },
-      { rootMargin: '-10% 0px -10% 0px', threshold: 0.05 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [fase])
-
-  // Red de seguridad: si el reparto no avisa que terminó (WebGL caído, texturas
-  // que no cargan, pestaña en segundo plano que congela el rAF), la grilla se
-  // muestra igual. Nunca puede quedar invisible.
-  useEffect(() => {
-    if (fase !== 'repartiendo') return
-    const t = setTimeout(() => setFase('listo'), 6000)
-    return () => clearTimeout(t)
-  }, [fase])
-
-  const repartiendo = fase === 'repartiendo' && layout !== null
-  const imgs = items.map(s => s.img)
-
   return (
-    <div className="relative">
-      <div
-        ref={ref}
-        className={`${GRID_CLASS} transition-opacity duration-500 ${
-          fase === 'listo' ? 'opacity-100' : 'opacity-0'
-        }`}
-        aria-busy={fase === 'repartiendo'}
-      >
-        {items.map(s => (
-          <StartupCard key={s.slug} s={s} onOpen={onOpen} />
-        ))}
-      </div>
-
-      {repartiendo && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 pointer-events-none"
-          style={{ height: deckHeight(layout, imgs.length) }}
-        >
-          <Suspense fallback={null}>
-            <DeckDeal3D images={imgs} layout={layout} onDone={() => setFase('listo')} />
-          </Suspense>
-        </div>
-      )}
-    </div>
+    <DeckGrid
+      images={items.map(s => s.img)}
+      gridClass={GRID_CLASS}
+      columns={GRID_COLS}
+      gap={GRID_GAP}
+    >
+      {items.map(s => (
+        <StartupCard key={s.slug} s={s} onOpen={onOpen} />
+      ))}
+    </DeckGrid>
   )
 }
 
