@@ -1,8 +1,14 @@
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { content } from '../lib/content'
 import { ShareLightbox } from '../components/ui/ShareLightbox'
 import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
+import { deckHeight, useDeckLayout } from '../lib/deckLayout'
+
+// El chunk de three.js sólo se descarga si el reparto se va a ejecutar.
+const DeckDeal3D = lazy(() =>
+  import('../components/ui/DeckDeal3D').then(m => ({ default: m.DeckDeal3D })),
+)
 
 /**
  * Página dedicada con las startups seleccionadas. Cada card es una figurita
@@ -65,6 +71,87 @@ function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }
   )
 }
 
+const GRID_CLASS = 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4'
+
+/**
+ * Grilla de un grupo con reparto de mazo en 3D.
+ *
+ * Mientras reparte, el canvas de three.js se superpone y la grilla real del DOM
+ * queda invisible pero presente (conserva el layout, el foco y el lector de
+ * pantalla). Al terminar, el canvas se desmonta y la grilla aparece: todo el
+ * click / hover / lightbox sigue siendo DOM nativo.
+ *
+ * Si el usuario pidió menos movimiento, se saltea el reparto por completo.
+ */
+function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Startup) => void }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const layout = useDeckLayout(ref)
+  const [fase, setFase] = useState<'espera' | 'repartiendo' | 'listo'>('espera')
+
+  useEffect(() => {
+    if (fase !== 'espera') return
+    const el = ref.current
+    if (!el) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setFase('listo')
+      return
+    }
+
+    const io = new IntersectionObserver(
+      entries => {
+        if (entries.some(e => e.isIntersecting)) {
+          setFase('repartiendo')
+          io.disconnect()
+        }
+      },
+      { rootMargin: '-10% 0px -10% 0px', threshold: 0.05 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [fase])
+
+  // Red de seguridad: si el reparto no avisa que terminó (WebGL caído, texturas
+  // que no cargan, pestaña en segundo plano que congela el rAF), la grilla se
+  // muestra igual. Nunca puede quedar invisible.
+  useEffect(() => {
+    if (fase !== 'repartiendo') return
+    const t = setTimeout(() => setFase('listo'), 6000)
+    return () => clearTimeout(t)
+  }, [fase])
+
+  const repartiendo = fase === 'repartiendo' && layout !== null
+  const imgs = items.map(s => s.img)
+
+  return (
+    <div className="relative">
+      <div
+        ref={ref}
+        className={`${GRID_CLASS} transition-opacity duration-500 ${
+          fase === 'listo' ? 'opacity-100' : 'opacity-0'
+        }`}
+        aria-busy={fase === 'repartiendo'}
+      >
+        {items.map(s => (
+          <StartupCard key={s.slug} s={s} onOpen={onOpen} />
+        ))}
+      </div>
+
+      {repartiendo && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 pointer-events-none"
+          style={{ height: deckHeight(layout, imgs.length) }}
+        >
+          <Suspense fallback={null}>
+            <DeckDeal3D images={imgs} layout={layout} onDone={() => setFase('listo')} />
+          </Suspense>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function StartupsPage() {
   const startups = content.startups
   const [open, setOpen] = useState<Startup | null>(STARTUP_DEL_LINK)
@@ -92,19 +179,10 @@ function StartupsPage() {
             ← Volver al sitio
           </Link>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase mb-4">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase">
             <span className="text-white">STARTUPS </span>
             <span className="text-[#75AADB]">SELECCIONADAS</span>
           </h1>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl">
-            Las startups elegidas que compiten en la Startup World Cup Argentina.
-            Tocá una card para compartirla.
-          </p>
-
-          <div className="mt-6 flex items-baseline gap-2 text-gray-400 text-xs uppercase tracking-[0.25em] font-bold">
-            <span className="text-2xl sm:text-3xl font-black text-white tabular-nums">{startups.length}</span>
-            <span>startups seleccionadas</span>
-          </div>
         </div>
       </header>
 
@@ -124,11 +202,7 @@ function StartupsPage() {
                   Startup World Cup · {g.dia}
                 </p>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-4">
-                {items.map(s => (
-                  <StartupCard key={s.slug} s={s} onOpen={setOpen} />
-                ))}
-              </div>
+              <GrillaConReparto items={items} onOpen={setOpen} />
             </section>
           )
         })}
