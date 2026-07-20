@@ -99,6 +99,18 @@ function StartupsPage() {
     }
   }, [])
 
+  // El <html> tiene scroll-snap-type: y proximity (para el landing). En /startups
+  // eso "tira" solo el scroll hasta alinear cada grupo. Lo desactivamos a nivel
+  // contenedor mientras la página está montada; se restaura al salir.
+  useEffect(() => {
+    const html = document.documentElement
+    const previo = html.style.scrollSnapType
+    html.style.scrollSnapType = 'none'
+    return () => {
+      html.style.scrollSnapType = previo
+    }
+  }, [])
+
   return (
     <div className="min-h-screen text-white" style={{ backgroundColor: BG }}>
       {/* Header */}
@@ -126,7 +138,7 @@ function StartupsPage() {
           const items = startups.filter(s => (s as { grupo?: string }).grupo === g.key)
           if (!items.length) return null
           return (
-            <section key={g.key} className="snap-none mb-14 sm:mb-20 last:mb-0">
+            <section key={g.key} className="mb-14 sm:mb-20 last:mb-0">
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-2xl sm:text-4xl font-black uppercase leading-tight">
                   <span className="text-white">Selección </span>
