@@ -5,24 +5,25 @@ import { TiltCard } from './ui/TiltCard'
 
 const BTN_CLASS =
   'inline-flex items-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 hover:scale-105'
+const BTN_OUTLINE_CLASS =
+  'inline-flex items-center gap-2 active:scale-95 border-2 border-[#75AADB] text-[#75AADB] hover:bg-[#75AADB] hover:text-white font-black text-lg px-8 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer hover:scale-105'
 const LINK_CLASS =
   'inline-flex items-center gap-1.5 text-[#75AADB] hover:text-white font-bold text-sm uppercase tracking-wide transition-colors'
 
 /**
  * CTA de la sección:
  * - Convocatoria abierta → "Postular mi Startup" (formulario) + link a las seleccionadas.
- * - Convocatoria cerrada → "Ver startups seleccionadas" (lleva a /startups).
+ * - Convocatoria cerrada → botón outline "Ver Selección de Startups" (lleva a /startups).
  */
 function CtaStartups({ abierta }: { abierta: boolean }) {
   if (!abierta) {
     return (
       <Link
         to="/startups"
-        aria-label="Conocé a la selección de startups"
-        style={{ backgroundImage: 'var(--gradient-cta)' }}
-        className={BTN_CLASS}
+        aria-label="Ver la selección de startups"
+        className={BTN_OUTLINE_CLASS}
       >
-        Conocé a la Selección
+        {content.config.convocatoria.ctaCerradaStartup}
       </Link>
     )
   }
