@@ -120,23 +120,30 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
         ✕
       </button>
 
-      {/* La imagen en grande (el click no cierra) */}
-      <img
-        src={src}
-        alt={alt}
-        onClick={e => e.stopPropagation()}
-        className="block max-h-[62vh] max-w-[90vw] sm:max-w-2xl w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
-      />
-
-      {/* Bio / descripción de la card (al hacer zoom) */}
-      {descripcion && (
-        <p
+      {/* Imagen + recuadro con la bio al costado (apilado en mobile). */}
+      <div
+        className={`flex items-center justify-center gap-4 sm:gap-6 ${
+          descripcion ? 'flex-col sm:flex-row' : 'flex-col'
+        }`}
+      >
+        {/* La imagen en grande (el click no cierra) */}
+        <img
+          src={src}
+          alt={alt}
           onClick={e => e.stopPropagation()}
-          className="max-w-[90vw] sm:max-w-xl text-center text-gray-200 text-sm sm:text-base leading-relaxed"
-        >
-          {descripcion}
-        </p>
-      )}
+          className="block max-h-[62vh] max-w-[90vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+        />
+
+        {/* Bio / descripción de la card (al hacer zoom) */}
+        {descripcion && (
+          <div
+            onClick={e => e.stopPropagation()}
+            className="w-full max-w-[90vw] sm:w-72 sm:max-w-xs rounded-2xl border border-[#75AADB]/30 bg-white/5 backdrop-blur-sm p-5 text-left text-gray-200 text-sm sm:text-base leading-relaxed"
+          >
+            {descripcion}
+          </div>
+        )}
+      </div>
 
       {/* Barra de compartir (íconos) — justo debajo de la imagen */}
       <div
