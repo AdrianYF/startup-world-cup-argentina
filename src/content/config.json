@@ -11,7 +11,7 @@
     "startupsAbierta": false,
     "ctaCerrada": "Ver agenda",
     "ctaCerradaCorta": "Ver agenda",
-    "ctaCerradaStartup": "Convocatoria cerrada"
+    "ctaCerradaStartup": "Ver Selección de Startups"
   },
   "stats": [
     { "valor": "1M USD", "label": "Premio final en Silicon Valley", "highlight": true },
