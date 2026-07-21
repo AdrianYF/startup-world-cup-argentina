@@ -166,7 +166,6 @@ function StartupsPage() {
           shareUrl={shortLink(open.img)}
           shareText={`${open.nombre} — Startup seleccionada · Startup World Cup Argentina`}
           tweetText={`${open.nombre} es una de las startups seleccionadas de la Startup World Cup Argentina\n@StartupWC_arg @StartupGrindBA`}
-          eyebrow={open.id}
           titulo={open.nombre}
           descripcion={open.descripcion}
           onClose={() => setOpen(null)}
