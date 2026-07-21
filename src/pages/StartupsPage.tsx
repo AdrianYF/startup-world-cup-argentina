@@ -62,6 +62,9 @@ function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }
         draggable={false}
         className="w-full aspect-[1080/1350] object-cover block rounded-2xl select-none transition-transform duration-300 hover:scale-[1.03] hover:-translate-y-1"
       />
+      <span className="mt-2 block text-center text-white text-xs sm:text-sm font-bold uppercase tracking-wide truncate">
+        {s.nombre}
+      </span>
     </button>
   )
 }
