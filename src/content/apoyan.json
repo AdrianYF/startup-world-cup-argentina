@@ -18,13 +18,13 @@
     "logos": [
       { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.6, "url": "https://kamayventures.com/" },
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
-      { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
+      { "nombre": "Lovable", "img": "/Lovable-logo.png", "scale": 1.2, "url": "https://lovable.dev/" },
       { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
       { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "muted": true },
       { "nombre": "UNCUYO", "img": null, "url": "https://www.uncuyo.edu.ar/" },
       { "nombre": "Fundación Empretec Argentina", "img": "/logos/empretec.png", "scale": 0.55, "muted": true },
       { "nombre": "CYTED", "img": "/logos/cyted-white.png", "scale": 0.5, "muted": true },
-      { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
+      { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
       { "nombre": "Universidad Nacional de Mar del Plata", "img": "/logos/unmdp-white.png", "scale": 0.75, "muted": true },
       { "nombre": "Centro de Innovación Atlantis", "img": "/logos/atlantis-white.png", "scale": 0.75, "muted": true },
       { "nombre": "Universidad Abierta Interamericana", "img": "/logos/uai-white.png", "scale": 0.5, "muted": true },
@@ -36,11 +36,11 @@
     "centrar": true,
     "porFila": 3,
     "logos": [
-      { "nombre": "Lovable", "img": "/Lovable-logo.png", "scale": 1.2, "url": "https://lovable.dev/" },
       { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.6, "url": "https://omaly.ai/" },
       { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.82, "url": "https://titofree.com/" },
       { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 1.0 },
       { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.5 },
+      { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
       { "nombre": "WIP Club", "img": null, "scale": 0.75, "url": "https://www.wipclub.com.ar" }
     ]
   }
