@@ -56,12 +56,14 @@ type Props = {
   shareText: string
   /** Texto del tweet (X permite prellenarlo; LinkedIn no). */
   tweetText: string
+  /** Título opcional (ej. nombre de la startup) mostrado al costado al hacer zoom. */
+  titulo?: string
   /** Bio / descripción opcional que se muestra bajo la imagen al hacer zoom. */
   descripcion?: string
   onClose: () => void
 }
 
-export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetText, descripcion, onClose }: Props) {
+export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetText, titulo, descripcion, onClose }: Props) {
   const [copied, setCopied] = useState(false)
   const canNativeShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
@@ -120,10 +122,10 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
         ✕
       </button>
 
-      {/* Imagen + recuadro con la bio al costado (apilado en mobile). */}
+      {/* Imagen + nombre y bio al costado (apilado en mobile). */}
       <div
         className={`flex items-center justify-center gap-4 sm:gap-6 ${
-          descripcion ? 'flex-col sm:flex-row' : 'flex-col'
+          titulo || descripcion ? 'flex-col sm:flex-row' : 'flex-col'
         }`}
       >
         {/* La imagen en grande (el click no cierra) */}
@@ -134,22 +136,31 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
           className="block max-h-[62vh] max-w-[90vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
         />
 
-        {/* Bio / descripción de la card (al hacer zoom), estilo quote */}
-        {descripcion && (
-          <blockquote
+        {/* Nombre + bio (al hacer zoom) */}
+        {(titulo || descripcion) && (
+          <div
             onClick={e => e.stopPropagation()}
-            className="relative w-full max-w-[90vw] sm:w-72 sm:max-w-xs px-4 pt-8 text-left"
+            className="w-full max-w-[90vw] sm:w-72 sm:max-w-xs text-left"
           >
-            <span
-              aria-hidden
-              className="absolute left-0 top-0 font-serif text-6xl leading-none text-[#75AADB]/50 select-none"
-            >
-              &ldquo;
-            </span>
-            <p className="font-serif italic text-gray-100 text-base sm:text-lg leading-relaxed">
-              {descripcion}
-            </p>
-          </blockquote>
+            {titulo && (
+              <h2 className="text-white text-2xl sm:text-3xl font-black uppercase tracking-wide mb-3">
+                {titulo}
+              </h2>
+            )}
+            {descripcion && (
+              <blockquote className="relative px-4 pt-8">
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-0 font-serif text-6xl leading-none text-[#75AADB]/50 select-none"
+                >
+                  &ldquo;
+                </span>
+                <p className="font-serif italic text-gray-100 text-base sm:text-lg leading-relaxed">
+                  {descripcion}
+                </p>
+              </blockquote>
+            )}
+          </div>
         )}
       </div>
 
