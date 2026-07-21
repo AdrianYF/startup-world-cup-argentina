@@ -146,7 +146,7 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
               // fontFamily inline: la regla sin capa de index.css para h1-h6 fuerza
               // el sans y le gana a la utility font-serif de Tailwind (layered).
               <h2
-                style={{ fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
+                style={{ fontFamily: '"Fraunces", ui-serif, Georgia, serif' }}
                 className="text-white text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
               >
                 {titulo}
