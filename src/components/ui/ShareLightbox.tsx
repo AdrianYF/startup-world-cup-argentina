@@ -124,19 +124,43 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
         ✕
       </button>
 
-      {/* Imagen + nombre y bio al costado (apilado en mobile). */}
+      {/* Card (imagen + compartir) + nombre/bio al costado (apilado en mobile). */}
       <div
         className={`flex items-center justify-center gap-4 sm:gap-6 ${
           eyebrow || titulo || descripcion ? 'flex-col sm:flex-row' : 'flex-col'
         }`}
       >
-        {/* La imagen en grande (el click no cierra) */}
-        <img
-          src={src}
-          alt={alt}
-          onClick={e => e.stopPropagation()}
-          className="block max-h-[62vh] max-w-[90vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
-        />
+        {/* Columna de la card: imagen + barra de compartir centrada debajo. */}
+        <div className="flex flex-col items-center gap-4">
+          {/* La imagen en grande (el click no cierra) */}
+          <img
+            src={src}
+            alt={alt}
+            onClick={e => e.stopPropagation()}
+            className="block max-h-[62vh] max-w-[90vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+          />
+
+          {/* Barra de compartir (íconos) — centrada debajo de la card */}
+          <div
+            onClick={e => e.stopPropagation()}
+            className="flex items-center justify-center gap-3 rounded-full bg-black/40 backdrop-blur-sm px-3 py-2"
+          >
+            {canNativeShare && (
+              <button type="button" onClick={shareNative} aria-label="Compartir" title="Compartir" className={`${iconBtn} bg-[#75AADB] hover:bg-[#5a93c5] text-white`}>
+                <ShareIcon />
+              </button>
+            )}
+            <a href={x} target="_blank" rel="noopener noreferrer" aria-label="Compartir en X" title="X" className={`${iconBtn} bg-white/10 hover:bg-white/20 text-white`}>
+              <XIcon />
+            </a>
+            <button type="button" onClick={() => openSharePopup(li)} aria-label="Compartir en LinkedIn" title="LinkedIn" className={`${iconBtn} bg-[#0A66C2] hover:brightness-110 text-white`}>
+              <LinkedInIcon />
+            </button>
+            <button type="button" onClick={copyLink} aria-label={copied ? 'Link copiado' : 'Copiar link'} title={copied ? '¡Copiado!' : 'Copiar link'} className={`${iconBtn} ${copied ? 'bg-[#25D366] text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
+              {copied ? <CheckIcon /> : <LinkIcon />}
+            </button>
+          </div>
+        </div>
 
         {/* Eyebrow + nombre + bio (al hacer zoom) */}
         {(eyebrow || titulo || descripcion) && (
@@ -174,27 +198,6 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
             )}
           </div>
         )}
-      </div>
-
-      {/* Barra de compartir (íconos) — justo debajo de la imagen */}
-      <div
-        onClick={e => e.stopPropagation()}
-        className="flex items-center justify-center gap-3 rounded-full bg-black/40 backdrop-blur-sm px-3 py-2"
-      >
-        {canNativeShare && (
-          <button type="button" onClick={shareNative} aria-label="Compartir" title="Compartir" className={`${iconBtn} bg-[#75AADB] hover:bg-[#5a93c5] text-white`}>
-            <ShareIcon />
-          </button>
-        )}
-        <a href={x} target="_blank" rel="noopener noreferrer" aria-label="Compartir en X" title="X" className={`${iconBtn} bg-white/10 hover:bg-white/20 text-white`}>
-          <XIcon />
-        </a>
-        <button type="button" onClick={() => openSharePopup(li)} aria-label="Compartir en LinkedIn" title="LinkedIn" className={`${iconBtn} bg-[#0A66C2] hover:brightness-110 text-white`}>
-          <LinkedInIcon />
-        </button>
-        <button type="button" onClick={copyLink} aria-label={copied ? 'Link copiado' : 'Copiar link'} title={copied ? '¡Copiado!' : 'Copiar link'} className={`${iconBtn} ${copied ? 'bg-[#25D366] text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
-          {copied ? <CheckIcon /> : <LinkIcon />}
-        </button>
       </div>
     </div>,
     document.body,
