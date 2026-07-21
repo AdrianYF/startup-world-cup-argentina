@@ -147,7 +147,7 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
               // el sans y le gana a la utility font-serif de Tailwind (layered).
               <h2
                 style={{ fontFamily: '"Fraunces", ui-serif, Georgia, serif' }}
-                className="text-white text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
+                className="pl-4 text-white text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
               >
                 {titulo}
               </h2>
