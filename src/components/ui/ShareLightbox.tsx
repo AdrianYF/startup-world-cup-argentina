@@ -143,7 +143,12 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
             className="w-full max-w-[90vw] sm:w-72 sm:max-w-xs text-left"
           >
             {titulo && (
-              <h2 className="text-white text-2xl sm:text-3xl font-black uppercase tracking-wide mb-3">
+              // fontFamily inline: la regla sin capa de index.css para h1-h6 fuerza
+              // el sans y le gana a la utility font-serif de Tailwind (layered).
+              <h2
+                style={{ fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif' }}
+                className="text-white text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
+              >
                 {titulo}
               </h2>
             )}
