@@ -112,18 +112,20 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
       aria-modal="true"
       aria-label={ariaLabel}
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-black/85 backdrop-blur-sm px-4 py-10 animate-[fade-in_200ms_ease-out]"
+      className="fixed inset-0 z-[100] overflow-y-auto bg-black/85 backdrop-blur-sm animate-[fade-in_200ms_ease-out]"
     >
-      {/* Cerrar */}
+      {/* Cerrar — fixed para que quede en la esquina aunque el contenido scrollee */}
       <button
         type="button"
         onClick={onClose}
         aria-label="Cerrar"
-        className="absolute top-4 right-4 grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white text-xl cursor-pointer"
+        className="fixed top-4 right-4 z-[101] grid place-items-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white text-xl cursor-pointer"
       >
         ✕
       </button>
 
+      {/* Wrapper centrado; con min-h-full permite scroll cuando el contenido no entra (mobile). */}
+      <div className="min-h-full flex flex-col items-center justify-center gap-4 px-4 py-12 sm:py-10">
       {/* Card (imagen + compartir) + nombre/bio al costado (apilado en mobile). */}
       <div
         className={`flex items-center justify-center gap-4 sm:gap-6 ${
@@ -137,7 +139,7 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
             src={src}
             alt={alt}
             onClick={e => e.stopPropagation()}
-            className="block max-h-[62vh] max-w-[90vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+            className="block max-h-[48vh] sm:max-h-[62vh] max-w-[78vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
           />
 
           {/* Barra de compartir (íconos) — centrada debajo de la card */}
@@ -178,7 +180,7 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
               // el sans y le gana a la utility font-serif de Tailwind (layered).
               <h2
                 style={{ fontFamily: '"Fraunces", ui-serif, Georgia, serif' }}
-                className="pl-4 text-white text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
+                className="pl-4 text-white text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-3 sm:mb-4"
               >
                 {titulo}
               </h2>
@@ -198,6 +200,7 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
             )}
           </div>
         )}
+      </div>
       </div>
     </div>,
     document.body,
