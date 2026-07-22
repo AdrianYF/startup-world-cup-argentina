@@ -55,7 +55,6 @@ function Apoyan() {
   )
 }
 
-/** Una categoría con reveal escalonado: los logos aparecen en cascada cuando entra al viewport. */
 function CategoriaLogos({ cat }: { cat: Categoria }) {
   const ref = useRef<HTMLDivElement>(null)
   const [reduced] = useState(prefiereMenosMovimiento)
@@ -115,16 +114,10 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
       <div ref={ref} className={contenedorClass} style={contenedorStyle}>
         {cat.logos.map((logo, j) => {
           const url = 'url' in logo && typeof logo.url === 'string' ? logo.url : undefined
-          // Marcas con guía de uso estricta (Deloitte, Workplace): componente dedicado
-          // con fondo sólido, área de protección y sin efectos (aislado del spotlight).
           const esProtegido = 'protegido' in logo && (logo as { protegido?: boolean }).protegido === true
-          // En modo centrado el ancho lo pone cada celda (el grid ya reparte solo).
           const anchoClass = centrar ? 'w-full sm:w-72' : 'w-full'
-          // spanFull: en grilla, cuando el logo queda huérfano en la fila de 2 (tablet)
-          // ocupa el ancho completo y queda centrado; en desktop (5 columnas) vuelve a 1.
           const spanFull = !centrar && 'spanFull' in logo && (logo as { spanFull?: boolean }).spanFull === true
           const spanClass = spanFull ? ' sm:col-span-2 md:col-span-1' : ''
-          // Reveal escalonado: cada logo entra con fade + subida, desfasado por su índice.
           const revealStyle = reduced
             ? undefined
             : {
@@ -200,7 +193,6 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                 )
               })() : (
                 <span
-                  // scale achica el texto igual que en los logos de imagen (sin scale = tamaño por defecto).
                   style={
                     'scale' in logo && typeof logo.scale === 'number'
                       ? { fontSize: `${logo.scale * 2.25}rem` }
