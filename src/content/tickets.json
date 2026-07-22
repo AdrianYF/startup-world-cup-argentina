@@ -19,8 +19,8 @@
     "precio": "$25.000",
     "cupos": "30 unidades",
     "descripcion": "Early Bird: descuento preferencial hasta agotar los primeros 30 cupos.",
-    "estado": "venta",
-    "badge": "A LA VENTA",
+    "estado": "agotado",
+    "badge": null,
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
@@ -33,8 +33,8 @@
     "precio": "$30.000",
     "cupos": "30 unidades",
     "descripcion": "Early Bird 2nd Round: abre el 20 de julio, hasta agotar los segundos 30 cupos.",
-    "estado": "proximamente",
-    "badge": null,
+    "estado": "venta",
+    "badge": "A LA VENTA",
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
