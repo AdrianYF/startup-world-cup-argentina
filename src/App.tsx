@@ -42,7 +42,6 @@ function App() {
     PitchBattle,
     Agenda,
     Galeria,
-    Tickets,
     Startups,
     Voluntarios,
     Comite,
@@ -61,6 +60,9 @@ function App() {
             <Section key={i} />
           ))}
         </ScrollStack>
+        <FadeInSection>
+          <Tickets />
+        </FadeInSection>
         <FadeInSection>
           <CaminoALaCopa />
         </FadeInSection>
