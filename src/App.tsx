@@ -4,6 +4,7 @@ import './index.css'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Tickets from './components/Tickets'
+import Participan from './components/Participan'
 import Apoyan from './components/Apoyan'
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
@@ -35,6 +36,9 @@ function App() {
         <Hero />
         <FadeInSection>
           <Tickets />
+        </FadeInSection>
+        <FadeInSection>
+          <Participan />
         </FadeInSection>
         <FadeInSection>
           <Apoyan />
