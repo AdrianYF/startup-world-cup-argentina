@@ -87,6 +87,12 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
     'cols' in cat && typeof (cat as { cols?: number }).cols === 'number'
       ? (cat as { cols: number }).cols
       : cat.logos.length
+  // escalaLogos: multiplicador de tamaño para toda la categoría (achica/agranda
+  // todos sus logos por igual, además del scale individual de cada uno).
+  const escalaLogos =
+    'escalaLogos' in cat && typeof (cat as { escalaLogos?: number }).escalaLogos === 'number'
+      ? (cat as { escalaLogos: number }).escalaLogos
+      : 1
   const colsClass =
     ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5', 6: 'md:grid-cols-6' } as Record<number, string>)[
       cols
@@ -167,8 +173,9 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                   : `contrast(1.18) saturate(1.3) brightness(1.12) drop-shadow(0 6px 24px rgba(117,170,219,0.55))`
                 const baseFilterFinal = muted || brandStrict ? 'none' : baseFilter
                 const baseOpacity = muted ? 0.8 : 1
-                const baseTransform = scale ? `scale(${scale})` : 'scale(1)'
-                const hoverTransform = scale ? `scale(${scale * 1.05})` : 'scale(1.05)'
+                const escala = (scale ?? 1) * escalaLogos
+                const baseTransform = `scale(${escala})`
+                const hoverTransform = `scale(${escala * 1.05})`
                 return (
                   <img
                     src={logo.img}
@@ -194,8 +201,8 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
               })() : (
                 <span
                   style={
-                    'scale' in logo && typeof logo.scale === 'number'
-                      ? { fontSize: `${logo.scale * 2.25}rem` }
+                    ('scale' in logo && typeof logo.scale === 'number') || escalaLogos !== 1
+                      ? { fontSize: `${(('scale' in logo && typeof logo.scale === 'number' ? logo.scale : 1) * escalaLogos) * 2.25}rem` }
                       : undefined
                   }
                   className="text-white/80 font-black text-3xl sm:text-4xl uppercase tracking-wide whitespace-nowrap hover:text-white hover:drop-shadow-[0_4px_16px_rgba(117,170,219,0.5)] transition-all"
