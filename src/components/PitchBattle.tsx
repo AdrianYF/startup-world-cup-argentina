@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { content } from '../lib/content'
 import { openStartupForm } from '../lib/ticketing'
 import { WorldCupTicket } from './ui/WorldCupTicket'
@@ -6,6 +7,8 @@ import { Modal } from './ui/Modal'
 import { BasesContent } from './Footer'
 
 function PitchBattle() {
+  const navigate = useNavigate()
+  const abierta = content.config.convocatoria.startupsAbierta
   const [popupIndex, setPopupIndex] = useState<number | null>(null)
   const [basesOpen, setBasesOpen] = useState(false)
   const stats = content.pitchBattle
@@ -52,15 +55,15 @@ function PitchBattle() {
 
             <div className="flex flex-col items-center gap-2">
               <button
-                onClick={() => openStartupForm()}
-                aria-label={content.config.convocatoria.startupsAbierta
+                onClick={() => (abierta ? openStartupForm() : navigate('/agenda'))}
+                aria-label={abierta
                   ? 'Aplicá como Startup (abre formulario en una nueva pestaña)'
-                  : 'Convocatoria de startups cerrada — ver la agenda del evento'}
+                  : 'Ver la agenda del evento'}
                 style={{ backgroundImage: 'var(--gradient-apply)' }}
                 className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-lg px-8 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer shadow-lg shadow-[#75AADB]/40 hover:scale-105"
               >
-                {content.config.convocatoria.startupsAbierta ? 'Aplicá como Startup' : content.config.convocatoria.ctaCerrada}
-                {content.config.convocatoria.startupsAbierta ? (
+                {abierta ? 'Aplicá como Startup' : content.config.convocatoria.ctaCerrada}
+                {abierta ? (
                   <svg
                     width="20"
                     height="20"
