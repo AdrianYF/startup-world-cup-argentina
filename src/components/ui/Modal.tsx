@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useEscape } from '../../lib/useEscape'
 
 /**
@@ -94,9 +95,14 @@ export function Modal({ onClose, children, titleId, ariaLabel, size = 'md' }: Pr
     return () => node.removeEventListener('keydown', onKey)
   }, [])
 
-  return (
+  // Portal a <body>: el modal debe cubrir TODO. Renderizado dentro de una
+  // sección envuelta en FadeInSection (que crea stacking context por su
+  // animación), su z-index quedaba atrapado y elementos flotantes como el botón
+  // de WhatsApp (z-40 en el root) pintaban por encima. En body compite en el
+  // contexto raíz y su z-[120] gana sobre todo.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#020618]/70 backdrop-blur-sm px-4 animate-[fade-in_0.2s_ease-out]"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-[#020618]/80 backdrop-blur-md px-4 animate-[fade-in_0.2s_ease-out]"
       onClick={onClose}
       aria-hidden="false"
     >
@@ -112,7 +118,8 @@ export function Modal({ onClose, children, titleId, ariaLabel, size = 'md' }: Pr
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
