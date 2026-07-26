@@ -12,6 +12,7 @@ import speakers from '../content/speakers.json'
 import perks from '../content/perks.json'
 import comite from '../content/comite.json'
 import startups from '../content/startups.json'
+import participan from '../content/participan.json'
 
 export const content = {
   config,
@@ -28,6 +29,7 @@ export const content = {
   perks,
   comite,
   startups,
+  participan,
 }
 
 export type TicketPlan = (typeof tickets)[number]
@@ -38,3 +40,4 @@ export type Speaker = (typeof speakers)[number]
 export type Perk = (typeof perks)[number]
 export type ComiteMiembro = (typeof comite)[number]
 export type Startup = (typeof startups)[number]
+export type Participante = (typeof participan)[number]

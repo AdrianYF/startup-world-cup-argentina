@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "francis-perelman",
+    "nombre": "Francis Perelman",
+    "cargo": "Partner, Capria Ventures",
+    "ticket": "Ticket de inversión: USD 1,5 millones",
+    "img": "/participan/francis-perelman.jpg"
+  },
+  {
+    "slug": "john-newkirk",
+    "nombre": "John Newkirk",
+    "cargo": "Investments & Portfolio Mgmt, Kamay",
+    "ticket": "Ticket de inversión: hasta USD 600k",
+    "img": "/participan/john-newkirk.jpg"
+  },
+  {
+    "slug": "esteban-wolf",
+    "nombre": "Esteban Wolf",
+    "cargo": "CEO · Chocorissimo · Guapaletas · Abuela Goye · Persicco",
+    "ticket": "Empresario, mentor e inversor ángel",
+    "img": "/participan/esteban-wolf.jpg"
+  }
+]
