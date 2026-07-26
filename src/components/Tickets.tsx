@@ -20,15 +20,15 @@ function Tickets() {
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">Cupos limitados para garantizar calidad de conexiones y experiencias.</p>
         </div>
         {/* Scroll horizontal: las tandas quedan en una sola línea; centradas si entran, con scroll si no. */}
-        <div className="overflow-x-auto pt-6 pb-4 [scrollbar-width:thin]">
-          <div className="flex gap-6 items-stretch w-max mx-auto snap-x snap-mandatory">
+        <div className="swc-scrollbar-simple overflow-x-auto pt-6 pb-4">
+          <div className="flex gap-6 items-stretch w-max mx-auto">
             {content.tickets.map((plan) => {
             const disponible = plan.estado === 'venta'
             const agotado = plan.estado === 'agotado'
             // Solo la tanda a la venta con badge se resalta; el tag "Próximamente" no destaca la card.
             const destacado = Boolean(plan.badge) && disponible
             return (
-            <div key={plan.id} className="relative shrink-0 w-[280px] snap-start">
+            <div key={plan.id} className="relative shrink-0 w-[280px]">
               <div
                 // La tanda destacada (badge "FINALIZA PRONTO") lleva más padding-top para
                 // que el título despegue del badge que asoma arriba.
