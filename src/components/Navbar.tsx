@@ -46,7 +46,7 @@ function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
-  const ctaAria = 'Conseguir tickets (abre Startup Grind en una nueva pestaña)'
+  const ctaAria = 'Conseguir entradas (abre Startup Grind en una nueva pestaña)'
 
   return (
     <nav
@@ -123,7 +123,7 @@ function Navbar() {
             style={{ backgroundImage: 'var(--gradient-cta)' }}
             className={`text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full active:scale-95 transition-all cursor-pointer font-black hover:scale-105 whitespace-nowrap ${scrolled ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2'}`}
           >
-            Tickets
+            Entradas
           </button>
         </div>
 
@@ -174,7 +174,7 @@ function Navbar() {
               style={{ backgroundImage: 'var(--gradient-cta)' }}
               className="mt-3 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] rounded-full font-black py-3 cursor-pointer uppercase tracking-wide transition-all"
             >
-              Tickets
+              Entradas
             </button>
           </div>
         </div>
