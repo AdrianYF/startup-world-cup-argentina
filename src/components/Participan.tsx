@@ -67,7 +67,7 @@ function Participan() {
             onClick={() => setModalOpen(true)}
             className="inline-flex items-center gap-2 border border-[#75AADB]/40 hover:bg-[#75AADB]/10 active:scale-95 text-[#75AADB] hover:text-white font-black text-sm px-7 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer"
           >
-            Conocé a los otros speakers
+            Conocé más participantes
             <span aria-hidden>→</span>
           </button>
         </div>
@@ -77,8 +77,8 @@ function Participan() {
         <Modal onClose={cerrarModal} titleId="speakers-title" size="lg">
           <div className="text-white">
             <h3 id="speakers-title" className="text-2xl sm:text-3xl font-black uppercase text-center mb-2">
-              <span className="text-white">Otros </span>
-              <span className="text-[#75AADB]">speakers</span>
+              <span className="text-white">Más </span>
+              <span className="text-[#75AADB]">participantes</span>
             </h3>
             <p className="text-gray-400 text-center text-sm mb-8">
               Inversores, mentores y referentes que participan del evento.
