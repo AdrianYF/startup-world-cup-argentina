@@ -14,7 +14,7 @@
   {
     "titulo": "INSTITUTIONAL PARTNERS",
     "centrar": true,
-    "porFila": 3,
+    "porFila": 4,
     "logos": [
       { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.6, "url": "https://kamayventures.com/" },
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
