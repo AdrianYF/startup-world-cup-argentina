@@ -30,7 +30,17 @@ function ParticipanteCard({ p, compact = false }: { p: Participante; compact?: b
 function Participan() {
   const participan = content.participan
   const destacados = participan.filter(p => 'destacado' in p && (p as { destacado?: boolean }).destacado)
+  const otros = participan.filter(p => !('destacado' in p && (p as { destacado?: boolean }).destacado))
   const [modalOpen, setModalOpen] = useState(false)
+
+  // Al cerrar el modal, volver a la sección de Entradas. Se difiere para que el
+  // Modal se desmonte y libere el scroll-lock del body antes de scrollear.
+  const cerrarModal = () => {
+    setModalOpen(false)
+    setTimeout(() => {
+      document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 80)
+  }
 
   return (
     <section id="participan" className="relative py-16 sm:py-24 bg-[#020618] text-white">
@@ -57,25 +67,25 @@ function Participan() {
             onClick={() => setModalOpen(true)}
             className="inline-flex items-center gap-2 border border-[#75AADB]/40 hover:bg-[#75AADB]/10 active:scale-95 text-[#75AADB] hover:text-white font-black text-sm px-7 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer"
           >
-            Conocé a todos los asistentes
+            Conocé a los otros speakers
             <span aria-hidden>→</span>
           </button>
         </div>
       </div>
 
       {modalOpen && (
-        <Modal onClose={() => setModalOpen(false)} titleId="asistentes-title" size="3xl">
+        <Modal onClose={cerrarModal} titleId="speakers-title" size="lg">
           <div className="text-white">
-            <h3 id="asistentes-title" className="text-2xl sm:text-3xl font-black uppercase text-center mb-2">
-              <span className="text-white">Todos los </span>
-              <span className="text-[#75AADB]">asistentes</span>
+            <h3 id="speakers-title" className="text-2xl sm:text-3xl font-black uppercase text-center mb-2">
+              <span className="text-white">Otros </span>
+              <span className="text-[#75AADB]">speakers</span>
             </h3>
             <p className="text-gray-400 text-center text-sm mb-8">
               Inversores, mentores y referentes que participan del evento.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 max-h-[60vh] overflow-y-auto swc-scrollbar-simple pr-1">
-              {participan.map(p => (
+            <div className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto swc-scrollbar-simple pr-1">
+              {otros.map(p => (
                 <ParticipanteCard key={p.slug} p={p} compact />
               ))}
             </div>

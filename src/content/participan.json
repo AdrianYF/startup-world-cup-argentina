@@ -70,5 +70,47 @@
     "nombre": "Diego Gonzalez",
     "cargo": "Alina VC",
     "img": "/participan/diego-gonzalez-a.jpg"
+  },
+  {
+    "slug": "anabella-guimarey",
+    "nombre": "Anabella Guimarey",
+    "cargo": "El Cero Km",
+    "img": "/participan/anabella-guimarey.jpg"
+  },
+  {
+    "slug": "lautaro-loguzzo",
+    "nombre": "Lautaro Loguzzo",
+    "cargo": "Canillita",
+    "img": "/participan/lautaro-loguzzo.jpg"
+  },
+  {
+    "slug": "claudia-casalongue",
+    "nombre": "Claudia Casalongue",
+    "cargo": "Unibaio",
+    "img": "/participan/claudia-casalongue.jpg"
+  },
+  {
+    "slug": "daniel-maquez",
+    "nombre": "Daniel Maquez",
+    "cargo": "Argenaura",
+    "img": "/participan/daniel-maquez.jpg"
+  },
+  {
+    "slug": "denis-balitskiy",
+    "nombre": "Denis Balitskiy",
+    "cargo": "",
+    "img": "/participan/denis-balitskiy.jpg"
+  },
+  {
+    "slug": "silvia-marra",
+    "nombre": "Silvia Marra",
+    "cargo": "",
+    "img": "/participan/silvia-marra.jpg"
+  },
+  {
+    "slug": "celia-alfie",
+    "nombre": "Celia Alfie",
+    "cargo": "",
+    "img": "/participan/celia-alfie.jpg"
   }
 ]
