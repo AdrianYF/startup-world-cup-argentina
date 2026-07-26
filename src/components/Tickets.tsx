@@ -19,22 +19,28 @@ function Tickets() {
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">Cupos limitados para garantizar calidad de conexiones y experiencias.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-          {content.tickets.map((plan) => {
+        {/* Scroll horizontal: las tandas quedan en una sola línea; centradas si entran, con scroll si no. */}
+        <div className="overflow-x-auto pt-6 pb-4 [scrollbar-width:thin]">
+          <div className="flex gap-6 items-stretch w-max mx-auto snap-x snap-mandatory">
+            {content.tickets.map((plan) => {
             const disponible = plan.estado === 'venta'
             const agotado = plan.estado === 'agotado'
+            // Solo la tanda a la venta con badge se resalta; el tag "Próximamente" no destaca la card.
+            const destacado = Boolean(plan.badge) && disponible
             return (
-            <div key={plan.id} className="relative">
+            <div key={plan.id} className="relative shrink-0 w-[280px] snap-start">
               <div
                 className={`relative rounded-2xl p-6 sm:p-8 border-[0.5px] transition-all ${
-                  plan.badge
-                    ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 mt-4 sm:mt-0 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
+                  destacado
+                    ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
                     : 'bg-white/5 border-[#75AADB]/10 hover:border-[#75AADB]/25 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]'
                 } ${agotado ? 'opacity-60' : ''}`}
               >
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-[#75AADB] text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">{plan.badge}</span>
+                  <span className={`text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest whitespace-nowrap ${
+                    disponible ? 'bg-[#75AADB] text-white' : 'bg-[#0f172b] border border-[#75AADB]/40 text-[#75AADB]'
+                  }`}>{plan.badge}</span>
                 </div>
               )}
               <div className="flex items-center justify-between gap-2 mb-3">
@@ -78,6 +84,7 @@ function Tickets() {
             </div>
             )
           })}
+          </div>
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />

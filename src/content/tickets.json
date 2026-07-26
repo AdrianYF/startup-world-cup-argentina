@@ -34,7 +34,21 @@
     "cupos": "30 unidades",
     "descripcion": "Early Bird 2nd Round: abre el 20 de julio, hasta agotar los segundos 30 cupos.",
     "estado": "venta",
-    "badge": "A LA VENTA",
+    "badge": "FINALIZA PRONTO",
+    "features": [
+      "Acceso general",
+      "Expo & Pitch Battle",
+      "Matchmaking digital"
+    ]
+  },
+  {
+    "id": "tanda-4",
+    "nombre": "Tanda 4",
+    "precio": "$35.000",
+    "cupos": "30 unidades",
+    "descripcion": "Última tanda: al precio más alto, hasta agotar cupos.",
+    "estado": "proximamente",
+    "badge": "PRÓXIMAMENTE",
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
