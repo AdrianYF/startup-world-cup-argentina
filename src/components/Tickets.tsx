@@ -15,7 +15,7 @@ function Tickets() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4 text-white">
-            ELEGÍ TU PUERTA DE ENTRADA
+            ASEGURATE TU ENTRADA
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">Cupos limitados para garantizar calidad de conexiones y experiencias.</p>
         </div>
