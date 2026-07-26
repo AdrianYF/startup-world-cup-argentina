@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { content } from '../lib/content'
 import { openStartupForm } from '../lib/ticketing'
-import { EventTicker } from './ui/EventTicker'
 
 function Hero() {
   const navigate = useNavigate()
@@ -229,9 +228,6 @@ function Hero() {
         </div>
 
       </div>
-
-      {/* Banda ticker de próximos eventos — abajo del todo en el hero */}
-      <EventTicker className="relative z-20 mb-8 sm:mb-10" />
     </section>
   )
 }
