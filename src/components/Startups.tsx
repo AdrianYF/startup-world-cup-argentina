@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { openStartupForm } from '../lib/ticketing'
 import { content } from '../lib/content'
 import { TiltCard } from './ui/TiltCard'
@@ -36,9 +35,9 @@ function CtaStartups({ abierta }: { abierta: boolean }) {
       >
         Postular mi Startup
       </button>
-      <Link to="/startups" className={LINK_CLASS}>
+      <a href="#seleccion" className={LINK_CLASS}>
         Conocé a la Selección →
-      </Link>
+      </a>
     </>
   )
 }
@@ -46,14 +45,14 @@ function CtaStartups({ abierta }: { abierta: boolean }) {
 /** Acceso a las startups seleccionadas, debajo de la card. Solo con la convocatoria cerrada. */
 function LinkSeleccion() {
   return (
-    <Link
-      to="/startups"
+    <a
+      href="#seleccion"
       aria-label="Ver la selección de startups"
       className={LINK_SELECCION_CLASS}
     >
       Ver Selección de Startups
       <span aria-hidden="true">→</span>
-    </Link>
+    </a>
   )
 }
 

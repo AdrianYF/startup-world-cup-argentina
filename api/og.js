@@ -94,10 +94,11 @@ export default function handler(req, res) {
   if (card) description = 'Comité de Selección de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   else if (startup) description = 'Startup seleccionada de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   const pageUrl = `${origin}/swc/${code}`
-  // Humanos → SPA (abre la imagen vía ?g= / ?c= / la página /startups). Bots se quedan con los meta tags.
-  let dest = '/#galeria'
-  if (photo) dest = `/?g=${encodeURIComponent(code)}`
-  else if (card) dest = `/?c=${encodeURIComponent(code)}`
+  // Humanos → la ruta que muestra esa imagen y abre el lightbox. Bots se quedan con los meta tags.
+  // Galería → /galeria ; Comité → /startups ; Startups → /startups (cada página lee su query).
+  let dest = '/galeria'
+  if (photo) dest = `/galeria?g=${encodeURIComponent(code)}`
+  else if (card) dest = `/startups?c=${encodeURIComponent(code)}`
   else if (startup) dest = `/startups?s=${encodeURIComponent(code)}`
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')

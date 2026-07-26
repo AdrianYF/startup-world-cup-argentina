@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { content } from '../lib/content'
-import { openTicketing, openStartupForm, openPartnerForm } from '../lib/ticketing'
+import { openTicketing } from '../lib/ticketing'
 import { Modal } from './ui/Modal'
 
 /**
@@ -13,12 +14,13 @@ import { Modal } from './ui/Modal'
  */
 
 const NAV_LINKS = [
-  { href: '#ruta', label: 'Ruta' },
-  { href: '#pitch', label: 'Pitch Battle' },
-  { href: '#agenda', label: 'Agenda' },
-  // { href: '#speakers', label: 'Speakers' }, // TODO: re-habilitar cuando se confirmen
-  // { href: '#partners', label: 'Partners' }, // removido por pedido
-  { href: '#faq', label: 'FAQ' },
+  { to: '/road-to-swc', label: 'Road to SWC' },
+  { to: '/agenda', label: 'Agenda' },
+  { to: '/pitch-battle', label: 'Pitch Battle' },
+  { to: '/startups', label: 'Startups' },
+  { to: '/voluntarios', label: 'Voluntarios' },
+  { to: '/galeria', label: 'Galería' },
+  { to: '/#faq', label: 'FAQ' },
 ] as const
 
 
@@ -36,82 +38,6 @@ function Footer() {
       {/* Separador celeste - coherente con el resto de secciones del sitio */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
-      {/* ═══ FINAL CTA STRIP ═══ */}
-      <div className="border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-10 sm:py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <p className="text-2xl sm:text-3xl font-black uppercase leading-tight text-center md:text-left">
-              <span className="text-white">¿List@ para el </span>
-              <span className="text-[#75AADB]">Mundial</span>
-              <span className="text-white">?</span>
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <button
-                onClick={() => openStartupForm()}
-                aria-label={content.config.convocatoria.startupsAbierta
-                  ? 'Aplicá como Startup (abre formulario en una nueva pestaña)'
-                  : 'Convocatoria de startups cerrada — ver la agenda del evento'}
-                style={{ backgroundImage: 'var(--gradient-cta)' }}
-                className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer whitespace-nowrap hover:scale-105"
-              >
-                {content.config.convocatoria.startupsAbierta ? 'Aplicá como Startup' : content.config.convocatoria.ctaCerrada}
-                {content.config.convocatoria.startupsAbierta ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                    {/* Heroicons rocket-launch (solid) */}
-                    <path fillRule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 0 1 .75.75c0 5.056-2.383 9.555-6.084 12.436A6.75 6.75 0 0 1 9.75 22.5a.75.75 0 0 1-.75-.75v-4.131A15.838 15.838 0 0 1 6.382 15H2.25a.75.75 0 0 1-.75-.75 6.75 6.75 0 0 1 7.815-6.666ZM15 6.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" clipRule="evenodd" />
-                    <path d="M5.26 17.242a1.5 1.5 0 1 0-2.567-1.555 5.97 5.97 0 0 0-.83 2.336 5.99 5.99 0 0 0-.27 1.405.75.75 0 0 0 .47.7 5.969 5.969 0 0 0 1.405-.27 5.97 5.97 0 0 0 2.337-.83 1.5 1.5 0 1 0-1.555-2.566L5.26 17.242Z" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                )}
-              </button>
-              <button
-                onClick={() => openPartnerForm()}
-                aria-label="Quiero ser Partner (contactanos)"
-                className="relative active:scale-95 text-white font-bold text-sm sm:text-base px-6 sm:px-7 py-3 min-h-[48px] rounded-full transition-transform uppercase tracking-wide cursor-pointer whitespace-nowrap hover:scale-105"
-              >
-                <span
-                  aria-hidden
-                  className="absolute inset-0 rounded-full pointer-events-none"
-                  style={{
-                    padding: '1px',
-                    background: 'var(--gradient-cta)',
-                    WebkitMask:
-                      'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    WebkitMaskComposite: 'xor',
-                    maskComposite: 'exclude',
-                  }}
-                />
-                <span className="relative inline-flex items-center justify-center gap-2">
-                  Quiero ser Partner
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    {/* Lucide handshake */}
-                    <path d="m11 17 2 2a1 1 0 1 0 3-3" />
-                    <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
-                    <path d="m21 3 1 11h-2" />
-                    <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
-                    <path d="M3 4h8" />
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* ═══ COLUMNAS ═══ */}
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
@@ -148,13 +74,13 @@ function Footer() {
             </h4>
             <ul className="flex flex-col gap-3">
               {NAV_LINKS.map(link => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
                     className="text-white hover:text-[#75AADB] text-[15px] font-medium transition-colors duration-200"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>
