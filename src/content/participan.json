@@ -4,20 +4,71 @@
     "nombre": "Francis Perelman",
     "cargo": "Partner, Capria Ventures",
     "ticket": "Ticket de inversión: USD 1,5 millones",
-    "img": "/participan/francis-perelman.jpg"
+    "img": "/participan/francis-perelman.jpg",
+    "destacado": true
   },
   {
     "slug": "john-newkirk",
     "nombre": "John Newkirk",
     "cargo": "Investments & Portfolio Mgmt, Kamay",
     "ticket": "Ticket de inversión: hasta USD 600k",
-    "img": "/participan/john-newkirk.jpg"
+    "img": "/participan/john-newkirk.jpg",
+    "destacado": true
   },
   {
     "slug": "esteban-wolf",
     "nombre": "Esteban Wolf",
     "cargo": "CEO · Chocorissimo · Guapaletas · Abuela Goye · Persicco",
     "ticket": "Empresario, mentor e inversor ángel",
-    "img": "/participan/esteban-wolf.jpg"
+    "img": "/participan/esteban-wolf.jpg",
+    "destacado": true
+  },
+  {
+    "slug": "tito-loizeau",
+    "nombre": "Tito Loizeau",
+    "cargo": "",
+    "img": "/participan/tito-loizeau.jpg"
+  },
+  {
+    "slug": "nicolai-ivansson",
+    "nombre": "Nicolai Ivansson",
+    "cargo": "Ingenerate VC",
+    "img": "/participan/nicolai-ivansson.jpg"
+  },
+  {
+    "slug": "micaela-bacher",
+    "nombre": "Micaela Bacher",
+    "cargo": "Natan.VC",
+    "img": "/participan/micaela-bacher.jpg"
+  },
+  {
+    "slug": "marcelo-rabinovich",
+    "nombre": "Marcelo Rabinovich",
+    "cargo": "MindPraxis",
+    "img": "/participan/marcelo-rabinovich.jpg"
+  },
+  {
+    "slug": "marcelo-de-vicenzi",
+    "nombre": "Marcelo De Vicenzi",
+    "cargo": "UAI",
+    "img": "/participan/marcelo-de-vicenzi.jpg"
+  },
+  {
+    "slug": "hernan-schuster",
+    "nombre": "Hernán Schuster",
+    "cargo": "Spiquers",
+    "img": "/participan/hernan-schuster.jpg"
+  },
+  {
+    "slug": "guido-kuznicki",
+    "nombre": "Guido Kuznicki",
+    "cargo": "Lara AI",
+    "img": "/participan/guido-kuznicki.jpg"
+  },
+  {
+    "slug": "diego-gonzalez-a",
+    "nombre": "Diego Gonzalez",
+    "cargo": "Alina VC",
+    "img": "/participan/diego-gonzalez-a.jpg"
   }
 ]

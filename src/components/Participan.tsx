@@ -6,6 +6,8 @@ type Participante = (typeof content.participan)[number]
 
 /** Tarjeta de participante: foto circular + nombre + cargo + línea destacada (ticket/rol). */
 function ParticipanteCard({ p, compact = false }: { p: Participante; compact?: boolean }) {
+  const cargo = 'cargo' in p ? (p as { cargo?: string }).cargo : ''
+  const ticket = 'ticket' in p ? (p as { ticket?: string }).ticket : ''
   return (
     <div className={`flex ${compact ? 'flex-row items-center gap-4 text-left' : 'flex-col items-center text-center'}`}>
       <img
@@ -14,12 +16,12 @@ function ParticipanteCard({ p, compact = false }: { p: Participante; compact?: b
         loading="lazy"
         decoding="async"
         draggable={false}
-        className={`${compact ? 'h-16 w-16' : 'h-28 w-28 sm:h-32 sm:w-32'} shrink-0 rounded-full object-cover ring-2 ring-[#75AADB]/40`}
+        className={`${compact ? 'h-14 w-14' : 'h-28 w-28 sm:h-32 sm:w-32'} shrink-0 rounded-full object-cover ring-2 ring-[#75AADB]/40`}
       />
-      <div className={compact ? '' : 'mt-4'}>
-        <h3 className={`font-black text-white ${compact ? 'text-base' : 'text-xl'}`}>{p.nombre}</h3>
-        <p className={`text-gray-400 ${compact ? 'text-xs' : 'text-sm'} mt-0.5`}>{p.cargo}</p>
-        <p className={`text-[#75AADB] font-bold ${compact ? 'text-xs' : 'text-sm'} mt-1.5`}>{p.ticket}</p>
+      <div className={compact ? 'min-w-0' : 'mt-4'}>
+        <h3 className={`font-black text-white ${compact ? 'text-sm' : 'text-xl'} truncate`}>{p.nombre}</h3>
+        {cargo ? <p className={`text-gray-400 ${compact ? 'text-xs' : 'text-sm'} mt-0.5 truncate`}>{cargo}</p> : null}
+        {ticket ? <p className={`text-[#75AADB] font-bold ${compact ? 'text-xs' : 'text-sm'} mt-1.5`}>{ticket}</p> : null}
       </div>
     </div>
   )
@@ -27,6 +29,7 @@ function ParticipanteCard({ p, compact = false }: { p: Participante; compact?: b
 
 function Participan() {
   const participan = content.participan
+  const destacados = participan.filter(p => 'destacado' in p && (p as { destacado?: boolean }).destacado)
   const [modalOpen, setModalOpen] = useState(false)
 
   return (
@@ -44,7 +47,7 @@ function Participan() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8">
-          {participan.map(p => (
+          {destacados.map(p => (
             <ParticipanteCard key={p.slug} p={p} />
           ))}
         </div>
@@ -61,25 +64,21 @@ function Participan() {
       </div>
 
       {modalOpen && (
-        <Modal onClose={() => setModalOpen(false)} titleId="asistentes-title" size="2xl">
+        <Modal onClose={() => setModalOpen(false)} titleId="asistentes-title" size="3xl">
           <div className="text-white">
             <h3 id="asistentes-title" className="text-2xl sm:text-3xl font-black uppercase text-center mb-2">
               <span className="text-white">Todos los </span>
               <span className="text-[#75AADB]">asistentes</span>
             </h3>
             <p className="text-gray-400 text-center text-sm mb-8">
-              Inversores, mentores y referentes confirmados para el evento.
+              Inversores, mentores y referentes que participan del evento.
             </p>
 
-            <div className="flex flex-col gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 max-h-[60vh] overflow-y-auto swc-scrollbar-simple pr-1">
               {participan.map(p => (
                 <ParticipanteCard key={p.slug} p={p} compact />
               ))}
             </div>
-
-            <p className="mt-8 text-center text-gray-500 text-sm uppercase tracking-widest font-bold">
-              Más asistentes próximamente
-            </p>
           </div>
         </Modal>
       )}
