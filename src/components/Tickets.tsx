@@ -30,6 +30,9 @@ function Tickets() {
             return (
             <div key={plan.id} className="relative shrink-0 w-[280px] snap-start">
               <div
+                // La tanda destacada (badge "FINALIZA PRONTO") lleva más padding-top para
+                // que el título despegue del badge que asoma arriba.
+                style={destacado ? { paddingTop: '28px' } : undefined}
                 className={`relative rounded-2xl p-6 sm:p-8 border-[0.5px] transition-all ${
                   destacado
                     ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
