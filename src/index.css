@@ -58,6 +58,25 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, rgba(117, 170, 219, 0.85), rgba(90, 147, 197, 0.95));
 }
 
+/* Scrollbar simple y sutil (carrusel horizontal de entradas): thin, celeste plano. */
+.swc-scrollbar-simple {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(117, 170, 219, 0.45) transparent;
+}
+.swc-scrollbar-simple::-webkit-scrollbar {
+  height: 6px;
+}
+.swc-scrollbar-simple::-webkit-scrollbar-track {
+  background: transparent;
+}
+.swc-scrollbar-simple::-webkit-scrollbar-thumb {
+  background: rgba(117, 170, 219, 0.45);
+  border-radius: 9999px;
+}
+.swc-scrollbar-simple::-webkit-scrollbar-thumb:hover {
+  background: rgba(117, 170, 219, 0.7);
+}
+
 /* Oculta la scrollbar (carrusel con flechas propias). */
 .no-scrollbar {
   scrollbar-width: none;

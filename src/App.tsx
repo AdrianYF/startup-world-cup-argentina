@@ -55,14 +55,14 @@ function App() {
       <Navbar />
       <main id="main" tabIndex={-1}>
         <Hero />
+        <FadeInSection>
+          <Tickets />
+        </FadeInSection>
         <ScrollStack>
           {stackedSections.map((Section, i) => (
             <Section key={i} />
           ))}
         </ScrollStack>
-        <FadeInSection>
-          <Tickets />
-        </FadeInSection>
         <FadeInSection>
           <CaminoALaCopa />
         </FadeInSection>
