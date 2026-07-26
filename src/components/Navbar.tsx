@@ -8,7 +8,6 @@ const links = [
   { to: '/agenda', label: 'Agenda' },
   { to: '/pitch-battle', label: 'Pitch Battle' },
   { to: '/startups', label: 'Startups' },
-  { to: '/voluntarios', label: 'Voluntarios' },
   { to: '/galeria', label: 'Galería' },
 ]
 
