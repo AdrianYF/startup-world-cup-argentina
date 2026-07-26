@@ -1,44 +1,27 @@
 import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { openTicketing } from '../lib/ticketing'
 
+// Cada ítem es una ruta propia.
 const links = [
-  { href: '#ruta', label: 'Ruta de Evolución' },
-  { href: '#camino', label: 'Camino a la Copa' },
-  { href: '#pitch', label: 'Pitch Battle' },
-  { href: '#agenda', label: 'Agenda' },
-  { href: '#startups', label: 'Startups' },
-  { href: '#voluntarios', label: 'Voluntarios' },
-  { href: '#partners', label: 'Partners' },
-  { href: '#galeria', label: 'Galería' },
-  // { href: '#speakers', label: 'Speakers' }, // disabled hasta confirmar
+  { to: '/road-to-swc', label: 'Road to SWC' },
+  { to: '/agenda', label: 'Agenda' },
+  { to: '/pitch-battle', label: 'Pitch Battle' },
+  { to: '/startups', label: 'Startups' },
+  { to: '/voluntarios', label: 'Voluntarios' },
+  { to: '/galeria', label: 'Galería' },
 ]
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState<string | null>(null)
+  const { pathname } = useLocation()
+  const esActiva = (to: string) => !to.startsWith('/#') && pathname === to
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // IntersectionObserver para marcar la sección activa (Don Norman: mapping)
-  useEffect(() => {
-    const sections = links.map(l => document.querySelector(l.href)).filter(Boolean) as HTMLElement[]
-    if (!sections.length) return
-    const obs = new IntersectionObserver(
-      entries => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (visible) setActiveSection(`#${visible.target.id}`)
-      },
-      { rootMargin: '-40% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75] },
-    )
-    sections.forEach(s => obs.observe(s))
-    return () => obs.disconnect()
   }, [])
 
   useEffect(() => {
@@ -57,8 +40,8 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <a
-            href="#top"
+          <Link
+            to="/"
             aria-label="Startup World Cup Argentina - ir al inicio"
             className="flex items-baseline gap-2"
           >
@@ -72,7 +55,7 @@ function Navbar() {
             >
               Argentina 26
             </span>
-          </a>
+          </Link>
 
           <span
             aria-hidden
@@ -100,12 +83,12 @@ function Navbar() {
         {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-5 font-semibold">
           {links.map(l => {
-            const isActive = activeSection === l.href
+            const isActive = esActiva(l.to)
             return (
-              <a
-                key={l.href}
-                href={l.href}
-                aria-current={isActive ? 'location' : undefined}
+              <Link
+                key={l.to}
+                to={l.to}
+                aria-current={isActive ? 'page' : undefined}
                 className={`transition-colors relative ${scrolled ? 'text-xs' : 'text-sm'} ${
                   isActive ? 'text-[#75AADB]' : 'text-white hover:text-[#75AADB]'
                 }`}
@@ -114,7 +97,7 @@ function Navbar() {
                 {isActive && (
                   <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#75AADB]" />
                 )}
-              </a>
+              </Link>
             )
           })}
           <button
@@ -151,12 +134,12 @@ function Navbar() {
         >
           <div className="flex flex-col p-4 gap-1">
             {links.map(l => {
-              const isActive = activeSection === l.href
+              const isActive = esActiva(l.to)
               return (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  aria-current={isActive ? 'location' : undefined}
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  aria-current={isActive ? 'page' : undefined}
                   onClick={() => setMobileOpen(false)}
                   className={`transition-colors py-3 px-3 rounded-lg font-semibold text-base border-b border-white/5 ${
                     isActive
@@ -165,7 +148,7 @@ function Navbar() {
                   }`}
                 >
                   {l.label}
-                </a>
+                </Link>
               )
             })}
             <button

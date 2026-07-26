@@ -1,13 +1,19 @@
+/* eslint-disable react-refresh/only-export-components -- entry point: los lazy() de rutas no son un boundary de fast-refresh */
 import { StrictMode, Suspense, lazy, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import SpeakersAll from './pages/SpeakersAll.tsx'
-import StartupsPage from './pages/StartupsPage.tsx'
 import { initAnalytics, trackPageView } from './lib/analytics'
 
-// Ruta oculta con Three.js → lazy para no inflar el bundle principal.
+// Páginas de ruta → lazy para mantener liviano el bundle del landing.
+const RoadToSwcPage = lazy(() => import('./pages/RoadToSwcPage.tsx'))
+const AgendaPage = lazy(() => import('./pages/AgendaPage.tsx'))
+const PitchBattlePage = lazy(() => import('./pages/PitchBattlePage.tsx'))
+const StartupsPage = lazy(() => import('./pages/StartupsPage.tsx'))
+const VoluntariosPage = lazy(() => import('./pages/VoluntariosPage.tsx'))
+const GaleriaPage = lazy(() => import('./pages/GaleriaPage.tsx'))
+const SpeakersAll = lazy(() => import('./pages/SpeakersAll.tsx'))
 const MysteryBox = lazy(() => import('./pages/MysteryBox.tsx'))
 
 initAnalytics()
@@ -37,24 +43,24 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <RouteAnalytics />
-      <Routes>
-        <Route path="/" element={<App />} />
-        {/* Short links de la galería: /swc/<CODE> (o /g legacy) abre esa foto (lo maneja Galeria) */}
-        <Route path="/swc/:code" element={<App />} />
-        <Route path="/g/:code" element={<App />} />
-        <Route path="/speakers" element={<SpeakersAll />} />
-        {/* Página dedicada: startups seleccionadas (cards compartibles) */}
-        <Route path="/startups" element={<StartupsPage />} />
-        {/* Sección oculta: se llega escaneando el QR del ticket */}
-        <Route
-          path="/mystery-box"
-          element={
-            <Suspense fallback={<div className="min-h-screen bg-[#020618]" />}>
-              <MysteryBox />
-            </Suspense>
-          }
-        />
-      </Routes>
+      <Suspense fallback={<div className="min-h-screen bg-[#020618]" />}>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/road-to-swc" element={<RoadToSwcPage />} />
+          <Route path="/agenda" element={<AgendaPage />} />
+          <Route path="/pitch-battle" element={<PitchBattlePage />} />
+          <Route path="/startups" element={<StartupsPage />} />
+          <Route path="/voluntarios" element={<VoluntariosPage />} />
+          <Route path="/galeria" element={<GaleriaPage />} />
+          <Route path="/speakers" element={<SpeakersAll />} />
+          {/* Short links (galería/comité/startups): /swc/<CODE> → OG redirige a la ruta correcta.
+              En prod lo intercepta el rewrite de vercel.json; acá quedan como fallback. */}
+          <Route path="/swc/:code" element={<App />} />
+          <Route path="/g/:code" element={<App />} />
+          {/* Sección oculta: se llega escaneando el QR del ticket */}
+          <Route path="/mystery-box" element={<MysteryBox />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   </StrictMode>,
 )

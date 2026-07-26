@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { content } from '../lib/content'
-import { openStartupForm, openPartnerForm } from '../lib/ticketing'
+import { openStartupForm } from '../lib/ticketing'
 import { EventTicker } from './ui/EventTicker'
 
 function Hero() {
+  const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
 
   useEffect(() => {
@@ -129,10 +131,10 @@ function Hero() {
               {/* CTAs — a la misma altura del trofeo */}
               <div className="flex flex-row flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full">
                 <button
-                  onClick={() => openStartupForm()}
+                  onClick={() => (convocatoriaAbierta ? openStartupForm() : navigate('/agenda'))}
                   aria-label={convocatoriaAbierta
                     ? `${content.config.hero.ctaPrimario} (abre formulario en una nueva pestaña)`
-                    : 'Convocatoria de startups cerrada — ver la agenda del evento'}
+                    : 'Ver la agenda del evento'}
                   style={{ backgroundImage: 'var(--gradient-cta)' }}
                   className="inline-flex items-center justify-center gap-2 active:scale-95 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105 shadow-lg shadow-[#6c5ce7]/30"
                 >
@@ -156,10 +158,10 @@ function Hero() {
                     </svg>
                   )}
                 </button>
-                <button
-                  onClick={() => openPartnerForm()}
-                  aria-label={`${content.config.hero.ctaSecundario} (contactanos)`}
-                  className="relative active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105"
+                <a
+                  href="#tickets"
+                  aria-label="Ver entradas"
+                  className="relative active:scale-95 text-white font-bold text-sm sm:text-base px-6 py-2.5 min-h-[44px] inline-flex items-center rounded-full transition-all text-center uppercase tracking-wide cursor-pointer hover:scale-105"
                 >
                   <span
                     aria-hidden
@@ -174,7 +176,7 @@ function Hero() {
                     }}
                   />
                   <span className="relative inline-flex items-center justify-center gap-2">
-                    {content.config.hero.ctaSecundario}
+                    Entradas
                     <svg
                       width="18"
                       height="18"
@@ -186,15 +188,14 @@ function Hero() {
                       strokeLinejoin="round"
                       aria-hidden
                     >
-                      {/* Lucide handshake */}
-                      <path d="m11 17 2 2a1 1 0 1 0 3-3" />
-                      <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
-                      <path d="m21 3 1 11h-2" />
-                      <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
-                      <path d="M3 4h8" />
+                      {/* Lucide ticket */}
+                      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                      <path d="M13 5v2" />
+                      <path d="M13 17v2" />
+                      <path d="M13 11v2" />
                     </svg>
                   </span>
-                </button>
+                </a>
               </div>
             </div>
 

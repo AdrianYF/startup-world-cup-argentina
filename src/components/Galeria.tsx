@@ -84,15 +84,15 @@ function Strip({
 function Galeria() {
   const [open, setOpen] = useState<string | null>(null)
 
-  // Si llegan con un short link (ruta /swc/<code>, /g/<code> o ?g=<code>), abrir esa foto y limpiar la URL.
+  // Si llegan con un short link (ruta /swc/<code>, /g/<code> o ?g=<code>), abrir esa foto
+  // y limpiar la URL (el lightbox es modal, no hace falta scrollear).
   useEffect(() => {
     const code = codeFromUrl('g')
     if (!code) return
     const src = srcFromCode(code)
     if (!src) return // el código es de otra sección (ej. el comité)
     setOpen(src)
-    window.history.replaceState({}, '', '/#galeria')
-    document.getElementById('galeria')?.scrollIntoView({ block: 'start' })
+    window.history.replaceState({}, '', '/galeria')
   }, [])
 
   return (

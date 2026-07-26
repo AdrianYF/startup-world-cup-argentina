@@ -45,11 +45,11 @@ function Comite() {
   // efecto que la setee después.
   const [open, setOpen] = useState<Miembro | null>(MIEMBRO_DEL_LINK)
 
-  // Llegando por short link, la URL se limpia y se baja hasta la sección.
+  // Llegando por short link (/startups?c=<CODE>): el lightbox ya abre solo; solo
+  // limpiamos la URL para que un refresh no lo reabra.
   useEffect(() => {
     if (!MIEMBRO_DEL_LINK) return
-    window.history.replaceState({}, '', '/#comite')
-    document.getElementById('comite')?.scrollIntoView({ block: 'start' })
+    window.history.replaceState({}, '', '/startups')
   }, [])
 
   const visibles = expanded ? miembros : miembros.slice(0, MOBILE_PREVIEW)

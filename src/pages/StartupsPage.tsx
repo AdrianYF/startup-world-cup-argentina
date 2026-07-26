@@ -1,41 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { content } from '../lib/content'
+import { PageLayout } from '../components/ui/PageLayout'
+import { FadeInSection } from '../components/ui/FadeInSection'
+import Startups from '../components/Startups'
+import Comite from '../components/Comite'
 import { ShareLightbox } from '../components/ui/ShareLightbox'
 import { DeckGrid } from '../components/ui/DeckGrid'
 import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
 
-/**
- * Página dedicada con las startups seleccionadas. Cada card es una figurita
- * (imagen) compartible: click → lightbox con compartir nativo / X / LinkedIn /
- * copiar link, y su propio short link opaco /swc/<CODE> (OG en api/og.js, que
- * redirige a /startups?s=<CODE>).
- */
-
 const BG = '#020618'
-const SURFACE = '#0f172b'
 
 type Startup = (typeof content.startups)[number]
 
-// Grupos de la selección, en orden de aparición. Cada startup trae su `grupo`.
 const GRUPOS: { key: string; nombre: string }[] = [
   { key: 'pitch-battle', nombre: 'Pitch Battle' },
   { key: 'builders-arena', nombre: 'Builders Arena' },
 ]
 
-// Mismo código opaco que la galería y el comité (FNV-1a → xorshift32 → base26),
-// sobre la imagen de cada card. No colisiona con las otras secciones (verificado).
 const STARTUP_POR_CODE = codeTable(content.startups.map(s => s.img))
 
 if (import.meta.env.DEV && Object.keys(STARTUP_POR_CODE).length !== content.startups.length) {
   console.warn('[Startups] colisión de códigos entre startups: revisá los slugs/imágenes en startups.json')
 }
 
-/**
- * Si llegan con un short link (/startups?s=<CODE>), la card que hay que abrir.
- * Se resuelve una sola vez al cargar el módulo, antes de que el efecto limpie la
- * URL: leerlo más tarde (en un re-mount de StrictMode) ya daría null.
- */
 const STARTUP_DEL_LINK: Startup | null = (() => {
   const code = codeFromUrl('s')
   if (!code) return null
@@ -45,7 +32,6 @@ const STARTUP_DEL_LINK: Startup | null = (() => {
 
 const alt = (nombre: string) => `${nombre} — Startup seleccionada · Startup World Cup Argentina 2026`
 
-/** Card (figurita) clickeable que abre el lightbox para compartir. */
 function StartupCard({ s, onOpen }: { s: Startup; onOpen: (s: Startup) => void }) {
   return (
     <button
@@ -73,7 +59,6 @@ const GRID_CLASS = 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-
 const GRID_COLS = { base: 3, sm: 4, md: 5, lg: 6 }
 const GRID_GAP = { base: 12, sm: 16 }
 
-/** Grilla de un grupo, con reparto de mazo en 3D al entrar en viewport. */
 function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Startup) => void }) {
   return (
     <DeckGrid gridClass={GRID_CLASS} columns={GRID_COLS} gap={GRID_GAP}>
@@ -84,79 +69,43 @@ function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Sta
   )
 }
 
-function StartupsPage() {
+function Seleccion() {
   const startups = content.startups
   const [open, setOpen] = useState<Startup | null>(STARTUP_DEL_LINK)
 
   useEffect(() => {
-    if (STARTUP_DEL_LINK) {
-      // Llegó por short link: limpiar la URL para que un refresh no reabra sola.
-      window.history.replaceState({}, '', '/startups')
-    } else {
-      window.scrollTo(0, 0)
-    }
-  }, [])
-
-  // El <html> tiene scroll-snap-type: y proximity (para el landing). En /startups
-  // eso "tira" solo el scroll hasta alinear cada grupo. Lo desactivamos a nivel
-  // contenedor mientras la página está montada; se restaura al salir.
-  useEffect(() => {
-    const html = document.documentElement
-    const previo = html.style.scrollSnapType
-    html.style.scrollSnapType = 'none'
-    return () => {
-      html.style.scrollSnapType = previo
-    }
+    // Llegó por short link: limpiar la URL para que un refresh no reabra sola.
+    if (STARTUP_DEL_LINK) window.history.replaceState({}, '', '/startups')
   }, [])
 
   return (
-    <div className="min-h-screen text-white" style={{ backgroundColor: BG }}>
-      {/* Header */}
-      <header className="relative" style={{ backgroundColor: SURFACE }}>
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
+    <section id="seleccion" className="relative py-16 sm:py-24" style={{ backgroundColor: BG }}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-16">
-          <Link
-            to="/#startups"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-[#75AADB] text-sm font-bold uppercase tracking-widest transition-colors mb-8"
-          >
-            ← Volver al sitio
-          </Link>
-
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black uppercase">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase">
             <span className="text-white">STARTUPS </span>
             <span className="text-[#75AADB]">SELECCIONADAS</span>
-          </h1>
+          </h2>
         </div>
-      </header>
 
-      {/* Grupos: Pitch Battle (14) y Builders Arena (14) */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {GRUPOS.map(g => {
           const items = startups.filter(s => (s as { grupo?: string }).grupo === g.key)
           if (!items.length) return null
           return (
-            <section key={g.key} className="mb-14 sm:mb-20 last:mb-0">
+            <div key={g.key} className="mb-14 sm:mb-20 last:mb-0">
               <div className="mb-6 sm:mb-8">
-                <h2 className="text-2xl sm:text-4xl font-black uppercase leading-tight">
+                <h3 className="text-2xl sm:text-4xl font-black uppercase leading-tight">
                   <span className="text-white">Selección </span>
                   <span className="text-[#75AADB]">{g.nombre}</span>
-                </h2>
+                </h3>
               </div>
               <GrillaConReparto items={items} onOpen={setOpen} />
-            </section>
+            </div>
           )
         })}
-
-        <div className="mt-16 text-center">
-          <Link
-            to="/#startups"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#75AADB] hover:bg-[#5a93c5] active:scale-95 text-white font-bold uppercase tracking-wide text-sm transition-[transform,background-color]"
-          >
-            Volver al sitio
-          </Link>
-        </div>
-      </main>
+      </div>
 
       {open && (
         <ShareLightbox
@@ -171,7 +120,23 @@ function StartupsPage() {
           onClose={() => setOpen(null)}
         />
       )}
-    </div>
+    </section>
+  )
+}
+
+function StartupsPage() {
+  return (
+    <PageLayout>
+      <FadeInSection>
+        <Startups />
+      </FadeInSection>
+      <FadeInSection>
+        <Comite />
+      </FadeInSection>
+      <FadeInSection>
+        <Seleccion />
+      </FadeInSection>
+    </PageLayout>
   )
 }
 
