@@ -35,9 +35,8 @@ function Participan() {
 
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
-            <span className="text-white">PARTICI</span>
-            <span className="text-[#75AADB]">PAN</span>
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4 text-white">
+            PARTICIPAN
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Inversores y referentes que van a estar en el evento.
