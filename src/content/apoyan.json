@@ -25,6 +25,7 @@
     "centrar": true,
     "porFila": 4,
     "escalaLogos": 0.85,
+    "compacto": true,
     "logos": [
       { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.6, "url": "https://kamayventures.com/" },
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },

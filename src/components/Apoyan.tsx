@@ -93,6 +93,13 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
     'escalaLogos' in cat && typeof (cat as { escalaLogos?: number }).escalaLogos === 'number'
       ? (cat as { escalaLogos: number }).escalaLogos
       : 1
+  // compacto: reduce el interlineado (~1/3) en categorías con muchas filas
+  // (ej. Other Partners) — baja el alto de fila y el gap vertical. También
+  // baja el max-h del logo para que los más altos no se desborden a la fila
+  // vecina al achicar la celda.
+  const compacto = 'compacto' in cat && (cat as { compacto?: boolean }).compacto === true
+  const cellHClass = compacto ? 'h-20 sm:h-24' : 'h-28 sm:h-32'
+  const imgMaxHClass = compacto ? 'max-h-20 sm:max-h-24' : 'max-h-24 sm:max-h-32'
   const colsClass =
     ({ 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4', 5: 'md:grid-cols-5', 6: 'md:grid-cols-6' } as Record<number, string>)[
       cols
@@ -108,8 +115,10 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
     centrar && typeof porFila === 'number'
       ? { maxWidth: `${porFila * 288 + (porFila - 1) * 16 + 12}px` }
       : undefined
+  // En modo compacto separamos el gap: columna normal (16px), fila reducida (4px).
+  const gapCentrar = compacto ? 'gap-x-4 gap-y-1' : 'gap-4'
   const contenedorClass = centrar
-    ? `flex flex-wrap gap-4 items-center justify-center${porFila ? ' mx-auto' : ''}`
+    ? `flex flex-wrap ${gapCentrar} items-center justify-center${porFila ? ' mx-auto' : ''}`
     : `grid grid-cols-1 sm:grid-cols-2 ${colsClass} gap-4 items-center justify-items-center`
 
   return (
@@ -139,13 +148,13 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Visitar ${logo.nombre} (abre en una nueva pestaña)`}
-                className={`flex items-center justify-center ${anchoClass}${spanClass} h-28 sm:h-32`}
+                className={`flex items-center justify-center ${anchoClass}${spanClass} ${cellHClass}`}
                 style={revealStyle}
               >
                 {children}
               </a>
             ) : (
-              <div className={`flex items-center justify-center ${anchoClass}${spanClass} h-28 sm:h-32`} style={revealStyle}>
+              <div className={`flex items-center justify-center ${anchoClass}${spanClass} ${cellHClass}`} style={revealStyle}>
                 {children}
               </div>
             )
@@ -196,7 +205,7 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                       e.currentTarget.style.transform = baseTransform
                       e.currentTarget.style.opacity = String(baseOpacity)
                     }}
-                    className="max-h-24 sm:max-h-32 max-w-[280px] sm:max-w-[320px] w-auto object-contain transition-[filter,transform,opacity] duration-300 ease-out cursor-pointer"
+                    className={`${imgMaxHClass} max-w-[280px] sm:max-w-[320px] w-auto object-contain transition-[filter,transform,opacity] duration-300 ease-out cursor-pointer`}
                   />
                 )
               })() : (
