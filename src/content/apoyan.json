@@ -12,6 +12,15 @@
     ]
   },
   {
+    "titulo": "ORGANIZERS",
+    "centrar": true,
+    "porFila": 2,
+    "logos": [
+      { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.6, "url": "https://omaly.ai/" },
+      { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.82, "url": "https://titofree.com/" }
+    ]
+  },
+  {
     "titulo": "INSTITUTIONAL PARTNERS",
     "centrar": true,
     "porFila": 4,
@@ -32,24 +41,15 @@
     ]
   },
   {
-    "titulo": "ORGANIZERS",
-    "centrar": true,
-    "porFila": 2,
-    "logos": [
-      { "nombre": "Omaly", "img": "/omaly-logo.png", "scale": 0.6, "url": "https://omaly.ai/" },
-      { "nombre": "Tito Free", "img": "/tito-logo.png", "scale": 0.82, "url": "https://titofree.com/" }
-    ]
-  },
-  {
     "titulo": "OTHER PARTNERS",
     "centrar": true,
     "porFila": 3,
     "logos": [
-      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 0.5 },
-      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.25 },
-      { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.35, "muted": true },
-      { "nombre": "WIP Club", "img": null, "scale": 0.375, "url": "https://www.wipclub.com.ar" },
-      { "nombre": "Huerta", "img": "/logos/huerta-logo.png", "scale": 0.25, "url": "https://huertacoworking.com" }
+      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 1.0 },
+      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.5 },
+      { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
+      { "nombre": "WIP Club", "img": null, "scale": 0.75, "url": "https://www.wipclub.com.ar" },
+      { "nombre": "Huerta", "img": "/logos/huerta-logo.png", "scale": 0.5, "url": "https://huertacoworking.com" }
     ]
   }
 ]
