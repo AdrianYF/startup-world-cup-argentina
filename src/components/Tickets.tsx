@@ -20,7 +20,7 @@ function Tickets() {
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">Cupos limitados para garantizar calidad de conexiones y experiencias.</p>
         </div>
         {/* Scroll horizontal: las tandas quedan en una sola línea; centradas si entran, con scroll si no. */}
-        <div className="overflow-x-auto pt-6 pb-4 [scrollbar-width:thin]">
+        <div className="swc-scrollbar overflow-x-auto pt-6 pb-4">
           <div className="flex gap-6 items-stretch w-max mx-auto snap-x snap-mandatory">
             {content.tickets.map((plan) => {
             const disponible = plan.estado === 'venta'
