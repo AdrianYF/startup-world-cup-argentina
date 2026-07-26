@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { content } from '../lib/content'
+import { openTicketing } from '../lib/ticketing'
 import { Modal } from './ui/Modal'
 
 type Participante = (typeof content.participan)[number]
@@ -84,10 +85,23 @@ function Participan() {
               Inversores, mentores y referentes que participan del evento.
             </p>
 
-            <div className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto swc-scrollbar-simple pr-1">
+            <div className="flex flex-col gap-4 max-h-[52vh] overflow-y-auto swc-scrollbar-simple pr-1">
               {otros.map(p => (
                 <ParticipanteCard key={p.slug} p={p} compact />
               ))}
+            </div>
+
+            {/* CTA fijo al pie del modal: la lista scrollea por encima, este queda siempre visible. */}
+            <div className="mt-6 pt-5 border-t border-white/10">
+              <button
+                onClick={() => openTicketing('participan-modal')}
+                aria-label="Conocelos en vivo — conseguí tu entrada (abre Startup Grind en una nueva pestaña)"
+                style={{ backgroundImage: 'var(--gradient-cta)' }}
+                className="w-full inline-flex items-center justify-center gap-2 text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] font-black text-sm px-7 py-3.5 rounded-full uppercase tracking-wide hover:scale-[1.02] active:scale-95 transition-transform cursor-pointer"
+              >
+                Conocelos en vivo
+                <span aria-hidden>→</span>
+              </button>
             </div>
           </div>
         </Modal>

@@ -156,6 +156,7 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                   src={logo.img}
                   alt={logo.nombre}
                   sinPadding={'sinPadding' in logo && (logo as { sinPadding?: boolean }).sinPadding === true}
+                  scale={'scale' in logo && typeof logo.scale === 'number' ? logo.scale : undefined}
                 />
               ) : logo.img ? (() => {
                 const scale = 'scale' in logo && typeof logo.scale === 'number' ? logo.scale : undefined

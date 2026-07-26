@@ -12,11 +12,14 @@ export function LogoProtegido({
   src,
   alt,
   sinPadding = false,
+  scale,
 }: {
   src: string
   alt: string
   /** Sin el área de protección (padding). */
   sinPadding?: boolean
+  /** Multiplicador de tamaño (para emparejar con otras marcas protegidas). */
+  scale?: number
 }) {
   return (
     <span
@@ -27,6 +30,7 @@ export function LogoProtegido({
         alt={alt}
         loading="lazy"
         draggable={false}
+        style={typeof scale === 'number' ? { transform: `scale(${scale})` } : undefined}
         className="h-10 w-auto object-contain sm:h-11"
       />
     </span>
