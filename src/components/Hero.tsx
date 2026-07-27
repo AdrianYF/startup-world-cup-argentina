@@ -7,6 +7,7 @@ function Hero() {
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
   const [videoActivo, setVideoActivo] = useState(false)
+  const [videoVisible, setVideoVisible] = useState(false)
 
   useEffect(() => {
     const target = new Date(content.config.evento.fechaInicioISO)
@@ -89,9 +90,13 @@ function Hero() {
     <section className="relative min-h-screen flex flex-col overflow-hidden">
 
       {/* Imagen de fondo base — siempre presente (en mobile es el fondo principal).
+          Es el primer frame de hero-720.mp4: cuando el video entra, arranca desde
+          esta misma imagen y el cambio no se percibe. Antes acá había un logo de
+          318x390 estirado 5x, que no tenía nada que ver con el video y hacía que
+          el reemplazo se viera como un salto.
           Es el elemento LCP del landing: va eager y con prioridad alta. */}
       <img
-        src="/SWC-header.png"
+        src="/hero-poster.jpg"
         alt=""
         aria-hidden
         fetchPriority="high"
@@ -109,17 +114,23 @@ function Hero() {
             // React setea `muted` como propiedad, no como atributo, así que en el
             // momento en que Chrome evalúa la política de autoplay todavía ve un
             // video con sonido y lo bloquea. Silenciarlo y arrancarlo a mano
-            // acá evita eso. Es decorativo: si igual lo rechaza, queda el poster.
+            // acá evita eso. Es decorativo: si igual lo rechaza, queda la imagen.
             el.muted = true
             void el.play().catch(() => {})
           }}
-          className="absolute inset-0 w-full h-full object-cover"
+          // Recién visible cuando ya está reproduciendo, con un fundido corto: sin
+          // esto el primer frame aparece de golpe. Si `playing` nunca llega, queda
+          // en opacity-0 y se ve la imagen de fondo, que es ese mismo frame.
+          onPlaying={() => setVideoVisible(true)}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-out ${
+            videoVisible ? 'opacity-100' : 'opacity-0'
+          }`}
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
-          poster="/SWC-header.png"
+          poster="/hero-poster.jpg"
           aria-hidden
         >
           <source src="/hero-720.mp4" type="video/mp4" />
