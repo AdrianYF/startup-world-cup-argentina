@@ -12,13 +12,29 @@ function Apoyan() {
   const wallRef = useRef<HTMLDivElement>(null)
 
   // Spotlight: una luz celeste sigue el cursor sobre el muro de logos (via CSS vars).
+  // Las escrituras van coalescidas en un rAF: mousemove dispara muchas más veces
+  // que frames hay, y cada setProperty invalida el estilo del muro entero.
+  const frameRef = useRef<number | null>(null)
+  const posRef = useRef({ x: 0, y: 0 })
+
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = wallRef.current
     if (!el) return
     const r = el.getBoundingClientRect()
-    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
-    el.style.setProperty('--my', `${e.clientY - r.top}px`)
+    posRef.current = { x: e.clientX - r.left, y: e.clientY - r.top }
+    if (frameRef.current !== null) return
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null
+      const nodo = wallRef.current
+      if (!nodo) return
+      nodo.style.setProperty('--mx', `${posRef.current.x}px`)
+      nodo.style.setProperty('--my', `${posRef.current.y}px`)
+    })
   }
+
+  useEffect(() => () => {
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current)
+  }, [])
 
   return (
     <section id="apoyan" className="relative py-16 sm:py-24 bg-[#020618] text-white">
@@ -190,6 +206,8 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                   <img
                     src={logo.img}
                     alt={logo.nombre}
+                    loading="lazy"
+                    decoding="async"
                     style={{
                       transform: baseTransform,
                       filter: baseFilterFinal,

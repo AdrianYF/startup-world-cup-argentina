@@ -18,8 +18,15 @@ function Navbar() {
   const esActiva = (to: string) => !to.startsWith('/#') && pathname === to
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
+    // passive: el handler nunca llama preventDefault, y sin la marca el browser
+    // no puede arrancar el scroll hasta haberlo ejecutado.
+    // El setState sólo se dispara al cruzar el umbral, no en cada evento.
+    const handleScroll = () => {
+      const pasado = window.scrollY > 50
+      setScrolled(prev => (prev === pasado ? prev : pasado))
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 

@@ -7,8 +7,8 @@
       { "nombre": "Startup World Cup", "img": "/SWC-logo.png", "brightness": 0.85, "scale": 0.85, "url": "https://www.startupworldcup.io/" },
       { "nombre": "Startup Grind Buenos Aires", "img": "/SGBA-logo.png", "url": "https://www.startupgrind.com/buenos-aires/" },
       { "nombre": "Pegasus Tech Ventures", "img": "/pegasus-logo.png", "scale": 0.85, "url": "https://www.pegasustechventures.com/" },
-      { "nombre": "Workplace", "img": "/logos/workplace-logo.png", "protegido": true, "sinPadding": true, "scale": 1.4 },
-      { "nombre": "Deloitte", "img": "/logos/deloitte-white.png", "protegido": true, "url": "https://www.deloitte.com/ar" }
+      { "nombre": "Workplace", "img": "/logos/workplace-logo.webp", "protegido": true, "sinPadding": true, "scale": 1.4 },
+      { "nombre": "Deloitte", "img": "/logos/deloitte-white.webp", "protegido": true, "url": "https://www.deloitte.com/ar" }
     ]
   },
   {
@@ -27,24 +27,24 @@
     "escalaLogos": 0.85,
     "compacto": true,
     "logos": [
-      { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.png", "scale": 0.6, "url": "https://kamayventures.com/" },
+      { "nombre": "Kamay Ventures", "img": "/logos/kamay-ventures.webp", "scale": 0.6, "url": "https://kamayventures.com/" },
       { "nombre": "Paisanos", "img": "/Paisanos-logo.png", "url": "https://paisanos.io/" },
       { "nombre": "Lovable", "img": "/Lovable-logo.png", "scale": 1.2, "url": "https://lovable.dev/" },
-      { "nombre": "UTN", "img": "/logos/utn-white.png", "scale": 0.4, "muted": true },
+      { "nombre": "UTN", "img": "/logos/utn-white.webp", "scale": 0.4, "muted": true },
       { "nombre": "Universidad Champagnat", "img": "/logos/champa-white.svg", "muted": true },
       { "nombre": "UNCUYO", "img": null, "url": "https://www.uncuyo.edu.ar/" },
-      { "nombre": "Fundación Empretec Argentina", "img": "/logos/empretec.png", "scale": 0.55, "muted": true },
-      { "nombre": "CYTED", "img": "/logos/cyted-white.png", "scale": 0.5, "muted": true },
-      { "nombre": "21", "img": "/logos/21-white.png", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
-      { "nombre": "Universidad Nacional de Mar del Plata", "img": "/logos/unmdp-white.png", "scale": 0.75, "muted": true },
-      { "nombre": "Centro de Innovación Atlantis", "img": "/logos/atlantis-white.png", "scale": 0.75, "muted": true },
-      { "nombre": "Universidad Abierta Interamericana", "img": "/logos/uai-white.png", "scale": 0.5, "muted": true },
-      { "nombre": "UAI Tecnología Informática", "img": "/logos/uai-ti-white.png", "scale": 0.6, "muted": true },
-      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.png", "scale": 1.0 },
-      { "nombre": "Xplora", "img": "/logos/xplora-logo.png", "scale": 0.5 },
-      { "nombre": "Red RIBCi", "img": "/logos/red-white.png", "scale": 0.7, "muted": true },
+      { "nombre": "Fundación Empretec Argentina", "img": "/logos/empretec.webp", "scale": 0.55, "muted": true },
+      { "nombre": "CYTED", "img": "/logos/cyted-white.webp", "scale": 0.5, "muted": true },
+      { "nombre": "21", "img": "/logos/21-white.webp", "scale": 0.5, "muted": true, "url": "https://21.edu.ar/" },
+      { "nombre": "Universidad Nacional de Mar del Plata", "img": "/logos/unmdp-white.webp", "scale": 0.75, "muted": true },
+      { "nombre": "Centro de Innovación Atlantis", "img": "/logos/atlantis-white.webp", "scale": 0.75, "muted": true },
+      { "nombre": "Universidad Abierta Interamericana", "img": "/logos/uai-white.webp", "scale": 0.5, "muted": true },
+      { "nombre": "UAI Tecnología Informática", "img": "/logos/uai-ti-white.webp", "scale": 0.6, "muted": true },
+      { "nombre": "Networking CriptoWorld", "img": "/logos/networking-cryptoworld-white.webp", "scale": 1.0 },
+      { "nombre": "Xplora", "img": "/logos/xplora-logo.webp", "scale": 0.5 },
+      { "nombre": "Red RIBCi", "img": "/logos/red-white.webp", "scale": 0.7, "muted": true },
       { "nombre": "WIP Club", "img": null, "scale": 0.75, "url": "https://www.wipclub.com.ar" },
-      { "nombre": "Huerta", "img": "/logos/huerta-logo.png", "scale": 0.5, "url": "https://huertacoworking.com" }
+      { "nombre": "Huerta", "img": "/logos/huerta-logo.webp", "scale": 0.5, "url": "https://huertacoworking.com" }
     ]
   }
 ]

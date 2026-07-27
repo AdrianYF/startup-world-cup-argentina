@@ -1,4 +1,24 @@
 {
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(mp4|webm|png|jpg|jpeg|webp|avif|svg|glb)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/swc/(.*)", "destination": "/api/og?code=$1" },
     { "source": "/(.*)", "destination": "/index.html" }

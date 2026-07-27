@@ -178,8 +178,10 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
             {titulo && (
               // fontFamily inline: la regla sin capa de index.css para h1-h6 fuerza
               // el sans y le gana a la utility font-serif de Tailwind (layered).
+              // Serif del sistema: Fraunces era el único uso en todo el repo y se
+              // bajaba (eje óptico variable completo) en cada página del sitio.
               <h2
-                style={{ fontFamily: '"Fraunces", ui-serif, Georgia, serif' }}
+                style={{ fontFamily: 'ui-serif, Georgia, "Times New Roman", serif' }}
                 className="pl-4 text-white text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-3 sm:mb-4"
               >
                 {titulo}

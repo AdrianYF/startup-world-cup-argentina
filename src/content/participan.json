@@ -4,7 +4,7 @@
     "nombre": "Francis Perelman",
     "cargo": "Partner, Capria Ventures",
     "ticket": "Ticket de inversión: USD 1,5 millones",
-    "img": "/participan/francis-perelman.jpg",
+    "img": "/participan/francis-perelman.webp",
     "destacado": true
   },
   {
@@ -12,7 +12,7 @@
     "nombre": "John Newkirk",
     "cargo": "Investments & Portfolio Mgmt, Kamay",
     "ticket": "Ticket de inversión: hasta USD 600k",
-    "img": "/participan/john-newkirk.jpg",
+    "img": "/participan/john-newkirk.webp",
     "destacado": true
   },
   {
@@ -20,97 +20,91 @@
     "nombre": "Esteban Wolf",
     "cargo": "CEO · Chocorissimo · Guapaletas · Abuela Goye · Persicco",
     "ticket": "Empresario, mentor e inversor ángel",
-    "img": "/participan/esteban-wolf.jpg",
+    "img": "/participan/esteban-wolf.webp",
     "destacado": true
   },
   {
     "slug": "tito-loizeau",
     "nombre": "Tito Loizeau",
     "cargo": "Emprendedor serial · Endeavor",
-    "img": "/participan/tito-loizeau.jpg"
+    "img": "/participan/tito-loizeau.webp"
   },
   {
     "slug": "nicolai-ivansson",
     "nombre": "Nicolai Ivansson",
     "cargo": "Ingenerate VC",
-    "img": "/participan/nicolai-ivansson.jpg"
+    "img": "/participan/nicolai-ivansson.webp"
   },
   {
     "slug": "micaela-bacher",
     "nombre": "Micaela Bacher",
     "cargo": "Natan.VC",
-    "img": "/participan/micaela-bacher.jpg"
+    "img": "/participan/micaela-bacher.webp"
   },
   {
     "slug": "marcelo-rabinovich",
     "nombre": "Marcelo Rabinovich",
     "cargo": "Fundador · Praxis Consulting",
-    "img": "/participan/marcelo-rabinovich.jpg"
+    "img": "/participan/marcelo-rabinovich.webp"
   },
   {
     "slug": "marcelo-de-vicenzi",
     "nombre": "Marcelo De Vicenzi",
     "cargo": "UAI",
-    "img": "/participan/marcelo-de-vicenzi.jpg"
-  },
-  {
-    "slug": "hernan-schuster",
-    "nombre": "Hernán Schuster",
-    "cargo": "Spiquers",
-    "img": "/participan/hernan-schuster.jpg"
+    "img": "/participan/marcelo-de-vicenzi.webp"
   },
   {
     "slug": "guido-kuznicki",
     "nombre": "Guido Kuznicki",
     "cargo": "Lara AI",
-    "img": "/participan/guido-kuznicki.jpg"
+    "img": "/participan/guido-kuznicki.webp"
   },
   {
     "slug": "diego-gonzalez-a",
     "nombre": "Diego Gonzalez",
     "cargo": "Alina VC",
-    "img": "/participan/diego-gonzalez-a.jpg"
+    "img": "/participan/diego-gonzalez-a.webp"
   },
   {
     "slug": "anabella-guimarey",
     "nombre": "Anabella Guimarey",
     "cargo": "El Cero Km",
-    "img": "/participan/anabella-guimarey.jpg"
+    "img": "/participan/anabella-guimarey.webp"
   },
   {
     "slug": "lautaro-loguzzo",
     "nombre": "Lautaro Loguzzo",
     "cargo": "Canillita",
-    "img": "/participan/lautaro-loguzzo.jpg"
+    "img": "/participan/lautaro-loguzzo.webp"
   },
   {
     "slug": "claudia-casalongue",
     "nombre": "Claudia Casalongue",
     "cargo": "Unibaio",
-    "img": "/participan/claudia-casalongue.jpg"
+    "img": "/participan/claudia-casalongue.webp"
   },
   {
     "slug": "daniel-maquez",
     "nombre": "Daniel Maquez",
     "cargo": "Argenaura",
-    "img": "/participan/daniel-maquez.jpg"
+    "img": "/participan/daniel-maquez.webp"
   },
   {
     "slug": "denis-balitskiy",
     "nombre": "Denis Balitskiy",
     "cargo": "",
-    "img": "/participan/denis-balitskiy.jpg"
+    "img": "/participan/denis-balitskiy.webp"
   },
   {
     "slug": "silvia-marra",
     "nombre": "Silvia Marra",
     "cargo": "",
-    "img": "/participan/silvia-marra.jpg"
+    "img": "/participan/silvia-marra.webp"
   },
   {
     "slug": "celia-alfie",
     "nombre": "Celia Alfie",
     "cargo": "",
-    "img": "/participan/celia-alfie.jpg"
+    "img": "/participan/celia-alfie.webp"
   }
 ]

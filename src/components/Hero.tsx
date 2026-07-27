@@ -6,21 +6,81 @@ import { openStartupForm } from '../lib/ticketing'
 function Hero() {
   const navigate = useNavigate()
   const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
+  const [videoActivo, setVideoActivo] = useState(false)
 
   useEffect(() => {
     const target = new Date(content.config.evento.fechaInicioISO)
-    const interval = setInterval(() => {
-      const now = new Date()
-      const diff = target.getTime() - now.getTime()
-      if (diff <= 0) { clearInterval(interval); return }
+    let interval: ReturnType<typeof setInterval> | undefined
+
+    const tick = () => {
+      const diff = target.getTime() - Date.now()
+      if (diff <= 0) { parar(); return }
       setTimeLeft({
         dias: Math.floor(diff / (1000 * 60 * 60 * 24)),
         horas: Math.floor((diff / (1000 * 60 * 60)) % 24),
         mins: Math.floor((diff / (1000 * 60)) % 60),
         segs: Math.floor((diff / 1000) % 60),
       })
-    }, 1000)
-    return () => clearInterval(interval)
+    }
+
+    const arrancar = () => {
+      if (interval) return
+      tick()  // pinta el valor real ya, sin esperar al primer segundo
+      interval = setInterval(tick, 1000)
+    }
+    function parar() {
+      if (!interval) return
+      clearInterval(interval)
+      interval = undefined
+    }
+
+    // Sin esto el setState de cada segundo sigue corriendo con la pestaña en
+    // segundo plano, para un contador que apunta a agosto de 2026.
+    const onVisibilidad = () => (document.hidden ? parar() : arrancar())
+
+    arrancar()
+    document.addEventListener('visibilitychange', onVisibilidad)
+    return () => {
+      parar()
+      document.removeEventListener('visibilitychange', onVisibilidad)
+    }
+  }, [])
+
+  /**
+   * El video de fondo es puramente decorativo, así que sólo se monta en sm+ y
+   * cuando el visitante no pidió menos movimiento ni está ahorrando datos.
+   * Antes esto se resolvía con `hidden sm:block`, que no alcanza: `display:none`
+   * no cancela la descarga del video. En los casos en que no se monta queda la
+   * imagen de fondo, que ya está siempre presente abajo.
+   *
+   * El montaje se difiere hasta después del load para que el video no le pelee
+   * ancho de banda a la imagen del hero, que es el LCP. Y como el montaje es el
+   * que decide, el <video> va con preload normal: con `preload="none"` Chrome
+   * nunca arranca la descarga y el autoplay no llega a dispararse.
+   */
+  useEffect(() => {
+    const anchoOk = window.matchMedia('(min-width: 640px)')
+    const menosMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const ahorroDatos =
+      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true
+
+    const evaluar = () =>
+      setVideoActivo(anchoOk.matches && !menosMovimiento.matches && !ahorroDatos)
+
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const activar = () => { timer = setTimeout(evaluar, 200) }
+
+    if (document.readyState === 'complete') activar()
+    else window.addEventListener('load', activar, { once: true })
+
+    anchoOk.addEventListener('change', evaluar)
+    menosMovimiento.addEventListener('change', evaluar)
+    return () => {
+      if (timer) clearTimeout(timer)
+      window.removeEventListener('load', activar)
+      anchoOk.removeEventListener('change', evaluar)
+      menosMovimiento.removeEventListener('change', evaluar)
+    }
   }, [])
 
   const convocatoriaAbierta = content.config.convocatoria.startupsAbierta
@@ -28,26 +88,43 @@ function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden">
 
-      {/* Imagen de fondo base — siempre presente (en mobile es el fondo principal) */}
+      {/* Imagen de fondo base — siempre presente (en mobile es el fondo principal).
+          Es el elemento LCP del landing: va eager y con prioridad alta. */}
       <img
         src="/SWC-header.png"
         alt=""
         aria-hidden
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* Video de fondo — solo sm+ (en mobile pesa/insegura el autoplay, queda la imagen) */}
-      <video
-        className="hidden sm:block absolute inset-0 w-full h-full object-cover"
-        src="/video.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        poster="/SWC-header.png"
-        aria-hidden
-      />
+      {/* Video de fondo — solo sm+ (ver el efecto de arriba: el montaje es el que
+          decide, no el CSS). El <source> lleva `type` para que el browser pueda
+          descartarlo sin bajar el contenedor. */}
+      {videoActivo && (
+        <video
+          ref={el => {
+            if (!el) return
+            // React setea `muted` como propiedad, no como atributo, así que en el
+            // momento en que Chrome evalúa la política de autoplay todavía ve un
+            // video con sonido y lo bloquea. Silenciarlo y arrancarlo a mano
+            // acá evita eso. Es decorativo: si igual lo rechaza, queda el poster.
+            el.muted = true
+            void el.play().catch(() => {})
+          }}
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster="/SWC-header.png"
+          aria-hidden
+        >
+          <source src="/hero-720.mp4" type="video/mp4" />
+        </video>
+      )}
 
       {/* Overlays originales (commit 56c80e8) — 3 capas, radial morado para feel cinematográfico */}
       <div className="absolute inset-0 bg-[#020618]/70" />
