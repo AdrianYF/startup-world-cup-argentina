@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { content } from '../lib/content'
+// Directo desde content/: sólo lo usa esta ruta, así queda en su propio chunk.
+import startupsJson from '../content/startups.json'
 import { PageLayout } from '../components/ui/PageLayout'
 import { FadeInSection } from '../components/ui/FadeInSection'
 import Startups from '../components/Startups'
@@ -10,16 +11,16 @@ import { codeTable, codeFromUrl, shortLink } from '../lib/shortlink'
 
 const BG = '#020618'
 
-type Startup = (typeof content.startups)[number]
+type Startup = (typeof startupsJson)[number]
 
 const GRUPOS: { key: string; nombre: string }[] = [
   { key: 'pitch-battle', nombre: 'Pitch Battle' },
   { key: 'builders-arena', nombre: 'Builders Arena' },
 ]
 
-const STARTUP_POR_CODE = codeTable(content.startups.map(s => s.img))
+const STARTUP_POR_CODE = codeTable(startupsJson.map(s => s.img))
 
-if (import.meta.env.DEV && Object.keys(STARTUP_POR_CODE).length !== content.startups.length) {
+if (import.meta.env.DEV && Object.keys(STARTUP_POR_CODE).length !== startupsJson.length) {
   console.warn('[Startups] colisión de códigos entre startups: revisá los slugs/imágenes en startups.json')
 }
 
@@ -27,7 +28,7 @@ const STARTUP_DEL_LINK: Startup | null = (() => {
   const code = codeFromUrl('s')
   if (!code) return null
   const img = STARTUP_POR_CODE[code.toUpperCase()]
-  return img ? content.startups.find(s => s.img === img) ?? null : null
+  return img ? startupsJson.find(s => s.img === img) ?? null : null
 })()
 
 const alt = (nombre: string) => `${nombre} — Startup seleccionada · Startup World Cup Argentina 2026`
@@ -70,7 +71,7 @@ function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Sta
 }
 
 function Seleccion() {
-  const startups = content.startups
+  const startups = startupsJson
   const [open, setOpen] = useState<Startup | null>(STARTUP_DEL_LINK)
 
   useEffect(() => {

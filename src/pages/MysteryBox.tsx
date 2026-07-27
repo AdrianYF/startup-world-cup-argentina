@@ -1,7 +1,10 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { MysteryBoxes3D } from '../components/ui/MysteryBoxes3D'
-import { content, type Perk } from '../lib/content'
+// Directo desde content/: sólo lo usa esta ruta, así queda en su propio chunk.
+import perksJson from '../content/perks.json'
+
+type Perk = (typeof perksJson)[number]
 import { trackEvent } from '../lib/analytics'
 
 type Phase = 'idle' | 'opening' | 'revealed'
@@ -9,7 +12,7 @@ type Phase = 'idle' | 'opening' | 'revealed'
 /** El juego todavía no está habilitado: poné en true para mostrar "Próximamente". */
 const COMING_SOON = false
 
-const perks = content.perks as Perk[]
+const perks: Perk[] = perksJson
 const rand = (n: number) => Math.floor(Math.random() * n)
 
 // Rate limit: 1 tirada por día, persistido por navegador (localStorage).

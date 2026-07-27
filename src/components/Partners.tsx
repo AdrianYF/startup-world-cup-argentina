@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { content } from '../lib/content'
+import partnersJson from '../content/partners.json'
 import { openPartnerForm } from '../lib/ticketing'
 import { Modal } from './ui/Modal'
 
@@ -18,7 +18,7 @@ const TIER_COLORS = [
 ] as const
 
 function Partners() {
-  const partners = content.partners
+  const partners = partnersJson
   const [popup, setPopup] = useState<number | null>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
 

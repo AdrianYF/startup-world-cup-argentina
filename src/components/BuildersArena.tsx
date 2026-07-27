@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { content } from '../lib/content'
+import buildersArenaJson from '../content/buildersArena.json'
 import { Modal } from './ui/Modal'
 
 function BuildersArena() {
-  const cards = content.buildersArena
+  const cards = buildersArenaJson
   const [popupIndex, setPopupIndex] = useState<number | null>(null)
 
   return (
