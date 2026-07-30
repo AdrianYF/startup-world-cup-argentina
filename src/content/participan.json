@@ -8,19 +8,19 @@
     "destacado": true
   },
   {
-    "slug": "john-newkirk",
-    "nombre": "John Newkirk",
-    "cargo": "Investments & Portfolio Mgmt, Kamay",
-    "ticket": "Ticket de inversión: hasta USD 600k",
-    "img": "/participan/john-newkirk.webp",
-    "destacado": true
-  },
-  {
     "slug": "esteban-wolf",
     "nombre": "Esteban Wolf",
     "cargo": "CEO · Chocorissimo · Guapaletas · Abuela Goye · Persicco",
     "ticket": "Empresario, mentor e inversor ángel",
     "img": "/participan/esteban-wolf.webp",
+    "destacado": true
+  },
+  {
+    "slug": "john-newkirk",
+    "nombre": "John Newkirk",
+    "cargo": "Investments & Portfolio Mgmt, Kamay",
+    "ticket": "Ticket de inversión: hasta USD 600k",
+    "img": "/participan/john-newkirk.webp",
     "destacado": true
   },
   {

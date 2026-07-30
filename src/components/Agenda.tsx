@@ -16,15 +16,13 @@ import type { AgendaDay, AgendaSpeaker } from '../lib/content'
  * días que quedan sin bloques simplemente no se dibujan.
  *
  * Dos desvíos deliberados del diseño original:
- * - Fuentes: el diseño pide Archivo + JetBrains Mono de Google Fonts. El sitio
- *   self-hostea Outfit y sacó Google Fonts por performance (commit 3ffbbeb), así
- *   que va Outfit + un stack mono del sistema, que no cuesta un request.
+ * - Fuentes: el diseño pide Archivo + JetBrains Mono de Google Fonts. Va todo en
+ *   Outfit, la del resto del sitio; los horarios llevan `tabular-nums`, que
+ *   alinea la columna sin pedir una familia extra.
  * - Acentos: el diseño alterna azul y naranja por día. El naranja no está en la
  *   rampa por día (ver /COLORS.md), así que los tres días usan celeste → azul →
  *   índigo. El naranja sobrevive en un solo lugar: el asterisco del título.
  */
-
-const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace'
 
 /** Acento por día, en orden. Celeste del sitio + la rampa azul del diseño. */
 const ACENTOS = ['#75AADB', '#3B82F6', '#6366F1']
@@ -43,6 +41,10 @@ const FILTROS = ['Keynote', 'Pitch Battle', 'Builders Arena', 'Investors', 'Side
 
 /** Bloques que se destacan (barra lateral + fondo tintado): los dos platos fuertes. */
 const DESTACADOS = new Set(['Builders Arena', 'Pitch Battle'])
+
+/** CTA del header de cada día: mismo botón, sea Luma (<a>) o ticketing (<button>). */
+const CTA_DIA =
+  'shrink-0 inline-flex items-center cursor-pointer rounded-full px-5 sm:px-6 py-2.5 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.14em] text-white transition-all hover:brightness-125 active:scale-95'
 
 const COLS = 'lg:grid-cols-[132px_minmax(0,1.5fr)_minmax(0,1fr)]'
 const HEAD_LABEL = 'text-[10px] font-extrabold uppercase tracking-[0.2em] text-gray-400'
@@ -97,15 +99,37 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
           </h3>
         </div>
 
-        <button
-          type="button"
-          onClick={() => openTicketing(`agenda-${dia.id}`)}
-          aria-label={`Conseguí tu ticket para ${dia.label} (abre Startup Grind en una nueva pestaña)`}
-          className="shrink-0 cursor-pointer rounded-full px-5 sm:px-6 py-2.5 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.14em] text-white transition-all hover:brightness-125 active:scale-95"
-          style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
-        >
-          Conseguí tu ticket
-        </button>
+        {/*
+          Los side events del día 1 tienen inscripción propia en Luma, una por
+          evento. El resto de los días van al ticketing del evento.
+        */}
+        <div className="flex flex-wrap gap-2">
+          {dia.ctas?.length ? (
+            dia.ctas.map(cta => (
+              <a
+                key={cta.url}
+                href={cta.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Inscribite a ${cta.label} — ${dia.label} (abre Luma en una nueva pestaña)`}
+                className={CTA_DIA}
+                style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
+              >
+                {cta.label}
+              </a>
+            ))
+          ) : (
+            <button
+              type="button"
+              onClick={() => openTicketing(`agenda-${dia.id}`)}
+              aria-label={`Conseguí tu ticket para ${dia.label} (abre Startup Grind en una nueva pestaña)`}
+              className={CTA_DIA}
+              style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
+            >
+              Conseguí tu ticket
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Cabecera de la tabla - solo desde lg, donde las columnas existen de verdad */}
@@ -132,8 +156,8 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
             }}
           >
             <span
-              className="text-[13px] lg:text-[15px] font-medium tracking-[-0.01em] whitespace-nowrap"
-              style={{ fontFamily: MONO, color: destacado ? '#FFFFFF' : '#d1d5db' }}
+              className="text-[13px] lg:text-[15px] font-semibold tabular-nums whitespace-nowrap"
+              style={{ color: destacado ? '#FFFFFF' : '#d1d5db' }}
             >
               {slot.hora}
             </span>

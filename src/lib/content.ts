@@ -42,7 +42,17 @@ export type TicketPlan = (typeof tickets)[number]
 // rompe el `.map()` en el componente. Se declara a mano.
 export type AgendaSpeaker = { nombre: string; empresa: string; img: string }
 export type AgendaSlot = { hora: string; titulo: string; categoria: string; speakers: AgendaSpeaker[] }
-export type AgendaDay = { id: string; fecha: string; label: string; subtitulo: string; slots: AgendaSlot[] }
+/** CTA propio de la jornada (ej. los side events del día 1, con su Luma). */
+export type AgendaCta = { label: string; url: string }
+export type AgendaDay = {
+  id: string
+  fecha: string
+  label: string
+  subtitulo: string
+  slots: AgendaSlot[]
+  /** Sin `ctas`, el día cae al ticketing del evento. */
+  ctas?: AgendaCta[]
+}
 export const agendaDias = agenda.dias as AgendaDay[]
 export type Speaker = (typeof speakers)[number]
 export type ComiteMiembro = (typeof comite)[number]

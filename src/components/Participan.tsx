@@ -6,6 +6,13 @@ import { SectionGlow } from './ui/SectionGlow'
 
 type Participante = (typeof content.participan)[number]
 
+/** Alta de perfil en imatchin, el matchmaking del evento. */
+const IMATCHIN_URL = 'https://imatchin.com'
+
+/** Los dos CTAs del pie de la sección comparten estilo. */
+const CTA_PARTICIPAN =
+  'inline-flex items-center gap-2 border border-[#75AADB]/40 hover:bg-[#75AADB]/10 active:scale-95 text-[#75AADB] hover:text-white font-black text-sm px-7 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer text-center'
+
 /** Tarjeta de participante: foto circular + nombre + cargo + línea destacada (ticket/rol). */
 function ParticipanteCard({ p, compact = false }: { p: Participante; compact?: boolean }) {
   const cargo = 'cargo' in p ? (p as { cargo?: string }).cargo : ''
@@ -65,14 +72,28 @@ function Participan() {
           ))}
         </div>
 
-        <div className="mt-14 flex justify-center">
+        {/*
+          Los dos CTAs van juntos y en este orden: primero ves quién viene,
+          después la invitación a que te encuentren a vos.
+        */}
+        <div className="mt-14 flex flex-col items-center gap-3">
           <button
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-2 border border-[#75AADB]/40 hover:bg-[#75AADB]/10 active:scale-95 text-[#75AADB] hover:text-white font-black text-sm px-7 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer"
+            className={CTA_PARTICIPAN}
           >
             Conocé más participantes
             <span aria-hidden>→</span>
           </button>
+          <a
+            href={IMATCHIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Agendá reuniones 1:1 en la SWC con imatchin (abre en una nueva pestaña)"
+            className={CTA_PARTICIPAN}
+          >
+            Agendá reuniones 1:1 en la SWC
+            <span aria-hidden>→</span>
+          </a>
         </div>
       </div>
 
