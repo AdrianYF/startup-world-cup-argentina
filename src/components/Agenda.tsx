@@ -19,9 +19,10 @@ import type { AgendaDay, AgendaSpeaker } from '../lib/content'
  * - Fuentes: el diseño pide Archivo + JetBrains Mono de Google Fonts. Va todo en
  *   Outfit, la del resto del sitio; los horarios llevan `tabular-nums`, que
  *   alinea la columna sin pedir una familia extra.
- * - Título: el diseño lo pide gigante y a la izquierda. Va con el mismo
- *   tratamiento que los otros H2 del sitio (centrado, `lg:text-6xl`, la
- *   palabra-acento en celeste) para que la sección no se lea como de otro lado.
+ * - Título: el diseño lo pide gigante y a la izquierda. Va con el tamaño y la
+ *   alineación de los otros H2 del sitio (centrado, `lg:text-6xl`) para que la
+ *   sección no se lea como de otro lado, pero conserva su gradient azul: es lo
+ *   único del diseño original que se quiso mantener.
  * - Acentos: el diseño alterna azul y naranja por día. El naranja no está en la
  *   rampa por día (ver /COLORS.md), así que los tres días usan celeste → azul →
  *   índigo. El naranja sobrevive en un solo lugar: el asterisco del título.
@@ -226,7 +227,12 @@ function Agenda() {
         <header className="text-center">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
             <span className="text-white">AGENDA </span>
-            <span className="text-[#75AADB]">TENTATIVA</span>
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(96deg, #7DB2E8 0%, #3B82F6 45%, #6366F1 100%)' }}
+            >
+              TENTATIVA
+            </span>
             <span className="text-[#ff6600]">*</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
