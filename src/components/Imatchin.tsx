@@ -19,23 +19,20 @@ function Imatchin() {
 
       <div className="relative max-w-3xl mx-auto px-4 flex flex-col items-center text-center gap-6">
         {/*
-          Chip blanco provisional: el logo es #0a66c2 y sobre el fondo dark da
-          3.39:1, así que "atchin" se pierde. El chip conserva el color de marca
-          exacto en vez de invertirlo. Cuando llegue la versión en blanco (como
-          el resto de public/logos/*-white), se saca el wrapper y queda el <img>.
+          Versión en blanco, como el resto de public/logos/*-white. El original
+          es #0a66c2 y sobre el fondo dark daba 3.39:1: "atchin" se perdía. Acá
+          la tinta va en blanco y el "im" queda calado, dejando ver el fondo.
         */}
-        <span className="inline-flex items-center rounded-2xl bg-white px-5 py-3">
-          <img
-            src="/logos/imatchin.webp"
-            alt="imatchin"
-            width={101}
-            height={43}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className="h-9 w-auto"
-          />
-        </span>
+        <img
+          src="/logos/imatchin-white.webp"
+          alt="imatchin"
+          width={101}
+          height={43}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="h-10 w-auto"
+        />
 
         <h2 className="m-0 text-2xl sm:text-4xl font-black leading-tight text-balance">
           No dejes tu próxima conexión al azar.

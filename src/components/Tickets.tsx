@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { content } from '../lib/content'
 import { openTicketing } from '../lib/ticketing'
 import { SectionGlow } from './ui/SectionGlow'
@@ -9,7 +10,23 @@ const CTA: Record<string, string> = {
   proximamente: 'Próximamente',
 }
 
+/** Ancho de cada tanda. Se usa para el padding que permite centrar cualquiera. */
+const CARD_W = 280
+
 function Tickets() {
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const destacadaRef = useRef<HTMLDivElement>(null)
+
+  // El carrusel arranca centrado en la tanda a la venta: es la única accionable
+  // y antes quedaba fuera de pantalla en mobile, detrás de dos tandas agotadas.
+  // Sin `smooth`: al montar tiene que estar ahí, no animarse hasta ahí.
+  useEffect(() => {
+    const scroller = scrollerRef.current
+    const card = destacadaRef.current
+    if (!scroller || !card) return
+    scroller.scrollLeft = card.offsetLeft - (scroller.clientWidth - card.offsetWidth) / 2
+  }, [])
+
   return (
     <section id="tickets" className="relative py-16 sm:py-24 bg-[#020618]">
       <SectionGlow />
@@ -21,16 +38,37 @@ function Tickets() {
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">Cupos limitados para garantizar calidad de conexiones y experiencias.</p>
         </div>
-        {/* Scroll horizontal: las tandas quedan en una sola línea; centradas si entran, con scroll si no. */}
-        <div className="swc-scrollbar-simple overflow-x-auto pt-6 pb-4">
-          <div className="flex gap-6 items-stretch w-max mx-auto">
+        {/*
+          Carrusel centrado en la tanda a la venta. El padding lateral de media
+          pantalla menos media card es lo que permite que cualquier tanda quede
+          en el centro — incluidas la primera y la última.
+
+          La máscara desvanece los bordes: las tandas agotadas se van apagando a
+          medida que salen de foco, en vez de cortarse de golpe contra el borde.
+        */}
+        <div
+          ref={scrollerRef}
+          className="swc-scrollbar-simple overflow-x-auto overscroll-x-contain snap-x snap-mandatory pt-6 pb-4"
+          style={{
+            maskImage: 'linear-gradient(90deg, transparent 0, #000 16%, #000 84%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(90deg, transparent 0, #000 16%, #000 84%, transparent 100%)',
+          }}
+        >
+          <div
+            className="flex gap-6 items-stretch w-max"
+            style={{ paddingInline: `calc(50% - ${CARD_W / 2}px)` }}
+          >
             {content.tickets.map((plan) => {
             const disponible = plan.estado === 'venta'
             const agotado = plan.estado === 'agotado'
             // Solo la tanda a la venta con badge se resalta; el tag "Próximamente" no destaca la card.
             const destacado = Boolean(plan.badge) && disponible
             return (
-            <div key={plan.id} className="relative shrink-0 w-[280px]">
+            <div
+              key={plan.id}
+              ref={destacado ? destacadaRef : undefined}
+              className="relative shrink-0 w-[280px] snap-center"
+            >
               <div
                 // La tanda destacada (badge "FINALIZA PRONTO") lleva más padding-top para
                 // que el título despegue del badge que asoma arriba.
