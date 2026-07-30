@@ -13,6 +13,7 @@ Reglas para mantener la consistencia visual del sitio. Si un color no aparece ac
 | `--color-swc-accent-dark` | `#5a93c5` | Hover de elementos celeste |
 | `--color-swc-violet` | `#6c5ce7` | Centro del gradient brand (uso semántico limitado) |
 | `--color-swc-coral` | `#ff7675` | Acento alternativo (Voluntarios, fin del gradient) |
+| `--color-swc-orange` | `#ff6600` | Naranja Silicon Valley. Único uso: el asterisco de "AGENDA TENTATIVA*" |
 | `--color-swc-muted` | `#9ca3af` (gray-400) | Texto muted, captions, info secundaria |
 | `--gradient-brand` | `linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%)` | Palabras-acento en títulos |
 | `--gradient-data` | `linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)` | Data numérica destacada |
@@ -66,10 +67,34 @@ Reglas para mantener la consistencia visual del sitio. Si un color no aparece ac
 
 - **Bordes de cards**: `border-white/10` (normal), `border-[#75AADB]/30` (hover/focus), `border-[#75AADB]` (active/selected)
 
+### Acentos por día (solo Agenda)
+
+La Agenda le da identidad a cada jornada con una rampa fría: celeste `#75AADB` (día 1)
+→ azul `#3B82F6` (día 2) → índigo `#6366F1` (día 3). Vive como el array `ACENTOS` en
+`src/components/Agenda.tsx`, no como token CSS: el componente calcula tintes `rgba()`
+en runtime (fondo de fila, borde, gradient del header) y necesita el hex en JS.
+
+Excepción acotada a esa sección. No usar esta rampa en otro lado.
+
+El asterisco de "AGENDA TENTATIVA\*" queda fuera de la rampa: va siempre en
+`--color-swc-orange` (`#ff6600`). Es el único punto cálido de la sección y no
+sigue al día activo — recupera el naranja del diseño original.
+
+### Fondo de sección dark
+
+Las secciones dark de contenido llevan `<SectionGlow />`
+(`src/components/ui/SectionGlow.tsx`): dos radiales azules anclados arriba. Nació en
+la Agenda y hoy lo comparten Tickets, Participan y Apoyan.
+
+Va como primer hijo de la `<section>` (que tiene que ser `relative`) y el contenedor
+del contenido necesita `relative`, si no el gradiente lo tapa.
+
+Quedan afuera: Hero (fondo propio con video), FAQ (blanca) y Footer (cierre).
+
 ### Backgrounds de sección
 
-- **Dark default**: `bg-[#020618]` (slate-950) — Hero, Stats, Ruta, Builders, Tickets, Startups, Partners, Speakers
-- **Light alternating**: `bg-white text-[#020618]` — Agenda, Apoyan, FAQ, PitchBattle, Voluntarios
+- **Dark default**: `bg-[#020618]` (slate-950) — Hero, Stats, Ruta, Builders, Tickets, Startups, Partners, Speakers, Agenda
+- **Light alternating**: `bg-white text-[#020618]` — Apoyan, FAQ, PitchBattle, Voluntarios
 - **Surface (cards/modals)**: `bg-[#0f172b]` (slate-900)
 
 ## Lo que NO se hace

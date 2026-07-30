@@ -1,5 +1,6 @@
 import { content } from '../lib/content'
 import { openTicketing } from '../lib/ticketing'
+import { SectionGlow } from './ui/SectionGlow'
 
 /** Copy del botón por estado. Solo la tanda a la venta linkea a Startup Grind. */
 const CTA: Record<string, string> = {
@@ -11,8 +12,9 @@ const CTA: Record<string, string> = {
 function Tickets() {
   return (
     <section id="tickets" className="relative py-16 sm:py-24 bg-[#020618]">
+      <SectionGlow />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="relative max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4 text-white">
             ASEGURATE TU ENTRADA

@@ -36,8 +36,14 @@ export const content = {
 // Los tipos de perks/startups/partners viven en sus consumidores: derivarlos acá
 // obligaría a importar el JSON como valor y volvería a meterlo en este bundle.
 export type TicketPlan = (typeof tickets)[number]
-export type AgendaSlot = (typeof agenda.dias)[number]['slots'][number]
-export type AgendaDay = (typeof agenda.dias)[number]
+
+// La agenda no se puede derivar con `typeof`: los slots sin speakers tienen
+// `"speakers": []`, que TS tipa `never[]`, y la unión con los que sí tienen
+// rompe el `.map()` en el componente. Se declara a mano.
+export type AgendaSpeaker = { nombre: string; empresa: string; img: string }
+export type AgendaSlot = { hora: string; titulo: string; categoria: string; speakers: AgendaSpeaker[] }
+export type AgendaDay = { id: string; fecha: string; label: string; subtitulo: string; slots: AgendaSlot[] }
+export const agendaDias = agenda.dias as AgendaDay[]
 export type Speaker = (typeof speakers)[number]
 export type ComiteMiembro = (typeof comite)[number]
 export type Participante = (typeof participan)[number]

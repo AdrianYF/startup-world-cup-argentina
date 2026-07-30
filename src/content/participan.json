@@ -54,6 +54,12 @@
     "img": "/participan/marcelo-de-vicenzi.webp"
   },
   {
+    "slug": "hernan-schuster",
+    "nombre": "Hernán Schuster",
+    "cargo": "Spiquers",
+    "img": "/participan/hernan-schuster.webp"
+  },
+  {
     "slug": "guido-kuznicki",
     "nombre": "Guido Kuznicki",
     "cargo": "Lara AI",
@@ -106,5 +112,29 @@
     "nombre": "Celia Alfie",
     "cargo": "",
     "img": "/participan/celia-alfie.webp"
+  },
+  {
+    "slug": "ana-julia-gavilan",
+    "nombre": "Ana Julia Gavilan",
+    "cargo": "",
+    "img": "/participan/ana-julia-gavilan.webp"
+  },
+  {
+    "slug": "gustavo-nusenovich",
+    "nombre": "Gustavo Nusenovich",
+    "cargo": "Otro Punto de Vista",
+    "img": "/participan/gustavo-nusenovich.webp"
+  },
+  {
+    "slug": "carla-goglia",
+    "nombre": "Carla Goglia",
+    "cargo": "",
+    "img": "/participan/carla-goglia.webp"
+  },
+  {
+    "slug": "gaba-najmanovich",
+    "nombre": "Gaba Najmanovich",
+    "cargo": "",
+    "img": "/participan/gaba-najmanovich.webp"
   }
 ]
