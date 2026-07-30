@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { agendaDias } from '../lib/content'
+import { openTicketing } from '../lib/ticketing'
 import { SectionGlow } from './ui/SectionGlow'
-import type { AgendaSpeaker } from '../lib/content'
+import type { AgendaDay, AgendaSpeaker } from '../lib/content'
 
 /**
- * Agenda - layout de tabla densa sobre fondo dark, según el diseño
- * "Startup World Cup agenda section" (claude.ai/design).
+ * Agenda - los tres días desplegados, uno debajo del otro.
+ *
+ * Antes había tabs y solo se veía un día por vez: para saber cuándo era algo
+ * había que ir probando. Ahora la jornada entera está a la vista y cada día
+ * cierra con su propio CTA de tickets.
+ *
+ * El filtro pasó a ser global — con las tabs, el track vivía dentro del día
+ * activo y se reseteaba al cambiar de día. Ahora filtra los tres a la vez y los
+ * días que quedan sin bloques simplemente no se dibujan.
  *
  * Dos desvíos deliberados del diseño original:
  * - Fuentes: el diseño pide Archivo + JetBrains Mono de Google Fonts. El sitio
@@ -13,12 +21,7 @@ import type { AgendaSpeaker } from '../lib/content'
  *   que va Outfit + un stack mono del sistema, que no cuesta un request.
  * - Acentos: el diseño alterna azul y naranja por día. El naranja no está en la
  *   rampa por día (ver /COLORS.md), así que los tres días usan celeste → azul →
- *   índigo. El naranja sobrevive en un solo lugar: el asterisco del título, que
- *   va fijo en `--color-swc-orange` y no sigue al día activo.
- *
- * Sin columna de duración ni contadores en el header del día: se pidió sacarlos.
- * Los bloques que se destacan son Builders Arena y Pitch Battle, por categoría
- * y no por duración.
+ *   índigo. El naranja sobrevive en un solo lugar: el asterisco del título.
  */
 
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace'
@@ -32,14 +35,17 @@ const COMING_SOON = 'Coming Soon'
 /**
  * Los únicos tracks filtrables, en este orden.
  *
- * La lista es explícita a propósito: antes salía de las categorías presentes en
- * el día, así que cualquier categoría nueva en el JSON se colaba como filtro.
- * `Charla`, `Networking` y `Coming Soon` existen como dato pero no filtran.
+ * La lista es explícita a propósito: si saliera de las categorías del JSON,
+ * cualquier categoría nueva se colaría como filtro. `Charla`, `Networking` y
+ * `Coming Soon` existen como dato pero no filtran.
  */
 const FILTROS = ['Keynote', 'Pitch Battle', 'Builders Arena', 'Investors', 'Side Events']
 
 /** Bloques que se destacan (barra lateral + fondo tintado): los dos platos fuertes. */
 const DESTACADOS = new Set(['Builders Arena', 'Pitch Battle'])
+
+const COLS = 'lg:grid-cols-[132px_minmax(0,1.5fr)_minmax(0,1fr)]'
+const HEAD_LABEL = 'text-[10px] font-extrabold uppercase tracking-[0.2em] text-gray-400'
 
 function rgba(hex: string, a: number): string {
   const n = parseInt(hex.slice(1), 16)
@@ -67,21 +73,121 @@ function Avatar({ speaker, accent }: { speaker: AgendaSpeaker; accent: string })
   )
 }
 
+/** Un día completo: header con su CTA + la tabla de bloques. */
+function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
+  return (
+    <div
+      className="border border-[#75AADB]/15 rounded-2xl overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, rgba(11,18,40,0.9), rgba(4,8,22,0.9))' }}
+    >
+      {/* Header del día + CTA */}
+      <div
+        className="flex flex-wrap items-center justify-between gap-4 px-5 sm:px-8 py-5 sm:py-7 border-b"
+        style={{
+          background: `linear-gradient(96deg, ${rgba(accent, 0.24)}, ${rgba(accent, 0.04)} 70%, transparent)`,
+          borderColor: rgba(accent, 0.35),
+        }}
+      >
+        <div className="flex flex-col gap-1">
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.26em]" style={{ color: accent }}>
+            {dia.subtitulo}
+          </span>
+          <h3 className="m-0 text-2xl sm:text-4xl font-black uppercase leading-none tracking-[-0.025em] text-white">
+            {dia.label}
+          </h3>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => openTicketing(`agenda-${dia.id}`)}
+          aria-label={`Conseguí tu ticket para ${dia.label} (abre Startup Grind en una nueva pestaña)`}
+          className="shrink-0 cursor-pointer rounded-full px-5 sm:px-6 py-2.5 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.14em] text-white transition-all hover:brightness-125 active:scale-95"
+          style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
+        >
+          Conseguí tu ticket
+        </button>
+      </div>
+
+      {/* Cabecera de la tabla - solo desde lg, donde las columnas existen de verdad */}
+      <div className={`hidden lg:grid ${COLS} gap-5 px-5 sm:px-8 py-3.5 border-b border-[#75AADB]/10 bg-[#020618]/60`}>
+        <span className={HEAD_LABEL}>Horario</span>
+        <span className={HEAD_LABEL}>Actividad / Bloque</span>
+        <span className={HEAD_LABEL}>Speaker(s)</span>
+      </div>
+
+      {/* Filas */}
+      {dia.slots.map((slot, i) => {
+        const destacado = DESTACADOS.has(slot.categoria)
+        const pendiente = slot.categoria === COMING_SOON
+
+        return (
+          <div
+            key={i}
+            className={`grid grid-cols-1 ${COLS} gap-y-1.5 lg:gap-5 items-center px-5 sm:px-8 py-3.5 lg:py-4 border-b border-[#75AADB]/8 border-l-[3px] transition-colors last:border-b-0 hover:bg-[#75AADB]/[0.07] ${
+              pendiente ? 'opacity-60' : ''
+            }`}
+            style={{
+              background: destacado ? rgba(accent, 0.1) : 'transparent',
+              borderLeftColor: destacado ? accent : 'transparent',
+            }}
+          >
+            <span
+              className="text-[13px] lg:text-[15px] font-medium tracking-[-0.01em] whitespace-nowrap"
+              style={{ fontFamily: MONO, color: destacado ? '#FFFFFF' : '#d1d5db' }}
+            >
+              {slot.hora}
+            </span>
+
+            <span
+              className={`text-sm lg:text-[16.5px] leading-snug text-white text-pretty ${
+                destacado ? 'font-extrabold' : 'font-semibold'
+              }`}
+            >
+              {slot.titulo}
+              {pendiente && (
+                <span
+                  className="ml-2 align-middle inline-block text-[10px] font-extrabold uppercase tracking-[0.18em] px-3 py-0.5 border rounded-full whitespace-nowrap"
+                  style={{ color: '#75AADB', borderColor: 'rgba(117,170,219,0.3)', background: 'rgba(117,170,219,0.08)' }}
+                >
+                  Coming Soon
+                </span>
+              )}
+            </span>
+
+            {slot.speakers.length > 0 ? (
+              <span className="flex items-center gap-2.5">
+                <span className="flex gap-1.5 flex-shrink-0">
+                  {slot.speakers.map(s => (
+                    <Avatar key={s.nombre} speaker={s} accent={accent} />
+                  ))}
+                </span>
+                <span className="text-[13.5px] leading-snug font-medium text-gray-400 text-pretty">
+                  {slot.speakers.map(s => s.nombre).join(' / ')}
+                </span>
+              </span>
+            ) : (
+              <span className="hidden lg:block" />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function Agenda() {
-  const dias = agendaDias
-  const [dia, setDia] = useState(0)
   const [filter, setFilter] = useState<string | null>(null)
 
-  const activo = dias[dia]
-  const accent = ACENTOS[dia % ACENTOS.length]
-  // Solo los tracks de FILTROS que existen en el día activo: si no, el día 5
-  // mostraría cuatro filtros que no devuelven nada.
-  const presentes = new Set(activo.slots.map(s => s.categoria))
-  const categorias = FILTROS.filter(c => presentes.has(c))
-  const slots = filter ? activo.slots.filter(s => s.categoria === filter) : activo.slots
+  // El filtro es global: se aplica a los tres días y los que quedan sin bloques
+  // no se dibujan (ej. Pitch Battle solo existe el viernes).
+  const dias = filter
+    ? agendaDias
+        .map(d => ({ ...d, slots: d.slots.filter(s => s.categoria === filter) }))
+        .filter(d => d.slots.length > 0)
+    : agendaDias
 
-  const cols = 'lg:grid-cols-[132px_minmax(0,1.5fr)_minmax(0,1fr)]'
-  const headLabel = 'text-[10px] font-extrabold uppercase tracking-[0.2em] text-gray-400'
+  const presentes = new Set(agendaDias.flatMap(d => d.slots.map(s => s.categoria)))
+  const categorias = FILTROS.filter(c => presentes.has(c))
 
   return (
     <section id="agenda" className="relative overflow-hidden bg-[#020618] text-white py-16 sm:py-24 px-4">
@@ -110,144 +216,41 @@ function Agenda() {
           </div>
         </header>
 
-        {/* Tabs por día */}
-        <div className="flex flex-wrap gap-2.5">
-          {dias.map((d, i) => {
-            const on = i === dia
-            const a = ACENTOS[i % ACENTOS.length]
-            return (
-              <button
-                key={d.id}
-                type="button"
-                onClick={() => { setDia(i); setFilter(null) }}
-                aria-pressed={on}
-                className="cursor-pointer border rounded-full px-5 sm:px-6 py-3.5 flex items-center gap-3 text-[13px] sm:text-[15px] font-extrabold uppercase tracking-[0.12em] transition-colors"
-                style={{
-                  background: on ? rgba(a, 0.18) : 'transparent',
-                  borderColor: on ? rgba(a, 0.55) : 'rgba(125,178,232,0.16)',
-                  color: on ? '#FFFFFF' : '#9ca3af',
-                }}
-              >
-                <span className="text-xs font-bold opacity-65" style={{ fontFamily: MONO }}>
-                  {d.fecha.slice(-2)}
-                </span>
-                {d.label}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Filtros por categoría. Con una sola categoría no filtran nada (día 5), así que no se muestran. */}
+        {/* Filtros por track, globales a los tres días */}
         {categorias.length > 1 && (
-        <div className="flex flex-wrap items-center gap-2 -mt-4 sm:-mt-8">
-          <span className={`${headLabel} mr-1`}>Filtrar</span>
-          {[null, ...categorias].map(c => {
-            const on = filter === c
-            return (
-              <button
-                key={c ?? '__todo'}
-                type="button"
-                onClick={() => setFilter(c)}
-                aria-pressed={on}
-                className="cursor-pointer border rounded-full px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-colors"
-                style={{
-                  background: on ? rgba(accent, 0.18) : 'transparent',
-                  borderColor: on ? rgba(accent, 0.55) : 'rgba(125,178,232,0.16)',
-                  color: on ? '#FFFFFF' : '#9ca3af',
-                }}
-              >
-                {c ?? 'Todo'}
-              </button>
-            )
-          })}
-        </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`${HEAD_LABEL} mr-1`}>Filtrar</span>
+            {[null, ...categorias].map(c => {
+              const on = filter === c
+              return (
+                <button
+                  key={c ?? '__todo'}
+                  type="button"
+                  onClick={() => setFilter(c)}
+                  aria-pressed={on}
+                  className="cursor-pointer border rounded-full px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.2em] transition-colors"
+                  style={{
+                    background: on ? 'rgba(117,170,219,0.18)' : 'transparent',
+                    borderColor: on ? 'rgba(117,170,219,0.55)' : 'rgba(125,178,232,0.16)',
+                    color: on ? '#FFFFFF' : '#9ca3af',
+                  }}
+                >
+                  {c ?? 'Todo'}
+                </button>
+              )
+            })}
+          </div>
         )}
 
-        {/* Panel del día activo */}
-        <div
-          key={activo.id}
-          className="border border-[#75AADB]/15 rounded-2xl overflow-hidden animate-[fade-in-up_340ms_ease_both]"
-          style={{ background: 'linear-gradient(180deg, rgba(11,18,40,0.9), rgba(4,8,22,0.9))' }}
-        >
-          {/* Header del día */}
-          <div
-            className="flex flex-col gap-1 px-5 sm:px-8 py-5 sm:py-7 border-b"
-            style={{
-              background: `linear-gradient(96deg, ${rgba(accent, 0.24)}, ${rgba(accent, 0.04)} 70%, transparent)`,
-              borderColor: rgba(accent, 0.35),
-            }}
-          >
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.26em]" style={{ color: accent }}>
-              {activo.subtitulo}
-            </span>
-            <h3 className="m-0 text-2xl sm:text-4xl font-black uppercase leading-none tracking-[-0.025em] text-white">
-              {activo.label}
-            </h3>
-          </div>
-
-          {/* Cabecera de la tabla - solo desde lg, igual que el diseño */}
-          <div className={`hidden lg:grid ${cols} gap-5 px-5 sm:px-8 py-3.5 border-b border-[#75AADB]/10 bg-[#020618]/60`}>
-            <span className={headLabel}>Horario</span>
-            <span className={headLabel}>Actividad / Bloque</span>
-            <span className={headLabel}>Speaker(s)</span>
-          </div>
-
-          {/* Filas */}
-          {slots.map((slot, i) => {
-            const destacado = DESTACADOS.has(slot.categoria)
-            const pendiente = slot.categoria === COMING_SOON
-
-            return (
-              <div
-                key={i}
-                className={`grid grid-cols-1 ${cols} gap-y-1.5 lg:gap-5 items-center px-5 sm:px-8 py-3.5 lg:py-4 border-b border-[#75AADB]/8 border-l-[3px] transition-colors hover:bg-[#75AADB]/[0.07] ${
-                  pendiente ? 'opacity-60' : ''
-                }`}
-                style={{
-                  background: destacado ? rgba(accent, 0.1) : 'transparent',
-                  borderLeftColor: destacado ? accent : 'transparent',
-                }}
-              >
-                <span
-                  className="text-[13px] lg:text-[15px] font-medium tracking-[-0.01em] whitespace-nowrap"
-                  style={{ fontFamily: MONO, color: destacado ? '#FFFFFF' : '#d1d5db' }}
-                >
-                  {slot.hora}
-                </span>
-
-                <span
-                  className={`text-sm lg:text-[16.5px] leading-snug text-white text-pretty ${
-                    destacado ? 'font-extrabold' : 'font-semibold'
-                  }`}
-                >
-                  {slot.titulo}
-                  {pendiente && (
-                    <span
-                      className="ml-2 align-middle inline-block text-[10px] font-extrabold uppercase tracking-[0.18em] px-3 py-0.5 border rounded-full whitespace-nowrap"
-                      style={{ color: '#75AADB', borderColor: 'rgba(117,170,219,0.3)', background: 'rgba(117,170,219,0.08)' }}
-                    >
-                      Coming Soon
-                    </span>
-                  )}
-                </span>
-
-                {slot.speakers.length > 0 ? (
-                  <span className="flex items-center gap-2.5">
-                    <span className="flex gap-1.5 flex-shrink-0">
-                      {slot.speakers.map(s => (
-                        <Avatar key={s.nombre} speaker={s} accent={accent} />
-                      ))}
-                    </span>
-                    <span className="text-[13.5px] leading-snug font-medium text-gray-400 text-pretty">
-                      {slot.speakers.map(s => s.nombre).join(' / ')}
-                    </span>
-                  </span>
-                ) : (
-                  <span className="hidden lg:block" />
-                )}
-              </div>
-            )
-          })}
+        {/* Los tres días, uno debajo del otro */}
+        <div className="flex flex-col gap-8 sm:gap-12">
+          {dias.map(d => (
+            <DiaPanel
+              key={d.id}
+              dia={d}
+              accent={ACENTOS[agendaDias.findIndex(x => x.id === d.id) % ACENTOS.length]}
+            />
+          ))}
         </div>
 
         {/* Footer */}
