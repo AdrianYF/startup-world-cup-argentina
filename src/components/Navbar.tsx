@@ -4,8 +4,8 @@ import { openTicketing } from '../lib/ticketing'
 
 // Cada ítem es una ruta propia.
 const links = [
-  { to: '/road-to-swc', label: 'Road to SWC' },
   { to: '/agenda', label: 'Agenda' },
+  { to: '/road-to-swc', label: 'Road to SWC' },
   { to: '/pitch-battle', label: 'Pitch Battle' },
   { to: '/startups', label: 'Startups' },
   { to: '/galeria', label: 'Galería' },

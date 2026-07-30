@@ -4,15 +4,20 @@
       "id": "dia-1",
       "fecha": "2026-08-05",
       "label": "Miércoles 5 Ago",
-      "subtitulo": "Amistosos",
+      "subtitulo": "Side Events",
       "slots": [
-        { "hora": "09:00 - 10:00", "titulo": "Acreditación y Welcome Coffee", "categoria": "Networking", "sala": "Lobby" },
-        { "hora": "10:00 - 10:30", "titulo": "Opening Ceremony", "categoria": "Keynote", "sala": "Main Stage" },
-        { "hora": "10:30 - 12:30", "titulo": "Spark Sessions", "categoria": "Builders Arena", "sala": "Arena A" },
-        { "hora": "12:30 - 14:00", "titulo": "Lunch & Networking", "categoria": "Networking", "sala": "Expo Zone" },
-        { "hora": "14:00 - 16:00", "titulo": "Workshops Estratégicos", "categoria": "Workshop", "sala": "Salas 1-3" },
-        { "hora": "16:00 - 18:00", "titulo": "Matchmaking Digital 1:1", "categoria": "Networking", "sala": "Arena B" },
-        { "hora": "19:00 - 22:00", "titulo": "Welcome Night Drinks", "categoria": "Side Event", "sala": "Rooftop" }
+        {
+          "hora": "16:00 - 20:00",
+          "titulo": "Speed Mentoring + SWC 26",
+          "categoria": "Side Event",
+          "speakers": []
+        },
+        {
+          "hora": "16:00 - 20:00",
+          "titulo": "Investor Room - Entrá en el criterio del inversor · WIP Club",
+          "categoria": "Side Event",
+          "speakers": []
+        }
       ]
     },
     {
@@ -21,12 +26,96 @@
       "label": "Jueves 6 Ago",
       "subtitulo": "Semi",
       "slots": [
-        { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
-        { "hora": "10:00 - 11:30", "titulo": "Reverse Pitches de Partners", "categoria": "Keynote", "sala": "Main Stage" },
-        { "hora": "11:30 - 13:30", "titulo": "Deal Flow Arena", "categoria": "Builders Arena", "sala": "Arena A" },
-        { "hora": "13:30 - 15:00", "titulo": "Lunch & Mesa Inversión", "categoria": "Networking", "sala": "Expo Zone" },
-        { "hora": "15:00 - 17:00", "titulo": "Paneles: Ecosistema LATAM", "categoria": "Keynote", "sala": "Main Stage" },
-        { "hora": "17:00 - 19:00", "titulo": "Expo & Cocktail Privado", "categoria": "Side Event", "sala": "Expo Zone" }
+        {
+          "hora": "13:00 - 13:30",
+          "titulo": "Registro y acreditación",
+          "categoria": "Networking",
+          "speakers": []
+        },
+        {
+          "hora": "13:30 - 14:00",
+          "titulo": "Apertura / Cámara Kirlian",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Daniel Maquez", "empresa": "Cámara Kirlian", "img": "/participan/daniel-maquez.webp" }
+          ]
+        },
+        {
+          "hora": "14:00 - 14:30",
+          "titulo": "Reinventando comportamientos",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Anabella Guimarey", "empresa": "El Cero Km", "img": "/participan/anabella-guimarey.webp" },
+            { "nombre": "Lautaro Loguzzo", "empresa": "Canillita", "img": "/participan/lautaro-loguzzo.webp" }
+          ]
+        },
+        {
+          "hora": "14:30 - 15:00",
+          "titulo": "Sub20",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Ana Julia Gavilan", "empresa": "", "img": "/participan/ana-julia-gavilan.webp" }
+          ]
+        },
+        {
+          "hora": "15:00 - 15:30",
+          "titulo": "Founder extraordinario / nuevos negocios",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Claudia Casalongue", "empresa": "Unibaio", "img": "/participan/claudia-casalongue.webp" },
+            { "nombre": "Gustavo Nusenovich", "empresa": "Otro Punto de Vista", "img": "/participan/gustavo-nusenovich.webp" }
+          ]
+        },
+        {
+          "hora": "15:30 - 16:00",
+          "titulo": "Tendencias antes que el mercado",
+          "categoria": "Keynote",
+          "speakers": []
+        },
+        {
+          "hora": "16:00 - 16:30",
+          "titulo": "Innovación abierta en Agro",
+          "categoria": "Coming Soon",
+          "speakers": []
+        },
+        {
+          "hora": "16:30 - 17:00",
+          "titulo": "Growth",
+          "categoria": "Coming Soon",
+          "speakers": []
+        },
+        {
+          "hora": "17:00 - 18:30",
+          "titulo": "Builders Arena",
+          "categoria": "Builders Arena",
+          "speakers": [
+            { "nombre": "Silvia Marra", "empresa": "", "img": "/participan/silvia-marra.webp" },
+            { "nombre": "Nicolai Ivansson", "empresa": "Ingenerate VC", "img": "/participan/nicolai-ivansson.webp" },
+            { "nombre": "Celia Alfie", "empresa": "", "img": "/participan/celia-alfie.webp" },
+            { "nombre": "Aldo Montefiore", "empresa": "", "img": "/participan/aldo-montefiore.webp" },
+            { "nombre": "Gustavo Nusenovich", "empresa": "Otro Punto de Vista", "img": "/participan/gustavo-nusenovich.webp" }
+          ]
+        },
+        {
+          "hora": "18:30 - 19:00",
+          "titulo": "IA responsable aplicada a negocios",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Marcelo De Vicenzi", "empresa": "Decano UAI", "img": "/participan/marcelo-de-vicenzi.webp" }
+          ]
+        },
+        {
+          "hora": "19:00 - 19:30",
+          "titulo": "Open Mic",
+          "categoria": "Coming Soon",
+          "speakers": []
+        },
+        {
+          "hora": "19:30 - 20:00",
+          "titulo": "Del piloto a Serie B: cómo escalar con un CVC",
+          "categoria": "Keynote",
+          "speakers": []
+        }
       ]
     },
     {
@@ -35,13 +124,94 @@
       "label": "Viernes 7 Ago",
       "subtitulo": "Final",
       "slots": [
-        { "hora": "09:00 - 10:00", "titulo": "Coffee & Networking", "categoria": "Networking", "sala": "Lobby" },
-        { "hora": "10:00 - 12:30", "titulo": "Pitch Battle - Ronda 1 (Top 10)", "categoria": "Pitch Battle", "sala": "Main Stage" },
-        { "hora": "12:30 - 14:00", "titulo": "Lunch", "categoria": "Networking", "sala": "Expo Zone" },
-        { "hora": "14:00 - 16:00", "titulo": "Pitch Battle - Final (Top 3)", "categoria": "Pitch Battle", "sala": "Main Stage" },
-        { "hora": "16:00 - 17:00", "titulo": "Anuncio del Ganador 🇦🇷", "categoria": "Keynote", "sala": "Main Stage" },
-        { "hora": "17:00 - 18:00", "titulo": "Closing Ceremony", "categoria": "Keynote", "sala": "Main Stage" },
-        { "hora": "19:00 - 23:00", "titulo": "After Party", "categoria": "Side Event", "sala": "Rooftop" }
+        {
+          "hora": "13:00 - 13:30",
+          "titulo": "Registro y acreditación",
+          "categoria": "Networking",
+          "speakers": []
+        },
+        {
+          "hora": "13:30 - 14:00",
+          "titulo": "Fireside chat / Panel de apertura",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Esteban Wolf", "empresa": "Chocorissimo", "img": "/participan/esteban-wolf.webp" }
+          ]
+        },
+        {
+          "hora": "14:00 - 15:30",
+          "titulo": "Panel VC + Speed Dating",
+          "categoria": "Networking",
+          "speakers": []
+        },
+        {
+          "hora": "15:30 - 16:00",
+          "titulo": "Historias de fracaso",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Hernán Schuster", "empresa": "Spiquers", "img": "/participan/hernan-schuster.webp" }
+          ]
+        },
+        {
+          "hora": "16:00 - 16:30",
+          "titulo": "Lo que aprendí de emprender",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Tito Loizeau", "empresa": "Endeavor", "img": "/participan/tito-loizeau.webp" }
+          ]
+        },
+        {
+          "hora": "16:30 - 17:00",
+          "titulo": "Vender más con psicología e IA",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Marcelo Rabinovich", "empresa": "Praxis Consulting", "img": "/participan/marcelo-rabinovich.webp" }
+          ]
+        },
+        {
+          "hora": "17:00 - 17:30",
+          "titulo": "Fireside chat",
+          "categoria": "Coming Soon",
+          "speakers": []
+        },
+        {
+          "hora": "17:30 - 18:00",
+          "titulo": "Open Mic",
+          "categoria": "Coming Soon",
+          "speakers": []
+        },
+        {
+          "hora": "18:00 - 18:30",
+          "titulo": "Panel journey de una startup, del 0 al exit",
+          "categoria": "Keynote",
+          "speakers": [
+            { "nombre": "Guido Kuznicki", "empresa": "Lara AI", "img": "/participan/guido-kuznicki.webp" }
+          ]
+        },
+        {
+          "hora": "18:30 - 19:00",
+          "titulo": "Intervalo",
+          "categoria": "Networking",
+          "speakers": []
+        },
+        {
+          "hora": "19:00 - 21:00",
+          "titulo": "Pitch Battle",
+          "categoria": "Pitch Battle",
+          "speakers": []
+        },
+        {
+          "hora": "21:00 - 21:30",
+          "titulo": "Deliberación, premiación y cierre",
+          "categoria": "Coming Soon",
+          "speakers": []
+        },
+        {
+          "hora": "21:30 - 22:00",
+          "titulo": "Networking de cierre",
+          "categoria": "Coming Soon",
+          "speakers": []
+        }
       ]
     }
   ]

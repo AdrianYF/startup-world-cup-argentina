@@ -14,8 +14,8 @@ import { Modal } from './ui/Modal'
  */
 
 const NAV_LINKS = [
-  { to: '/road-to-swc', label: 'Road to SWC' },
   { to: '/agenda', label: 'Agenda' },
+  { to: '/road-to-swc', label: 'Road to SWC' },
   { to: '/pitch-battle', label: 'Pitch Battle' },
   { to: '/startups', label: 'Startups' },
   { to: '/voluntarios', label: 'Voluntarios' },
