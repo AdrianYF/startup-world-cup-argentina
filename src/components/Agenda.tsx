@@ -17,7 +17,8 @@ import type { AgendaSpeaker } from '../lib/content'
  *   va fijo en `--color-swc-orange` y no sigue al día activo.
  *
  * Sin columna de duración ni contadores en el header del día: se pidió sacarlos.
- * La duración se sigue calculando para destacar los bloques largos.
+ * Los bloques que se destacan son Builders Arena y Pitch Battle, por categoría
+ * y no por duración.
  */
 
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace'
@@ -28,23 +29,21 @@ const ACENTOS = ['#75AADB', '#3B82F6', '#6366F1']
 /** Bloque todavía sin confirmar: no es un track, es un estado. */
 const COMING_SOON = 'Coming Soon'
 
-/** Desde qué duración un bloque se destaca (barra + fondo tintado). */
-const BLOQUE_LARGO_MIN = 90
+/**
+ * Los únicos tracks filtrables, en este orden.
+ *
+ * La lista es explícita a propósito: antes salía de las categorías presentes en
+ * el día, así que cualquier categoría nueva en el JSON se colaba como filtro.
+ * `Charla`, `Networking` y `Coming Soon` existen como dato pero no filtran.
+ */
+const FILTROS = ['Keynote', 'Pitch Battle', 'Builders Arena', 'Investors', 'Side Events']
+
+/** Bloques que se destacan (barra lateral + fondo tintado): los dos platos fuertes. */
+const DESTACADOS = new Set(['Builders Arena', 'Pitch Battle'])
 
 function rgba(hex: string, a: number): string {
   const n = parseInt(hex.slice(1), 16)
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`
-}
-
-function minutos(hora: string): number {
-  const [hh, mm] = hora.split(':').map(Number)
-  return hh * 60 + mm
-}
-
-/** "13:00 - 13:30" -> 30. No se muestra; sirve para destacar los bloques largos. */
-function duracionMin(hora: string): number {
-  const [desde, hasta] = hora.split(' - ')
-  return minutos(hasta) - minutos(desde)
 }
 
 /** Sin foto (todavía) mostramos las iniciales en el mismo círculo. */
@@ -75,8 +74,10 @@ function Agenda() {
 
   const activo = dias[dia]
   const accent = ACENTOS[dia % ACENTOS.length]
-  // Coming Soon queda afuera: es un estado del bloque, no un track filtrable.
-  const categorias = Array.from(new Set(activo.slots.map(s => s.categoria))).filter(c => c !== COMING_SOON)
+  // Solo los tracks de FILTROS que existen en el día activo: si no, el día 5
+  // mostraría cuatro filtros que no devuelven nada.
+  const presentes = new Set(activo.slots.map(s => s.categoria))
+  const categorias = FILTROS.filter(c => presentes.has(c))
   const slots = filter ? activo.slots.filter(s => s.categoria === filter) : activo.slots
 
   const cols = 'lg:grid-cols-[132px_minmax(0,1.5fr)_minmax(0,1fr)]'
@@ -193,8 +194,7 @@ function Agenda() {
 
           {/* Filas */}
           {slots.map((slot, i) => {
-            const mins = duracionMin(slot.hora)
-            const largo = mins >= BLOQUE_LARGO_MIN
+            const destacado = DESTACADOS.has(slot.categoria)
             const pendiente = slot.categoria === COMING_SOON
 
             return (
@@ -204,20 +204,20 @@ function Agenda() {
                   pendiente ? 'opacity-60' : ''
                 }`}
                 style={{
-                  background: largo ? rgba(accent, 0.1) : 'transparent',
-                  borderLeftColor: largo ? accent : 'transparent',
+                  background: destacado ? rgba(accent, 0.1) : 'transparent',
+                  borderLeftColor: destacado ? accent : 'transparent',
                 }}
               >
                 <span
                   className="text-[13px] lg:text-[15px] font-medium tracking-[-0.01em] whitespace-nowrap"
-                  style={{ fontFamily: MONO, color: largo ? '#FFFFFF' : '#d1d5db' }}
+                  style={{ fontFamily: MONO, color: destacado ? '#FFFFFF' : '#d1d5db' }}
                 >
                   {slot.hora}
                 </span>
 
                 <span
                   className={`text-sm lg:text-[16.5px] leading-snug text-white text-pretty ${
-                    largo ? 'font-extrabold' : 'font-semibold'
+                    destacado ? 'font-extrabold' : 'font-semibold'
                   }`}
                 >
                   {slot.titulo}

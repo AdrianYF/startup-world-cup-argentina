@@ -9,13 +9,13 @@
         {
           "hora": "16:00 - 20:00",
           "titulo": "Speed Mentoring + SWC 26",
-          "categoria": "Side Event",
+          "categoria": "Side Events",
           "speakers": []
         },
         {
           "hora": "16:00 - 20:00",
           "titulo": "Investor Room - Entrá en el criterio del inversor · WIP Club",
-          "categoria": "Side Event",
+          "categoria": "Side Events",
           "speakers": []
         }
       ]
@@ -35,41 +35,65 @@
         {
           "hora": "13:30 - 14:00",
           "titulo": "Apertura / Cámara Kirlian",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Daniel Maquez", "empresa": "Cámara Kirlian", "img": "/participan/daniel-maquez.webp" }
+            {
+              "nombre": "Daniel Maquez",
+              "empresa": "Cámara Kirlian",
+              "img": "/participan/daniel-maquez.webp"
+            }
           ]
         },
         {
           "hora": "14:00 - 14:30",
           "titulo": "Reinventando comportamientos",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Anabella Guimarey", "empresa": "El Cero Km", "img": "/participan/anabella-guimarey.webp" },
-            { "nombre": "Lautaro Loguzzo", "empresa": "Canillita", "img": "/participan/lautaro-loguzzo.webp" }
+            {
+              "nombre": "Anabella Guimarey",
+              "empresa": "El Cero Km",
+              "img": "/participan/anabella-guimarey.webp"
+            },
+            {
+              "nombre": "Lautaro Loguzzo",
+              "empresa": "Canillita",
+              "img": "/participan/lautaro-loguzzo.webp"
+            }
           ]
         },
         {
           "hora": "14:30 - 15:00",
           "titulo": "Sub20",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Ana Julia Gavilan", "empresa": "", "img": "/participan/ana-julia-gavilan.webp" }
+            {
+              "nombre": "Ana Julia Gavilan",
+              "empresa": "",
+              "img": "/participan/ana-julia-gavilan.webp"
+            }
           ]
         },
         {
           "hora": "15:00 - 15:30",
           "titulo": "Founder extraordinario / nuevos negocios",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Claudia Casalongue", "empresa": "Unibaio", "img": "/participan/claudia-casalongue.webp" },
-            { "nombre": "Gustavo Nusenovich", "empresa": "Otro Punto de Vista", "img": "/participan/gustavo-nusenovich.webp" }
+            {
+              "nombre": "Claudia Casalongue",
+              "empresa": "Unibaio",
+              "img": "/participan/claudia-casalongue.webp"
+            },
+            {
+              "nombre": "Gustavo Nusenovich",
+              "empresa": "Otro Punto de Vista",
+              "img": "/participan/gustavo-nusenovich.webp"
+            }
           ]
         },
         {
           "hora": "15:30 - 16:00",
           "titulo": "Tendencias antes que el mercado",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": []
         },
         {
@@ -89,19 +113,43 @@
           "titulo": "Builders Arena",
           "categoria": "Builders Arena",
           "speakers": [
-            { "nombre": "Silvia Marra", "empresa": "", "img": "/participan/silvia-marra.webp" },
-            { "nombre": "Nicolai Ivansson", "empresa": "Ingenerate VC", "img": "/participan/nicolai-ivansson.webp" },
-            { "nombre": "Celia Alfie", "empresa": "", "img": "/participan/celia-alfie.webp" },
-            { "nombre": "Aldo Montefiore", "empresa": "", "img": "/participan/aldo-montefiore.webp" },
-            { "nombre": "Gustavo Nusenovich", "empresa": "Otro Punto de Vista", "img": "/participan/gustavo-nusenovich.webp" }
+            {
+              "nombre": "Silvia Marra",
+              "empresa": "",
+              "img": "/participan/silvia-marra.webp"
+            },
+            {
+              "nombre": "Nicolai Ivansson",
+              "empresa": "Ingenerate VC",
+              "img": "/participan/nicolai-ivansson.webp"
+            },
+            {
+              "nombre": "Celia Alfie",
+              "empresa": "",
+              "img": "/participan/celia-alfie.webp"
+            },
+            {
+              "nombre": "Aldo Montefiore",
+              "empresa": "",
+              "img": "/participan/aldo-montefiore.webp"
+            },
+            {
+              "nombre": "Gustavo Nusenovich",
+              "empresa": "Otro Punto de Vista",
+              "img": "/participan/gustavo-nusenovich.webp"
+            }
           ]
         },
         {
           "hora": "18:30 - 19:00",
           "titulo": "IA responsable aplicada a negocios",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Marcelo De Vicenzi", "empresa": "Decano UAI", "img": "/participan/marcelo-de-vicenzi.webp" }
+            {
+              "nombre": "Marcelo De Vicenzi",
+              "empresa": "Decano UAI",
+              "img": "/participan/marcelo-de-vicenzi.webp"
+            }
           ]
         },
         {
@@ -114,7 +162,13 @@
           "hora": "19:30 - 20:00",
           "titulo": "Del piloto a Serie B: cómo escalar con un CVC",
           "categoria": "Keynote",
-          "speakers": []
+          "speakers": [
+            {
+              "nombre": "John Newkirk",
+              "empresa": "Kamay",
+              "img": "/participan/john-newkirk.webp"
+            }
+          ]
         }
       ]
     },
@@ -135,37 +189,53 @@
           "titulo": "Fireside chat / Panel de apertura",
           "categoria": "Keynote",
           "speakers": [
-            { "nombre": "Esteban Wolf", "empresa": "Chocorissimo", "img": "/participan/esteban-wolf.webp" }
+            {
+              "nombre": "Esteban Wolf",
+              "empresa": "Chocorissimo",
+              "img": "/participan/esteban-wolf.webp"
+            }
           ]
         },
         {
           "hora": "14:00 - 15:30",
           "titulo": "Panel VC + Speed Dating",
-          "categoria": "Networking",
+          "categoria": "Investors",
           "speakers": []
         },
         {
           "hora": "15:30 - 16:00",
           "titulo": "Historias de fracaso",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Hernán Schuster", "empresa": "Spiquers", "img": "/participan/hernan-schuster.webp" }
+            {
+              "nombre": "Hernán Schuster",
+              "empresa": "Spiquers",
+              "img": "/participan/hernan-schuster.webp"
+            }
           ]
         },
         {
           "hora": "16:00 - 16:30",
           "titulo": "Lo que aprendí de emprender",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Tito Loizeau", "empresa": "Endeavor", "img": "/participan/tito-loizeau.webp" }
+            {
+              "nombre": "Tito Loizeau",
+              "empresa": "Endeavor",
+              "img": "/participan/tito-loizeau.webp"
+            }
           ]
         },
         {
           "hora": "16:30 - 17:00",
           "titulo": "Vender más con psicología e IA",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Marcelo Rabinovich", "empresa": "Praxis Consulting", "img": "/participan/marcelo-rabinovich.webp" }
+            {
+              "nombre": "Marcelo Rabinovich",
+              "empresa": "Praxis Consulting",
+              "img": "/participan/marcelo-rabinovich.webp"
+            }
           ]
         },
         {
@@ -183,9 +253,13 @@
         {
           "hora": "18:00 - 18:30",
           "titulo": "Panel journey de una startup, del 0 al exit",
-          "categoria": "Keynote",
+          "categoria": "Charla",
           "speakers": [
-            { "nombre": "Guido Kuznicki", "empresa": "Lara AI", "img": "/participan/guido-kuznicki.webp" }
+            {
+              "nombre": "Guido Kuznicki",
+              "empresa": "Lara AI",
+              "img": "/participan/guido-kuznicki.webp"
+            }
           ]
         },
         {
