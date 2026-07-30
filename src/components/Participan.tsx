@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { content } from '../lib/content'
 import { openTicketing } from '../lib/ticketing'
 import { Modal } from './ui/Modal'
+import { SectionGlow } from './ui/SectionGlow'
 
 type Participante = (typeof content.participan)[number]
 
@@ -45,9 +46,10 @@ function Participan() {
 
   return (
     <section id="participan" className="relative py-16 sm:py-24 bg-[#020618] text-white">
+      <SectionGlow />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
 
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="relative max-w-6xl mx-auto px-4">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4 text-white">
             PARTICIPAN

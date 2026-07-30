@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { content } from '../lib/content'
 import { LogoProtegido } from './ui/LogoProtegido'
+import { SectionGlow } from './ui/SectionGlow'
 
 type Categoria = (typeof content.apoyan)[number]
 
@@ -38,8 +39,9 @@ function Apoyan() {
 
   return (
     <section id="apoyan" className="relative py-16 sm:py-24 bg-[#020618] text-white">
+      <SectionGlow />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="relative max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase mb-4">
             <span className="text-white">QUIENES NOS </span>
