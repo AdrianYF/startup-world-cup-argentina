@@ -15,10 +15,13 @@ import type { AgendaDay, AgendaSpeaker } from '../lib/content'
  * activo y se reseteaba al cambiar de día. Ahora filtra los tres a la vez y los
  * días que quedan sin bloques simplemente no se dibujan.
  *
- * Dos desvíos deliberados del diseño original:
+ * Tres desvíos deliberados del diseño original:
  * - Fuentes: el diseño pide Archivo + JetBrains Mono de Google Fonts. Va todo en
  *   Outfit, la del resto del sitio; los horarios llevan `tabular-nums`, que
  *   alinea la columna sin pedir una familia extra.
+ * - Título: el diseño lo pide gigante y a la izquierda. Va con el mismo
+ *   tratamiento que los otros H2 del sitio (centrado, `lg:text-6xl`, la
+ *   palabra-acento en celeste) para que la sección no se lea como de otro lado.
  * - Acentos: el diseño alterna azul y naranja por día. El naranja no está en la
  *   rampa por día (ver /COLORS.md), así que los tres días usan celeste → azul →
  *   índigo. El naranja sobrevive en un solo lugar: el asterisco del título.
@@ -219,25 +222,17 @@ function Agenda() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB]/50 to-transparent" />
 
       <div className="relative max-w-7xl mx-auto flex flex-col gap-8 sm:gap-12">
-        {/* Header */}
-        <header>
-          <div className="flex flex-col gap-4 max-w-[760px]">
-            <h2 className="m-0 text-[44px] sm:text-6xl lg:text-8xl font-black uppercase leading-[0.9] tracking-[-0.035em] text-balance">
-              Agenda
-              <br />
-              <span
-                className="bg-clip-text text-transparent"
-                style={{ backgroundImage: 'linear-gradient(96deg, #7DB2E8 0%, #3B82F6 45%, #6366F1 100%)' }}
-              >
-                tentativa
-              </span>
-              <span className="text-[#ff6600]">*</span>
-            </h2>
-            <p className="m-0 text-sm sm:text-base leading-relaxed text-gray-400 max-w-[56ch]">
-              Tres jornadas de charlas, paneles, speed dating con fondos y el Pitch Battle que define al campeón
-              argentino. <span className="text-gray-300">*La agenda puede sufrir modificaciones.</span>
-            </p>
-          </div>
+        {/* Header — mismo tratamiento que el resto de los H2 del sitio */}
+        <header className="text-center">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
+            <span className="text-white">AGENDA </span>
+            <span className="text-[#75AADB]">TENTATIVA</span>
+            <span className="text-[#ff6600]">*</span>
+          </h2>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Tres jornadas de charlas, paneles, speed dating con fondos y el Pitch Battle que define al campeón
+            argentino. <span className="text-gray-300">*La agenda puede sufrir modificaciones.</span>
+          </p>
         </header>
 
         {/* Filtros por track, globales a los tres días */}
