@@ -9,7 +9,7 @@ import { SectionGlow } from './ui/SectionGlow'
  */
 
 /** URL del alta de perfil en imatchin. Vacío = no se muestra el botón. */
-const IMATCHIN_URL = ''
+const IMATCHIN_URL = 'https://imatchin.com'
 
 function Imatchin() {
   return (
