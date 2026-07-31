@@ -50,7 +50,12 @@ const DESTACADOS = new Set(['Builders Arena', 'Pitch Battle'])
 const CTA_DIA =
   'shrink-0 inline-flex items-center cursor-pointer rounded-full px-5 sm:px-6 py-2.5 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.14em] text-white transition-all hover:brightness-125 active:scale-95'
 
+/**
+ * Los días sin un solo speaker (hoy los side events del miércoles) van a dos
+ * columnas: la de speakers quedaba con el encabezado puesto y nada abajo.
+ */
 const COLS = 'lg:grid-cols-[132px_minmax(0,1.5fr)_minmax(0,1fr)]'
+const COLS_SIN_SPEAKERS = 'lg:grid-cols-[132px_minmax(0,1fr)]'
 const HEAD_LABEL = 'text-[10px] font-extrabold uppercase tracking-[0.2em] text-gray-400'
 
 function rgba(hex: string, a: number): string {
@@ -81,6 +86,9 @@ function Avatar({ speaker, accent }: { speaker: AgendaSpeaker; accent: string })
 
 /** Un día completo: header con su CTA + la tabla de bloques. */
 function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
+  const conSpeakers = dia.slots.some(s => s.speakers.length > 0)
+  const cols = conSpeakers ? COLS : COLS_SIN_SPEAKERS
+
   return (
     <div
       className="border border-[#75AADB]/15 rounded-2xl overflow-hidden"
@@ -137,10 +145,10 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
       </div>
 
       {/* Cabecera de la tabla - solo desde lg, donde las columnas existen de verdad */}
-      <div className={`hidden lg:grid ${COLS} gap-5 px-5 sm:px-8 py-3.5 border-b border-[#75AADB]/10 bg-[#020618]/60`}>
+      <div className={`hidden lg:grid ${cols} gap-5 px-5 sm:px-8 py-3.5 border-b border-[#75AADB]/10 bg-[#020618]/60`}>
         <span className={HEAD_LABEL}>Horario</span>
         <span className={HEAD_LABEL}>Actividad / Bloque</span>
-        <span className={HEAD_LABEL}>Speaker(s)</span>
+        {conSpeakers && <span className={HEAD_LABEL}>Speaker(s)</span>}
       </div>
 
       {/* Filas */}
@@ -151,7 +159,7 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
         return (
           <div
             key={i}
-            className={`grid grid-cols-1 ${COLS} gap-y-1.5 lg:gap-5 items-center px-5 sm:px-8 py-3.5 lg:py-4 border-b border-[#75AADB]/8 border-l-[3px] transition-colors last:border-b-0 hover:bg-[#75AADB]/[0.07] ${
+            className={`grid grid-cols-1 ${cols} gap-y-1.5 lg:gap-5 items-center px-5 sm:px-8 py-3.5 lg:py-4 border-b border-[#75AADB]/8 border-l-[3px] transition-colors last:border-b-0 hover:bg-[#75AADB]/[0.07] ${
               pendiente ? 'opacity-60' : ''
             }`}
             style={{
@@ -194,7 +202,9 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
                 </span>
               </span>
             ) : (
-              <span className="hidden lg:block" />
+              // Sin la celda vacía la fila se desalinearía de la cabecera; en los
+              // días de dos columnas no va, o el grid inventaría una tercera.
+              conSpeakers && <span className="hidden lg:block" />
             )}
           </div>
         )
