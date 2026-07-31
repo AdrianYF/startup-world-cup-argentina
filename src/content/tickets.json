@@ -31,10 +31,10 @@
     "id": "tanda-3",
     "nombre": "Tanda 3",
     "precio": "$30.000",
-    "cupos": "30 unidades",
-    "descripcion": "Early Bird 2nd Round: abre el 20 de julio, hasta agotar los segundos 30 cupos.",
-    "estado": "venta",
-    "badge": "FINALIZA PRONTO",
+    "cupos": "50 unidades",
+    "descripcion": "Early Bird 2nd Round: cerró el 28 de julio.",
+    "estado": "agotado",
+    "badge": null,
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
@@ -46,13 +46,27 @@
     "nombre": "Tanda 4",
     "precio": "$35.000",
     "cupos": "30 unidades",
-    "descripcion": "Última tanda: al precio más alto, hasta agotar cupos.",
-    "estado": "proximamente",
-    "badge": "PRÓXIMAMENTE",
+    "descripcion": "Última tanda general: descuento preferencial hasta agotar los 30 cupos.",
+    "estado": "venta",
+    "badge": "ÚLTIMA TANDA",
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
       "Matchmaking digital"
+    ]
+  },
+  {
+    "id": "vip",
+    "nombre": "Entrada VIP",
+    "precio": "$65.000",
+    "cupos": "30 unidades",
+    "descripcion": "Acceso a conexiones top, con comida del 6/08 y cocktail de cierre incluidos.",
+    "estado": "venta",
+    "badge": null,
+    "features": [
+      "Todo lo de la entrada general",
+      "Comida del jueves 6",
+      "Cocktail de cierre con cata de vino"
     ]
   }
 ]
