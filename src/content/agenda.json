@@ -170,9 +170,19 @@
         },
         {
           "hora": "19:30 - 20:00",
-          "titulo": "Del piloto a Serie B: cómo escalar con un CVC",
+          "titulo": "Corporación, startup y VC: la fórmula detrás de un caso de éxito regional",
           "categoria": "Keynote",
           "speakers": [
+            {
+              "nombre": "Matias Vigil",
+              "empresa": "Arcor",
+              "img": ""
+            },
+            {
+              "nombre": "Ignacio Bivort",
+              "empresa": "AltScore",
+              "img": ""
+            },
             {
               "nombre": "John Newkirk",
               "empresa": "Kamay",
