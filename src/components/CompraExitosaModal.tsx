@@ -152,12 +152,15 @@ function Exito({ orden }: { orden: Orden }) {
         </dl>
       </div>
 
+      {/* PDF y no un link a la página: la entrada queda guardada en el
+          teléfono y sirve aunque en la puerta no haya señal. */}
       <a
-        href={`/entrada/${orden.ticketToken}`}
+        href={`/api/entrada-pdf?t=${orden.ticketToken}`}
+        download
         style={{ backgroundImage: 'var(--gradient-cta)' }}
         className="mt-5 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
       >
-        Ver mi entrada completa
+        Descargar entrada
       </a>
     </>
   )

@@ -60,13 +60,11 @@
     "nombre": "Entrada VIP",
     "precio": "$65.000",
     "cupos": "30 unidades",
-    "descripcion": "Acceso a conexiones top, con comida del 6/08 y cocktail de cierre incluidos.",
+    "descripcion": "Acceso a conexiones top.",
     "estado": "venta",
     "badge": null,
     "features": [
-      "Todo lo de la entrada general",
-      "Comida del jueves 6",
-      "Cocktail de cierre con cata de vino"
+      "Todo lo de la entrada general"
     ]
   }
 ]
