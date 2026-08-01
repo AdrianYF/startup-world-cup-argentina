@@ -37,7 +37,7 @@ export default async function handler(req, res) {
   const buyer = body.buyer || {}
   const nombre = String(buyer.nombre || '').trim()
   const email = String(buyer.email || '').trim().toLowerCase()
-  const dni = String(buyer.dni || '').trim()
+  const empresa = String(buyer.empresa || '').trim()
 
   if (!tierId) return json(res, 400, { error: 'tier_requerido' })
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_UNIDADES) {
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
         service_fee_ars: montos.cargo,
         buyer_name: nombre,
         buyer_email: email,
-        buyer_dni: dni || null,
+        buyer_empresa: empresa || null,
         status: 'pending',
         expires_at: expiresAt.toISOString(),
       })

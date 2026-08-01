@@ -56,7 +56,7 @@ const LABEL = 'block text-[11px] font-extrabold uppercase tracking-[0.14em] text
 
 function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descripcion, onClose }: Props) {
   const [paso, setPaso] = useState<Paso>('elegir')
-  const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', dni: '' })
+  const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', empresa: '' })
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
@@ -169,16 +169,16 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
               />
             </div>
             <div>
-              <label className={LABEL} htmlFor="ck-dni">
-                DNI <span className="text-gray-600 normal-case tracking-normal font-normal">(opcional)</span>
+              <label className={LABEL} htmlFor="ck-empresa">
+                Empresa <span className="text-gray-600 normal-case tracking-normal font-normal">(opcional)</span>
               </label>
               <input
-                id="ck-dni"
+                id="ck-empresa"
                 className={INPUT}
-                value={comprador.dni}
-                onChange={set('dni')}
-                inputMode="numeric"
-                placeholder="Agiliza la acreditación en puerta"
+                value={comprador.empresa}
+                onChange={set('empresa')}
+                autoComplete="organization"
+                placeholder="Dónde trabajás o tu startup"
               />
             </div>
           </div>

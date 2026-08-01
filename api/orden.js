@@ -11,7 +11,7 @@
 // Sigue siendo seguro: el estado se lo pedimos a MP con nuestro access token. El
 // cliente sólo aporta el id de la orden — nunca dice si pagó.
 //
-// No devuelve el mail, el DNI ni el payment_id: el id de la orden viaja en la
+// No devuelve el mail ni el payment_id: el id de la orden viaja en la
 // URL y podría quedar en un historial compartido. El `ticket_token` sí, porque
 // sin él la pantalla de éxito no serviría de nada.
 import { db } from './_lib/db.js'

@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
- * La lista de acreditación, con los dos canales juntos.
+ * La lista de acreditación, con los tres canales juntos.
  *
  *   node scripts/lista-puerta.mjs              # tabla en pantalla
  *   node scripts/lista-puerta.mjs --csv        # CSV a stdout
  *   node scripts/lista-puerta.mjs --dia mie    # sólo un día (mie|jue|vie)
  *
  * Sale de la vista `acreditacion`: los `orders` pagados de la venta propia más
- * los aprobados de Luma. Ordena por apellido para buscar rápido en la puerta.
+ * los confirmados de Luma y Startup Grind. Ordena por apellido, que es lo que
+ * la gente dice en la puerta.
  */
 import { createClient } from '@supabase/supabase-js'
 import { aCSV } from './lib/csv.mjs'
@@ -49,7 +50,7 @@ const apellido = n => (n || '').trim().split(/\s+/).slice(-1)[0].toLowerCase()
 filas.sort((a, b) => apellido(a.nombre).localeCompare(apellido(b.nombre), 'es'))
 
 if (comoCSV) {
-  const cols = ['nombre', 'email', 'entrada', 'dias', 'cantidad', 'documento', 'origen', 'usada_en']
+  const cols = ['nombre', 'email', 'empresa', 'entrada', 'dias', 'cantidad', 'origen', 'usada_en']
   console.log(aCSV(cols, filas))
   process.exit(0)
 }
@@ -57,7 +58,7 @@ if (comoCSV) {
 if (!filas.length) {
   console.log('\n  La lista está vacía.\n')
   console.log('  · Venta propia: se llena sola con cada compra aprobada.')
-  console.log('  · Luma: node scripts/importar-luma.mjs <archivo.csv> --evento <slug>\n')
+  console.log('  · Luma / Startup Grind: node scripts/importar-asistentes.mjs <csv> --origen <canal> --evento <id>\n')
   process.exit(0)
 }
 
@@ -67,19 +68,20 @@ const w = (s, n) => String(s ?? '').slice(0, n).padEnd(n)
 const ancho = (campo, min) =>
   Math.max(min, ...filas.map(f => String(f[campo] ?? '').length))
 
-const cN = Math.min(ancho('nombre', 6), 28) + 2
-const cE = Math.min(ancho('email', 5), 32) + 2
+const cN = Math.min(ancho('nombre', 6), 26) + 2
+const cE = Math.min(ancho('email', 5), 30) + 2
+const cC = Math.min(ancho('empresa', 7), 20) + 2
 const cT = Math.min(ancho('entrada', 7), 24) + 2
 const cD = ancho('dias', 4) + 2
 const cO = ancho('origen', 6) + 2
-const raya = '─'.repeat(cN + cE + cT + cD + cO)
+const raya = '─'.repeat(cN + cE + cC + cT + cD + cO)
 
 console.log('')
-console.log(`  ${w('NOMBRE', cN)}${w('EMAIL', cE)}${w('ENTRADA', cT)}${w('DÍAS', cD)}${w('ORIGEN', cO)}`)
+console.log(`  ${w('NOMBRE', cN)}${w('EMAIL', cE)}${w('EMPRESA', cC)}${w('ENTRADA', cT)}${w('DÍAS', cD)}${w('ORIGEN', cO)}`)
 console.log(`  ${raya}`)
 for (const f of filas) {
   const usada = f.usada_en ? '✓ usada' : ''
-  console.log(`  ${w(f.nombre, cN)}${w(f.email, cE)}${w(f.entrada, cT)}${w(f.dias, cD)}${w(f.origen, cO)}${usada}`)
+  console.log(`  ${w(f.nombre, cN)}${w(f.email, cE)}${w(f.empresa, cC)}${w(f.entrada, cT)}${w(f.dias, cD)}${w(f.origen, cO)}${usada}`)
 }
 
 const porOrigen = filas.reduce((a, f) => ({ ...a, [f.origen]: (a[f.origen] || 0) + 1 }), {})
