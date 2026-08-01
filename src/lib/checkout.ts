@@ -43,7 +43,11 @@ export type Orden = {
   cargo: number
   total: number
   status: EstadoOrden
+  /** Por qué rechazó Mercado Pago, sólo cuando `status === 'rejected'`. */
+  detalle: string | null
   nombre: string
+  /** Enmascarado por el backend: `an•••@ejemplo.com`. */
+  email: string
   ticketToken: string | null
 }
 
