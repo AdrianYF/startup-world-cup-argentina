@@ -2,7 +2,7 @@
 //
 // El token ES la credencial: quien lo tiene, tiene la entrada. Por eso se
 // genera con 32 bytes aleatorios y por eso acá se devuelve sólo lo que hace
-// falta para mostrar el ticket, sin el mail ni el DNI del comprador.
+// falta para mostrar el ticket, sin los datos de contacto del comprador.
 import { db } from './_lib/db.js'
 import { json, rejectMethod, first } from './_lib/http.js'
 

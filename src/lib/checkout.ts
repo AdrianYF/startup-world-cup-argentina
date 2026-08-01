@@ -30,7 +30,8 @@ export type TierLive = {
 export type Comprador = {
   nombre: string
   email: string
-  dni: string
+  /** Opcional. Sale en la lista de acreditación, para networking. */
+  empresa: string
 }
 
 export type EstadoOrden = 'pending' | 'paid' | 'rejected' | 'expired' | 'refunded'
