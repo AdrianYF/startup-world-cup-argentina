@@ -22,9 +22,18 @@ import { traerPago, acreditar } from './_lib/acreditar.js'
 const TOLERANCIA_SEG = 300
 
 export default async function handler(req, res) {
-  // MP puede tantear la URL con un GET al configurar la notificación.
+  // Mercado Pago tantea la URL con un GET/HEAD antes de dejarte guardarla en el
+  // panel, y también para chequear que siga viva. Si le contestamos 405 la
+  // rechaza y no se puede configurar la notificación.
+  //
+  // El OK no toca nada ni devuelve datos: sólo dice "acá hay algo escuchando".
+  // Lo que acredita sigue siendo únicamente el POST, y sólo con firma válida.
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    return json(res, 200, { ok: true, endpoint: 'mp-webhook' })
+  }
+
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST')
+    res.setHeader('Allow', 'POST, GET')
     return json(res, 405, { error: 'method_not_allowed' })
   }
 
