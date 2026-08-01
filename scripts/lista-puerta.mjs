@@ -50,7 +50,7 @@ const apellido = n => (n || '').trim().split(/\s+/).slice(-1)[0].toLowerCase()
 filas.sort((a, b) => apellido(a.nombre).localeCompare(apellido(b.nombre), 'es'))
 
 if (comoCSV) {
-  const cols = ['nombre', 'email', 'empresa', 'entrada', 'dias', 'cantidad', 'origen', 'usada_en']
+  const cols = ['nombre', 'email', 'telefono', 'empresa', 'entrada', 'dias', 'cantidad', 'origen', 'usada_en']
   console.log(aCSV(cols, filas))
   process.exit(0)
 }
@@ -70,18 +70,19 @@ const ancho = (campo, min) =>
 
 const cN = Math.min(ancho('nombre', 6), 26) + 2
 const cE = Math.min(ancho('email', 5), 30) + 2
-const cC = Math.min(ancho('empresa', 7), 20) + 2
+const cF = Math.min(ancho('telefono', 8), 16) + 2
+const cC = Math.min(ancho('empresa', 7), 18) + 2
 const cT = Math.min(ancho('entrada', 7), 24) + 2
 const cD = ancho('dias', 4) + 2
 const cO = ancho('origen', 6) + 2
-const raya = '─'.repeat(cN + cE + cC + cT + cD + cO)
+const raya = '─'.repeat(cN + cE + cF + cC + cT + cD + cO)
 
 console.log('')
-console.log(`  ${w('NOMBRE', cN)}${w('EMAIL', cE)}${w('EMPRESA', cC)}${w('ENTRADA', cT)}${w('DÍAS', cD)}${w('ORIGEN', cO)}`)
+console.log(`  ${w('NOMBRE', cN)}${w('EMAIL', cE)}${w('TELÉFONO', cF)}${w('EMPRESA', cC)}${w('ENTRADA', cT)}${w('DÍAS', cD)}${w('ORIGEN', cO)}`)
 console.log(`  ${raya}`)
 for (const f of filas) {
   const usada = f.usada_en ? '✓ usada' : ''
-  console.log(`  ${w(f.nombre, cN)}${w(f.email, cE)}${w(f.empresa, cC)}${w(f.entrada, cT)}${w(f.dias, cD)}${w(f.origen, cO)}${usada}`)
+  console.log(`  ${w(f.nombre, cN)}${w(f.email, cE)}${w(f.telefono, cF)}${w(f.empresa, cC)}${w(f.entrada, cT)}${w(f.dias, cD)}${w(f.origen, cO)}${usada}`)
 }
 
 const porOrigen = filas.reduce((a, f) => ({ ...a, [f.origen]: (a[f.origen] || 0) + 1 }), {})

@@ -30,6 +30,8 @@ export type TierLive = {
 export type Comprador = {
   nombre: string
   email: string
+  /** Opcional. Para avisar de un cambio de último momento. */
+  telefono: string
   /** Opcional. Sale en la lista de acreditación, para networking. */
   empresa: string
 }

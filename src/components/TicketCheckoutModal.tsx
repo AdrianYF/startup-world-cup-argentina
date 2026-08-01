@@ -15,9 +15,12 @@ import {
  *
  * El primer paso es elegir dónde pagar:
  *
- *   · Mercado Pago  → se queda en el sitio. Datos del comprador, Wallet Brick,
- *                     y la entrada con QR sale por mail desde acá.
- *   · Startup Grind → se va a su checkout, que es el que venía funcionando.
+ *   · Mercado Pago          → se queda en el sitio. Datos del comprador, Wallet
+ *                             Brick, y la entrada con QR sale por mail desde acá.
+ *   · Otros medios de pago  → al checkout de Startup Grind, que es el que venía
+ *                             funcionando. El botón no lo nombra: para el
+ *                             comprador lo relevante es que hay más formas de
+ *                             pagar, no de quién es el checkout.
  *
  * Cobran lo mismo: el cargo de servicio espeja al de Startup Grind justamente
  * para que elegir sea una cuestión de preferencia y no de precio.
@@ -53,10 +56,11 @@ const INPUT =
   'transition-colors focus:border-[#75AADB]/60 focus:bg-white/[0.07] outline-none'
 
 const LABEL = 'block text-[11px] font-extrabold uppercase tracking-[0.14em] text-gray-400 mb-1.5'
+const OPCIONAL = 'text-gray-600 normal-case tracking-normal font-normal'
 
 function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descripcion, onClose }: Props) {
   const [paso, setPaso] = useState<Paso>('elegir')
-  const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', empresa: '' })
+  const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', telefono: '', empresa: '' })
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
@@ -169,8 +173,23 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
               />
             </div>
             <div>
+              <label className={LABEL} htmlFor="ck-telefono">
+                Teléfono <span className={OPCIONAL}>(opcional)</span>
+              </label>
+              <input
+                id="ck-telefono"
+                type="tel"
+                className={INPUT}
+                value={comprador.telefono}
+                onChange={set('telefono')}
+                autoComplete="tel"
+                inputMode="tel"
+                placeholder="Por si hay algún cambio de último momento"
+              />
+            </div>
+            <div>
               <label className={LABEL} htmlFor="ck-empresa">
-                Empresa <span className="text-gray-600 normal-case tracking-normal font-normal">(opcional)</span>
+                Empresa <span className={OPCIONAL}>(opcional)</span>
               </label>
               <input
                 id="ck-empresa"
@@ -244,10 +263,10 @@ function ElegirCanal({
           onClick={onMercadoPago}
         />
         <Canal
-          titulo="Startup Grind"
-          detalle={`Te llevamos a su checkout${
+          titulo="Otros medios de pago"
+          detalle={`Te llevamos al checkout de Startup Grind${
             tier === 'vip' ? ', donde elegís la Entrada VIP' : ''
-          }. La entrada te la manda Startup Grind.`}
+          }. Ellos te mandan la entrada.`}
           onClick={onStartupGrind}
           externo
         />
