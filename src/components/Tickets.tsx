@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { content } from '../lib/content'
-import { openTicketing } from '../lib/ticketing'
 import { SectionGlow } from './ui/SectionGlow'
+import TicketCheckoutModal from './TicketCheckoutModal'
+import { fetchTiers, formatARS, TIER_POR_TICKET, type TierId, type TierLive } from '../lib/checkout'
 
-/** Copy del botón por estado. Solo la tanda a la venta linkea a Startup Grind. */
+/** Copy del botón por estado. */
 const CTA: Record<string, string> = {
   venta: 'Conseguir Ticket',
   agotado: 'Agotado',
@@ -13,9 +14,35 @@ const CTA: Record<string, string> = {
 /** Ancho de cada tanda. Se usa para el padding que permite centrar cualquiera. */
 const CARD_W = 280
 
+/**
+ * "$35.000" → 35000. Sólo se usa como respaldo si /api/tiers no contestó: el
+ * precio que se cobra siempre lo pone el backend, esto es para no mostrar un
+ * hueco en el modal mientras tanto.
+ */
+function precioDesdeTexto(precio: string): number {
+  return Number(precio.replace(/[^\d]/g, '')) || 0
+}
+
 function Tickets() {
   const scrollerRef = useRef<HTMLDivElement>(null)
   const destacadaRef = useRef<HTMLDivElement>(null)
+
+  // Tier abierto en el modal de compra (null = cerrado).
+  const [comprando, setComprando] = useState<TierId | null>(null)
+
+  // Precio y cupo reales. La tabla `tiers` del backend es la fuente de verdad;
+  // tickets.json sólo pinta las cards. Si la API no contesta, `live` queda null
+  // y la sección sigue mostrando los valores del JSON: preferimos eso a romperla.
+  const [live, setLive] = useState<Record<string, TierLive> | null>(null)
+
+  useEffect(() => {
+    const ac = new AbortController()
+    fetchTiers(ac.signal).then(tiers => {
+      if (!tiers) return
+      setLive(Object.fromEntries(tiers.map(t => [t.id, t])))
+    })
+    return () => ac.abort()
+  }, [])
 
   // El carrusel arranca centrado en la tanda a la venta: es la única accionable
   // y antes quedaba fuera de pantalla en mobile, detrás de dos tandas agotadas.
@@ -59,8 +86,19 @@ function Tickets() {
             style={{ paddingInline: `calc(50% - ${CARD_W / 2}px)` }}
           >
             {content.tickets.map((plan) => {
-            const disponible = plan.estado === 'venta'
-            const agotado = plan.estado === 'agotado'
+            // El tier del backend que corresponde a esta card (las tandas viejas
+            // no tienen: son historia, no se venden).
+            const tier = TIER_POR_TICKET[plan.id]
+            const datos = tier && live ? live[tier] : undefined
+
+            // Sin datos vivos mandamos el JSON; con datos vivos manda la base,
+            // que es la única que sabe cuánto queda del cupo web.
+            const sinCupo = datos ? datos.disponible <= 0 : false
+            const disponible = plan.estado === 'venta' && Boolean(tier) && !sinCupo
+            const agotado = plan.estado === 'agotado' || sinCupo
+            const precio = datos ? formatARS(datos.precio) : plan.precio
+            const estadoLabel = agotado ? 'agotado' : plan.estado
+
             // Solo la tanda a la venta con badge se resalta; el tag "Próximamente" no destaca la card.
             const destacado = Boolean(plan.badge) && disponible
             return (
@@ -93,7 +131,7 @@ function Tickets() {
                 </span>
               </div>
               <div className={`text-4xl font-black ${agotado ? 'text-gray-500 line-through' : 'text-white'}`}>
-                {plan.precio}
+                {precio}
               </div>
               <p className="text-gray-500 text-xs mt-1 mb-5 min-h-4">
                 {disponible ? '+ cargo de servicio' : ''}
@@ -107,12 +145,12 @@ function Tickets() {
                 ))}
               </ul>
               <button
-                onClick={disponible ? () => openTicketing(`tickets-${plan.id}`) : undefined}
+                onClick={disponible && tier ? () => setComprando(tier) : undefined}
                 disabled={!disponible}
                 aria-label={
                   disponible
-                    ? `Conseguir ticket ${plan.nombre} (abre Startup Grind en una nueva pestaña)`
-                    : `${plan.nombre}: ${CTA[plan.estado]}`
+                    ? `Comprar ${plan.nombre}`
+                    : `${plan.nombre}: ${CTA[estadoLabel]}`
                 }
                 style={plan.badge && disponible ? { backgroundImage: 'var(--gradient-cta)' } : undefined}
                 className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all ${
@@ -121,8 +159,13 @@ function Tickets() {
                     : `cursor-pointer active:scale-95 ${plan.badge ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105' : 'border border-white/30 hover:border-[#ff7675] text-white'}`
                 }`}
               >
-                {CTA[plan.estado]}
+                {CTA[estadoLabel]}
               </button>
+              {disponible && datos && datos.disponible <= 5 && (
+                <p className="mt-2.5 text-center text-[11px] font-bold uppercase tracking-wider text-[#ff7675]">
+                  {datos.disponible === 1 ? 'Queda 1' : `Quedan ${datos.disponible}`}
+                </p>
+              )}
               </div>
             </div>
             )
@@ -131,6 +174,24 @@ function Tickets() {
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
+
+      {comprando && (() => {
+        // La card de la que salió el modal: de ahí vienen los perks y el badge.
+        const card = content.tickets.find(t => TIER_POR_TICKET[t.id] === comprando)
+        const datos = live?.[comprando]
+        if (!card) return null
+        return (
+          <TicketCheckoutModal
+            tier={comprando}
+            nombre={datos?.nombre || card.nombre}
+            precio={datos?.precio ?? precioDesdeTexto(card.precio)}
+            perks={card.features}
+            badge={card.badge}
+            descripcion={card.descripcion}
+            onClose={() => setComprando(null)}
+          />
+        )
+      })()}
     </section>
   )
 }

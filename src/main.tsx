@@ -15,6 +15,9 @@ const VoluntariosPage = lazy(() => import('./pages/VoluntariosPage.tsx'))
 const GaleriaPage = lazy(() => import('./pages/GaleriaPage.tsx'))
 const SpeakersAll = lazy(() => import('./pages/SpeakersAll.tsx'))
 const MysteryBox = lazy(() => import('./pages/MysteryBox.tsx'))
+// Compra de entradas: vuelta desde Mercado Pago y la entrada con su QR.
+const Gracias = lazy(() => import('./pages/Gracias.tsx'))
+const Entrada = lazy(() => import('./pages/Entrada.tsx'))
 
 initAnalytics()
 
@@ -59,6 +62,10 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/g/:code" element={<App />} />
           {/* Sección oculta: se llega escaneando el QR del ticket */}
           <Route path="/mystery-box" element={<MysteryBox />} />
+          {/* Compra de entradas. `back_urls` de Mercado Pago vuelve a /gracias;
+              /entrada/:token es el link del mail y el destino del QR. */}
+          <Route path="/gracias" element={<Gracias />} />
+          <Route path="/entrada/:token" element={<Entrada />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
