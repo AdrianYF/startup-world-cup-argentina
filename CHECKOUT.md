@@ -45,17 +45,7 @@ App **startupworldcupar** (`1003572338407990`) en
    - Evento: **Pagos**
    - Revelá la **clave secreta** → esa es `MP_WEBHOOK_SECRET`.
 
-Para probar en local hace falta que MP llegue a tu máquina:
-
-```bash
-npm run dev
-cloudflared tunnel --url http://localhost:5173
-# la URL que devuelve va como notification_url y como PUBLIC_SITE_URL
-```
-
-> `vite dev` **no** sirve las funciones de `api/`. Para probar el flujo completo
-> en local hay que usar `vercel dev`. Sin eso, el sitio anda pero el modal corta
-> con "El pago online no está disponible": es esperable.
+Ver **[Probar en local](#probar-en-local)** más abajo.
 
 ## 3 · Resend
 
@@ -75,6 +65,55 @@ vercel env add MP_ACCESS_TOKEN production
 Sólo `VITE_MP_PUBLIC_KEY` lleva el prefijo `VITE_`. Todo lo prefijado así se
 inlinea en el JavaScript público: si le ponés `VITE_` a un secreto, queda
 expuesto en el bundle.
+
+## Probar en local
+
+`vite dev` **no ejecuta las funciones de `api/`**: devuelve el `index.html` del
+fallback de la SPA, así que el checkout no anda. Hacen falta dos procesos:
+
+```bash
+npm run dev       # vite en :5173 — dejalo corriendo
+npm run dev:api   # sitio + funciones en :3000  ← entrá por acá
+```
+
+`dev:api` proxea todo lo que no sea `/api/*` a vite (hot reload incluido) y
+ejecuta las funciones con el mismo shim de `req`/`res` que usa Vercel. Levanta
+`.env.local` solo. No necesita cuenta de Vercel ni `vercel link`.
+
+Comprobá que las funciones están vivas:
+
+```bash
+curl localhost:3000/api/tiers
+# {"tiers":[{"id":"general",...}]}   ← con Supabase configurado
+# {"error":"tiers_unavailable"}      ← falta SUPABASE_URL / SERVICE_ROLE_KEY
+# <!doctype html>                    ← estás entrando por :5173, no por :3000
+```
+
+### Para que Mercado Pago te alcance
+
+El webhook lo llama MP desde internet, así que `localhost` no le sirve. Hay que
+exponer **el puerto 3000**, no el 5173:
+
+```bash
+cloudflared tunnel --url http://localhost:3000
+```
+
+Con la URL que devuelve:
+
+1. Ponela en `PUBLIC_SITE_URL` dentro de `.env.local` y reiniciá `dev:api`. Sin
+   esto, las `back_urls` apuntan a `localhost` y al pagar no volvés a ningún lado.
+2. Cargala en el panel de MP como `https://<túnel>/api/mp-webhook`, evento
+   **Pagos**.
+3. Copiá la clave secreta que revela el panel a `MP_WEBHOOK_SECRET`.
+
+> El túnel es público mientras el proceso viva: cualquiera con el link entra a tu
+> máquina. Cortalo cuando termines.
+
+### Sin Mercado Pago
+
+Para tocar sólo la UI del modal alcanza con `npm run dev`: el formulario se ve y
+valida, y al continuar corta con "El pago online no está disponible". Es lo
+esperado — no hay backend.
 
 ## 5 · Probar antes de cobrar en serio
 
