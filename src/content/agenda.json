@@ -205,6 +205,18 @@
           "speakers": []
         },
         {
+          "hora": "13:00 - 13:30",
+          "titulo": "Apertura / Cámara Kirlian",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Daniel Maquez",
+              "empresa": "Cámara Kirlian",
+              "img": "/participan/daniel-maquez.webp"
+            }
+          ]
+        },
+        {
           "hora": "13:30 - 14:00",
           "titulo": "Fireside chat / Panel de apertura",
           "categoria": "Keynote",
