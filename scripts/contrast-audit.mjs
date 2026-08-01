@@ -56,6 +56,13 @@ const checks = [
   ['white',       'primary',     'White en botón violeta',           'normal'],
   ['surface',     'accent',      'Slate en botón coral (FIX)',       'normal'],
   ['white',       'primaryDark', 'White en primary-dark (hover)',    'normal'],
+  // checkout — el modal de compra y las pantallas de /gracias y /entrada
+  ['gray400',     'surface',  'Labels del form de compra',           'normal'],
+  ['gray300',     'surface',  'Perks del modal de compra',           'normal'],
+  // Ambos son texto chico (14px), así que van contra el umbral normal (4.5), no
+  // contra el de texto grande.
+  ['accent',      'surface',  'Error del form / "ya usada"',         'normal'],
+  ['celeste',     'surface',  'Check ✓ y acentos del modal',         'normal'],
   // Dorado de la Entrada VIP. Sobre dorado va texto OSCURO: el blanco da 2,10 y
   // no llega al 4,5 de AA — ver el bloque de prohibidas.
   ['oro',         'bg',       'Oro en bg (borde y ✓ de la VIP)',     'normal'],
