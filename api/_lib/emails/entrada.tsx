@@ -45,6 +45,7 @@ export type EntradaEmailProps = {
   total: string
   ordenId: string
   ticketUrl: string
+  pdfUrl: string
   qrUrl: string
   fechas: string
 }
@@ -63,6 +64,7 @@ export function EntradaEmail({
   total,
   ordenId,
   ticketUrl,
+  pdfUrl,
   qrUrl,
   fechas,
 }: EntradaEmailProps) {
@@ -113,8 +115,8 @@ export function EntradaEmail({
           </Section>
 
           <Section style={{ padding: '24px 28px 0', textAlign: 'center' as const }}>
-            <Button href={ticketUrl} style={boton}>
-              Ver mi entrada
+            <Button href={pdfUrl} style={boton}>
+              Descargar entrada
             </Button>
           </Section>
 

@@ -250,4 +250,5 @@ update orders set ticket_used_at = now() where ticket_token = '<token>';
 - **Reembolsos.** Se ejecutan desde el panel de Mercado Pago; después conviene
   poner la orden en `refunded`.
 - **Términos y privacidad.** El modal pide nombre y mail (obligatorios) y
-  empresa (opcional): corresponde linkear términos y política de datos.
+  teléfono y empresa (opcionales): corresponde linkear términos y
+  política de datos.

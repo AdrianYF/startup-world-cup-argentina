@@ -132,6 +132,7 @@ async function mandarMail(orden, baseUrl) {
     orden,
     tierNombre: tier?.nombre || orden.tier_id,
     ticketUrl: `${baseUrl}/entrada/${orden.ticket_token}`,
+    pdfUrl: `${baseUrl}/api/entrada-pdf?t=${orden.ticket_token}`,
     qrUrl: `${baseUrl}/api/entrada-qr?t=${orden.ticket_token}`,
   })
 

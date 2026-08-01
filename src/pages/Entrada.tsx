@@ -51,7 +51,7 @@ function Entrada() {
           ) : !entrada ? (
             <div className="rounded-2xl border border-[#75AADB]/15 bg-white/[0.03] h-96 animate-pulse" />
           ) : (
-            <Ticket entrada={entrada} url={url} />
+            <Ticket entrada={entrada} url={url} token={token!} />
           )}
 
           <div className="mt-8 text-center">
@@ -65,7 +65,7 @@ function Entrada() {
   )
 }
 
-function Ticket({ entrada, url }: { entrada: EntradaData; url: string }) {
+function Ticket({ entrada, url, token }: { entrada: EntradaData; url: string; token: string }) {
   const usada = Boolean(entrada.usadaEn)
 
   return (
@@ -114,6 +114,18 @@ function Ticket({ entrada, url }: { entrada: EntradaData; url: string }) {
           </p>
         </div>
       )}
+
+      {/* Descargar el PDF: en la puerta puede no haber señal para abrir esto. */}
+      <div className="px-7 pb-7">
+        <a
+          href={`/api/entrada-pdf?t=${token}`}
+          download
+          style={{ backgroundImage: 'var(--gradient-cta)' }}
+          className="block w-full text-center font-black py-3 rounded-full uppercase tracking-wide text-white text-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
+        >
+          Descargar entrada
+        </a>
+      </div>
     </div>
   )
 }

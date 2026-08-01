@@ -33,11 +33,13 @@ export async function enviarEntrada({
   orden,
   tierNombre,
   ticketUrl,
+  pdfUrl,
   qrUrl,
 }: {
   orden: Orden
   tierNombre: string
   ticketUrl: string
+  pdfUrl: string
   qrUrl: string
 }): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY
@@ -70,6 +72,7 @@ export async function enviarEntrada({
           total={money(total)}
           ordenId={orden.id}
           ticketUrl={ticketUrl}
+          pdfUrl={pdfUrl}
           qrUrl={qrUrl}
           fechas={fechas}
         />
@@ -86,7 +89,8 @@ export async function enviarEntrada({
         '',
         `Startup World Cup Argentina 2026 — ${fechas}`,
         '',
-        `Mostrá este link en la puerta: ${ticketUrl}`,
+        `Descargá tu entrada: ${pdfUrl}`,
+        `O abrila en el sitio: ${ticketUrl}`,
       ].join('\n'),
     })
 
