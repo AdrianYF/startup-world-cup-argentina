@@ -40,9 +40,15 @@ export default async function handler(req, res) {
     })
 
     res.setHeader('Content-Type', 'image/png')
-    // Cache privada: la imagen identifica una entrada concreta, no puede quedar
-    // en un CDN compartido. Gmail igual la proxea del lado del destinatario.
-    res.setHeader('Cache-Control', 'private, max-age=3600')
+    // `public` y no `private`, aunque la imagen identifique una entrada.
+    //
+    // Gmail no muestra las imágenes de un mail directo: las baja con su propio
+    // proxy y las cachea. Con `private` el proxy no la guarda y el QR llega roto
+    // — que es exactamente lo que pasaba.
+    //
+    // No abre nada: la credencial es el token de la URL, y quien la tenga ya
+    // tiene la entrada. Cachear por-URL no expone más de lo que expone el link.
+    res.setHeader('Cache-Control', 'public, max-age=86400')
     res.status(200).send(png)
   } catch (err) {
     console.error('[entrada-qr]', err)

@@ -188,14 +188,35 @@ Con credenciales de **test**:
 Antes de pasar a producción, pasá el `quality_checklist` del MCP de Mercado Pago
 contra la app.
 
-## Operación
+## La lista de la puerta
 
-**Lista de quién compró** (para la puerta):
+El evento entra por dos canales y hasta la acreditación viven separados:
 
-```sql
-select buyer_name, buyer_email, tier_id, quantity, created_at
-from orders where status = 'paid' order by created_at;
+| día | canal | de dónde sale |
+|---|---|---|
+| Miércoles 5 (side events) | Luma, con aprobación del host | CSV importado |
+| Jueves 6 y viernes 7 | venta propia | tabla `orders` |
+
+```bash
+# 1. Bajá el CSV de Luma: evento → pestaña Guests → ícono Download.
+#    (Si filtrás la lista antes, te deja exportar sólo lo filtrado.)
+node scripts/importar-luma.mjs ~/Downloads/guests.csv --evento quzhnee8
+
+# 2. La lista unificada
+node scripts/lista-puerta.mjs             # tabla, ordenada por apellido
+node scripts/lista-puerta.mjs --dia mie   # sólo un día (mie|jue|vie)
+node scripts/lista-puerta.mjs --csv       # para imprimir o mandar
 ```
+
+El importador **no necesita la API paga de Luma**: trabaja sobre el CSV que el
+panel exporta gratis. Detecta las columnas por nombre —Luma las cambia entre
+versiones y cada evento suma sus preguntas custom— y lo que no mapea lo guarda en
+`extra`, así no se pierde nada del archivo. Reimportar actualiza en vez de
+duplicar. Con `--dry` te muestra qué detectó sin escribir.
+
+De Luma sólo entran a la lista los **aprobados**: los pendientes y rechazados
+quedan afuera. Quien viene por los dos canales aparece dos veces a propósito (son
+días distintos), y el script lo avisa aparte para que no lo cuentes doble.
 
 **Marcar una entrada como usada**: hoy se hace a mano. El QR abre
 `/entrada/<token>`, que muestra el ticket y avisa si ya está usada, pero no hay
