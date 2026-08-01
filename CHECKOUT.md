@@ -80,10 +80,30 @@ Ver **[Probar en local](#probar-en-local)** más abajo.
 
 ## 3 · Resend
 
-1. Alta en [resend.com](https://resend.com), API key.
+El mail está hecho con [React Email](https://react.email/docs/integrations/resend):
+el template es un componente en `api/_lib/emails/entrada.tsx` y se le pasa a
+Resend por la prop `react`, que lo renderiza a HTML del lado de ellos. Los
+componentes ya resuelven las tablas anidadas y los estilos inline que los
+clientes de mail necesitan — el render sale con 14 tablas, 48 estilos inline y
+cero bloques `<style>`, que es lo que Gmail descarta.
+
+1. Alta en [resend.com](https://resend.com), API key → `RESEND_API_KEY`.
 2. Verificá el dominio (SPF + DKIM). **Son registros DNS que tenés que cargar
    donde esté hosteado el dominio** — es el paso más lento, conviene arrancarlo
-   primero. Hasta que esté verificado, Resend sólo entrega a tu propia casilla.
+   primero.
+
+Sin dominio verificado, Resend sólo deja mandar **desde `onboarding@resend.dev`
+y hacia la casilla de tu cuenta**. Para probar:
+
+```bash
+RESEND_FROM="Startup World Cup Argentina <onboarding@resend.dev>"
+```
+
+> Los dos `.tsx` empiezan con `@jsxRuntime automatic` / `@jsxImportSource react`.
+> No sacar: el `tsconfig.json` de la raíz es sólo un archivo de referencias, sin
+> `compilerOptions`, así que el bundler que compila `api/` no encuentra ningún
+> `jsx` configurado y cae al transform clásico — que revienta con "React is not
+> defined" en runtime, y sólo en producción.
 
 ## 4 · Variables
 
