@@ -16,7 +16,7 @@
 import crypto from 'node:crypto'
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { db } from './db.js'
-import { enviarEntrada } from './email.js'
+import { enviarEntrada } from './email.tsx'
 
 function cliente() {
   const accessToken = process.env.MP_ACCESS_TOKEN

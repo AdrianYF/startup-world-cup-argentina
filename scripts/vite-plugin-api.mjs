@@ -11,7 +11,6 @@
  */
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { pathToFileURL } from 'node:url'
 
 /** Vercel agrega status()/send()/json() al `res` de node. Acá se replican. */
 function vercelizar(req, res, url) {
@@ -108,9 +107,11 @@ export function apiFunctions({ raiz }) {
 
         const t0 = Date.now()
         try {
-          // Query param variable para saltear el caché de módulos: así se toman
-          // los cambios de api/ sin reiniciar el dev server.
-          const mod = await import(`${pathToFileURL(archivo).href}?t=${Date.now()}`)
+          // ssrLoadModule y no import(): pasa por la pipeline de Vite, así que
+          // los handlers pueden importar TypeScript y JSX (el template del mail
+          // usa React Email). Con `import()` pelado, Node tira
+          // "Unknown file extension .tsx".
+          const mod = await server.ssrLoadModule(archivo)
           await mod.default(req, res)
         } catch (err) {
           server.config.logger.error(`  api ${req.method} ${url.pathname}\n${err?.stack || err}`)
