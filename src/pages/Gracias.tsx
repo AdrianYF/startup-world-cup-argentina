@@ -135,13 +135,14 @@ function Exito({ orden }: { orden: Orden }) {
       </dl>
 
       {orden.ticketToken && (
-        <Link
-          to={`/entrada/${orden.ticketToken}`}
+        <a
+          href={`/api/entrada-pdf?t=${orden.ticketToken}`}
+          download
           style={{ backgroundImage: 'var(--gradient-cta)' }}
           className="mt-6 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
         >
-          Ver mi entrada
-        </Link>
+          Descargar entrada
+        </a>
       )}
     </>
   )
