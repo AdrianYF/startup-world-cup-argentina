@@ -190,33 +190,48 @@ contra la app.
 
 ## La lista de la puerta
 
-El evento entra por dos canales y hasta la acreditación viven separados:
+Las entradas salen por **tres** canales:
 
-| día | canal | de dónde sale |
+| día | canal | de dónde sale la lista |
 |---|---|---|
-| Miércoles 5 (side events) | Luma, con aprobación del host | CSV importado |
-| Jueves 6 y viernes 7 | venta propia | tabla `orders` |
+| Miércoles 5 (side events) | Luma, con aprobación del host | CSV del panel |
+| Jueves 6 y viernes 7 | **Startup Grind** (la mayoría) | CSV del panel |
+| Jueves 6 y viernes 7 | venta propia | tabla `orders`, sola |
 
 ```bash
-# 1. Bajá el CSV de Luma: evento → pestaña Guests → ícono Download.
-#    (Si filtrás la lista antes, te deja exportar sólo lo filtrado.)
-node scripts/importar-luma.mjs ~/Downloads/guests.csv --evento quzhnee8
+# Luma: evento → pestaña Guests → ícono Download
+node scripts/importar-asistentes.mjs guests.csv --origen luma --evento quzhnee8
 
-# 2. La lista unificada
+# Startup Grind: panel del evento → asistentes → export
+node scripts/importar-asistentes.mjs attendees.csv --origen startupgrind --evento 31263
+
+# La lista unificada
 node scripts/lista-puerta.mjs             # tabla, ordenada por apellido
-node scripts/lista-puerta.mjs --dia mie   # sólo un día (mie|jue|vie)
+node scripts/lista-puerta.mjs --dia jue   # un día (mie|jue|vie)
 node scripts/lista-puerta.mjs --csv       # para imprimir o mandar
 ```
 
-El importador **no necesita la API paga de Luma**: trabaja sobre el CSV que el
-panel exporta gratis. Detecta las columnas por nombre —Luma las cambia entre
-versiones y cada evento suma sus preguntas custom— y lo que no mapea lo guarda en
-`extra`, así no se pierde nada del archivo. Reimportar actualiza en vez de
-duplicar. Con `--dry` te muestra qué detectó sin escribir.
+**Ninguna API paga.** Las dos plataformas exportan CSV gratis desde su panel de
+organizador. El API público de Startup Grind
+(`GET /api/event/31263/`) sólo da conteos —`total_attendees` y el vendido por
+tanda—, sirve para chequear stock pero no trae nombres ni mails.
 
-De Luma sólo entran a la lista los **aprobados**: los pendientes y rechazados
-quedan afuera. Quien viene por los dos canales aparece dos veces a propósito (son
-días distintos), y el script lo avisa aparte para que no lo cuentes doble.
+El importador no asume las columnas: las detecta por nombre, arma el nombre
+completo si viene partido en `First Name` / `Last Name`, y lo que no mapea lo
+guarda en `extra`. Si alguna no la reconoce, la lista y la forzás con
+`--map email="Attendee Email"`. Con `--dry` muestra el mapeo y los estados sin
+escribir. Reimportar actualiza en vez de duplicar.
+
+Cada plataforma tiene su vocabulario de estados (`approved`, `Completed`,
+`Refunded`…) y el importador los traduce a uno solo. **A la puerta entran sólo
+los confirmados**; pendientes y rechazados quedan afuera.
+
+Sumar un canal nuevo es agregar una entrada a `CANALES` en el importador: la
+tabla y la vista no se tocan.
+
+> Como Startup Grind y la venta propia venden **la misma entrada**, alguien puede
+> pagar dos veces. El script marca a quien aparece en los dos canales con un
+> aviso, para revisar el reembolso.
 
 **Marcar una entrada como usada**: hoy se hace a mano. El QR abre
 `/entrada/<token>`, que muestra el ticket y avisa si ya está usada, pero no hay
