@@ -61,26 +61,47 @@ if (!filas.length) {
   process.exit(0)
 }
 
+// Anchos calculados sobre los datos reales: "startupgrind" y los nombres de
+// tanda largos se cortaban con anchos fijos.
 const w = (s, n) => String(s ?? '').slice(0, n).padEnd(n)
+const ancho = (campo, min) =>
+  Math.max(min, ...filas.map(f => String(f[campo] ?? '').length))
+
+const cN = Math.min(ancho('nombre', 6), 28) + 2
+const cE = Math.min(ancho('email', 5), 32) + 2
+const cT = Math.min(ancho('entrada', 7), 24) + 2
+const cD = ancho('dias', 4) + 2
+const cO = ancho('origen', 6) + 2
+const raya = '─'.repeat(cN + cE + cT + cD + cO)
+
 console.log('')
-console.log(`  ${w('NOMBRE', 26)}${w('EMAIL', 30)}${w('ENTRADA', 16)}${w('DÍAS', 14)}${w('ORIGEN', 7)}`)
-console.log(`  ${'─'.repeat(93)}`)
+console.log(`  ${w('NOMBRE', cN)}${w('EMAIL', cE)}${w('ENTRADA', cT)}${w('DÍAS', cD)}${w('ORIGEN', cO)}`)
+console.log(`  ${raya}`)
 for (const f of filas) {
-  const usada = f.usada_en ? ' ✓' : ''
-  console.log(`  ${w(f.nombre, 26)}${w(f.email, 30)}${w(f.entrada, 16)}${w(f.dias, 14)}${w(f.origen, 7)}${usada}`)
+  const usada = f.usada_en ? '✓ usada' : ''
+  console.log(`  ${w(f.nombre, cN)}${w(f.email, cE)}${w(f.entrada, cT)}${w(f.dias, cD)}${w(f.origen, cO)}${usada}`)
 }
 
 const porOrigen = filas.reduce((a, f) => ({ ...a, [f.origen]: (a[f.origen] || 0) + 1 }), {})
 const entradas = filas.reduce((n, f) => n + (f.cantidad || 1), 0)
-console.log(`  ${'─'.repeat(93)}`)
-console.log(`  ${filas.length} personas · ${entradas} entradas · ` +
-  Object.entries(porOrigen).map(([k, v]) => `${k}: ${v}`).join(' · '))
+console.log(`  ${raya}`)
+console.log(`  ${filas.length} filas · ${entradas} entradas · ` +
+  Object.entries(porOrigen).sort().map(([k, v]) => `${k}: ${v}`).join(' · '))
 
-// Quien viene por los dos canales aparece dos veces a propósito (son días
-// distintos), pero conviene saberlo para no contarlo dos veces.
+// La misma persona puede estar en varios canales: en Luma por el side event del
+// miércoles y en Startup Grind o la web por el evento principal. Aparece una vez
+// por canal a propósito (son días distintos), pero conviene tenerlo a la vista
+// para no contar dos veces la cabeza — y para detectar a quien pagó dos veces la
+// misma entrada, ahora que Startup Grind y la web venden lo mismo.
 const { data: ambos } = await db.from('acreditacion_ambos_canales').select('*')
 if (ambos?.length) {
-  console.log(`\n  ${ambos.length} en los dos canales (misma persona, días distintos):`)
-  for (const p of ambos) console.log(`    ${w(p.nombre, 26)}${p.email}`)
+  console.log(`\n  ${ambos.length} en más de un canal:`)
+  for (const p of ambos) {
+    console.log(`    ${w(p.nombre, cN)}${w(p.email, cE)}${p.origenes}`)
+  }
+  const dobles = ambos.filter(p => (p.origenes || '').includes('startupgrind') && (p.origenes || '').includes('web'))
+  if (dobles.length) {
+    console.log(`\n  ⚠ ${dobles.length} pagó la MISMA entrada en Startup Grind y en la web — revisar reembolso.`)
+  }
 }
 console.log('')
