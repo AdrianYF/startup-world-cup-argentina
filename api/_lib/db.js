@@ -13,9 +13,12 @@ export function db() {
   if (cached) return cached
 
   const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  // Supabase renombró las keys: la `service_role` (un JWT) pasó a llamarse
+  // secret key y ahora empieza con `sb_secret_`. Se aceptan los dos nombres para
+  // que sirva tanto lo que copiás del panel nuevo como una config vieja.
+  const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) {
-    throw new Error('Faltan SUPABASE_URL y/o SUPABASE_SERVICE_ROLE_KEY (ver .env.example)')
+    throw new Error('Faltan SUPABASE_URL y/o SUPABASE_SECRET_KEY (ver .env.example)')
   }
 
   cached = createClient(url, key, {
