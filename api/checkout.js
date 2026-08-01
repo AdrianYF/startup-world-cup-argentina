@@ -87,6 +87,12 @@ export default async function handler(req, res) {
     const base = siteUrl(req)
     const mp = new MercadoPagoConfig({ accessToken })
 
+    // `auto_return` hace que MP vuelva solo al aprobar, pero exige que
+    // back_urls.success sea una URL pública: con localhost la creación de la
+    // preferencia falla entera con `invalid_auto_return`. En local se omite —
+    // se pierde el redirect automático, no el pago.
+    const publica = !/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])/i.test(base)
+
     const preference = await new Preference(mp).create({
       body: {
         items: [
@@ -107,8 +113,8 @@ export default async function handler(req, res) {
           pending: `${base}/gracias?orden=${orden.id}`,
           failure: `${base}/gracias?orden=${orden.id}`,
         },
-        auto_return: 'approved',
-        notification_url: `${base}/api/mp-webhook`,
+        ...(publica ? { auto_return: 'approved' } : {}),
+        ...(publica ? { notification_url: `${base}/api/mp-webhook` } : {}),
         statement_descriptor: 'SWC ARGENTINA',
         // Coherente con la reserva: si no pagó en 30 minutos, el cupo se libera
         // y la preferencia tampoco debería seguir viva.

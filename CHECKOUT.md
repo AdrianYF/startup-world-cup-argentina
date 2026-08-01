@@ -68,52 +68,62 @@ expuesto en el bundle.
 
 ## Probar en local
 
-`vite dev` **no ejecuta las funciones de `api/`**: devuelve el `index.html` del
-fallback de la SPA, así que el checkout no anda. Hacen falta dos procesos:
+Dos procesos, y con eso `npm run dev` en **:5173** sirve el sitio *y* las
+funciones:
 
 ```bash
-npm run dev       # vite en :5173 — dejalo corriendo
-npm run dev:api   # sitio + funciones en :3000  ← entrá por acá
+supabase start   # Postgres local en Docker; aplica supabase/migrations/ solo
+npm run dev      # http://localhost:5173
 ```
 
-`dev:api` proxea todo lo que no sea `/api/*` a vite (hot reload incluido) y
-ejecuta las funciones con el mismo shim de `req`/`res` que usa Vercel. Levanta
-`.env.local` solo. No necesita cuenta de Vercel ni `vercel link`.
+Las funciones corren dentro del dev server gracias a `scripts/vite-plugin-api.mjs`.
+Sin ese plugin, Vite no conoce `/api/*` y cae al fallback de la SPA: un GET
+devuelve el index.html con 200 pero **un POST devuelve 404**, porque el fallback
+sólo aplica a GET/HEAD. Ese 404 parecía un bug del checkout y no lo era.
 
-Comprobá que las funciones están vivas:
+`supabase start` imprime la **API URL** y la **Secret key**: van a `SUPABASE_URL`
+y `SUPABASE_SERVICE_ROLE_KEY`. Son de un Postgres en tu máquina, no tocan nada
+remoto. `supabase stop` lo baja.
+
+Comprobá que están vivas:
 
 ```bash
-curl localhost:3000/api/tiers
-# {"tiers":[{"id":"general",...}]}   ← con Supabase configurado
-# {"error":"tiers_unavailable"}      ← falta SUPABASE_URL / SERVICE_ROLE_KEY
-# <!doctype html>                    ← estás entrando por :5173, no por :3000
+curl localhost:5173/api/tiers
+# {"tiers":[{"id":"general","precio":35000,"disponible":20}, …]}   ← ok
+# {"error":"tiers_unavailable"}   ← falta SUPABASE_URL / SERVICE_ROLE_KEY
+# <!doctype html>                 ← el plugin no cargó; reiniciá el dev server
 ```
 
-### Para que Mercado Pago te alcance
+### Sin túnel
 
-El webhook lo llama MP desde internet, así que `localhost` no le sirve. Hay que
-exponer **el puerto 3000**, no el 5173:
+Con `PUBLIC_SITE_URL=http://localhost:5173` el pago funciona igual, con dos
+límites que son de Mercado Pago, no del código:
+
+- **No hay `auto_return`.** MP lo rechaza si `back_urls.success` no es pública —
+  la preferencia falla entera con `invalid_auto_return`. En local se omite: al
+  pagar hay que tocar "Volver al sitio" a mano.
+- **No llegan webhooks**, así que la orden se queda en `pending` y no sale el
+  mail. Para acreditarla a mano:
+
+```sql
+update orders set status = 'paid', ticket_token = encode(gen_random_bytes(32),'base64')
+where id = '<uuid>';
+```
+
+### Con túnel, para probar el webhook de verdad
 
 ```bash
-cloudflared tunnel --url http://localhost:3000
+cloudflared tunnel --url http://localhost:5173
 ```
 
-Con la URL que devuelve:
-
-1. Ponela en `PUBLIC_SITE_URL` dentro de `.env.local` y reiniciá `dev:api`. Sin
-   esto, las `back_urls` apuntan a `localhost` y al pagar no volvés a ningún lado.
+1. Poné esa URL en `PUBLIC_SITE_URL` y reiniciá `npm run dev`. Sin esto las
+   `back_urls` apuntan a localhost y al pagar no volvés a ningún lado.
 2. Cargala en el panel de MP como `https://<túnel>/api/mp-webhook`, evento
    **Pagos**.
 3. Copiá la clave secreta que revela el panel a `MP_WEBHOOK_SECRET`.
 
 > El túnel es público mientras el proceso viva: cualquiera con el link entra a tu
 > máquina. Cortalo cuando termines.
-
-### Sin Mercado Pago
-
-Para tocar sólo la UI del modal alcanza con `npm run dev`: el formulario se ve y
-valida, y al continuar corta con "El pago online no está disponible". Es lo
-esperado — no hay backend.
 
 ## 5 · Probar antes de cobrar en serio
 
