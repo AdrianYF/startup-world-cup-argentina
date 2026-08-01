@@ -63,6 +63,9 @@ const checks = [
   // contra el de texto grande.
   ['accent',      'surface',  'Error del form / "ya usada"',         'normal'],
   ['celeste',     'surface',  'Check ✓ y acentos del modal',         'normal'],
+  // Chips sobre celeste. Va texto oscuro y no blanco: a este tamaño el blanco
+  // da 2,46:1 y no llega al 4,5 que pide AA.
+  ['surface',     'celeste',  'Chip "Más rápido" del selector',      'normal'],
   // Dorado de la Entrada VIP. Sobre dorado va texto OSCURO: el blanco da 2,10 y
   // no llega al 4,5 de AA — ver el bloque de prohibidas.
   ['oro',         'bg',       'Oro en bg (borde y ✓ de la VIP)',     'normal'],
