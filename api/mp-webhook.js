@@ -1,4 +1,4 @@
-// POST /api/mp-webhook — la única puerta por la que una orden pasa a `paid`.
+// POST /api/mp-webhook — Mercado Pago nos avisa que pasó algo con un pago.
 //
 // Tres reglas, y ninguna es opcional:
 //
@@ -10,17 +10,13 @@
 //  3. Es idempotente. MP reintenta las notificaciones; acreditar dos veces
 //     descontaría el cupo dos veces y mandaría el mail repetido.
 //
-// El redirect a /gracias NO acredita: esa URL se escribe a mano en la barra.
-import crypto from 'node:crypto'
-import {
-  MercadoPagoConfig,
-  Payment,
-  WebhookSignatureValidator,
-  InvalidWebhookSignatureError,
-} from 'mercadopago'
+// El redirect a la pantalla de gracias NO acredita: esa URL se escribe a mano.
+// La acreditación en sí vive en _lib/acreditar.js, compartida con la
+// reconciliación de /api/orden.
+import { WebhookSignatureValidator, InvalidWebhookSignatureError } from 'mercadopago'
 import { db } from './_lib/db.js'
 import { json, first, siteUrl } from './_lib/http.js'
-import { enviarEntrada } from './_lib/email.js'
+import { traerPago, acreditar } from './_lib/acreditar.js'
 
 /** Ventana de tolerancia del timestamp firmado. Acota los replays. */
 const TOLERANCIA_SEG = 300
@@ -69,8 +65,7 @@ export default async function handler(req, res) {
   if (!paymentId) return json(res, 400, { error: 'sin_payment_id' })
 
   try {
-    const mp = new MercadoPagoConfig({ accessToken })
-    const pago = await new Payment(mp).get({ id: String(paymentId) })
+    const pago = await traerPago(paymentId)
 
     const ordenId = pago.external_reference
     if (!ordenId) {
@@ -78,11 +73,7 @@ export default async function handler(req, res) {
       return json(res, 200, { ignored: 'sin_external_reference' })
     }
 
-    const { data: orden, error } = await db()
-      .from('orders')
-      .select('*')
-      .eq('id', ordenId)
-      .single()
+    const { data: orden, error } = await db().from('orders').select('*').eq('id', ordenId).single()
 
     if (error || !orden) {
       console.warn('[webhook] orden inexistente:', ordenId)
@@ -90,83 +81,8 @@ export default async function handler(req, res) {
       return json(res, 200, { ignored: 'orden_inexistente' })
     }
 
-    // Ya acreditada: cortamos acá. Es el caso normal del reintento de MP.
-    if (orden.status === 'paid' && orden.mp_payment_id === String(paymentId)) {
-      return json(res, 200, { ok: true, idempotente: true })
-    }
-
-    if (pago.status !== 'approved') {
-      await db()
-        .from('orders')
-        .update({
-          status: pago.status === 'pending' || pago.status === 'in_process' ? 'pending' : 'rejected',
-          mp_payment_id: String(paymentId),
-          mp_status_detail: pago.status_detail || pago.status,
-        })
-        .eq('id', orden.id)
-      return json(res, 200, { ok: true, status: pago.status })
-    }
-
-    // --- Aprobado ---------------------------------------------------------
-    // Se verifica que el monto coincida con lo que la orden dice. Si no, se
-    // acredita igual (la plata entró) pero queda logueado para revisarlo: no
-    // vamos a dejar a alguien que pagó sin su entrada por un descuadre nuestro.
-    const esperado =
-      Math.round((orden.unit_price_ars * orden.quantity + Number(orden.service_fee_ars || 0)) * 100) / 100
-    if (Number(pago.transaction_amount) !== esperado) {
-      console.error(
-        `[webhook] monto distinto en la orden ${orden.id}:`,
-        `cobrado ${pago.transaction_amount} vs esperado ${esperado}`,
-      )
-    }
-
-    const token = orden.ticket_token || crypto.randomBytes(32).toString('base64url')
-
-    // El WHERE sobre status evita que dos notificaciones simultáneas escriban
-    // las dos: sólo una encuentra la fila todavía en 'pending'.
-    const { data: acreditada, error: updErr } = await db()
-      .from('orders')
-      .update({
-        status: 'paid',
-        mp_payment_id: String(paymentId),
-        mp_status_detail: pago.status_detail || 'accredited',
-        ticket_token: token,
-      })
-      .eq('id', orden.id)
-      .neq('status', 'paid')
-      .select('*')
-      .maybeSingle()
-
-    if (updErr) throw updErr
-    if (!acreditada) {
-      // Otra ejecución ganó la carrera y ya la acreditó.
-      return json(res, 200, { ok: true, idempotente: true })
-    }
-
-    // Mail — sólo una vez, y su fallo no invalida la acreditación.
-    if (!acreditada.email_sent_at) {
-      const { data: tier } = await db()
-        .from('tiers')
-        .select('nombre')
-        .eq('id', acreditada.tier_id)
-        .single()
-
-      const base = siteUrl(req)
-      const enviado = await enviarEntrada({
-        orden: acreditada,
-        tierNombre: tier?.nombre || acreditada.tier_id,
-        ticketUrl: `${base}/entrada/${acreditada.ticket_token}`,
-        qrUrl: `${base}/api/entrada-qr?t=${acreditada.ticket_token}`,
-      })
-      if (enviado) {
-        await db()
-          .from('orders')
-          .update({ email_sent_at: new Date().toISOString() })
-          .eq('id', acreditada.id)
-      }
-    }
-
-    return json(res, 200, { ok: true, status: 'approved' })
+    const { orden: final, cambio } = await acreditar({ orden, pago, baseUrl: siteUrl(req) })
+    return json(res, 200, { ok: true, status: final.status, idempotente: !cambio })
   } catch (err) {
     console.error('[webhook]', err)
     // 500 para que MP reintente: si acá se rompió algo, el pago existe y la

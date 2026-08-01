@@ -29,16 +29,28 @@ Modal (datos)  →  POST /api/checkout  →  orden 'pending' + preferencia MP
                                               ↓
                                      Wallet Brick → Mercado Pago
                                               ↓
-        /gracias?orden=…  ←  back_url          │
+         /?compra=<id>  ←  back_url            │
+              ↓                                ↓
+     modal de felicitaciones     POST /api/mp-webhook  ← firma + acredita
               ↓ poletea                        ↓
-        GET /api/orden          POST /api/mp-webhook  ← valida firma, acredita
-                                              ↓
-                                    orden 'paid' + mail con QR
+        GET /api/orden ──────────────→  _lib/acreditar.js
+              (si sigue pendiente,             ↓
+               le pregunta a MP)      orden 'paid' + mail con QR
 ```
 
-**El redirect a `/gracias` no acredita nada.** Esa URL se puede escribir a mano.
-Lo único que pasa una orden a `paid` es el webhook, y sólo después de validar la
-firma HMAC contra `MP_WEBHOOK_SECRET`.
+Hay **dos caminos** que acreditan, y los dos terminan en `_lib/acreditar.js`:
+
+1. **El webhook**, cuando MP nos avisa. Es el normal.
+2. **La reconciliación**: si el comprador vuelve y su orden sigue `pending`,
+   `/api/orden` le pregunta a Mercado Pago por `external_reference` y acredita en
+   el acto. No es un lujo — en local el webhook no llega nunca (MP no alcanza
+   `localhost`) y en producción puede demorar o fallar. Sin esto, alguien que
+   pagó se queda mirando "confirmando" para siempre.
+
+Los dos son seguros por lo mismo: **el estado del pago se lo pedimos a Mercado
+Pago con nuestro access token**. El cliente sólo aporta el id de la orden; los
+query params que MP agrega al volver (`status`, `payment_id`) se ignoran, porque
+esa URL se escribe a mano.
 
 ## 1 · Supabase
 
@@ -115,19 +127,16 @@ curl localhost:5173/api/tiers
 
 ### Sin túnel
 
-Con `PUBLIC_SITE_URL=http://localhost:5173` el pago funciona igual, con dos
-límites que son de Mercado Pago, no del código:
+Con `PUBLIC_SITE_URL=http://localhost:5173` el pago funciona de punta a punta.
 
-- **No hay `auto_return`.** MP lo rechaza si `back_urls.success` no es pública —
-  la preferencia falla entera con `invalid_auto_return`. En local se omite: al
-  pagar hay que tocar "Volver al sitio" a mano.
-- **No llegan webhooks**, así que la orden se queda en `pending` y no sale el
-  mail. Para acreditarla a mano:
+No llegan webhooks (MP no alcanza `localhost`), pero **no hace falta**: al volver
+al sitio, la reconciliación de `/api/orden` le pregunta a MP y acredita sola. La
+única diferencia es que el mail no se manda hasta que haya `RESEND_API_KEY`.
 
-```sql
-update orders set status = 'paid', ticket_token = encode(gen_random_bytes(32),'base64')
-where id = '<uuid>';
-```
+El límite real es de Mercado Pago: **no hay `auto_return`**, porque lo rechaza si
+`back_urls.success` no es pública (la preferencia falla entera con
+`invalid_auto_return`). O sea que al terminar de pagar hay que tocar "Volver al
+sitio" a mano; ahí sí se abre el modal de felicitaciones.
 
 ### Con túnel, para probar el webhook de verdad
 

@@ -122,10 +122,13 @@ export default async function handler(req, res) {
         // Es el hilo que une el pago de MP con nuestra orden: el webhook lo lee
         // para saber qué acreditar.
         external_reference: orden.id,
+        // Se vuelve al landing con `?compra=<id>`, que abre el modal de
+        // felicitaciones ahí mismo. El id es lo único que viaja: el estado del
+        // pago se lo pregunta el backend a MP, nunca se lee de esta URL.
         back_urls: {
-          success: `${base}/gracias?orden=${orden.id}`,
-          pending: `${base}/gracias?orden=${orden.id}`,
-          failure: `${base}/gracias?orden=${orden.id}`,
+          success: `${base}/?compra=${orden.id}`,
+          pending: `${base}/?compra=${orden.id}`,
+          failure: `${base}/?compra=${orden.id}`,
         },
         ...(publica ? { auto_return: 'approved' } : {}),
         ...(publica ? { notification_url: `${base}/api/mp-webhook` } : {}),
