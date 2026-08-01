@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type ComponentType, type FormEvent } from 'react'
 import { Modal } from './ui/Modal'
 import { trackEvent } from '../lib/analytics'
+import { openTicketing } from '../lib/ticketing'
 import {
   crearCheckout,
   formatARS,
@@ -10,11 +11,18 @@ import {
 } from '../lib/checkout'
 
 /**
- * Compra de entradas sin salir del sitio.
+ * Compra de entradas, por los dos canales.
  *
- * Dos pasos: primero los datos del comprador, después el botón de Mercado Pago
- * (Wallet Brick). La preferencia se crea recién al pasar de un paso al otro, y
- * el monto lo pone el backend leyendo la tabla `tiers` — nunca este componente.
+ * El primer paso es elegir dónde pagar:
+ *
+ *   · Mercado Pago  → se queda en el sitio. Datos del comprador, Wallet Brick,
+ *                     y la entrada con QR sale por mail desde acá.
+ *   · Startup Grind → se va a su checkout, que es el que venía funcionando.
+ *
+ * Cobran lo mismo: el cargo de servicio espeja al de Startup Grind justamente
+ * para que elegir sea una cuestión de preferencia y no de precio.
+ *
+ * El monto lo pone el backend leyendo la tabla `tiers` — nunca este componente.
  *
  * Monta sobre <Modal>, que ya trae el look del sitio, focus-trap, ESC y portal.
  */
@@ -35,7 +43,7 @@ type Props = {
   onClose: () => void
 }
 
-type Paso = 'datos' | 'pago'
+type Paso = 'elegir' | 'datos' | 'pago'
 
 const TITLE_ID = 'checkout-titulo'
 
@@ -47,7 +55,7 @@ const INPUT =
 const LABEL = 'block text-[11px] font-extrabold uppercase tracking-[0.14em] text-gray-400 mb-1.5'
 
 function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descripcion, onClose }: Props) {
-  const [paso, setPaso] = useState<Paso>('datos')
+  const [paso, setPaso] = useState<Paso>('elegir')
   const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', dni: '' })
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -118,7 +126,20 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
 
       <div className="h-px bg-gradient-to-r from-transparent via-[#75AADB]/30 to-transparent mb-6" />
 
-      {paso === 'datos' ? (
+      {paso === 'elegir' ? (
+        <ElegirCanal
+          tier={tier}
+          onMercadoPago={() => {
+            trackEvent('checkout_canal', { canal: 'mercadopago', tier })
+            setPaso('datos')
+          }}
+          onStartupGrind={() => {
+            trackEvent('checkout_canal', { canal: 'startupgrind', tier })
+            openTicketing(`modal-${tier}`)
+            onClose()
+          }}
+        />
+      ) : paso === 'datos' ? (
         <form onSubmit={onSubmit} noValidate>
           <div className="flex flex-col gap-4">
             <div>
@@ -185,11 +206,115 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
             Vas a pagar con Mercado Pago. Al continuar aceptás que usemos tus datos
             para emitir y validar tu entrada.
           </p>
+
+          <Volver onClick={() => setPaso('elegir')}>← Cambiar forma de pago</Volver>
         </form>
       ) : (
         <PasoPago preferenceId={preferenceId} onVolver={() => setPaso('datos')} />
       )}
     </Modal>
+  )
+}
+
+/**
+ * Paso 1: dónde pagar.
+ *
+ * Los dos cobran lo mismo, así que la decisión es de preferencia. Lo que cambia
+ * es quién emite la entrada y por dónde llega, y eso es lo que dice cada opción.
+ */
+function ElegirCanal({
+  tier,
+  onMercadoPago,
+  onStartupGrind,
+}: {
+  tier: TierId
+  onMercadoPago: () => void
+  onStartupGrind: () => void
+}) {
+  return (
+    <div>
+      <p className={LABEL}>¿Dónde querés pagar?</p>
+
+      <div className="flex flex-col gap-3 mt-3">
+        <Canal
+          titulo="Mercado Pago"
+          etiqueta="Más rápido"
+          destacado
+          detalle="Pagás sin salir del sitio. La entrada con tu QR te llega por mail al toque."
+          onClick={onMercadoPago}
+        />
+        <Canal
+          titulo="Startup Grind"
+          detalle={`Te llevamos a su checkout${
+            tier === 'vip' ? ', donde elegís la Entrada VIP' : ''
+          }. La entrada te la manda Startup Grind.`}
+          onClick={onStartupGrind}
+          externo
+        />
+      </div>
+
+      <p className="mt-5 text-center text-[11px] text-gray-500 leading-relaxed">
+        Cuestan lo mismo por los dos lados.
+      </p>
+    </div>
+  )
+}
+
+function Canal({
+  titulo,
+  detalle,
+  etiqueta,
+  destacado,
+  externo,
+  onClick,
+}: {
+  titulo: string
+  detalle: string
+  etiqueta?: string
+  destacado?: boolean
+  externo?: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group w-full text-left rounded-xl border px-5 py-4 transition-all cursor-pointer active:scale-[0.99] ${
+        destacado
+          ? 'border-[#75AADB]/45 bg-[#75AADB]/[0.08] hover:bg-[#75AADB]/[0.14]'
+          : 'border-white/12 bg-white/[0.03] hover:border-[#75AADB]/30 hover:bg-white/[0.06]'
+      }`}
+    >
+      <span className="flex items-center gap-2">
+        <span className="font-black text-white">{titulo}</span>
+        {etiqueta && (
+          // Texto oscuro y no blanco: a 9px, blanco sobre #75AADB da 2,46:1 y no
+          // llega al 4,5 de AA. Con #0f172b sube a 7,24:1.
+          <span className="rounded-full bg-[#75AADB] px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-[#0f172b]">
+            {etiqueta}
+          </span>
+        )}
+        <span
+          aria-hidden
+          className="ml-auto text-gray-500 transition-transform group-hover:translate-x-0.5"
+        >
+          {externo ? '↗' : '→'}
+        </span>
+      </span>
+      <span className="mt-1 block text-sm text-gray-400 leading-relaxed">{detalle}</span>
+    </button>
+  )
+}
+
+function Volver({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="mt-5 w-full text-center text-xs font-bold uppercase tracking-[0.14em] text-gray-500 hover:text-gray-300 transition-colors cursor-pointer"
+    >
+      {children}
+    </button>
   )
 }
 
@@ -267,7 +392,7 @@ function PasoPago({ preferenceId, onVolver }: { preferenceId: string | null; onV
         <p role="alert" className="text-sm text-[#ff7675] bg-[#ff7675]/10 border border-[#ff7675]/30 rounded-xl px-4 py-3">
           {error}
         </p>
-        <BotonVolver onVolver={onVolver} />
+        <Volver onClick={onVolver}>← Volver a mis datos</Volver>
       </div>
     )
   }
@@ -292,20 +417,8 @@ function PasoPago({ preferenceId, onVolver }: { preferenceId: string | null; onV
         )}
       </div>
 
-      <BotonVolver onVolver={onVolver} />
+      <Volver onClick={onVolver}>← Volver a mis datos</Volver>
     </div>
-  )
-}
-
-function BotonVolver({ onVolver }: { onVolver: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onVolver}
-      className="mt-5 w-full text-center text-xs font-bold uppercase tracking-[0.14em] text-gray-500 hover:text-gray-300 transition-colors cursor-pointer"
-    >
-      ← Volver a mis datos
-    </button>
   )
 }
 
