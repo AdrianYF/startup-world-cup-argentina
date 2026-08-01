@@ -3,6 +3,25 @@
 Qué hay que hacer, una vez, para que la sección de Entradas cobre de verdad.
 El código ya está; lo que falta son credenciales y configuración.
 
+## Precios
+
+| tier | precio | cargo de servicio | total |
+|---|---|---|---|
+| `general` — Última tanda | $35.000 | $1.952,27 | **$36.952,27** |
+| `vip` — Entrada VIP | $65.000 | $3.624,77 | **$68.624,77** |
+
+El cargo espeja el de Startup Grind — `precio × 5,575% + $1,02`, despejado de
+sus dos precios publicados y exacto al centavo — para que comprar por acá cueste
+lo mismo que por allá. Si un canal saliera más barato, competiríamos con nuestro
+propio partner.
+
+Vive en `api/_lib/precios.js`, en un solo lugar: el modal muestra lo que el
+backend calculó (`/api/tiers`), no lo recalcula. El cargo se congela en
+`orders.service_fee_ars` al crear la orden, así una compra vieja sigue mostrando
+lo que la persona pagó aunque después cambie la fórmula.
+
+Es **por entrada**: dos entradas pagan dos cargos.
+
 ## Cómo funciona
 
 ```

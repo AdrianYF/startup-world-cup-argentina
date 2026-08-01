@@ -57,7 +57,16 @@ export function esMailValido(mail) {
   return typeof mail === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.trim())
 }
 
-/** Formato de precio para mostrar (los montos se guardan en pesos enteros). */
-export function formatARS(pesos) {
-  return '$' + Number(pesos).toLocaleString('es-AR')
+/**
+ * Formato de precio.
+ *
+ * `centavos: true` fuerza los dos decimales, que es lo que corresponde en un
+ * desglose: con "$35.000 / $1.952,27 / $36.952,27" las columnas no alinean y
+ * parece que el subtotal fuera aproximado.
+ */
+export function formatARS(pesos, { centavos = false } = {}) {
+  return '$' + Number(pesos).toLocaleString('es-AR', {
+    minimumFractionDigits: centavos ? 2 : 0,
+    maximumFractionDigits: 2,
+  })
 }

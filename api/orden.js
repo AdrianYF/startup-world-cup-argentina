@@ -23,17 +23,22 @@ export default async function handler(req, res) {
   try {
     const { data, error } = await db()
       .from('orders')
-      .select('id, tier_id, quantity, unit_price_ars, status, ticket_token, buyer_name')
+      .select('id, tier_id, quantity, unit_price_ars, service_fee_ars, status, ticket_token, buyer_name')
       .eq('id', id)
       .single()
 
     if (error || !data) return json(res, 404, { error: 'orden_inexistente' })
 
+    const subtotal = data.unit_price_ars * data.quantity
+    const cargo = Number(data.service_fee_ars || 0)
+
     json(res, 200, {
       id: data.id,
       tier: data.tier_id,
       cantidad: data.quantity,
-      total: data.unit_price_ars * data.quantity,
+      subtotal,
+      cargo,
+      total: Math.round((subtotal + cargo) * 100) / 100,
       status: data.status,
       nombre: data.buyer_name,
       ticketToken: data.status === 'paid' ? data.ticket_token : null,

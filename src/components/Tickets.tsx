@@ -201,6 +201,7 @@ function Tickets() {
             tier={comprando}
             nombre={datos?.nombre || card.nombre}
             precio={datos?.precio ?? precioDesdeTexto(card.precio)}
+            cargo={datos?.cargo ?? null}
             perks={card.features}
             badge={card.badge}
             descripcion={card.descripcion}

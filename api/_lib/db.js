@@ -4,6 +4,7 @@
 // guión bajo) justamente para que Vercel no lo exponga como ruta: nunca tiene
 // que ser alcanzable desde afuera.
 import { createClient } from '@supabase/supabase-js'
+import { desglose } from './precios.js'
 
 let cached = null
 
@@ -36,7 +37,12 @@ export async function stockDisponible(tierId) {
   return typeof data === 'number' ? data : 0
 }
 
-/** Los tiers que se pueden comprar hoy, con su cupo libre. */
+/**
+ * Los tiers que se pueden comprar hoy, con su cupo libre y el desglose de una
+ * entrada. El cargo lo calcula el servidor y viaja al front ya resuelto: si el
+ * modal lo recalculara por su cuenta, podría mostrar un número distinto del que
+ * se cobra.
+ */
 export async function tiersActivos() {
   const { data, error } = await db()
     .from('tiers')
@@ -45,11 +51,16 @@ export async function tiersActivos() {
   if (error) throw error
 
   return Promise.all(
-    (data || []).map(async t => ({
-      id: t.id,
-      nombre: t.nombre,
-      precio: t.price_ars,
-      disponible: await stockDisponible(t.id),
-    })),
+    (data || []).map(async t => {
+      const d = desglose(t.price_ars, 1)
+      return {
+        id: t.id,
+        nombre: t.nombre,
+        precio: t.price_ars,
+        cargo: d.cargoUnitario,
+        total: d.total,
+        disponible: await stockDisponible(t.id),
+      }
+    }),
   )
 }
