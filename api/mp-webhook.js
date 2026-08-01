@@ -111,7 +111,8 @@ export default async function handler(req, res) {
     // Se verifica que el monto coincida con lo que la orden dice. Si no, se
     // acredita igual (la plata entró) pero queda logueado para revisarlo: no
     // vamos a dejar a alguien que pagó sin su entrada por un descuadre nuestro.
-    const esperado = orden.unit_price_ars * orden.quantity
+    const esperado =
+      Math.round((orden.unit_price_ars * orden.quantity + Number(orden.service_fee_ars || 0)) * 100) / 100
     if (Number(pago.transaction_amount) !== esperado) {
       console.error(
         `[webhook] monto distinto en la orden ${orden.id}:`,

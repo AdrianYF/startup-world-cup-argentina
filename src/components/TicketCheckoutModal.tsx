@@ -23,6 +23,12 @@ type Props = {
   tier: TierId
   nombre: string
   precio: number
+  /**
+   * Cargo de servicio de una entrada, calculado por el backend. `null` cuando
+   * /api/tiers no contestó: ahí no se muestra desglose, porque un "$0,00"
+   * inventado sería peor que no mostrar nada.
+   */
+  cargo: number | null
   perks: string[]
   badge?: string | null
   descripcion?: string
@@ -40,7 +46,7 @@ const INPUT =
 
 const LABEL = 'block text-[11px] font-extrabold uppercase tracking-[0.14em] text-gray-400 mb-1.5'
 
-function TicketCheckoutModal({ tier, nombre, precio, perks, badge, descripcion, onClose }: Props) {
+function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descripcion, onClose }: Props) {
   const [paso, setPaso] = useState<Paso>('datos')
   const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', dni: '' })
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
@@ -87,6 +93,16 @@ function TicketCheckoutModal({ tier, nombre, precio, perks, badge, descripcion, 
         <p className="text-gray-500 text-xs mt-1">+ cargo de servicio</p>
 
         {descripcion && <p className="text-gray-400 text-sm mt-4">{descripcion}</p>}
+
+        {/* Desglose: el "+ cargo de servicio" de arriba tiene que poder
+            explicarse con un número antes de que la persona pague. */}
+        {cargo !== null && (
+          <dl className="mt-5 rounded-xl border border-[#75AADB]/15 bg-white/[0.04] px-4 py-3">
+            <Monto label="Subtotal" valor={precio} />
+            <Monto label="Cargo de servicio" valor={cargo} />
+            <Monto label="Total" valor={precio + cargo} destacado />
+          </dl>
+        )}
 
         {perks.length > 0 && (
           <ul className="flex flex-col gap-2.5 mt-5">
@@ -174,6 +190,28 @@ function TicketCheckoutModal({ tier, nombre, precio, perks, badge, descripcion, 
         <PasoPago preferenceId={preferenceId} onVolver={() => setPaso('datos')} />
       )}
     </Modal>
+  )
+}
+
+/** Una fila del desglose. El total se separa con una línea: es el número que se busca. */
+function Monto({ label, valor, destacado }: { label: string; valor: number; destacado?: boolean }) {
+  return (
+    <div
+      className={`flex items-baseline justify-between gap-4 ${
+        destacado ? 'mt-2 pt-2 border-t border-[#75AADB]/20' : 'py-0.5'
+      }`}
+    >
+      <dt className={destacado ? 'text-sm font-bold text-white' : 'text-xs text-gray-400'}>
+        {label}
+      </dt>
+      <dd
+        className={`tabular-nums ${
+          destacado ? 'text-base font-black text-white' : 'text-xs font-bold text-gray-300'
+        }`}
+      >
+        {formatARS(valor, { centavos: true })}
+      </dd>
+    </div>
   )
 }
 

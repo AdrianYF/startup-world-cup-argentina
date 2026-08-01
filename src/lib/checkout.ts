@@ -18,8 +18,12 @@ export const TIER_POR_TICKET: Record<string, TierId> = {
 export type TierLive = {
   id: TierId
   nombre: string
-  /** Pesos enteros, sin centavos. */
+  /** Precio de una entrada, en pesos enteros. */
   precio: number
+  /** Cargo de servicio de UNA entrada. Tiene centavos. */
+  cargo: number
+  /** precio + cargo, de una entrada. */
+  total: number
   disponible: number
 }
 
@@ -35,6 +39,8 @@ export type Orden = {
   id: string
   tier: TierId
   cantidad: number
+  subtotal: number
+  cargo: number
   total: number
   status: EstadoOrden
   nombre: string
@@ -152,7 +158,16 @@ export async function fetchEntrada(token: string, signal?: AbortSignal): Promise
   return jsonSeguro<Entrada>(res)
 }
 
-/** Formato de precio del sitio: `$35.000`. */
-export function formatARS(pesos: number): string {
-  return '$' + pesos.toLocaleString('es-AR')
+/**
+ * Formato de precio del sitio: `$35.000`.
+ *
+ * `centavos: true` fuerza los dos decimales, que es lo que va en un desglose:
+ * con "$35.000 / $1.952,27 / $36.952,27" las columnas no alinean y el subtotal
+ * parece redondeado.
+ */
+export function formatARS(pesos: number, { centavos = false } = {}): string {
+  return '$' + pesos.toLocaleString('es-AR', {
+    minimumFractionDigits: centavos ? 2 : 0,
+    maximumFractionDigits: 2,
+  })
 }

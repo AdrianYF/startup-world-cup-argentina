@@ -128,7 +128,9 @@ function Exito({ orden }: { orden: Orden }) {
       <dl className="mt-8 text-left rounded-xl border border-[#75AADB]/15 bg-white/[0.04] px-5 py-4">
         <Fila label="Entrada" valor={orden.tier === 'vip' ? 'Entrada VIP' : 'Última tanda'} />
         <Fila label="Cantidad" valor={unidades} />
-        <Fila label="Total" valor={formatARS(orden.total)} />
+        <Fila label="Subtotal" valor={formatARS(orden.subtotal, { centavos: true })} />
+        <Fila label="Cargo de servicio" valor={formatARS(orden.cargo, { centavos: true })} />
+        <Fila label="Total" valor={formatARS(orden.total, { centavos: true })} destacado />
         <Fila label="Orden" valor={<span className="font-mono text-[11px]">{orden.id}</span>} />
       </dl>
 
@@ -145,11 +147,25 @@ function Exito({ orden }: { orden: Orden }) {
   )
 }
 
-function Fila({ label, valor }: { label: string; valor: React.ReactNode }) {
+function Fila({
+  label,
+  valor,
+  destacado,
+}: {
+  label: string
+  valor: React.ReactNode
+  destacado?: boolean
+}) {
   return (
-    <div className="flex items-center justify-between gap-4 py-1.5">
+    <div
+      className={`flex items-center justify-between gap-4 ${
+        destacado ? 'mt-1.5 pt-2.5 border-t border-[#75AADB]/20' : 'py-1.5'
+      }`}
+    >
       <dt className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-gray-400">{label}</dt>
-      <dd className="text-sm font-bold text-white text-right">{valor}</dd>
+      <dd className={`text-right tabular-nums ${destacado ? 'text-base font-black text-white' : 'text-sm font-bold text-white'}`}>
+        {valor}
+      </dd>
     </div>
   )
 }

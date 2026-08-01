@@ -21,7 +21,9 @@ export async function enviarEntrada({ orden, tierNombre, ticketUrl, qrUrl }) {
     return false
   }
 
-  const total = orden.unit_price_ars * orden.quantity
+  const subtotal = orden.unit_price_ars * orden.quantity
+  const cargo = Number(orden.service_fee_ars || 0)
+  const total = Math.round((subtotal + cargo) * 100) / 100
   const unidades = orden.quantity === 1 ? '1 entrada' : `${orden.quantity} entradas`
 
   try {
@@ -30,12 +32,14 @@ export async function enviarEntrada({ orden, tierNombre, ticketUrl, qrUrl }) {
       to: orden.buyer_email,
       replyTo: process.env.RESEND_REPLY_TO || undefined,
       subject: `Tu entrada para Startup World Cup Argentina 2026 · ${tierNombre}`,
-      html: plantilla({ orden, tierNombre, ticketUrl, qrUrl, total, unidades }),
+      html: plantilla({ orden, tierNombre, ticketUrl, qrUrl, subtotal, cargo, total, unidades }),
       text: [
         `¡Listo, ${orden.buyer_name}! Tu compra está confirmada.`,
         '',
         `${tierNombre} — ${unidades}`,
-        `Total: ${formatARS(total)}`,
+        `Subtotal: ${formatARS(subtotal, { centavos: true })}`,
+        `Cargo de servicio: ${formatARS(cargo, { centavos: true })}`,
+        `Total: ${formatARS(total, { centavos: true })}`,
         `Orden: ${orden.id}`,
         '',
         'Startup World Cup Argentina 2026',
@@ -56,11 +60,18 @@ export async function enviarEntrada({ orden, tierNombre, ticketUrl, qrUrl }) {
   }
 }
 
-function plantilla({ orden, tierNombre, ticketUrl, qrUrl, total, unidades }) {
+function plantilla({ orden, tierNombre, ticketUrl, qrUrl, subtotal, cargo, total, unidades }) {
   const fila = (label, valor) => `
     <tr>
       <td style="padding:6px 0;color:#9ca3af;font-size:13px;">${label}</td>
       <td style="padding:6px 0;color:#ffffff;font-size:13px;font-weight:700;text-align:right;">${valor}</td>
+    </tr>`
+
+  // El total va separado por una línea: es el número que la persona busca.
+  const filaTotal = (label, valor) => `
+    <tr>
+      <td style="padding:10px 0 0;border-top:1px solid rgba(117,170,219,0.2);color:#ffffff;font-size:14px;font-weight:700;">${label}</td>
+      <td style="padding:10px 0 0;border-top:1px solid rgba(117,170,219,0.2);color:#ffffff;font-size:15px;font-weight:800;text-align:right;">${valor}</td>
     </tr>`
 
   return `<!doctype html>
@@ -82,7 +93,9 @@ function plantilla({ orden, tierNombre, ticketUrl, qrUrl, total, unidades }) {
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 ${fila('Entrada', escapar(tierNombre))}
                 ${fila('Cantidad', unidades)}
-                ${fila('Total', formatARS(total))}
+                ${fila('Subtotal', formatARS(subtotal, { centavos: true }))}
+                ${fila('Cargo de servicio', formatARS(cargo, { centavos: true }))}
+                ${filaTotal('Total', formatARS(total, { centavos: true }))}
                 ${fila('Orden', `<span style="font-family:monospace;font-size:11px;">${orden.id}</span>`)}
               </table>
             </td></tr>

@@ -74,6 +74,20 @@ export function apiFunctions({ raiz }) {
     },
 
     configureServer(server) {
+      // Reiniciar el server ante cualquier cambio en api/.
+      //
+      // El `?t=` de más abajo sólo invalida el handler, no lo que el handler
+      // importa: tocar api/_lib/db.js dejaba corriendo la versión vieja y el
+      // endpoint devolvía datos viejos sin ningún error a la vista. Reiniciar es
+      // lo único que limpia el caché de módulos entero.
+      const dirApi = join(raiz, 'api')
+      server.watcher.add(dirApi)
+      server.watcher.on('change', archivo => {
+        if (!archivo.startsWith(dirApi)) return
+        server.config.logger.info(`  api cambió ${archivo.slice(raiz.length + 1)} → reiniciando`)
+        server.restart()
+      })
+
       server.middlewares.use(async (req, res, next) => {
         const url = new URL(req.url, 'http://localhost')
         if (!url.pathname.startsWith('/api/')) return next()

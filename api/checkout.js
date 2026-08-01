@@ -11,6 +11,7 @@
 // /api/mp-webhook confirme el pago contra Mercado Pago.
 import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { db, stockDisponible } from './_lib/db.js'
+import { desglose } from './_lib/precios.js'
 import { json, rejectMethod, readBody, siteUrl, esMailValido } from './_lib/http.js'
 
 /** Minutos que una orden pendiente mantiene reservado su cupo. */
@@ -66,13 +67,17 @@ export default async function handler(req, res) {
     }
 
     const expiresAt = new Date(Date.now() + RESERVA_MINUTOS * 60_000)
+    // Precio y cargo se congelan en la orden: si mañana cambian, esta compra
+    // tiene que seguir mostrando lo que la persona efectivamente pagó.
+    const montos = desglose(tier.price_ars, quantity)
 
     const { data: orden, error: ordenErr } = await db()
       .from('orders')
       .insert({
         tier_id: tier.id,
         quantity,
-        unit_price_ars: tier.price_ars, // precio congelado: la fuente es la base
+        unit_price_ars: tier.price_ars, // la fuente del precio es la base, nunca el request
+        service_fee_ars: montos.cargo,
         buyer_name: nombre,
         buyer_email: email,
         buyer_dni: dni || null,
@@ -95,12 +100,21 @@ export default async function handler(req, res) {
 
     const preference = await new Preference(mp).create({
       body: {
+        // Dos ítems para que el comprador vea el desglose también dentro de
+        // Mercado Pago, y no un total redondo que no puede explicarse.
         items: [
           {
             id: tier.id,
             title: `Startup World Cup Argentina 2026 — ${tier.nombre}`,
             quantity,
-            unit_price: tier.price_ars,
+            unit_price: montos.precioUnitario,
+            currency_id: 'ARS',
+          },
+          {
+            id: `${tier.id}-cargo`,
+            title: 'Cargo de servicio',
+            quantity,
+            unit_price: montos.cargoUnitario,
             currency_id: 'ARS',
           },
         ],
