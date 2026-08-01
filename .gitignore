@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Credenciales. `*.local` ya cubre .env.local, pero no un .env pelado ni las
+# variantes por entorno — y acá adentro viven los access tokens de Mercado Pago
+# y la service_role de Supabase. .env.example SÍ se versiona: no tiene valores.
+.env
+.env.*
+!.env.example
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
