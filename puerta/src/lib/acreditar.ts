@@ -11,6 +11,7 @@ import { cola } from './almacen'
 import type { Checkin, Persona } from './tipos'
 
 const URL = '/api/puerta-checkin'
+const URL_AGREGAR = '/api/puerta-agregar'
 
 /**
  * Manda lo que quedó pendiente, en orden. Devuelve cuántos siguen sin salir.
@@ -86,4 +87,49 @@ export function acreditarPorToken(args: { dia: string; token: string; por?: stri
 
 export function anular(id: string): Promise<void> {
   return postearOEncolar({ anular: id })
+}
+
+/**
+ * Da de alta a alguien que no está en la lista y lo devuelve como fila.
+ *
+ * Sin señal se encola y se devuelve una fila optimista: la persona ya está
+ * parada en la puerta y no puede esperar a que vuelva el wifi. El `id` lo genera
+ * acá, así que el reintento no crea a nadie dos veces.
+ */
+export async function agregar(args: {
+  dia: string
+  diasLabel: string
+  nombre: string
+  email?: string
+  empresa?: string
+}): Promise<Persona> {
+  const id = crypto.randomUUID()
+  const cuerpo = {
+    id,
+    dia: args.dia,
+    nombre: args.nombre.trim(),
+    email: args.email?.trim() || '',
+    empresa: args.empresa?.trim() || '',
+  }
+
+  try {
+    const r = await postear<{ persona: Persona }>(URL_AGREGAR, cuerpo)
+    return r.persona
+  } catch (err) {
+    if (esSinSesion(err)) throw err
+    // Un 4xx sí se propaga: si el nombre no pasó la validación, encolarlo sólo
+    // escondería el problema. A la cola va únicamente lo que falló por red.
+    if (err instanceof PuertaError) throw err
+    cola.sumar({ url: URL_AGREGAR, cuerpo })
+    return {
+      id,
+      origen: 'puerta',
+      nombre: cuerpo.nombre,
+      email: cuerpo.email,
+      telefono: null,
+      empresa: cuerpo.empresa || null,
+      entrada: 'Alta en puerta',
+      dias: args.diasLabel,
+    }
+  }
 }

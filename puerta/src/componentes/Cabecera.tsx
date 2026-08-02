@@ -17,10 +17,14 @@ type Props = {
   onBusqueda: (v: string) => void
   sinConexion: boolean
   enCola: number
+  /** Quién está acreditando, si cargó su nombre al entrar. */
+  quien: string
+  onSalir: () => void
 }
 
 function Cabecera({
   dias, diaActivo, onDia, adentro, total, busqueda, onBusqueda, sinConexion, enCola,
+  quien, onSalir,
 }: Props) {
   return (
     <header className="sticky top-0 z-20 border-b border-white/10 bg-swc-bg/95 backdrop-blur">
@@ -39,9 +43,21 @@ function Cabecera({
               </button>
             ))}
           </div>
-          <p className="shrink-0 text-xs font-bold tabular-nums text-swc-muted">
-            <span className="text-swc-light">{adentro}</span>/{total}
-          </p>
+          <div className="flex shrink-0 items-center gap-3">
+            <p className="text-xs font-bold tabular-nums text-swc-muted">
+              <span className="text-swc-light">{adentro}</span>/{total}
+            </p>
+            {/* Salir. Es un celular compartido entre el staff: quien lo agarra
+                tiene que poder dejar de ser el anterior, y si el equipo cambia de
+                turno la sesión no puede quedar abierta para siempre. */}
+            <button
+              onClick={onSalir}
+              title={quien ? `Salir (${quien})` : 'Salir'}
+              className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-swc-muted active:scale-95"
+            >
+              {quien ? `${quien} · Salir` : 'Salir'}
+            </button>
+          </div>
         </div>
 
         <input

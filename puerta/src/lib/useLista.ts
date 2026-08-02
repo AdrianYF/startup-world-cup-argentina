@@ -6,7 +6,7 @@
  * Los componentes de `componentes/` sólo pintan lo que sale de acá.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { acreditar, anular, vaciarCola } from './acreditar'
+import { acreditar, agregar, anular, vaciarCola } from './acreditar'
 import { esSinSesion, mensajeDeError, traerDelta, traerLista } from './api'
 import { cache, cola, diaDeHoy, quien } from './almacen'
 import { porPersona } from './buscar'
@@ -134,6 +134,31 @@ export function useLista(onSinSesion: () => void) {
     }
   }, [diaVigente, manejarError])
 
+  /**
+   * Alta en la puerta: se agrega a la lista Y se acredita, en un solo paso.
+   *
+   * Van juntos a propósito. A nadie se lo da de alta para dejarlo afuera: si
+   * está parado adelante y no figuraba, lo que sigue es que entre.
+   */
+  const agregarYAcreditar = useCallback(async (datos: {
+    nombre: string
+    email?: string
+    empresa?: string
+  }) => {
+    if (!lista) return
+    try {
+      const persona = await agregar({
+        dia: lista.dia.id,
+        diasLabel: `${lista.dia.label} ${Number(lista.dia.fecha.slice(-2))}`,
+        ...datos,
+      })
+      setLista(l => (l ? conPersona(l, persona) : l))
+      await anotar(persona)
+    } catch (err) {
+      manejarError(err)
+    }
+  }, [lista, anotar, manejarError])
+
   /** Lo que ya resolvió el escáner contra el servidor: sólo hay que reflejarlo. */
   const anotarEscaneado = useCallback((checkin: Checkin, persona: Persona) => {
     setLista(l => (l ? fusionar(l, [checkin]) : l))
@@ -155,8 +180,23 @@ export function useLista(onSinSesion: () => void) {
 
   return {
     lista, ingresos, error, sinConexion, enCola, ultimo,
-    cambiarDia, anotar, anotarEscaneado, deshacer,
+    cambiarDia, anotar, anotarEscaneado, deshacer, agregarYAcreditar,
   }
+}
+
+/**
+ * Suma una persona a la lista cacheada.
+ *
+ * Por `id`, igual que `fusionar`: si el alta se reintenta desde la cola y el
+ * servidor la devuelve otra vez, tiene que reemplazar a la optimista, no
+ * duplicarla.
+ */
+function conPersona(lista: Lista, persona: Persona): Lista {
+  const porId = new Map(lista.personas.map(p => [p.id, p]))
+  porId.set(persona.id, persona)
+  const nueva = { ...lista, personas: [...porId.values()] }
+  cache.guardar(nueva)
+  return nueva
 }
 
 /**
