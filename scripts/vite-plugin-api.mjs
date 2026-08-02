@@ -66,10 +66,38 @@ export function apiFunctions({ raiz }) {
       // Las funciones leen process.env, no import.meta.env: Vite sólo expone las
       // VITE_*, así que el resto hay que cargarlo a mano.
       const env = join(raiz, '.env.local')
+
+      // OJO con la precedencia: `loadEnvFile` NO pisa lo que ya está en el
+      // entorno. Si el shell tiene un `export SUPABASE_URL=...`, el archivo se
+      // ignora en silencio y la app termina hablándole a OTRA base — con la
+      // misma cara, respondiendo 200 y con otros números de stock. Pasó, y
+      // costó encontrarlo.
+      //
+      // Se guarda qué venía del shell para poder avisarlo abajo.
+      const antes = { ...process.env }
       if (existsSync(env)) process.loadEnvFile(env)
+
       if (!process.env.PUBLIC_SITE_URL) {
         process.env.PUBLIC_SITE_URL = 'http://localhost:5173'
       }
+
+      // A qué base y a qué Mercado Pago le está hablando este dev server, en una
+      // línea y sin secretos. Es la pregunta que uno se hace cuando los números
+      // no cierran.
+      const url = process.env.SUPABASE_URL || ''
+      const local = /127\.0\.0\.1|localhost/.test(url)
+      const pisadas = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'MP_ACCESS_TOKEN', 'PUBLIC_SITE_URL']
+        .filter(k => antes[k] !== undefined && antes[k] !== '')
+
+      console.log('')
+      console.log(`  base       ${url || '(sin configurar)'}${local ? '  ← Supabase LOCAL, no la de producción' : ''}`)
+      console.log(`  mp         ${/^TEST-/.test(process.env.VITE_MP_PUBLIC_KEY || '') ? 'credenciales de test' : (process.env.MP_ACCESS_TOKEN ? 'configurado' : '(sin configurar)')}`)
+      console.log(`  sitio      ${process.env.PUBLIC_SITE_URL}`)
+      if (pisadas.length) {
+        console.log(`\n  ⚠ el shell pisa a .env.local en: ${pisadas.join(', ')}`)
+        console.log(`    (loadEnvFile no sobrescribe lo ya exportado — usá \`unset\` si no era a propósito)`)
+      }
+      console.log('')
     },
 
     configureServer(server) {
