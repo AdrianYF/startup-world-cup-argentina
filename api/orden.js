@@ -12,8 +12,8 @@
 // cliente sólo aporta el id de la orden — nunca dice si pagó.
 //
 // No devuelve el mail ni el payment_id: el id de la orden viaja en la
-// URL y podría quedar en un historial compartido. El `ticket_token` sí, porque
-// sin él la pantalla de éxito no serviría de nada.
+// URL y podría quedar en un historial compartido. Los tokens de las entradas sí,
+// porque sin ellos la pantalla de éxito no serviría de nada.
 import { db } from './_lib/db.js'
 import { json, rejectMethod, first, siteUrl } from './_lib/http.js'
 import { buscarPagoDeOrden, acreditar } from './_lib/acreditar.js'
@@ -57,6 +57,23 @@ export default async function handler(req, res) {
     const subtotal = orden.unit_price_ars * orden.quantity
     const cargo = Number(orden.service_fee_ars || 0)
 
+    // Las entradas emitidas, una por asistente. Sólo con la orden pagada: antes
+    // de eso no hay tokens, y devolver los nombres tampoco aportaría nada.
+    let entradas = []
+    if (orden.status === 'paid') {
+      const { data: filas } = await db()
+        .from('entradas')
+        .select('numero, nombre, token')
+        .eq('order_id', orden.id)
+        .not('token', 'is', null)
+        .order('numero')
+      entradas = (filas || []).map(e => ({
+        numero: e.numero,
+        nombre: e.nombre,
+        token: e.token,
+      }))
+    }
+
     json(res, 200, {
       id: orden.id,
       tier: orden.tier_id,
@@ -70,7 +87,7 @@ export default async function handler(req, res) {
       // Enmascarado: sirve para confirmar a dónde fue el mail sin exponer la
       // casilla, porque el id de la orden viaja en la URL.
       email: enmascarar(orden.buyer_email),
-      ticketToken: orden.status === 'paid' ? orden.ticket_token : null,
+      entradas,
     })
   } catch (err) {
     console.error('[orden]', err)

@@ -65,14 +65,23 @@ function Entrada() {
   )
 }
 
-function Ticket({ entrada, url, token }: { entrada: EntradaData; url: string; token: string }) {
-  const usada = Boolean(entrada.usadaEn)
+/**
+ * Cuándo se acreditó, siempre en hora de Buenos Aires: alguien que llega de
+ * afuera con el reloj en otro huso no tiene por qué ver otra hora que la del
+ * evento.
+ */
+function cuando(iso: string): string {
+  return new Date(iso).toLocaleString('es-AR', {
+    weekday: 'long', day: 'numeric', month: 'short',
+    hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+}
 
+function Ticket({ entrada, url, token }: { entrada: EntradaData; url: string; token: string }) {
   return (
     <div
-      className={`relative rounded-2xl border overflow-hidden transition-opacity ${
-        usada ? 'border-white/10 opacity-70' : 'border-[#75AADB]/35'
-      }`}
+      className="relative rounded-2xl border border-[#75AADB]/35 overflow-hidden"
       style={{ background: 'linear-gradient(160deg, #0f172b 0%, #020618 100%)' }}
     >
       {/* Cabecera */}
@@ -100,17 +109,23 @@ function Ticket({ entrada, url, token }: { entrada: EntradaData; url: string; to
         </p>
       </div>
 
-      {/* Datos */}
+      {/* Datos. El nombre es el del ASISTENTE: esta entrada es de una persona,
+          no de la compra. Quien compró tres tiene tres tokens distintos. */}
       <dl className="px-7 pb-7">
-        <Fila label="A nombre de" valor={entrada.nombre} />
-        <Fila label="Cantidad" valor={entrada.cantidad === 1 ? '1 entrada' : `${entrada.cantidad} entradas`} />
+        <Fila label="A nombre de" valor={entrada.nombre || '—'} />
+        {entrada.deTotal > 1 && (
+          <Fila label="Entrada" valor={`${entrada.numero} de ${entrada.deTotal}`} />
+        )}
         <Fila label="Orden" valor={<span className="font-mono text-[11px]">{entrada.orden}</span>} />
       </dl>
 
-      {usada && (
+      {/* Que ya se haya usado NO la invalida: la entrada habilita el jueves y el
+          viernes, así que quien entró un día vuelve a entrar al otro. Es un dato,
+          no un rechazo — de ahí el gris y no el rojo. */}
+      {entrada.usadaEn && (
         <div className="px-7 pb-7">
-          <p className="rounded-xl border border-[#ff7675]/40 bg-[#ff7675]/10 px-4 py-3 text-center text-sm font-bold text-[#ff7675]">
-            Esta entrada ya fue utilizada
+          <p className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center text-sm text-gray-300">
+            Acreditada el {cuando(entrada.usadaEn)}
           </p>
         </div>
       )}

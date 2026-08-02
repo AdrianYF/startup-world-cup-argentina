@@ -38,6 +38,13 @@ export type Comprador = {
 
 export type EstadoOrden = 'pending' | 'paid' | 'rejected' | 'expired' | 'refunded'
 
+/** Una entrada emitida. Hay una por asistente, cada una con su propio QR. */
+export type EntradaEmitida = {
+  numero: number
+  nombre: string | null
+  token: string
+}
+
 export type Orden = {
   id: string
   tier: TierId
@@ -51,7 +58,8 @@ export type Orden = {
   nombre: string
   /** Enmascarado por el backend: `an•••@ejemplo.com`. */
   email: string
-  ticketToken: string | null
+  /** Vacío mientras la orden no esté pagada: los tokens se emiten al acreditar. */
+  entradas: EntradaEmitida[]
 }
 
 /** Error con el código que devuelve la API, para poder mostrar el mensaje justo. */
@@ -74,6 +82,7 @@ const MENSAJES: Record<string, string> = {
   tier_no_disponible: 'Esa entrada ya no está a la venta.',
   email_invalido: 'Revisá el mail: no parece válido.',
   nombre_requerido: 'Escribí tu nombre y apellido.',
+  asistente_requerido: 'Falta el nombre de alguna de las entradas.',
   cantidad_invalida: 'Cantidad inválida.',
   checkout_no_configurado: 'El pago online todavía no está habilitado.',
   api_no_disponible: 'El pago online no está disponible en este momento.',
@@ -127,16 +136,22 @@ export async function fetchTiers(signal?: AbortSignal): Promise<TierLive[] | nul
   }
 }
 
-/** Crea la orden y devuelve la preferencia con la que se monta el Wallet Brick. */
+/**
+ * Crea la orden y devuelve la preferencia con la que se monta el Wallet Brick.
+ *
+ * `asistentes` son los nombres, uno por entrada — cada uno recibe su propio QR.
+ * El primero es el del comprador.
+ */
 export async function crearCheckout(
   tier: TierId,
   cantidad: number,
   buyer: Comprador,
+  asistentes: string[],
 ): Promise<{ orderId: string; preferenceId: string }> {
   const res = await fetch('/api/checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tier, quantity: cantidad, buyer }),
+    body: JSON.stringify({ tier, quantity: cantidad, buyer, asistentes }),
   })
   if (!res.ok) await parseError(res)
   return jsonSeguro<{ orderId: string; preferenceId: string }>(res)
@@ -153,8 +168,11 @@ export type Entrada = {
   orden: string
   tier: TierId
   tierNombre: string
-  cantidad: number
-  nombre: string
+  /** El asistente de ESTA entrada, no el comprador. */
+  nombre: string | null
+  /** Para poder decir "Entrada 2 de 3" cuando la compra fue de varias. */
+  numero: number
+  deTotal: number
   usadaEn: string | null
   compradaEn: string
 }

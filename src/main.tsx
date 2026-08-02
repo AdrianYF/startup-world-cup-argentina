@@ -66,6 +66,9 @@ createRoot(document.getElementById('root')!).render(
               /entrada/:token es el link del mail y el destino del QR. */}
           <Route path="/gracias" element={<Gracias />} />
           <Route path="/entrada/:token" element={<Entrada />} />
+          {/* /puerta NO está acá: la acreditación es otra app, con su propio
+              bundle y su propio index.html (ver puerta/). El rewrite de
+              vercel.json la deja afuera del catch-all de esta SPA. */}
         </Routes>
       </Suspense>
     </BrowserRouter>

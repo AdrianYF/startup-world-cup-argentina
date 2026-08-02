@@ -86,8 +86,6 @@ export async function acreditar({ orden, pago, baseUrl }) {
     )
   }
 
-  const token = orden.ticket_token || crypto.randomBytes(32).toString('base64url')
-
   // El `.neq('status','paid')` es lo que hace que dos ejecuciones simultáneas no
   // acrediten las dos: sólo una encuentra la fila todavía sin pagar.
   const { data: acreditada, error } = await db()
@@ -96,7 +94,6 @@ export async function acreditar({ orden, pago, baseUrl }) {
       status: 'paid',
       mp_payment_id: paymentId,
       mp_status_detail: pago.status_detail || 'accredited',
-      ticket_token: token,
     })
     .eq('id', orden.id)
     .neq('status', 'paid')
@@ -111,15 +108,57 @@ export async function acreditar({ orden, pago, baseUrl }) {
     return { orden: data, cambio: false }
   }
 
-  await mandarMail(acreditada, baseUrl)
+  const entradas = await emitirTokens(acreditada.id)
+  await mandarMail(acreditada, entradas, baseUrl)
   return { orden: acreditada, cambio: true }
+}
+
+/**
+ * Emite la credencial de cada entrada de la orden y las devuelve todas.
+ *
+ * Un token por asistente, 32 bytes aleatorios cada uno — el mismo criterio que
+ * tenía `orders.ticket_token`: quien lo tiene, tiene la entrada.
+ *
+ * El `.is('token', null)` cumple el rol que cumplía el `.neq('status','paid')`
+ * de arriba: si esto corre dos veces, la segunda no reemplaza los tokens ya
+ * emitidos y mandados por mail.
+ */
+async function emitirTokens(ordenId) {
+  const { data: filas, error } = await db()
+    .from('entradas')
+    .select('id, numero, nombre, token')
+    .eq('order_id', ordenId)
+    .order('numero')
+
+  if (error) throw error
+
+  for (const entrada of filas || []) {
+    if (entrada.token) continue
+    const token = crypto.randomBytes(32).toString('base64url')
+    const { data } = await db()
+      .from('entradas')
+      .update({ token })
+      .eq('id', entrada.id)
+      .is('token', null)
+      .select('token')
+      .maybeSingle()
+    // Si otra ejecución llegó primero, vale el token de ella.
+    entrada.token = data?.token || (await tokenDe(entrada.id))
+  }
+
+  return filas || []
+}
+
+async function tokenDe(entradaId) {
+  const { data } = await db().from('entradas').select('token').eq('id', entradaId).single()
+  return data?.token || null
 }
 
 /**
  * Mail de confirmación, una sola vez. Su fallo no invalida la acreditación: el
  * pago ya entró y el comprador siempre puede ver su entrada en el sitio.
  */
-async function mandarMail(orden, baseUrl) {
+async function mandarMail(orden, entradas, baseUrl) {
   if (orden.email_sent_at) return
 
   const { data: tier } = await db()
@@ -128,12 +167,19 @@ async function mandarMail(orden, baseUrl) {
     .eq('id', orden.tier_id)
     .single()
 
+  // Un solo mail al comprador, con una tarjeta por asistente. Mandar N mails
+  // separados exigiría un mail por persona, que el checkout no pide.
   const enviado = await enviarEntrada({
     orden,
     tierNombre: tier?.nombre || orden.tier_id,
-    ticketUrl: `${baseUrl}/entrada/${orden.ticket_token}`,
-    pdfUrl: `${baseUrl}/api/entrada-pdf?t=${orden.ticket_token}`,
-    qrUrl: `${baseUrl}/api/entrada-qr?t=${orden.ticket_token}`,
+    entradas: entradas
+      .filter(e => e.token)
+      .map(e => ({
+        nombre: e.nombre,
+        ticketUrl: `${baseUrl}/entrada/${e.token}`,
+        pdfUrl: `${baseUrl}/api/entrada-pdf?t=${e.token}`,
+        qrUrl: `${baseUrl}/api/entrada-qr?t=${e.token}`,
+      })),
   })
 
   if (enviado) {

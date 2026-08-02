@@ -104,8 +104,8 @@ function CompraExitosaModal({ ordenId, onClose }: Props) {
 
 function Exito({ orden }: { orden: Orden }) {
   const nombre = orden.nombre.split(' ')[0]
-  const unidades = orden.cantidad === 1 ? '1 entrada' : `${orden.cantidad} entradas`
-  const ticketUrl = `${window.location.origin}/entrada/${orden.ticketToken}`
+  const varias = orden.entradas.length > 1
+  const tierNombre = orden.tier === 'vip' ? 'Entrada VIP' : 'Última tanda'
 
   return (
     <>
@@ -120,48 +120,68 @@ function Exito({ orden }: { orden: Orden }) {
           ¡Felicitaciones, {nombre}!
         </h2>
         <p className="mt-3 text-gray-400 text-sm leading-relaxed">
-          Tu entrada está confirmada. Te la mandamos a{' '}
+          {varias ? 'Tus entradas están confirmadas' : 'Tu entrada está confirmada'}. Te{' '}
+          {varias ? 'las' : 'la'} mandamos a{' '}
           <span className="text-gray-300">{orden.email}</span> — nos vemos el 5, 6 y 7 de agosto.
         </p>
       </div>
 
-      {/* La entrada, con el QR que se muestra en la puerta */}
-      <div className="mt-7 rounded-2xl border border-[#75AADB]/25 bg-white/[0.04] overflow-hidden">
-        <div className="px-6 pt-6 pb-5 text-center border-b border-dashed border-[#75AADB]/20">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#75AADB]">
-            Startup World Cup Argentina
-          </p>
-          <p className="mt-1.5 text-xl font-black text-white">
-            {orden.tier === 'vip' ? 'Entrada VIP' : 'Última tanda'}
-          </p>
-          <p className="mt-0.5 text-xs text-gray-400">{unidades}</p>
-        </div>
-
-        <div className="px-6 py-6 text-center">
-          <div className="inline-block bg-white p-3 rounded-xl">
-            <QRCodeSVG value={ticketUrl} size={148} level="M" bgColor="#ffffff" fgColor="#020618" />
+      {/* Una tarjeta por asistente: cada uno entra con SU código. */}
+      {orden.entradas.map(entrada => (
+        <div
+          key={entrada.token}
+          className="mt-7 rounded-2xl border border-[#75AADB]/25 bg-white/[0.04] overflow-hidden"
+        >
+          <div className="px-6 pt-6 pb-5 text-center border-b border-dashed border-[#75AADB]/20">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#75AADB]">
+              {varias ? `Entrada ${entrada.numero} de ${orden.entradas.length}` : 'Startup World Cup Argentina'}
+            </p>
+            <p className="mt-1.5 text-xl font-black text-white">
+              {entrada.nombre || tierNombre}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-400">{tierNombre}</p>
           </div>
-          <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gray-500">
-            Mostralo en la puerta
-          </p>
+
+          <div className="px-6 py-6 text-center">
+            <div className="inline-block bg-white p-3 rounded-xl">
+              <QRCodeSVG
+                value={`${window.location.origin}/entrada/${entrada.token}`}
+                size={148}
+                level="M"
+                bgColor="#ffffff"
+                fgColor="#020618"
+              />
+            </div>
+            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gray-500">
+              Mostralo en la puerta
+            </p>
+          </div>
+
+          {/* PDF y no un link a la página: la entrada queda guardada en el
+              teléfono y sirve aunque en la puerta no haya señal. */}
+          <div className="px-6 pb-6">
+            <a
+              href={`/api/entrada-pdf?t=${entrada.token}`}
+              download
+              style={{ backgroundImage: 'var(--gradient-cta)' }}
+              className="block w-full text-center font-black py-3 rounded-full uppercase tracking-wide text-white text-sm [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
+            >
+              Descargar
+            </a>
+          </div>
         </div>
+      ))}
 
-        <dl className="px-6 pb-5">
-          <Fila label="Total pagado" valor={formatARS(orden.total, { centavos: true })} />
-          <Fila label="Orden" valor={<span className="font-mono text-[10px]">{orden.id}</span>} />
-        </dl>
-      </div>
+      <dl className="mt-6">
+        <Fila label="Total pagado" valor={formatARS(orden.total, { centavos: true })} />
+        <Fila label="Orden" valor={<span className="font-mono text-[10px]">{orden.id}</span>} />
+      </dl>
 
-      {/* PDF y no un link a la página: la entrada queda guardada en el
-          teléfono y sirve aunque en la puerta no haya señal. */}
-      <a
-        href={`/api/entrada-pdf?t=${orden.ticketToken}`}
-        download
-        style={{ backgroundImage: 'var(--gradient-cta)' }}
-        className="mt-5 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
-      >
-        Descargar entrada
-      </a>
+      {varias && (
+        <p className="mt-4 text-center text-[11px] text-gray-500 leading-relaxed">
+          Reenviale a cada persona su entrada: en la puerta se acredita una por una.
+        </p>
+      )}
     </>
   )
 }

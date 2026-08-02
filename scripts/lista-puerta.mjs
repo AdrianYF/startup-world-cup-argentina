@@ -12,6 +12,9 @@
  */
 import { createClient } from '@supabase/supabase-js'
 import { aCSV } from './lib/csv.mjs'
+// Los días del evento salen del mismo lado que los usa la app de la puerta: si
+// se corrige una fecha, se corrige en un solo archivo.
+import { dia as buscarDia, habilitaDia, DIAS } from '../api/_lib/puerta.js'
 
 process.loadEnvFile('.env.local')
 
@@ -34,15 +37,14 @@ if (error) {
   process.exit(1)
 }
 
-const DIAS = { mie: 'Mié', jue: 'Jue', vie: 'Vie' }
 let filas = data || []
 if (dia) {
-  const buscado = DIAS[dia.toLowerCase()]
-  if (!buscado) {
-    console.error(`--dia tiene que ser mie, jue o vie (recibí "${dia}")`)
+  const elegido = buscarDia(dia)
+  if (!elegido) {
+    console.error(`--dia tiene que ser ${DIAS.map(d => d.id).join(', ')} (recibí "${dia}")`)
     process.exit(1)
   }
-  filas = filas.filter(f => (f.dias || '').includes(buscado))
+  filas = filas.filter(f => habilitaDia(f.dias, elegido.label))
 }
 
 // Por apellido: en la puerta la gente dice el apellido, no el nombre.
@@ -50,7 +52,7 @@ const apellido = n => (n || '').trim().split(/\s+/).slice(-1)[0].toLowerCase()
 filas.sort((a, b) => apellido(a.nombre).localeCompare(apellido(b.nombre), 'es'))
 
 if (comoCSV) {
-  const cols = ['nombre', 'email', 'telefono', 'empresa', 'entrada', 'dias', 'cantidad', 'origen', 'usada_en']
+  const cols = ['nombre', 'email', 'telefono', 'empresa', 'entrada', 'dias', 'origen', 'usada_en']
   console.log(aCSV(cols, filas))
   process.exit(0)
 }
@@ -85,10 +87,11 @@ for (const f of filas) {
   console.log(`  ${w(f.nombre, cN)}${w(f.email, cE)}${w(f.telefono, cF)}${w(f.empresa, cC)}${w(f.entrada, cT)}${w(f.dias, cD)}${w(f.origen, cO)}${usada}`)
 }
 
+// Una fila es una persona, así que filas = entradas. Antes no: la venta propia
+// traía una sola fila por compra, con su cantidad al costado.
 const porOrigen = filas.reduce((a, f) => ({ ...a, [f.origen]: (a[f.origen] || 0) + 1 }), {})
-const entradas = filas.reduce((n, f) => n + (f.cantidad || 1), 0)
 console.log(`  ${raya}`)
-console.log(`  ${filas.length} filas · ${entradas} entradas · ` +
+console.log(`  ${filas.length} personas · ` +
   Object.entries(porOrigen).sort().map(([k, v]) => `${k}: ${v}`).join(' · '))
 
 // La misma persona puede estar en varios canales: en Luma por el side event del

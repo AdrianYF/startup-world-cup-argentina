@@ -40,15 +40,22 @@ type Props = {
    * inventado sería peor que no mostrar nada.
    */
   cargo: number | null
+  /** Cupo web libre. `null` si /api/tiers no contestó: ahí manda sólo MAX_UNIDADES. */
+  disponible: number | null
   perks: string[]
   badge?: string | null
   descripcion?: string
+  /** 'oro' pinta el modal como la card VIP. */
+  acento?: string | null
   onClose: () => void
 }
 
 type Paso = 'elegir' | 'datos' | 'pago'
 
 const TITLE_ID = 'checkout-titulo'
+
+/** Tope por compra. Espeja MAX_UNIDADES de api/checkout.js y el CHECK de la tabla. */
+const MAX_UNIDADES = 5
 
 /** Mismo tratamiento que los inputs del resto del sitio. */
 const INPUT =
@@ -58,22 +65,33 @@ const INPUT =
 const LABEL = 'block text-[11px] font-extrabold uppercase tracking-[0.14em] text-gray-400 mb-1.5'
 const OPCIONAL = 'text-gray-600 normal-case tracking-normal font-normal'
 
-function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descripcion, onClose }: Props) {
+function TicketCheckoutModal({
+  tier, nombre, precio, cargo, disponible, perks, badge, descripcion, acento, onClose,
+}: Props) {
   const [paso, setPaso] = useState<Paso>('elegir')
   const [comprador, setComprador] = useState<Comprador>({ nombre: '', email: '', telefono: '', empresa: '' })
+  // Un nombre por entrada. El índice 0 es el del comprador y se sincroniza solo
+  // con el campo "Nombre y apellido": pedirlo dos veces sería absurdo.
+  const [asistentes, setAsistentes] = useState<string[]>([''])
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
+
+  const oro = acento === 'oro'
+  const cantidad = asistentes.length
+  // El tope real es el menor entre lo que acepta el backend y lo que queda del
+  // cupo web. Sin dato vivo manda sólo el backend.
+  const tope = Math.max(1, Math.min(MAX_UNIDADES, disponible ?? MAX_UNIDADES))
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (enviando) return
     setError(null)
     setEnviando(true)
-    trackEvent('checkout_start', { tier })
+    trackEvent('checkout_start', { tier, cantidad })
 
     try {
-      const { preferenceId: pref } = await crearCheckout(tier, 1, comprador)
+      const { preferenceId: pref } = await crearCheckout(tier, cantidad, comprador, asistentes)
       setPreferenceId(pref)
       setPaso('pago')
     } catch (err) {
@@ -84,8 +102,37 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
     }
   }
 
-  const set = (campo: keyof Comprador) => (e: ChangeEvent<HTMLInputElement>) =>
-    setComprador(c => ({ ...c, [campo]: e.target.value }))
+  const set = (campo: keyof Comprador) => (e: ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value
+    setComprador(c => ({ ...c, [campo]: valor }))
+    // El comprador ES la primera entrada.
+    if (campo === 'nombre') setAsistentes(a => [valor, ...a.slice(1)])
+    invalidarPreferencia()
+  }
+
+  /**
+   * Cualquier cambio en lo que se va a cobrar invalida la preferencia ya creada:
+   * si se vuelve al paso de pago con la vieja, Mercado Pago cobra el monto
+   * anterior. Se limpia y el submit crea una nueva.
+   */
+  function invalidarPreferencia() {
+    setPreferenceId(p => (p ? null : p))
+  }
+
+  function cambiarCantidad(nueva: number) {
+    const n = Math.max(1, Math.min(tope, nueva))
+    setAsistentes(a =>
+      n <= a.length
+        ? a.slice(0, n)
+        : [...a, ...Array.from({ length: n - a.length }, () => '')],
+    )
+    invalidarPreferencia()
+  }
+
+  function cambiarAsistente(i: number, valor: string) {
+    setAsistentes(a => a.map((v, j) => (j === i ? valor : v)))
+    if (i === 0) setComprador(c => ({ ...c, nombre: valor }))
+  }
 
   return (
     <Modal onClose={onClose} titleId={TITLE_ID} size="md">
@@ -95,24 +142,36 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
             {nombre}
           </h2>
           {badge && (
-            <span className="shrink-0 bg-[#75AADB] text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap">
+            <span
+              className={`shrink-0 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ${
+                // Texto oscuro sobre dorado: blanco sobre #d4af37 da 2,10 y no
+                // llega al 4,5 de AA. Con #0f172b sube a 8,48.
+                oro ? 'bg-[#d4af37] text-[#0f172b]' : 'bg-[#75AADB] text-white'
+              }`}
+            >
               {badge}
             </span>
           )}
         </div>
 
         <div className="text-4xl font-black text-white">{formatARS(precio)}</div>
-        <p className="text-gray-500 text-xs mt-1">+ cargo de servicio</p>
+        <p className="text-gray-500 text-xs mt-1">
+          + cargo de servicio{cantidad > 1 ? ' · por entrada' : ''}
+        </p>
 
         {descripcion && <p className="text-gray-400 text-sm mt-4">{descripcion}</p>}
 
         {/* Desglose: el "+ cargo de servicio" de arriba tiene que poder
-            explicarse con un número antes de que la persona pague. */}
+            explicarse con un número antes de que la persona pague. Multiplicar
+            acá por `cantidad` es lo mismo que hace desglose() en el backend. */}
         {cargo !== null && (
-          <dl className="mt-5 rounded-xl border border-[#75AADB]/15 bg-white/[0.04] px-4 py-3">
-            <Monto label="Subtotal" valor={precio} />
-            <Monto label="Cargo de servicio" valor={cargo} />
-            <Monto label="Total" valor={precio + cargo} destacado />
+          <dl className={`mt-5 rounded-xl border px-4 py-3 ${oro ? 'border-[#d4af37]/25 bg-[#d4af37]/[0.06]' : 'border-[#75AADB]/15 bg-white/[0.04]'}`}>
+            <Monto
+              label={cantidad > 1 ? `Subtotal (${cantidad} entradas)` : 'Subtotal'}
+              valor={precio * cantidad}
+            />
+            <Monto label="Cargo de servicio" valor={redondear(cargo * cantidad)} />
+            <Monto label="Total" valor={redondear((precio + cargo) * cantidad)} destacado oro={oro} />
           </dl>
         )}
 
@@ -120,7 +179,7 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
           <ul className="flex flex-col gap-2.5 mt-5">
             {perks.map((p, i) => (
               <li key={i} className="flex items-start gap-2 text-gray-300 text-sm">
-                <span className="text-[#75AADB] mt-0.5">✓</span>
+                <span className={`mt-0.5 ${oro ? 'text-[#d4af37]' : 'text-[#75AADB]'}`}>✓</span>
                 {p}
               </li>
             ))}
@@ -128,7 +187,7 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
         )}
       </header>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-[#75AADB]/30 to-transparent mb-6" />
+      <div className={`h-px bg-gradient-to-r from-transparent mb-6 ${oro ? 'via-[#d4af37]/40' : 'via-[#75AADB]/30'} to-transparent`} />
 
       {paso === 'elegir' ? (
         <ElegirCanal
@@ -145,7 +204,19 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
         />
       ) : paso === 'datos' ? (
         <form onSubmit={onSubmit} noValidate>
+          <Cantidad
+            valor={cantidad}
+            tope={tope}
+            oro={oro}
+            onCambio={cambiarCantidad}
+          />
+
           <div className="flex flex-col gap-4">
+            {cantidad > 1 && (
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
+                Entrada 1 · vos
+              </p>
+            )}
             <div>
               <label className={LABEL} htmlFor="ck-nombre">Nombre y apellido</label>
               <input
@@ -202,6 +273,25 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
             </div>
           </div>
 
+          {/* Los acompañantes. Cada uno recibe SU QR, así que el nombre no es un
+              dato de más: es lo que la puerta busca cuando llegan por separado. */}
+          {asistentes.slice(1).map((valor, i) => (
+            <div key={i + 1} className="mt-5">
+              <label className={LABEL} htmlFor={`ck-asistente-${i + 1}`}>
+                Entrada {i + 2} · quién la usa
+              </label>
+              <input
+                id={`ck-asistente-${i + 1}`}
+                className={INPUT}
+                value={valor}
+                onChange={e => cambiarAsistente(i + 1, e.target.value)}
+                required
+                minLength={2}
+                placeholder="Nombre y apellido"
+              />
+            </div>
+          ))}
+
           {error && (
             <p role="alert" className="mt-4 text-sm text-[#ff7675] bg-[#ff7675]/10 border border-[#ff7675]/30 rounded-xl px-4 py-3">
               {error}
@@ -211,11 +301,14 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
           <button
             type="submit"
             disabled={enviando}
-            style={enviando ? undefined : { backgroundImage: 'var(--gradient-cta)' }}
-            className={`mt-6 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide text-white transition-all ${
+            style={enviando || oro ? undefined : { backgroundImage: 'var(--gradient-cta)' }}
+            className={`mt-6 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide transition-all ${
               enviando
                 ? 'cursor-wait border border-white/15 text-gray-400'
-                : 'cursor-pointer hover:scale-[1.02] active:scale-95 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]'
+                : oro
+                  // Plano y con texto oscuro: sobre dorado el blanco no pasa AA.
+                  ? 'cursor-pointer bg-[#d4af37] text-[#0f172b] hover:bg-[#c19f2f] hover:scale-[1.02] active:scale-95'
+                  : 'cursor-pointer text-white hover:scale-[1.02] active:scale-95 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]'
             }`}
           >
             {enviando ? 'Preparando el pago…' : 'Continuar al pago'}
@@ -232,6 +325,98 @@ function TicketCheckoutModal({ tier, nombre, precio, cargo, perks, badge, descri
         <PasoPago preferenceId={preferenceId} onVolver={() => setPaso('datos')} />
       )}
     </Modal>
+  )
+}
+
+/** Al centavo, igual que `desglose()` en api/_lib/precios.js. */
+function redondear(v: number): number {
+  return Math.round(v * 100) / 100
+}
+
+/**
+ * Cuántas entradas.
+ *
+ * Con − y + en vez de un `<select>`: el rango real es 1 a 5 y el caso abrumador
+ * es 1 o 2, así que un par de botones grandes es menos fricción que desplegar
+ * una lista. El tope lo pone el cupo web que queda.
+ */
+function Cantidad({
+  valor,
+  tope,
+  oro,
+  onCambio,
+}: {
+  valor: number
+  tope: number
+  oro: boolean
+  onCambio: (n: number) => void
+}) {
+  // Con una sola entrada disponible no hay nada que elegir.
+  if (tope <= 1) return null
+
+  const activo = oro ? 'border-[#d4af37]/45 text-[#d4af37]' : 'border-[#75AADB]/45 text-[#75AADB]'
+
+  return (
+    <div className="mb-6">
+      <p className={LABEL}>¿Cuántas entradas?</p>
+      <div className="flex items-center gap-4">
+        <Paso1
+          signo="−"
+          etiqueta="Una entrada menos"
+          disabled={valor <= 1}
+          activo={activo}
+          onClick={() => onCambio(valor - 1)}
+        />
+        <span
+          aria-live="polite"
+          className="min-w-10 text-center text-2xl font-black tabular-nums text-white"
+        >
+          {valor}
+        </span>
+        <Paso1
+          signo="+"
+          etiqueta="Una entrada más"
+          disabled={valor >= tope}
+          activo={activo}
+          onClick={() => onCambio(valor + 1)}
+        />
+        {valor >= tope && (
+          <span className="text-[11px] text-gray-500">
+            {tope === MAX_UNIDADES ? 'Máximo por compra' : `Quedan ${tope}`}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function Paso1({
+  signo,
+  etiqueta,
+  disabled,
+  activo,
+  onClick,
+}: {
+  signo: string
+  etiqueta: string
+  disabled: boolean
+  activo: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={etiqueta}
+      className={`h-11 w-11 shrink-0 rounded-full border text-xl font-black transition-colors ${
+        disabled
+          ? 'cursor-not-allowed border-white/10 text-gray-600'
+          : `cursor-pointer bg-white/[0.03] hover:bg-white/[0.07] active:scale-95 ${activo}`
+      }`}
+    >
+      {signo}
+    </button>
   )
 }
 
@@ -338,11 +523,23 @@ function Volver({ onClick, children }: { onClick: () => void; children: React.Re
 }
 
 /** Una fila del desglose. El total se separa con una línea: es el número que se busca. */
-function Monto({ label, valor, destacado }: { label: string; valor: number; destacado?: boolean }) {
+function Monto({
+  label,
+  valor,
+  destacado,
+  oro,
+}: {
+  label: string
+  valor: number
+  destacado?: boolean
+  oro?: boolean
+}) {
   return (
     <div
       className={`flex items-baseline justify-between gap-4 ${
-        destacado ? 'mt-2 pt-2 border-t border-[#75AADB]/20' : 'py-0.5'
+        destacado
+          ? `mt-2 pt-2 border-t ${oro ? 'border-[#d4af37]/30' : 'border-[#75AADB]/20'}`
+          : 'py-0.5'
       }`}
     >
       <dt className={destacado ? 'text-sm font-bold text-white' : 'text-xs text-gray-400'}>

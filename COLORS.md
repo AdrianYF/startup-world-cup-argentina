@@ -15,6 +15,9 @@ Reglas para mantener la consistencia visual del sitio. Si un color no aparece ac
 | `--color-swc-coral` | `#ff7675` | Acento alternativo (Voluntarios, fin del gradient) |
 | `--color-swc-orange` | `#ff6600` | Naranja Silicon Valley. Único uso: el asterisco de "AGENDA TENTATIVA*" |
 | `--color-swc-muted` | `#9ca3af` (gray-400) | Texto muted, captions, info secundaria |
+| `--color-swc-oro` | `#d4af37` | Dorado VIP: borde, badge, ✓ y fondo de botón de la Entrada VIP |
+| `--color-swc-oro-claro` | `#f3e6b3` | Brillo del gradiente dorado |
+| `--color-swc-oro-oscuro` | `#a67c00` | Sombra del gradiente dorado y hover del botón |
 | `--gradient-brand` | `linear-gradient(90deg, #4F46E5 0%, #6c5ce7 35%, #c084fc 65%, #ff7675 100%)` | Palabras-acento en títulos |
 | `--gradient-data` | `linear-gradient(135deg, #ffffff 0%, #75AADB 40%, #75AADB 100%)` | Data numérica destacada |
 
@@ -67,6 +70,34 @@ Reglas para mantener la consistencia visual del sitio. Si un color no aparece ac
 
 - **Bordes de cards**: `border-white/10` (normal), `border-[#75AADB]/30` (hover/focus), `border-[#75AADB]` (active/selected)
 
+### Dorado VIP (solo la Entrada VIP)
+
+La Entrada VIP cuesta casi el doble que la general y hasta ahora se pintaba igual
+que las tandas agotadas. El dorado la separa.
+
+No es una paleta nueva: son los tres tonos del ticket premio de Pitch Battle
+(`src/components/ui/WorldCupTicket.tsx`), donde el dorado ya significaba "esto es
+lo excepcional".
+
+Se activa desde el contenido, no desde el código: la card lleva `"acento": "oro"`
+en `src/content/tickets.json` y `Tickets.tsx` / `TicketCheckoutModal.tsx` lo
+leen. Ninguna otra card lo usa.
+
+| Elemento | Estilo |
+|---|---|
+| Borde de la card | `border-[#d4af37]/45` |
+| Glow | `shadow-[0_0_24px_-6px_rgba(212,175,55,0.35)]` |
+| Badge | `bg-[#d4af37] text-[#0f172b]` |
+| ✓ de los perks | `text-[#d4af37]` |
+| Botón | `bg-[#d4af37] text-[#0f172b] hover:bg-[#c19f2f]` |
+
+**Sobre dorado va siempre texto oscuro.** Blanco sobre `#d4af37` da **2,10** y no
+llega al 4,5 de AA; `#0f172b` da **8,48**. Mismo problema que ya tenía el chip
+"Más rápido" sobre celeste, y misma solución.
+
+El botón va plano y no con gradiente: es la regla general de abajo, y acá además
+un gradiente dorado con texto oscuro pierde contraste en el extremo claro.
+
 ### Acentos por día (solo Agenda)
 
 La Agenda le da identidad a cada jornada con una rampa fría: celeste `#75AADB` (día 1)
@@ -108,7 +139,11 @@ Quedan afuera: Hero (fondo propio con video), FAQ (blanca) y Footer (cierre).
 ## Cómo agregar un nuevo color
 
 1. Si es un caso único: NO. Buscá si alguno de los tokens existentes funciona.
-2. Si realmente hace falta uno nuevo: agregarlo al `@theme` en `src/index.css` Y documentarlo acá con su rol semántico. No usar arbitrary values en componentes.
+2. Si realmente hace falta uno nuevo: agregarlo al `@theme` en `src/marca.css` Y documentarlo acá con su rol semántico. No usar arbitrary values en componentes.
+
+`src/marca.css` es el archivo compartido por las dos apps del repo — el sitio
+(`src/index.css`) y la puerta (`puerta/src/estilos.css`). Un token que se agregue
+sólo en una de las dos se desincroniza a la primera.
 
 ## Audit
 

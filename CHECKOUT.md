@@ -22,6 +22,28 @@ lo que la persona pagó aunque después cambie la fórmula.
 
 Es **por entrada**: dos entradas pagan dos cargos.
 
+Se pueden comprar hasta **5 por compra** (`MAX_UNIDADES` en `api/checkout.js`, y
+el mismo tope en el CHECK de la tabla). El selector del modal se corta antes si
+queda menos cupo web.
+
+## Una entrada es una persona
+
+Cada asistente tiene su fila en `entradas`, con **su nombre y su QR**. Quien
+compra tres carga tres nombres en el checkout y recibe un mail con tres códigos.
+
+No es un detalle de forma: en la puerta se busca por apellido. Con un solo QR
+por compra, los dos acompañantes no figuraban por nombre en ningún lado y había
+que acreditarlos "a cuenta" del que compró.
+
+```
+orders (la compra: quién pagó, cuánto, estado del pago)
+  └── entradas (una por asistente: nombre, token, usada_en)
+        └── checkins (una por ingreso: qué día, quién acreditó)
+```
+
+El token se emite **al aprobarse el pago**, no al crear la orden: hasta que
+Mercado Pago confirma, la entrada existe pero no tiene credencial.
+
 ## Cómo funciona
 
 ```
@@ -35,7 +57,8 @@ Modal (datos)  →  POST /api/checkout  →  orden 'pending' + preferencia MP
               ↓ poletea                        ↓
         GET /api/orden ──────────────→  _lib/acreditar.js
               (si sigue pendiente,             ↓
-               le pregunta a MP)      orden 'paid' + mail con QR
+               le pregunta a MP)      orden 'paid' + un token por
+                                      entrada + mail con los N QR
 ```
 
 Hay **dos caminos** que acreditan, y los dos terminan en `_lib/acreditar.js`:
@@ -56,7 +79,17 @@ esa URL se escribe a mano.
 
 1. Creá el proyecto desde la integración de Vercel (Storage → Supabase). Eso deja
    `SUPABASE_URL` y las keys ya cargadas en el proyecto de Vercel.
-2. En el SQL Editor, corré `supabase/migrations/0001_checkout.sql`.
+2. En el SQL Editor, corré las migraciones de `supabase/migrations/` **en orden**
+   (`0001` … `0009`). O `supabase db push` si tenés la CLI linkeada.
+
+   `0009` hace un backfill sobre entradas ya vendidas: la primera entrada de
+   cada orden hereda el `ticket_token` que ya se mandó por mail, así los QR
+   emitidos siguen abriendo. Después de correrla, chequealo:
+
+   ```sql
+   select count(*) from orders o join entradas e on e.order_id=o.id and e.numero=1
+    where o.status='paid' and o.ticket_token is distinct from e.token;  -- 0
+   ```
 3. **Ajustá el `stock_total` del seed.** Está en 20 generales / 10 VIP, que es un
    número de ejemplo. Es cuántas entradas querés vender *por la web* — Startup
    Grind sigue vendiendo su propio cupo, y los dos stocks son independientes.
@@ -184,6 +217,9 @@ Con credenciales de **test**:
   y el mail sale **una** vez.
 - Poné `stock_total = 1` y lanzá dos checkouts: el segundo tiene que dar 409.
 - Escribí `/gracias?orden=<uuid>` a mano sin haber pagado: no debe acreditar.
+- Comprá **dos** entradas con nombres distintos: tienen que llegar dos QR, cada
+  uno con su nombre, y en `/puerta` tienen que aparecer **dos filas** que se
+  acreditan por separado.
 
 Antes de pasar a producción, pasá el `quality_checklist` del MCP de Mercado Pago
 contra la app.
@@ -233,15 +269,57 @@ tabla y la vista no se tocan.
 > pagar dos veces. El script marca a quien aparece en los dos canales con un
 > aviso, para revisar el reembolso.
 
-**Marcar una entrada como usada**: hoy se hace a mano. El QR abre
-`/entrada/<token>`, que muestra el ticket y avisa si ya está usada, pero no hay
-app de escaneo que la marque sola.
-
-```sql
-update orders set ticket_used_at = now() where ticket_token = '<token>';
-```
-
 **Cerrar la venta**: `update tiers set activo = false;`
+
+## La pantalla de la puerta
+
+`/puerta`. Se abre en el celular de cada persona del staff, se pone el PIN una
+vez y queda.
+
+Es **otra app**: su propio `index.html` y su propio bundle (`puerta/`), no una
+ruta más del sitio. Comparte las funciones de `api/` y la paleta de
+`src/marca.css`, y nada más — abrir la puerta en la fila de entrada no tiene por
+qué bajar el Three.js del landing para mostrar una lista de nombres.
+
+**Se busca por apellido; el QR es el atajo.** Al revés de lo que parece: la
+mayoría compró por Startup Grind o se anotó en Luma y **no tiene QR nuestro**
+(`acreditacion` les devuelve `token = null`). Un escáner solo dejaría afuera al
+grueso de la fila. El botón de cámara sirve para quien compró por la web.
+
+Tocar una fila abre su ficha; el botón grande la acredita; queda unos segundos
+un **Deshacer**. Si ya entró, lo dice con la hora y ofrece acreditarla igual —
+el caso real es alguien que vuelve de fumar, no un fraude.
+
+**Se registra por día.** La entrada web habilita jueves *y* viernes: quien entró
+el jueves tiene que poder entrar el viernes. Por eso hay una tabla `checkins`
+—una fila por ingreso, con `dia`, `personas` y `por`— y no un booleano. Deshacer
+no borra: anula (`anulado_en`), así se puede reconstruir qué pasó en la puerta.
+
+`orders.ticket_used_at` y `asistentes_externos.checkin_en` siguen existiendo: se
+escriben en el **primer** ingreso, y son lo que leen `/entrada/<token>` y
+`scripts/lista-puerta.mjs`.
+
+**Está hecha para que el wifi se caiga**, porque se va a caer:
+
+- La lista del día se baja entera y se busca en memoria. Sin señal se sigue
+  buscando y acreditando.
+- Lo que no sale queda en una cola en el teléfono y se reintenta al volver la
+  conexión. El `id` de cada ingreso lo genera el cliente, así que reintentar no
+  duplica: el servidor hace upsert.
+- Cada 10 s pregunta por lo que anotaron las otras puertas, para que dos
+  personas no dejen entrar dos veces a la misma.
+
+Lo único que necesita red es el escaneo: el token no viaja al celular del staff
+—es la credencial de quien compró—, así que lo resuelve el servidor.
+
+**Configuración**: `PUERTA_PIN` y `PUERTA_SECRET` (ver `.env.example`). El PIN
+tiene que ser largo: detrás está la lista completa con mails y teléfonos. Sin
+las dos variables, el login devuelve 503.
+
+```bash
+vercel env add PUERTA_PIN production
+vercel env add PUERTA_SECRET production
+```
 
 ## Lo que queda afuera del código
 

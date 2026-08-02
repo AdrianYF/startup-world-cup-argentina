@@ -8,7 +8,7 @@
 import QRCode from 'qrcode'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import { db } from './_lib/db.js'
-import { json, rejectMethod, first, siteUrl, formatARS } from './_lib/http.js'
+import { json, rejectMethod, first, siteUrl } from './_lib/http.js'
 
 const TOKEN_RE = /^[A-Za-z0-9_-]{20,64}$/
 
@@ -29,15 +29,17 @@ export default async function handler(req, res) {
   if (!TOKEN_RE.test(token)) return json(res, 400, { error: 'token_invalido' })
 
   try {
-    const { data, error } = await db()
-      .from('orders')
-      .select('id, tier_id, quantity, unit_price_ars, service_fee_ars, buyer_name, buyer_empresa, status, ticket_used_at, tiers(nombre)')
-      .eq('ticket_token', token)
-      .eq('status', 'paid')
+    const { data: entrada, error } = await db()
+      .from('entradas')
+      .select('id, numero, nombre, orders(id, tier_id, quantity, unit_price_ars, service_fee_ars, buyer_name, buyer_empresa, status, tiers(nombre))')
+      .eq('token', token)
       .maybeSingle()
 
     if (error) throw error
-    if (!data) return json(res, 404, { error: 'entrada_inexistente' })
+    if (!entrada || entrada.orders?.status !== 'paid') {
+      return json(res, 404, { error: 'entrada_inexistente' })
+    }
+    const data = entrada.orders
 
     const base = siteUrl(req)
     const url = `${base}/entrada/${token}`
@@ -61,13 +63,19 @@ export default async function handler(req, res) {
 
     // Datos del pie de la tarjeta. Se arman ANTES de dibujarla porque de cuántas
     // filas haya depende su alto.
-    const subtotal = data.unit_price_ars * data.quantity
-    const total = Math.round((subtotal + Number(data.service_fee_ars || 0)) * 100) / 100
+    //
+    // No hay cartel de "ya utilizada": la entrada habilita el jueves y el
+    // viernes, así que haber entrado un día no la invalida para el otro. Quien
+    // se re-descarga el PDF después de acreditarse veía un rojo que no
+    // significaba nada. El estado real está en /entrada/<token>.
+    // Este PDF es de UNA persona. Por eso "A nombre de" es el asistente y no el
+    // comprador, y por eso no va el total pagado: en una compra de tres, poner
+    // el total de la compra en la entrada de cada uno confunde más de lo que
+    // informa. El comprobante con los montos es el mail.
     const filas = [
-      ['A nombre de', data.buyer_name],
+      ['A nombre de', entrada.nombre || data.buyer_name],
       ...(data.buyer_empresa ? [['Empresa', data.buyer_empresa]] : []),
-      ['Cantidad', data.quantity === 1 ? '1 entrada' : `${data.quantity} entradas`],
-      ['Total pagado', formatARS(total, { centavos: true })],
+      ...(data.quantity > 1 ? [['Entrada', `${entrada.numero} de ${data.quantity}`]] : []),
       ['Orden', data.id],
     ]
 
@@ -79,7 +87,6 @@ export default async function handler(req, res) {
     const ALTO = {
       kicker: 46, tier: 34, fechas: 22, linea: 26,
       qr: 250, pie: 26, antesDeFilas: 34, fila: 20,
-      usada: data.ticket_used_at ? 28 : 0,
       respiro: 30,
     }
     const m = 56
@@ -143,15 +150,6 @@ export default async function handler(req, res) {
       y -= ALTO.fila
     }
 
-    if (data.ticket_used_at) {
-      y -= 8
-      const usada = 'ENTRADA YA UTILIZADA'
-      page.drawText(usada, {
-        x: centrar(usada, bold, 12), y, size: 12, font: bold,
-        color: rgb(1, 0.46, 0.46),
-      })
-    }
-
     // Pie de página
     const nota = 'Guardá esta entrada. Si la perdés, está en el mail de confirmación.'
     page.drawText(nota, {
@@ -159,7 +157,10 @@ export default async function handler(req, res) {
     })
 
     const bytes = await pdf.save()
-    const archivo = `entrada-swc-2026-${data.id.slice(0, 8)}.pdf`
+    // Con varias entradas de la misma compra, el número evita que el navegador
+    // las guarde todas con el mismo nombre y las numere él (1), (2)…
+    const sufijo = data.quantity > 1 ? `-${entrada.numero}` : ''
+    const archivo = `entrada-swc-2026-${data.id.slice(0, 8)}${sufijo}.pdf`
 
     res.setHeader('Content-Type', 'application/pdf')
     // `attachment` es lo que hace que el navegador descargue en vez de abrir.

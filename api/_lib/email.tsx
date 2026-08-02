@@ -29,18 +29,22 @@ type Orden = {
  * porque Mercado Pago reintentaría y el pago YA está acreditado. Se loguea y se
  * sigue; el comprador siempre tiene su entrada en el sitio.
  */
-export async function enviarEntrada({
-  orden,
-  tierNombre,
-  ticketUrl,
-  pdfUrl,
-  qrUrl,
-}: {
-  orden: Orden
-  tierNombre: string
+/** Una por asistente: su nombre y los tres links de SU entrada. */
+type EntradaMail = {
+  nombre: string | null
   ticketUrl: string
   pdfUrl: string
   qrUrl: string
+}
+
+export async function enviarEntrada({
+  orden,
+  tierNombre,
+  entradas,
+}: {
+  orden: Orden
+  tierNombre: string
+  entradas: EntradaMail[]
 }): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.RESEND_FROM
@@ -52,7 +56,8 @@ export async function enviarEntrada({
   const subtotal = orden.unit_price_ars * orden.quantity
   const cargo = Number(orden.service_fee_ars || 0)
   const total = Math.round((subtotal + cargo) * 100) / 100
-  const unidades = orden.quantity === 1 ? '1 entrada' : `${orden.quantity} entradas`
+  const varias = entradas.length > 1
+  const unidades = varias ? `${entradas.length} entradas` : '1 entrada'
   const fechas = '5, 6 y 7 de agosto en Buenos Aires'
   const money = (v: number) => formatARS(v, { centavos: true })
 
@@ -61,7 +66,9 @@ export async function enviarEntrada({
       from,
       to: orden.buyer_email,
       replyTo: process.env.RESEND_REPLY_TO || undefined,
-      subject: `Tu entrada para Startup World Cup Argentina 2026 · ${tierNombre}`,
+      subject: varias
+        ? `Tus ${entradas.length} entradas para Startup World Cup Argentina 2026 · ${tierNombre}`
+        : `Tu entrada para Startup World Cup Argentina 2026 · ${tierNombre}`,
       react: (
         <EntradaEmail
           nombre={orden.buyer_name}
@@ -71,9 +78,7 @@ export async function enviarEntrada({
           cargo={money(cargo)}
           total={money(total)}
           ordenId={orden.id}
-          ticketUrl={ticketUrl}
-          pdfUrl={pdfUrl}
-          qrUrl={qrUrl}
+          entradas={entradas}
           fechas={fechas}
         />
       ),
@@ -89,8 +94,13 @@ export async function enviarEntrada({
         '',
         `Startup World Cup Argentina 2026 — ${fechas}`,
         '',
-        `Descargá tu entrada: ${pdfUrl}`,
-        `O abrila en el sitio: ${ticketUrl}`,
+        ...entradas.flatMap((e, i) => [
+          varias ? `Entrada ${i + 1}${e.nombre ? ` — ${e.nombre}` : ''}:` : 'Tu entrada:',
+          `  Descargar: ${e.pdfUrl}`,
+          `  Ver en el sitio: ${e.ticketUrl}`,
+          '',
+        ]),
+        varias ? 'Cada persona entra con SU código: reenviale el suyo a cada una.' : '',
       ].join('\n'),
     })
 

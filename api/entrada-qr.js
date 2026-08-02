@@ -22,14 +22,15 @@ export default async function handler(req, res) {
     // Se verifica que exista antes de dibujar nada: así el endpoint no es un
     // generador de QR gratis para cualquier string.
     const { data, error } = await db()
-      .from('orders')
-      .select('id')
-      .eq('ticket_token', token)
-      .eq('status', 'paid')
+      .from('entradas')
+      .select('id, orders(status)')
+      .eq('token', token)
       .maybeSingle()
 
     if (error) throw error
-    if (!data) return json(res, 404, { error: 'entrada_inexistente' })
+    if (!data || data.orders?.status !== 'paid') {
+      return json(res, 404, { error: 'entrada_inexistente' })
+    }
 
     const png = await QRCode.toBuffer(`${siteUrl(req)}/entrada/${token}`, {
       type: 'png',

@@ -62,7 +62,8 @@
     "cupos": "30 unidades",
     "descripcion": "Acceso a conexiones top.",
     "estado": "venta",
-    "badge": null,
+    "badge": "VIP",
+    "acento": "oro",
     "features": [
       "Todo lo de la entrada general"
     ]
