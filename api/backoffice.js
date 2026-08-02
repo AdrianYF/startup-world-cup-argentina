@@ -1,4 +1,4 @@
-// POST /api/puerta-login — el PIN del staff a cambio de un token de sesión.
+// POST /api/backoffice — el PIN del staff a cambio de un token de sesión.
 //
 // Un PIN compartido y no cuentas: el equipo de puerta se arma el día anterior,
 // nadie va a dar de alta usuarios a las 8 de la mañana. Lo que protege es la
