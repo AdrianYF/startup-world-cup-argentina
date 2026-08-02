@@ -19,10 +19,14 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/puerta", "destination": "/backoffice/", "permanent": false },
+    { "source": "/puerta/", "destination": "/backoffice/", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/swc/(.*)", "destination": "/api/og?code=$1" },
-    { "source": "/puerta", "destination": "/puerta/index.html" },
-    { "source": "/puerta/", "destination": "/puerta/index.html" },
+    { "source": "/backoffice", "destination": "/backoffice/index.html" },
+    { "source": "/backoffice/(.*)", "destination": "/backoffice/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -1,58 +1,41 @@
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
-import Pin from './componentes/Pin'
-import Cabecera from './componentes/Cabecera'
-import FilaPersona from './componentes/FilaPersona'
-import Panel from './componentes/Panel'
-import BarraAcciones from './componentes/BarraAcciones'
-import Agregar from './componentes/Agregar'
-import { quien, sesion } from './lib/almacen'
-import { filtrar, ordenarPorApellido } from './lib/buscar'
-import { useLista } from './lib/useLista'
-import type { Persona } from './lib/tipos'
+import Cabecera from '../componentes/Cabecera'
+import FilaPersona from '../componentes/FilaPersona'
+import Panel from '../componentes/Panel'
+import BarraAcciones from '../componentes/BarraAcciones'
+import Agregar from '../componentes/Agregar'
+import Pendientes from '../componentes/Pendientes'
+import { olvidar, reintentar } from '../lib/acreditar'
+import { cola, descartados } from '../lib/almacen'
+import { filtrar, ordenarPorApellido } from '../lib/buscar'
+import { useLista } from '../lib/useLista'
+import type { Checkin, Persona } from '../lib/tipos'
 
 // La cámara sólo pesa cuando alguien la abre.
-const Escaner = lazy(() => import('./componentes/Escaner'))
+const Escaner = lazy(() => import('../componentes/Escaner'))
 
 /**
  * La acreditación en la puerta.
  *
- * Es una herramienta de trabajo, no una página del sitio: sin navbar, sin
- * footer, sin animaciones, y en su propio bundle para que abrir la puerta no
- * baje el landing entero con su Three.js.
+ * Es la sección que se abre el 95% de las veces, así que es la única que NO va
+ * lazy: bajarla en un chunk aparte le agregaría un viaje a lo primero que ve
+ * alguien parado en la fila de entrada.
  *
  * Este archivo sólo arma la pantalla. Las reglas —caché, deltas, cola offline—
  * están en `lib/useLista.ts`.
  */
-function Puerta() {
-  const [autenticado, setAutenticado] = useState(() => Boolean(sesion.token()))
-
-  /**
-   * Salir. Borra el token y vuelve al PIN.
-   *
-   * NO borra la lista cacheada ni la cola de ingresos pendientes: si alguien
-   * sale con cosas sin sincronizar, esas cosas tienen que seguir ahí cuando el
-   * siguiente entre. Lo único que se va es la sesión.
-   */
-  const salir = useCallback(() => {
-    sesion.borrar()
-    setAutenticado(false)
-  }, [])
-
-  return autenticado
-    ? <Tablero onSinSesion={() => setAutenticado(false)} onSalir={salir} />
-    : <Pin onListo={() => setAutenticado(true)} />
-}
-
-function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: () => void }) {
+function Puerta({ onSinSesion }: { onSinSesion: () => void }) {
   const {
-    lista, ingresos, error, sinConexion, enCola, ultimo,
-    cambiarDia, anotar, anotarEscaneado, deshacer, agregarYAcreditar,
+    lista, ingresos, error, sinConexion, estadoCola, ultimo, sincronizando,
+    cambiarDia, recargar, anotar, anotarEscaneado, deshacer, anularIngreso,
+    agregarYAcreditar, setEstadoCola,
   } = useLista(onSinSesion)
 
   const [busqueda, setBusqueda] = useState('')
   const [seleccion, setSeleccion] = useState<Persona | null>(null)
   const [escaneando, setEscaneando] = useState(false)
   const [agregando, setAgregando] = useState(false)
+  const [viendoPendientes, setViendoPendientes] = useState(false)
 
   const personas = useMemo(
     () => ordenarPorApellido(filtrar(lista?.personas || [], busqueda)),
@@ -77,9 +60,19 @@ function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: (
     setBusqueda('')
   }, [anotar])
 
+  /** Para que el alta pueda avisar antes de crear a alguien que ya está. */
+  const buscarParecidos = useCallback(
+    (nombre: string) => filtrar(lista?.personas || [], nombre),
+    [lista],
+  )
+
+  const anular = useCallback((checkin: Checkin) => {
+    anularIngreso(checkin, seleccion || undefined)
+  }, [anularIngreso, seleccion])
+
   if (!lista) {
     return (
-      <div className="flex min-h-screen items-center justify-center px-5 text-center">
+      <div className="flex min-h-[60vh] items-center justify-center px-5 text-center">
         {error
           ? <p className="text-sm font-bold text-swc-coral">{error}</p>
           : <p className="text-sm text-gray-500">Cargando la lista…</p>}
@@ -95,12 +88,14 @@ function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: (
         onDia={id => { cambiarDia(id); setBusqueda(''); setSeleccion(null) }}
         adentro={totales.adentro}
         total={totales.entradas}
-        quien={quien.leer()}
-        onSalir={onSalir}
         busqueda={busqueda}
         onBusqueda={setBusqueda}
         sinConexion={sinConexion}
-        enCola={enCola}
+        estadoCola={estadoCola}
+        onPendientes={() => setViendoPendientes(true)}
+        onRecargar={recargar}
+        sincronizando={sincronizando}
+        sinDia={lista.sinDia}
       />
 
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-40">
@@ -147,6 +142,7 @@ function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: (
           persona={seleccion}
           ingresos={ingresos.get(seleccion.id) || []}
           onAcreditar={() => acreditarA(seleccion)}
+          onAnular={anular}
           onCerrar={() => setSeleccion(null)}
         />
       )}
@@ -155,12 +151,25 @@ function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: (
         <Agregar
           inicial={busqueda}
           dia={lista.dia.nombre.toLowerCase()}
+          buscarParecidos={buscarParecidos}
           onCerrar={() => setAgregando(false)}
-          onAgregar={datos => {
-            agregarYAcreditar(datos)
-            setAgregando(false)
+          // El alta la espera el formulario: si falla la validación tiene que
+          // poder mostrar el error sin perder lo que ya se tipeó.
+          onAgregar={async datos => {
+            await agregarYAcreditar(datos)
             setBusqueda('')
           }}
+        />
+      )}
+
+      {viendoPendientes && (
+        <Pendientes
+          cola={cola.ver()}
+          descartados={descartados.ver()}
+          onReintentar={p => reintentar(p).then(setEstadoCola)}
+          onOlvidar={p => setEstadoCola(olvidar(p))}
+          onSincronizar={recargar}
+          onCerrar={() => setViendoPendientes(false)}
         />
       )}
 
@@ -169,18 +178,19 @@ function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: (
           <Escaner
             dia={lista.dia.id}
             onCerrar={() => setEscaneando(false)}
-            onAcreditado={(checkin, persona) => {
-              anotarEscaneado(checkin, persona)
-              setEscaneando(false)
-            }}
+            // La cámara NO se cierra al acreditar: la fila sigue y el que viene
+            // atrás ya está mostrando su QR. Se cierra sólo con "Cerrar".
+            onAcreditado={anotarEscaneado}
           />
         </Suspense>
       )}
 
       {error && (
-        <p className="fixed inset-x-0 bottom-24 z-30 mx-auto max-w-lg px-4 text-center text-sm font-bold text-swc-coral">
-          {error}
-        </p>
+        <div className="fixed inset-x-0 bottom-24 z-30 px-4 lg:pl-56">
+          <p className="mx-auto max-w-lg text-center text-sm font-bold text-swc-coral">
+            {error}
+          </p>
+        </div>
       )}
     </div>
   )

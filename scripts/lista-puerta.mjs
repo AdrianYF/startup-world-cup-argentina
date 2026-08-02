@@ -11,7 +11,7 @@
  * la gente dice en la puerta.
  */
 import { createClient } from '@supabase/supabase-js'
-import { aCSV } from './lib/csv.mjs'
+import { aCSV } from '../api/_lib/csv.js'
 // Los días del evento salen del mismo lado que los usa la app de la puerta: si
 // se corrige una fecha, se corrige en un solo archivo.
 import { dia as buscarDia, habilitaDia, DIAS } from '../api/_lib/puerta.js'

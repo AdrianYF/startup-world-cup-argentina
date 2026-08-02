@@ -155,11 +155,32 @@ async function tokenDe(entradaId) {
 }
 
 /**
+ * Vuelve a mandar el mail de una orden ya paga, aunque ya se haya mandado.
+ *
+ * Es el caso #1 de soporte —"no me llegó"— y hasta ahora la única salida era
+ * poner `email_sent_at` en null a mano en Supabase y esperar a que algo
+ * volviera a pasar por la acreditación. Lo usa el backoffice.
+ */
+export async function reenviarEntrada({ orden, baseUrl }) {
+  const { data: entradas, error } = await db()
+    .from('entradas')
+    .select('id, numero, nombre, token')
+    .eq('order_id', orden.id)
+    .order('numero')
+  if (error) throw error
+
+  return mandarMail(orden, entradas || [], baseUrl, true)
+}
+
+/**
  * Mail de confirmación, una sola vez. Su fallo no invalida la acreditación: el
  * pago ya entró y el comprador siempre puede ver su entrada en el sitio.
+ *
+ * `forzar` saltea el "una sola vez": es el reenvío manual desde el backoffice,
+ * donde justamente lo que se pide es mandarlo de nuevo.
  */
-async function mandarMail(orden, entradas, baseUrl) {
-  if (orden.email_sent_at) return
+async function mandarMail(orden, entradas, baseUrl, forzar = false) {
+  if (orden.email_sent_at && !forzar) return false
 
   const { data: tier } = await db()
     .from('tiers')
@@ -188,4 +209,6 @@ async function mandarMail(orden, entradas, baseUrl) {
       .update({ email_sent_at: new Date().toISOString() })
       .eq('id', orden.id)
   }
+
+  return enviado
 }

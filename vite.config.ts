@@ -6,22 +6,42 @@ import tailwindcss from '@tailwindcss/vite'
 import { apiFunctions } from './scripts/vite-plugin-api.mjs'
 
 /**
- * En dev, `/puerta` (sin barra final) cae al fallback de la SPA y sirve el
- * index.html del sitio: el html fallback de Vite sólo prueba `puerta.html` y
- * `/puerta/index.html`, en ese orden, y con la barra. En Vercel lo resuelve el
- * rewrite de vercel.json; esto hace que local se comporte igual.
+ * En dev, todo lo que cuelga de `/backoffice` tiene que caer en su index.html.
+ *
+ * El fallback de Vite sólo prueba `backoffice.html` y `/backoffice/index.html`,
+ * y siempre con la barra final: sin esto, `/backoffice` pelado y
+ * `/backoffice/ventas` —que es una ruta del router propio, no un archivo— caen
+ * al fallback de la SPA y sirven el index del sitio.
+ *
+ * `/puerta` sigue andando porque es el link que el staff tiene guardado desde
+ * antes del rename. En Vercel lo resuelven los rewrites de vercel.json; esto
+ * hace que local se comporte igual.
  */
-function puertaConBarra(): Plugin {
+function rutasDelBackoffice(): Plugin {
   return {
-    name: 'puerta-con-barra',
+    name: 'swc:rutas-backoffice',
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url === '/puerta') {
-          res.writeHead(302, { Location: '/puerta/' })
+        const url = (req.url || '').split('?')[0]
+
+        if (url === '/puerta' || url === '/puerta/') {
+          res.writeHead(302, { Location: '/backoffice/' })
           res.end()
           return
         }
+
+        if (url === '/backoffice') {
+          res.writeHead(302, { Location: '/backoffice/' })
+          res.end()
+          return
+        }
+
+        // `/backoffice/ventas` y compañía: son rutas del router, no archivos.
+        if (url.startsWith('/backoffice/') && !url.includes('.')) {
+          req.url = '/backoffice/index.html'
+        }
+
         next()
       })
     },
@@ -36,12 +56,12 @@ export default defineConfig({
     // fallback de la SPA y un POST devuelve 404. Sólo dev: en Vercel las sirve
     // la plataforma.
     apiFunctions({ raiz: import.meta.dirname }),
-    puertaConBarra(),
+    rutasDelBackoffice(),
   ],
   // Dos apps, dos bundles, un solo deploy.
   //
-  //   index.html        el sitio (React Router, Three.js, todo el landing)
-  //   puerta/index.html la acreditación
+  //   index.html            el sitio (React Router, Three.js, todo el landing)
+  //   backoffice/index.html la puerta y el resto de la operación
   //
   // Separadas porque no comparten nada de UI y sí compiten por el peso: la
   // puerta se abre en la fila de entrada, con el 4G del venue, y no tiene por
@@ -50,7 +70,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         sitio: resolve(import.meta.dirname, 'index.html'),
-        puerta: resolve(import.meta.dirname, 'puerta/index.html'),
+        backoffice: resolve(import.meta.dirname, 'backoffice/index.html'),
       },
     },
   },
