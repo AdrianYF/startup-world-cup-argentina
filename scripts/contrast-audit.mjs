@@ -35,6 +35,8 @@ const tokens = {
   gray300:        '#d1d5db',
   gray200:        '#e5e7eb',
   gray500:        '#6b7280',
+  oro:            '#d4af37',
+  oroClaro:       '#f3e6b3',
 }
 
 // Solo combinaciones que se usan REALMENTE en el código actual.
@@ -54,6 +56,19 @@ const checks = [
   ['white',       'primary',     'White en botón violeta',           'normal'],
   ['surface',     'accent',      'Slate en botón coral (FIX)',       'normal'],
   ['white',       'primaryDark', 'White en primary-dark (hover)',    'normal'],
+  // Dorado de la Entrada VIP. Sobre dorado va texto OSCURO: el blanco da 2,10 y
+  // no llega al 4,5 de AA — ver el bloque de prohibidas.
+  ['oro',         'bg',       'Oro en bg (borde y ✓ de la VIP)',     'normal'],
+  ['surface',     'oro',      'Texto del badge y del botón VIP',     'normal'],
+  ['oroClaro',    'bg',       'Oro claro en bg',                     'normal'],
+]
+
+/**
+ * Combinaciones que NO se usan, y por qué. El audit las verifica al revés: si
+ * alguna empezara a pasar, es que cambió un token y hay que revisar la nota.
+ */
+const prohibidas = [
+  ['white', 'oro', 'Blanco sobre dorado — por eso el botón VIP lleva texto oscuro'],
 ]
 
 const required = { normal: 4.5, large: 3.0 }
@@ -75,6 +90,19 @@ for (const [fgKey, bgKey, label, type] of checks) {
   console.log(
     `  ${fgKey.padEnd(11)}/ ${bgKey.padEnd(8)} ${fg} / ${bg}  ${r.toFixed(2).padStart(5)}  >=${need.toFixed(1)}  ${ok ? 'PASS' : 'FAIL'}    ${label} (${type})`
   )
+}
+
+console.log('\n  Combinaciones prohibidas (tienen que seguir fallando):')
+for (const [fgKey, bgKey, motivo] of prohibidas) {
+  const r = contrast(tokens[fgKey], tokens[bgKey])
+  const sigueMal = r < required.normal
+  if (sigueMal) pass++
+  else {
+    fail++
+    failures.push({ fgKey, bgKey, ratio: r, need: required.normal, type: 'normal',
+      label: `${motivo} — YA NO FALLA: revisar la nota` })
+  }
+  console.log(`  ${fgKey.padEnd(11)}/ ${bgKey.padEnd(8)} ${r.toFixed(2).padStart(5)}   ${sigueMal ? 'OK (no se usa)' : 'REVISAR'}   ${motivo}`)
 }
 
 console.log(`\n  Total: ${pass} pass · ${fail} fail\n`)
