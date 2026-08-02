@@ -19,6 +19,23 @@ const CAMPOS = 'id, origen, nombre, email, telefono, empresa, entrada, dias'
 /** Todos los altas de puerta viven bajo el mismo "evento". */
 const EVENTO = 'puerta'
 
+/**
+ * Por qué se dio de alta. Termina en `acreditacion.entrada`, así que se ve en la
+ * lista, en la ficha y en el CSV sin tocar el esquema.
+ *
+ * "Compró, no figura" es el que importa: no se cobra nada en el check-in —la
+ * compra se hace afuera— pero hay que poder marcar a quien dice haber comprado
+ * y no aparece, para buscar su orden después.
+ */
+const MOTIVOS = {
+  invitacion: 'Invitación',
+  prensa: 'Prensa',
+  speaker: 'Speaker',
+  staff: 'Staff',
+  comprada: 'Compró, no figura',
+}
+const MOTIVO_DEFAULT = 'Alta en check-in'
+
 export default async function handler(req, res) {
   if (rejectMethod(req, res, 'POST')) return
   if (rejectSinSesion(req, res)) return
@@ -27,7 +44,9 @@ export default async function handler(req, res) {
   const id = String(body.id || '')
   const nombre = String(body.nombre || '').trim()
   const email = String(body.email || '').trim().toLowerCase()
+  const telefono = String(body.telefono || '').trim()
   const empresa = String(body.empresa || '').trim()
+  const motivo = MOTIVOS[String(body.motivo || '')] || MOTIVO_DEFAULT
 
   if (!UUID_RE.test(id)) return json(res, 400, { error: 'id_invalido' })
   if (nombre.length < 2) return json(res, 400, { error: 'nombre_requerido' })
@@ -49,12 +68,17 @@ export default async function handler(req, res) {
       // Vacío queda NULL, no cadena vacía: el índice único trata a los NULL como
       // distintos, así que varios altas sin mail conviven.
       email: email || null,
-      estado: 'alta en puerta',
+      estado: 'alta en check-in',
       estado_norm: 'confirmado',
       dias: `${d.label} ${Number(d.fecha.slice(-2))}`,
-      ticket: 'Alta en puerta',
+      ticket: motivo,
       registrado_en: new Date().toISOString(),
-      extra: empresa ? { company: empresa } : {},
+      // Las claves son las que ya lee la vista `acreditacion` para los CSV de
+      // Luma y Startup Grind: así el alta de puerta se muestra igual que el resto.
+      extra: {
+        ...(empresa ? { company: empresa } : {}),
+        ...(telefono ? { phone: telefono } : {}),
+      },
     }
 
     // `ignoreDuplicates` = el reintento de la cola offline no crea dos personas.

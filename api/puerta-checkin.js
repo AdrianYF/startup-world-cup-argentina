@@ -2,6 +2,7 @@
 //
 //   { checkin, dia, origen, ref, por }   desde el buscador
 //   { checkin, dia, token, por }         desde el escáner
+//   { …, forzar: true }                  acreditar en un día que la entrada no habilita
 //   { anular }                           deshacer
 //
 // `checkin` es el uuid de la fila, y lo genera el CLIENTE. Es lo que hace que la
@@ -9,7 +10,7 @@
 // se inserta una sola.
 import { db } from './_lib/db.js'
 import { json, rejectMethod, readBody } from './_lib/http.js'
-import { dia as buscarDia, rejectSinSesion } from './_lib/puerta.js'
+import { dia as buscarDia, habilitaDia, rejectSinSesion } from './_lib/puerta.js'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const TOKEN_RE = /^[A-Za-z0-9_-]{20,64}$/
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
 /* -------------------------------------------------------------------------- */
 
 async function anotar(res, body) {
-  const { checkin, dia: diaId, origen, ref, token, por } = body
+  const { checkin, dia: diaId, origen, ref, token, por, forzar } = body
 
   if (!UUID_RE.test(String(checkin || ''))) {
     return json(res, 400, { error: 'checkin_invalido' })
@@ -62,6 +63,20 @@ async function anotar(res, body) {
   }
 
   if (!fila) return json(res, 404, { error: 'persona_inexistente' })
+
+  // Que la entrada habilite ESTE día.
+  //
+  // La lista ya viene filtrada por día, así que por el buscador no debería
+  // pasar. Por el escáner sí: hasta acá alcanzaba con que el token existiera y
+  // la orden estuviera paga, y una entrada de "Jue 6 + Vie 7" leída el miércoles
+  // se acreditaba igual.
+  //
+  // No es un rechazo: se devuelve a la persona para que la pantalla muestre
+  // quién es y ofrezca acreditar igual. En la puerta hay casos legítimos —una
+  // cortesía, un cambio de día— y quien decide es el staff, no la validación.
+  if (!forzar && !habilitaDia(fila.dias, d.label)) {
+    return json(res, 409, { error: 'dia_no_habilitado', persona: fila, dia: d })
+  }
 
   const esWeb = fila.origen === 'web'
   const nuevo = {
