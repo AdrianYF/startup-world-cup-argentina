@@ -1,0 +1,94 @@
+@import "tailwindcss";
+/* Tipografía y paleta, compartidas con el sitio. Nada más: la puerta no carga
+   las animaciones, los scrollbars ni el scroll-snap del landing — es una
+   herramienta que se abre con una mano en la fila de entrada. */
+@import "../../src/marca.css";
+
+/* Sin rebote de scroll: la lista es larga y el pull-to-refresh de iOS recarga la
+   app justo cuando se está buscando a alguien. */
+html, body {
+  overscroll-behavior-y: contain;
+}
+
+/* La cámara del escáner y la lista ocupan la pantalla completa, también con la
+   barra de navegación del celular a la vista. */
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Un tap en la puerta no tiene que dejar el resaltado azul de iOS. */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* === Feedback ============================================================ */
+/*
+ * Todo el feedback de esta app es visual y de una sola pasada: quien acredita
+ * mira la pantalla medio segundo y vuelve a la fila. Nada de spinners eternos
+ * ni de estados que hay que interpretar.
+ *
+ * Es CSS y no una librería de animación por lo mismo que los iconos: son cinco
+ * keyframes.
+ */
+
+/* El tilde se DIBUJA en vez de aparecer. Un tilde que aparece de golpe se
+   confunde con uno que ya estaba; uno que se dibuja dice "acabás de hacerlo". */
+.swc-tick {
+  stroke-dasharray: 26;
+  stroke-dashoffset: 26;
+  animation: swc-trazo 420ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* El círculo que lo rodea se cierra primero, y el tilde entra atrás. */
+.swc-circulo {
+  stroke-dasharray: 58;
+  stroke-dashoffset: 58;
+  animation: swc-trazo 380ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.swc-circulo + .swc-tick {
+  animation-delay: 200ms;
+}
+
+@keyframes swc-trazo {
+  to { stroke-dashoffset: 0; }
+}
+
+/* El flash del escáner: verde si entró, coral si el QR no sirvió. Ocupa la
+   pantalla entera porque en la puerta se mira de reojo y con sol. */
+.swc-flash {
+  animation: swc-flash 520ms ease-out forwards;
+}
+
+@keyframes swc-flash {
+  0%   { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+
+/* La persona recién agregada entra desde abajo, para que se vea de dónde salió
+   la fila nueva en una lista que ya tenía cien. */
+.swc-entra {
+  animation: swc-entra 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes swc-entra {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* El contador late cuando sube: es el único número que la gente mira de lejos. */
+.swc-late {
+  animation: swc-late 420ms ease-out;
+}
+
+@keyframes swc-late {
+  0%, 100% { transform: scale(1); }
+  35%      { transform: scale(1.22); }
+}
+
+/* Nada de esto es información: si alguien pidió menos movimiento, se apaga y la
+   app sigue diciendo exactamente lo mismo. */
+@media (prefers-reduced-motion: reduce) {
+  .swc-tick, .swc-circulo { animation: none; stroke-dashoffset: 0; }
+  .swc-flash, .swc-entra, .swc-late { animation: none; }
+  .swc-flash { opacity: 0; }
+}
