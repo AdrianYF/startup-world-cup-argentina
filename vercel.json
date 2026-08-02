@@ -21,6 +21,8 @@
   ],
   "rewrites": [
     { "source": "/swc/(.*)", "destination": "/api/og?code=$1" },
+    { "source": "/puerta", "destination": "/puerta/index.html" },
+    { "source": "/puerta/", "destination": "/puerta/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

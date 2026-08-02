@@ -134,16 +134,20 @@ function Exito({ orden }: { orden: Orden }) {
         <Fila label="Orden" valor={<span className="font-mono text-[11px]">{orden.id}</span>} />
       </dl>
 
-      {orden.ticketToken && (
+      {/* Una descarga por asistente: cada uno entra con su propio QR. */}
+      {orden.entradas.map(entrada => (
         <a
-          href={`/api/entrada-pdf?t=${orden.ticketToken}`}
+          key={entrada.token}
+          href={`/api/entrada-pdf?t=${entrada.token}`}
           download
           style={{ backgroundImage: 'var(--gradient-cta)' }}
-          className="mt-6 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
+          className="mt-4 block w-full text-center font-black py-3.5 rounded-full uppercase tracking-wide text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.02] active:scale-95"
         >
-          Descargar entrada
+          {orden.entradas.length > 1
+            ? `Descargar entrada de ${entrada.nombre || `#${entrada.numero}`}`
+            : 'Descargar entrada'}
         </a>
-      )}
+      ))}
     </>
   )
 }

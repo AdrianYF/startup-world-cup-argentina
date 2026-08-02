@@ -3,9 +3,12 @@
 // Crea la orden en estado `pending` y devuelve el `preferenceId` con el que el
 // front renderiza el Wallet Brick.
 //
-// El cliente manda SÓLO { tier, quantity, buyer }. El precio nunca viaja en el
-// request: sale de la tabla `tiers`. Si lo tomáramos del body, cualquiera
-// compraría un VIP a $1 editando el fetch desde el devtools.
+// El cliente manda SÓLO { tier, quantity, buyer, asistentes }. El precio nunca
+// viaja en el request: sale de la tabla `tiers`. Si lo tomáramos del body,
+// cualquiera compraría un VIP a $1 editando el fetch desde el devtools.
+//
+// `asistentes` son los nombres, uno por entrada. Se guardan ya en `entradas`,
+// todavía sin token: la credencial se emite recién cuando el pago se aprueba.
 //
 // Esta función NO acredita nada. La orden queda pendiente hasta que
 // /api/mp-webhook confirme el pago contra Mercado Pago.
@@ -46,6 +49,17 @@ export default async function handler(req, res) {
   }
   if (nombre.length < 2) return json(res, 400, { error: 'nombre_requerido' })
   if (!esMailValido(email)) return json(res, 400, { error: 'email_invalido' })
+
+  // Un nombre por entrada. El primero es el del comprador: si no vino (una
+  // compra de una sola entrada desde una versión vieja del modal), se completa
+  // con `nombre` en vez de rechazar la compra.
+  const asistentes = Array.isArray(body.asistentes) ? body.asistentes : []
+  const nombres = Array.from({ length: quantity }, (_, i) =>
+    String(asistentes[i] ?? (i === 0 ? nombre : '')).trim(),
+  )
+  if (nombres.some(n => n.length < 2)) {
+    return json(res, 400, { error: 'asistente_requerido' })
+  }
 
   try {
     const { data: tier, error: tierErr } = await db()
@@ -90,6 +104,16 @@ export default async function handler(req, res) {
       .single()
 
     if (ordenErr) throw ordenErr
+
+    // Una fila por asistente, todavía sin token: la credencial se emite cuando
+    // el pago se aprueba (ver api/_lib/acreditar.js). Guardar los nombres acá y
+    // no al acreditar es lo que permite que el mail y la puerta sepan quién es
+    // cada uno sin volver a preguntar.
+    const { error: entradasErr } = await db()
+      .from('entradas')
+      .insert(nombres.map((n, i) => ({ order_id: orden.id, numero: i + 1, nombre: n })))
+
+    if (entradasErr) throw entradasErr
 
     const base = siteUrl(req)
     const mp = new MercadoPagoConfig({ accessToken })

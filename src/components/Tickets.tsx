@@ -202,9 +202,11 @@ function Tickets() {
             nombre={datos?.nombre || card.nombre}
             precio={datos?.precio ?? precioDesdeTexto(card.precio)}
             cargo={datos?.cargo ?? null}
+            disponible={datos?.disponible ?? null}
             perks={card.features}
             badge={card.badge}
             descripcion={card.descripcion}
+            acento={card.acento}
             onClose={() => setComprando(null)}
           />
         )

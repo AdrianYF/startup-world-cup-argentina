@@ -36,6 +36,14 @@ import {
  * Paleta del sitio: #020618 de fondo, #0f172b la tarjeta, #75AADB el acento.
  */
 
+export type EntradaMail = {
+  /** El asistente, no el comprador. */
+  nombre: string | null
+  ticketUrl: string
+  pdfUrl: string
+  qrUrl: string
+}
+
 export type EntradaEmailProps = {
   nombre: string
   tierNombre: string
@@ -44,9 +52,8 @@ export type EntradaEmailProps = {
   cargo: string
   total: string
   ordenId: string
-  ticketUrl: string
-  pdfUrl: string
-  qrUrl: string
+  /** Una por asistente. Con una sola, el mail se ve igual que siempre. */
+  entradas: EntradaMail[]
   fechas: string
 }
 
@@ -63,11 +70,11 @@ export function EntradaEmail({
   cargo,
   total,
   ordenId,
-  ticketUrl,
-  pdfUrl,
-  qrUrl,
+  entradas,
   fechas,
 }: EntradaEmailProps) {
+  const varias = entradas.length > 1
+
   return (
     <Html lang="es-AR">
       <Head />
@@ -99,35 +106,51 @@ export function EntradaEmail({
             </Section>
           </Section>
 
-          <Section style={{ padding: '26px 28px 0', textAlign: 'center' as const }}>
-            <Text style={{ ...bajada, margin: '0 0 14px', fontSize: '13px' }}>
-              Mostrá este código en la puerta
-            </Text>
-            {/* El QR va como imagen remota: los clientes de mail no ejecutan JS,
-                así que el que dibuja el sitio con qrcode.react no les sirve. */}
-            <Img
-              src={qrUrl}
-              width="180"
-              height="180"
-              alt="Código QR de tu entrada"
-              style={qr}
-            />
-          </Section>
+          {/* Una tarjeta por asistente. Cada uno entra con SU código: si dos
+              personas mostraran el mismo, la puerta no podría distinguirlas. */}
+          {entradas.map((entrada, i) => (
+            <Section key={i} style={{ padding: '26px 28px 0', textAlign: 'center' as const }}>
+              {varias && (
+                <Text style={separadorEntrada}>
+                  Entrada {i + 1} de {entradas.length}
+                </Text>
+              )}
+              {entrada.nombre && (
+                <Text style={nombreAsistente}>{entrada.nombre}</Text>
+              )}
+              <Text style={{ ...bajada, margin: '6px 0 14px', fontSize: '13px' }}>
+                {varias ? 'Este código es sólo de esta persona' : 'Mostrá este código en la puerta'}
+              </Text>
+              {/* El QR va como imagen remota: los clientes de mail no ejecutan JS,
+                  así que el que dibuja el sitio con qrcode.react no les sirve. */}
+              <Img
+                src={entrada.qrUrl}
+                width="180"
+                height="180"
+                alt={`Código QR de la entrada de ${entrada.nombre || nombre}`}
+                style={qr}
+              />
+              <Section style={{ padding: '18px 0 0', textAlign: 'center' as const }}>
+                <Button href={entrada.pdfUrl} style={boton}>
+                  Descargar entrada
+                </Button>
+              </Section>
+              <Text style={{ ...pie, margin: '12px 0 0' }}>
+                <Link href={entrada.ticketUrl} style={{ color: ACENTO }}>
+                  Verla en el sitio
+                </Link>
+              </Text>
+            </Section>
+          ))}
 
-          <Section style={{ padding: '24px 28px 0', textAlign: 'center' as const }}>
-            <Button href={pdfUrl} style={boton}>
-              Descargar entrada
-            </Button>
-          </Section>
-
-          <Section style={{ padding: '22px 28px 28px' }}>
+          <Section style={{ padding: '26px 28px 28px' }}>
             <Text style={pie}>
-              Si el código no se ve, abrí{' '}
-              <Link href={ticketUrl} style={{ color: ACENTO }}>
-                tu entrada en el sitio
-              </Link>
-              .
-              <br />
+              {varias && (
+                <>
+                  Reenviale a cada persona su entrada: en la puerta se acredita una por una.
+                  <br />
+                </>
+              )}
               Guardá este mail: es tu comprobante.
             </Text>
           </Section>
@@ -229,6 +252,22 @@ const filaValor = {
 }
 
 const separador = { borderColor: 'rgba(117,170,219,0.2)', margin: '8px 0' }
+
+const separadorEntrada = {
+  margin: '0 0 4px',
+  color: ACENTO,
+  fontSize: '10px',
+  fontWeight: 700,
+  letterSpacing: '1.6px',
+  textTransform: 'uppercase' as const,
+}
+
+const nombreAsistente = {
+  margin: 0,
+  color: '#ffffff',
+  fontSize: '17px',
+  fontWeight: 800,
+}
 
 const qr = {
   display: 'block',
