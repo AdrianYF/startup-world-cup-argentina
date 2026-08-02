@@ -73,7 +73,7 @@ export function postear<T>(url: string, cuerpo: unknown): Promise<T> {
 /* -------------------------------------------------------------------------- */
 
 export async function login(pin: string): Promise<void> {
-  const r = await postear<{ token: string; dias: Dia[] }>('/api/puerta-login', { pin })
+  const r = await postear<{ token: string; dias: Dia[] }>('/api/backoffice', { pin })
   sesion.guardar(r.token)
   dias.guardar(r.dias)
 }
