@@ -63,11 +63,12 @@
     "cupos": "30 unidades",
     "descripcion": "Todo lo de la general, más conexiones top y el evento VIP de cierre.",
     "estado": "venta",
-    "badge": null,
+    "badge": "VIP",
     "features": [
       "Todo lo de la entrada General",
       "Acceso a Conexiones Top",
       "Ingreso a evento VIP de cierre"
-    ]
+    ],
+    "acento": "oro"
   }
 ]

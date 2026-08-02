@@ -61,20 +61,29 @@ function Tickets() {
             {content.tickets.map((plan) => {
             const disponible = plan.estado === 'venta'
             const agotado = plan.estado === 'agotado'
+            // La VIP se destaca con el dorado, no con la escala: dos cards
+            // agrandadas al lado compiten y ninguna gana.
+            const oro = plan.acento === 'oro'
             // Solo la tanda a la venta con badge se resalta; el tag "Próximamente" no destaca la card.
-            const destacado = Boolean(plan.badge) && disponible
+            const conBadge = Boolean(plan.badge) && disponible
+            const destacado = conBadge && !oro
             return (
             <div
               key={plan.id}
+              // Dónde abre el carrusel. Sigue siendo la tanda general aunque la
+              // VIP también tenga badge: es la de volumen, y abrir en $65.000
+              // sería otra primera impresión.
               ref={destacado ? destacadaRef : undefined}
               className="relative shrink-0 w-[280px] snap-center"
             >
               <div
                 // La tanda destacada (badge "FINALIZA PRONTO") lleva más padding-top para
                 // que el título despegue del badge que asoma arriba.
-                style={destacado ? { paddingTop: '28px' } : undefined}
+                style={conBadge ? { paddingTop: '28px' } : undefined}
                 className={`relative rounded-2xl p-6 sm:p-8 border-[0.5px] transition-all ${
-                  destacado
+                  oro
+                    ? 'bg-[#d4af37]/[0.07] border-[#d4af37]/45 shadow-[0_0_24px_-6px_rgba(212,175,55,0.35)] hover:border-[#d4af37]/70'
+                    : destacado
                     ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
                     : 'bg-white/5 border-[#75AADB]/10 hover:border-[#75AADB]/25 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]'
                 } ${agotado ? 'opacity-60' : ''}`}
@@ -82,7 +91,10 @@ function Tickets() {
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className={`text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest whitespace-nowrap ${
-                    disponible ? 'bg-[#75AADB] text-white' : 'bg-[#0f172b] border border-[#75AADB]/40 text-[#75AADB]'
+                    // Texto oscuro sobre dorado: el blanco no pasa AA (2,10).
+                    oro
+                      ? 'bg-[#d4af37] text-[#0f172b]'
+                      : disponible ? 'bg-[#75AADB] text-white' : 'bg-[#0f172b] border border-[#75AADB]/40 text-[#75AADB]'
                   }`}>{plan.badge}</span>
                 </div>
               )}
@@ -102,7 +114,7 @@ function Tickets() {
               <ul className="flex flex-col gap-3 mb-8">
                 {plan.features.map((f, j) => (
                   <li key={j} className="flex items-start gap-2 text-gray-300 text-sm">
-                    <span className="text-[#75AADB] mt-0.5">✓</span>{f}
+                    <span className={`mt-0.5 ${oro ? 'text-[#d4af37]' : 'text-[#75AADB]'}`}>✓</span>{f}
                   </li>
                 ))}
               </ul>
@@ -114,11 +126,15 @@ function Tickets() {
                     ? `Conseguir ticket ${plan.nombre} (abre Startup Grind en una nueva pestaña)`
                     : `${plan.nombre}: ${CTA[plan.estado]}`
                 }
-                style={plan.badge && disponible ? { backgroundImage: 'var(--gradient-cta)' } : undefined}
+                style={destacado ? { backgroundImage: 'var(--gradient-cta)' } : undefined}
                 className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all ${
                   !disponible
                     ? 'cursor-not-allowed border border-white/15 text-gray-500'
-                    : `cursor-pointer active:scale-95 ${plan.badge ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105' : 'border border-white/30 hover:border-[#ff7675] text-white'}`
+                    : oro
+                      // Plano y con texto oscuro: sobre dorado el blanco da 2,10
+                      // y no llega al 4,5 de AA.
+                      ? 'cursor-pointer bg-[#d4af37] text-[#0f172b] hover:bg-[#c19f2f] hover:scale-105 active:scale-95'
+                      : `cursor-pointer active:scale-95 ${plan.badge ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105' : 'border border-white/30 hover:border-[#ff7675] text-white'}`
                 }`}
               >
                 {CTA[plan.estado]}
