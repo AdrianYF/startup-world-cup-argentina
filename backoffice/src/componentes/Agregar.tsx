@@ -1,4 +1,8 @@
 import { useMemo, useState, type FormEvent } from 'react'
+import { Boton, Pildoras, type Opcion } from '../ui/Acciones'
+import { Aviso } from '../ui/Aviso'
+import { Campo, Opcional, Rotulo } from '../ui/Campos'
+import { Hoja } from '../ui/Hoja'
 import { mensajeDeError } from '../lib/api'
 import type { Persona } from '../lib/tipos'
 
@@ -34,11 +38,11 @@ type Props = {
  * Por qué se lo deja entrar.
  *
  * Acá NO se cobra: la compra se hace afuera y el check-in sólo la valida.
- * "Compró, no figura" existe para marcar a quien dice haber comprado y no
+ * «Compró, no figura» existe para marcar a quien dice haber comprado y no
  * aparece, y poder buscar su orden después. Los demás sirven para saber, al
  * cerrar el evento, de dónde salió cada alta.
  */
-const MOTIVOS = [
+const MOTIVOS: Opcion<string>[] = [
   { id: '', label: 'Sin especificar' },
   { id: 'invitacion', label: 'Invitación' },
   { id: 'prensa', label: 'Prensa' },
@@ -46,13 +50,6 @@ const MOTIVOS = [
   { id: 'staff', label: 'Staff' },
   { id: 'comprada', label: 'Compró, no figura' },
 ]
-
-const INPUT =
-  'w-full rounded-xl border border-swc-accent/25 bg-white/[0.04] px-4 py-3 text-base ' +
-  'text-swc-light placeholder:text-gray-600 outline-none focus:border-swc-accent'
-
-const LABEL = 'mb-1.5 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-swc-muted'
-const OPCIONAL = 'font-normal normal-case tracking-normal text-gray-600'
 
 function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Props) {
   const [nombre, setNombre] = useState(inicial)
@@ -89,136 +86,101 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
   }
 
   return (
-    <div className="fixed inset-0 z-30 flex items-end" role="dialog" aria-modal="true">
-      <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Cerrar" />
-
-      <form
-        onSubmit={enviar}
-        className="relative mx-auto max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-2xl border-t border-swc-accent/30 bg-swc-surface px-5 pt-6 pb-8"
-      >
-        <h2 className="text-xl font-black text-swc-light">Agregar a la lista</h2>
-        <p className="mt-1 mb-5 text-sm text-swc-muted">
-          Queda acreditada para el {dia}, como alta de check-in.
-        </p>
-
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className={LABEL} htmlFor="ag-nombre">Nombre y apellido</label>
-            <input
-              id="ag-nombre"
-              className={INPUT}
-              value={nombre}
-              onChange={e => setNombre(e.target.value)}
-              autoFocus
-              autoComplete="off"
-              autoCapitalize="words"
-              required
-              minLength={2}
-            />
-            {parecidos.length > 0 && (
-              <div className="mt-2 rounded-xl border border-swc-warn/40 bg-swc-warn/10 px-3 py-2">
-                <p className="text-xs font-bold text-swc-warn">
-                  {parecidos.length === 1 ? 'Ya hay alguien parecido:' : 'Ya hay gente parecida:'}
-                </p>
-                <ul className="mt-1 text-xs text-gray-300">
-                  {parecidos.map(p => (
-                    <li key={`${p.origen}-${p.id}`} className="truncate">
-                      {p.nombre}
-                      {p.empresa ? ` · ${p.empresa}` : ''}
-                      <span className="text-gray-500"> · {p.entrada}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-1 text-[11px] text-gray-500">
-                  Si es la misma persona, cerrá y buscala por apellido.
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <span className={LABEL}>Por qué entra</span>
-            <div className="flex flex-wrap gap-1.5">
-              {MOTIVOS.map(m => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => setMotivo(m.id)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-black transition-colors ${
-                    m.id === motivo ? 'bg-swc-accent text-swc-bg' : 'bg-white/[0.06] text-swc-muted'
-                  }`}
-                >
-                  {m.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className={LABEL} htmlFor="ag-email">
-              Email <span className={OPCIONAL}>(opcional)</span>
-            </label>
-            <input
-              id="ag-email"
-              type="email"
-              className={INPUT}
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              autoComplete="off"
-              autoCapitalize="none"
-              inputMode="email"
-            />
-          </div>
-          <div>
-            <label className={LABEL} htmlFor="ag-telefono">
-              Teléfono <span className={OPCIONAL}>(opcional)</span>
-            </label>
-            <input
-              id="ag-telefono"
-              className={INPUT}
-              value={telefono}
-              onChange={e => setTelefono(e.target.value)}
-              autoComplete="off"
-              inputMode="tel"
-            />
-          </div>
-          <div>
-            <label className={LABEL} htmlFor="ag-empresa">
-              Empresa <span className={OPCIONAL}>(opcional)</span>
-            </label>
-            <input
-              id="ag-empresa"
-              className={INPUT}
-              value={empresa}
-              onChange={e => setEmpresa(e.target.value)}
-              autoComplete="off"
-            />
-          </div>
+    <Hoja
+      titulo="Agregar a la lista"
+      subtitulo={`Queda acreditada para el ${dia}, como alta de check-in.`}
+      onCerrar={onCerrar}
+      onSubmit={enviar}
+      anclada
+      cerrar="Cancelar"
+    >
+      <div className="flex flex-col gap-4">
+        <div>
+          <Campo
+            id="ag-nombre"
+            label="Nombre y apellido"
+            value={nombre}
+            onChange={e => setNombre(e.target.value)}
+            autoFocus
+            autoComplete="off"
+            autoCapitalize="words"
+            required
+            minLength={2}
+          />
+          {parecidos.length > 0 && (
+            <Aviso
+              tono="warn"
+              className="mt-2"
+              titulo={parecidos.length === 1 ? 'Ya hay alguien parecido' : 'Ya hay gente parecida'}
+            >
+              <ul className="text-xs">
+                {parecidos.map(p => (
+                  <li key={`${p.origen}-${p.id}`} className="truncate">
+                    {p.nombre}
+                    {p.empresa ? ` · ${p.empresa}` : ''}
+                    <span className="text-gray-500"> · {p.entrada}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1 text-[11px] text-gray-500">
+                Si es la misma persona, cerrá y buscala por apellido.
+              </p>
+            </Aviso>
+          )}
         </div>
 
-        {error && (
-          <p className="mt-4 rounded-xl border border-swc-coral/40 bg-swc-coral/10 px-4 py-3 text-sm font-bold text-swc-coral">
-            {error}
-          </p>
-        )}
+        <div>
+          <Rotulo className="mb-1.5">Por qué entra</Rotulo>
+          <Pildoras
+            opciones={MOTIVOS}
+            valor={motivo}
+            onCambio={setMotivo}
+            etiqueta="Motivo del alta"
+            tam="sm"
+          />
+        </div>
 
-        <button
-          type="submit"
-          disabled={nombre.trim().length < 2 || enviando}
-          className="mt-6 w-full rounded-full bg-swc-ok px-6 py-4 text-base font-black text-swc-bg disabled:opacity-40"
-        >
-          {enviando ? 'Agregando…' : 'Agregar y acreditar'}
-        </button>
+        <Campo
+          id="ag-email"
+          label={<>Email<Opcional /></>}
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          autoComplete="off"
+          autoCapitalize="none"
+          inputMode="email"
+        />
+        <Campo
+          id="ag-telefono"
+          label={<>Teléfono<Opcional /></>}
+          value={telefono}
+          onChange={e => setTelefono(e.target.value)}
+          autoComplete="off"
+          inputMode="tel"
+        />
+        <Campo
+          id="ag-empresa"
+          label={<>Empresa<Opcional /></>}
+          value={empresa}
+          onChange={e => setEmpresa(e.target.value)}
+          autoComplete="off"
+        />
+      </div>
 
-        <button
-          type="button"
-          onClick={onCerrar}
-          className="mt-4 w-full text-center text-xs font-bold uppercase tracking-[0.14em] text-gray-500"
-        >
-          Cancelar
-        </button>
-      </form>
-    </div>
+      {error && <Aviso tono="error" className="mt-4">{error}</Aviso>}
+
+      <Boton
+        type="submit"
+        tono="ok"
+        tam="lg"
+        ancho
+        className="mt-6"
+        disabled={nombre.trim().length < 2}
+        ocupado={enviando ? 'Agregando…' : undefined}
+      >
+        Agregar y acreditar
+      </Boton>
+    </Hoja>
   )
 }
 

@@ -1,5 +1,10 @@
 import { useState, type ChangeEvent } from 'react'
+import { Boton, Pildoras, type Opcion } from '../ui/Acciones'
+import { Aviso } from '../ui/Aviso'
+import { Campo, Dato, Datos, Opcional, Rotulo } from '../ui/Campos'
 import { Chip } from '../ui/Estado'
+import { Bloque, Limite, Operacion } from '../ui/Operacion'
+import { Pasos, type Paso } from '../ui/Pasos'
 import { mensajeDeError } from '../lib/api'
 import { importarCSV, type ResumenImport } from '../lib/admin'
 
@@ -11,19 +16,21 @@ import { importarCSV, type ResumenImport } from '../lib/admin'
  * `.env.local`. El día del evento, quien recibe el CSV por mail no siempre es
  * quien tiene el repo clonado.
  *
- * Siempre pasa primero por la vista previa. Un import a ciegas sobre la lista
- * de acreditación, con el evento encima, no es algo que convenga poder hacer de
- * un solo click.
+ * Es la pantalla que más justifica el panel de contexto: escribe sobre la lista
+ * de acreditación, con el evento encima, y no tiene deshacer. El paso que se
+ * saltea —la vista previa— es el único que separa un upsert correcto de haber
+ * pisado el padrón.
  */
 const CANALES = [
   { id: 'luma', label: 'Luma', ayuda: 'slug del evento, ej. quzhnee8', dias: 'Mié 5' },
   { id: 'startupgrind', label: 'Startup Grind', ayuda: 'id del evento, ej. 31263', dias: 'Jue 6 + Vie 7' },
 ]
 
-const INPUT =
-  'w-full rounded-xl border border-swc-accent/25 bg-white/[0.04] px-4 py-2.5 text-base ' +
-  'text-swc-light placeholder:text-gray-600 outline-none focus:border-swc-accent'
-const LABEL = 'mb-1.5 block text-[10px] font-extrabold uppercase tracking-[0.14em] text-swc-muted'
+const PASOS: Paso[] = [
+  { id: 'archivo', label: 'Canal y archivo', detalle: 'De dónde salió el export y a qué evento pertenece.' },
+  { id: 'previa', label: 'Vista previa', detalle: 'Qué columnas detectó y a cuánta gente toca. No escribe nada.' },
+  { id: 'escribir', label: 'Importar', detalle: 'Upsert por canal + evento + mail. Actualiza, nunca duplica.' },
+]
 
 function Importar({ onSinSesion }: { onSinSesion: () => void }) {
   const [origen, setOrigen] = useState('startupgrind')
@@ -37,6 +44,11 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
   const [ocupado, setOcupado] = useState('')
 
   const canal = CANALES.find(c => c.id === origen)!
+  const listo = Boolean(csv && evento.trim())
+
+  // El paso en curso sale del estado, no de un contador: si alguien cambia el
+  // archivo después de la previa, la previa deja de valer y el flujo retrocede.
+  const paso = escrito ? 2 : previa ? 2 : listo ? 1 : 0
 
   function elegir(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -46,6 +58,12 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
     setEscrito(false)
     setError('')
     f.text().then(setCsv).catch(() => setError('No pudimos leer ese archivo.'))
+  }
+
+  /** Cambiar cualquier entrada invalida la previa: describía otro import. */
+  function invalidar() {
+    setPrevia(null)
+    setEscrito(false)
   }
 
   async function correr(seco: boolean) {
@@ -69,64 +87,65 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
     }
   }
 
-  const listo = Boolean(csv && evento.trim())
+  const opcionesCanal: Opcion<string>[] = CANALES.map(c => ({ id: c.id, label: c.label }))
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex flex-col gap-4">
-        <div>
-          <span className={LABEL}>Canal</span>
-          <div className="flex flex-wrap gap-1.5">
-            {CANALES.map(c => (
-              <button
-                key={c.id}
-                onClick={() => { setOrigen(c.id); setPrevia(null); setEscrito(false) }}
-                className={`rounded-full px-4 py-2 text-xs font-black transition-colors ${
-                  c.id === origen ? 'bg-swc-accent text-swc-bg' : 'bg-white/[0.06] text-swc-muted'
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-        </div>
+    <Operacion
+      contexto={
+        <>
+          <Bloque titulo="Flujo del import">
+            <Pasos pasos={PASOS} actual={paso} />
+          </Bloque>
 
+          <Bloque titulo="Qué escribe" className="mt-6">
+            <Datos>
+              <Dato label="Clave del upsert">canal + evento + mail</Dato>
+              <Dato label="Mail repetido">actualiza la fila</Dato>
+              <Dato label="Días por defecto">{canal.dias}</Dato>
+            </Datos>
+          </Bloque>
+
+          <Limite>
+            Reimportar el mismo evento actualiza por mail, no duplica. Pero quien deja de
+            aparecer en el CSV —un reembolso en Startup Grind— <strong>no</strong> se da de
+            baja solo: eso se hace desde «Personas», sacándolo de la lista.
+          </Limite>
+        </>
+      }
+    >
+      <div className="flex max-w-xl flex-col gap-4">
         <div>
-          <label className={LABEL} htmlFor="im-evento">Id del evento</label>
-          <input
-            id="im-evento"
-            className={INPUT}
-            value={evento}
-            onChange={e => { setEvento(e.target.value); setPrevia(null); setEscrito(false) }}
-            placeholder={canal.ayuda}
-            autoComplete="off"
+          <Rotulo className="mb-1.5">Canal</Rotulo>
+          <Pildoras
+            opciones={opcionesCanal}
+            valor={origen}
+            onCambio={id => { setOrigen(id); invalidar() }}
+            etiqueta="Canal del export"
           />
-          <p className="mt-1 text-xs text-gray-500">
-            Es la clave del upsert junto con el canal y el mail: reimportar el mismo
-            evento actualiza en vez de duplicar.
-          </p>
         </div>
 
-        <div>
-          <label className={LABEL} htmlFor="im-dias">
-            Días <span className="font-normal normal-case tracking-normal text-gray-600">(opcional)</span>
-          </label>
-          <input
-            id="im-dias"
-            className={INPUT}
-            value={dias}
-            onChange={e => { setDias(e.target.value); setPrevia(null) }}
-            placeholder={`por defecto: ${canal.dias}`}
-            autoComplete="off"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            Tiene que contener «Mié», «Jue» o «Vie» tal cual: la puerta los busca dentro
-            de este texto. Lo que no coincida no aparece en ninguna lista.
-          </p>
-        </div>
+        <Campo
+          id="im-evento"
+          label="Id del evento"
+          value={evento}
+          onChange={e => { setEvento(e.target.value); invalidar() }}
+          placeholder={canal.ayuda}
+          autoComplete="off"
+          ayuda="Es la clave del upsert junto con el canal y el mail: reimportar el mismo evento actualiza en vez de duplicar."
+        />
+
+        <Campo
+          id="im-dias"
+          label={<>Días<Opcional /></>}
+          value={dias}
+          onChange={e => { setDias(e.target.value); invalidar() }}
+          placeholder={`por defecto: ${canal.dias}`}
+          autoComplete="off"
+          ayuda="Tiene que contener «Mié», «Jue» o «Vie» tal cual: la puerta los busca dentro de este texto. Lo que no coincida no aparece en ninguna lista."
+        />
 
         <div>
-          <span className={LABEL}>Archivo CSV</span>
+          <Rotulo className="mb-1.5">Archivo CSV</Rotulo>
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/20 bg-white/[0.02] px-4 py-4">
             <input type="file" accept=".csv,text/csv" onChange={elegir} className="hidden" />
             <span className="rounded-full border border-swc-accent/40 px-4 py-1.5 text-xs font-black text-swc-accent">
@@ -139,33 +158,33 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
         </div>
       </div>
 
-      {error && (
-        <p className="mt-5 rounded-xl border border-swc-coral/40 bg-swc-coral/10 px-4 py-3 text-sm font-bold text-swc-coral">
-          {error}
-        </p>
-      )}
+      {error && <Aviso tono="error" className="mt-5 max-w-xl">{error}</Aviso>}
 
       <div className="mt-5 flex flex-wrap gap-2">
-        <button
-          disabled={!listo || Boolean(ocupado)}
+        <Boton
+          tono="secundario"
+          tam="lg"
+          disabled={!listo}
           onClick={() => correr(true)}
-          className="rounded-full border border-swc-accent/40 px-6 py-3 text-sm font-black text-swc-accent disabled:opacity-30"
+          ocupado={ocupado === 'previa' ? 'Leyendo…' : undefined}
         >
-          {ocupado === 'previa' ? 'Leyendo…' : 'Ver qué va a pasar'}
-        </button>
+          Ver qué va a pasar
+        </Boton>
         {/* Escribir sólo se habilita después de la vista previa: es la lista de
-            acreditación del evento y no hay "deshacer". */}
-        <button
+            acreditación del evento y no hay «deshacer». */}
+        <Boton
+          tono="ok"
+          tam="lg"
           disabled={!previa || escrito || Boolean(ocupado)}
           onClick={() => correr(false)}
-          className="rounded-full bg-swc-ok px-6 py-3 text-sm font-black text-swc-bg disabled:opacity-30"
+          ocupado={ocupado === 'import' ? 'Importando…' : undefined}
         >
-          {ocupado === 'import' ? 'Importando…' : 'Importar'}
-        </button>
+          Importar
+        </Boton>
       </div>
 
       {previa?.resumen && (
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
+        <div className="mt-6 max-w-xl rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
           <div className="mb-3 flex items-center gap-2">
             <h2 className="text-sm font-black text-swc-light">
               {escrito ? 'Importado' : 'Vista previa'}
@@ -175,30 +194,28 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
             </Chip>
           </div>
 
-          <dl className="text-sm">
-            <Dato label="Filas en el archivo" valor={previa.resumen.filas} />
-            <Dato label="Personas" valor={previa.resumen.registros} />
-            <Dato label="Entran a la puerta" valor={previa.resumen.confirmados} tono="ok" />
+          <Datos>
+            <Dato label="Filas en el archivo">{previa.resumen.filas}</Dato>
+            <Dato label="Personas">{previa.resumen.registros}</Dato>
+            <Dato label="Entran a la puerta" tono="ok">{previa.resumen.confirmados}</Dato>
             {previa.resumen.pendientes > 0 && (
-              <Dato label="Pendientes (no entran)" valor={previa.resumen.pendientes} tono="warn" />
+              <Dato label="Pendientes (no entran)" tono="warn">{previa.resumen.pendientes}</Dato>
             )}
             {previa.resumen.rechazados > 0 && (
-              <Dato label="Rechazados (no entran)" valor={previa.resumen.rechazados} />
+              <Dato label="Rechazados (no entran)">{previa.resumen.rechazados}</Dato>
             )}
             {previa.resumen.sinEmail > 0 && (
-              <Dato label="Sin mail (se saltean)" valor={previa.resumen.sinEmail} tono="coral" />
+              <Dato label="Sin mail (se saltean)" tono="coral">{previa.resumen.sinEmail}</Dato>
             )}
             {previa.resumen.repetidos > 0 && (
-              <Dato label="Mail repetido (queda el último)" valor={previa.resumen.repetidos} />
+              <Dato label="Mail repetido (queda el último)">{previa.resumen.repetidos}</Dato>
             )}
-            <Dato label="Días asignados" valor={previa.dias || '—'} />
-          </dl>
+            <Dato label="Días asignados">{previa.dias || '—'}</Dato>
+          </Datos>
 
           {previa.mapa && (
             <>
-              <p className="mt-4 mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
-                Columnas detectadas
-              </p>
+              <Rotulo className="mt-4 mb-1.5">Columnas detectadas</Rotulo>
               <ul className="text-xs text-gray-400">
                 {Object.entries(previa.mapa)
                   .filter(([k]) => !k.startsWith('_'))
@@ -212,26 +229,7 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
           )}
         </div>
       )}
-
-      <p className="mt-6 text-xs text-gray-500">
-        Reimportar el mismo evento actualiza las filas por mail, no duplica. Pero quien
-        deja de aparecer en el CSV —un reembolso en Startup Grind— NO se da de baja solo:
-        eso se hace desde «Asistentes», sacándolo de la lista.
-      </p>
-    </div>
-  )
-}
-
-function Dato({ label, valor, tono }: { label: string; valor: number | string; tono?: 'ok' | 'warn' | 'coral' }) {
-  const color = tono === 'ok' ? 'text-swc-ok'
-    : tono === 'warn' ? 'text-swc-warn'
-    : tono === 'coral' ? 'text-swc-coral'
-    : 'text-swc-light'
-  return (
-    <div className="flex items-center justify-between gap-4 border-t border-white/5 py-1.5 first:border-t-0">
-      <dt className="text-gray-500">{label}</dt>
-      <dd className={`font-bold tabular-nums ${color}`}>{valor}</dd>
-    </div>
+    </Operacion>
   )
 }
 

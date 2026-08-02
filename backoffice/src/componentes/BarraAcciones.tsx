@@ -15,10 +15,10 @@ function BarraAcciones({ ultimo, onDeshacer, onEscanear, onAgregar }: {
   onAgregar: () => void
 }) {
   return (
-    // `lg:pl-56` porque `position: fixed` ignora el padding del shell: sin esto
-    // la barra se centra contra la ventana entera y queda corrida a la
-    // izquierda, medio metida abajo del sidebar.
-    <div className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-swc-bg via-swc-bg to-transparent px-4 pt-8 pb-5 lg:pl-56">
+    // Sin corrección lateral: desde que la navegación es una franja arriba, el
+    // ancho de la ventana y el del contenido son el mismo, y `position: fixed`
+    // ya centra donde corresponde.
+    <div className="fixed inset-x-0 bottom-0 z-20 bg-gradient-to-t from-swc-bg via-swc-bg to-transparent px-4 pt-8 pb-5">
       <div className="mx-auto max-w-lg">
         {ultimo && (
           <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-swc-ok/30 bg-swc-ok/10 px-4 py-3">

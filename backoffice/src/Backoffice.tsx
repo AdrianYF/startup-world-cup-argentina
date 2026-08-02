@@ -1,24 +1,28 @@
 import { lazy, Suspense, useCallback, useState } from 'react'
 import Pin from './componentes/Pin'
 import Shell from './componentes/Shell'
-import Puerta from './secciones/Puerta'
+import Personas from './secciones/Personas'
+import { Cargando } from './ui/Estado'
+import { Encabezado } from './ui/Encabezado'
 import { cache, quien, sesion } from './lib/almacen'
-import { PUERTA, useRuta } from './lib/ruta'
-import { nombreDe } from './lib/secciones'
+import { PERSONAS, useRuta } from './lib/ruta'
+import { seccionDe } from './lib/secciones'
 
 /**
  * El backoffice del evento.
  *
- * Es una herramienta de trabajo, no una página del sitio: sin navbar, sin
- * footer, sin animaciones, y en su propio bundle para que abrir la puerta no
- * baje el landing entero con su Three.js.
+ * Es una herramienta de trabajo, no una página del sitio: sin navbar del sitio,
+ * sin animaciones, y en su propio bundle para que abrir la puerta no baje el
+ * landing entero con su Three.js.
  *
- * La puerta se importa derecho y las demás secciones con `lazy()`. No es un
- * detalle: la puerta se abre parado en la fila de entrada con el 4G del venue,
- * y no tiene por qué bajar la pantalla de ventas para mostrar una lista de
+ * Personas se importa derecho y las demás secciones con `lazy()`. No es un
+ * detalle: Personas se abre parado en la fila de entrada con el 4G del venue, y
+ * no tiene por qué bajar la pantalla de ventas para mostrar una lista de
  * nombres. Las otras se usan sentado, con wifi, y un chunk de más no se nota.
+ *
+ * Su propia mitad «de mesa» —el padrón, la tabla, el cliente de admin— también
+ * va lazy, adentro de la sección.
  */
-const Asistentes = lazy(() => import('./secciones/Asistentes'))
 const Ventas = lazy(() => import('./secciones/Ventas'))
 const Stock = lazy(() => import('./secciones/Stock'))
 const Importar = lazy(() => import('./secciones/Importar'))
@@ -50,14 +54,14 @@ function Backoffice() {
 
   return (
     <Shell ruta={ruta} ir={ir} quien={quien.leer()} onSalir={salir}>
-      {ruta === PUERTA ? (
-        <Puerta onSinSesion={sinSesion} />
+      {ruta === PERSONAS ? (
+        // Personas arma su propio marco: en modo día ocupa la pantalla entera,
+        // con su cabecera pegajosa y la barra de acciones abajo.
+        <Personas onSinSesion={sinSesion} />
       ) : (
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 lg:px-8 lg:py-8">
-          <h1 className="mb-6 hidden text-2xl font-black text-swc-light lg:block">
-            {nombreDe(ruta)}
-          </h1>
-          <Suspense fallback={<p className="text-sm text-gray-500">Cargando…</p>}>
+        <main className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-8">
+          <Encabezado titulo={seccionDe(ruta).label} bajada={seccionDe(ruta).bajada} />
+          <Suspense fallback={<Cargando />}>
             <Seccion ruta={ruta} onSinSesion={sinSesion} />
           </Suspense>
         </main>
@@ -68,7 +72,6 @@ function Backoffice() {
 
 function Seccion({ ruta, onSinSesion }: { ruta: string; onSinSesion: () => void }) {
   switch (ruta) {
-    case 'asistentes': return <Asistentes onSinSesion={onSinSesion} />
     case 'ventas': return <Ventas onSinSesion={onSinSesion} />
     case 'stock': return <Stock onSinSesion={onSinSesion} />
     case 'importar': return <Importar onSinSesion={onSinSesion} />
@@ -79,7 +82,7 @@ function Seccion({ ruta, onSinSesion }: { ruta: string; onSinSesion: () => void 
       return (
         <p className="text-sm text-gray-500">
           Esa sección no existe.{' '}
-          <a href="/backoffice/" className="text-swc-accent underline">Volver a la puerta</a>
+          <a href="/backoffice/" className="text-swc-accent underline">Volver a Personas</a>
         </p>
       )
   }

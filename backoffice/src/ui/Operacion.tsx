@@ -31,10 +31,10 @@ export function Operacion({ contexto, children, className = '' }: {
       <div className="min-w-0 px-4 py-5 sm:px-7 sm:py-7">{children}</div>
 
       {contexto && (
-        // El acento de marca al 14% sobre la surface: es el equivalente oscuro
-        // del panel azul lleno. Un celeste sólido acá obligaría a texto oscuro y
-        // sería lo único claro de toda la app.
-        <aside className="border-t border-swc-accent/15 bg-[linear-gradient(160deg,rgba(117,170,219,0.13),rgba(117,170,219,0.03))] px-4 py-5 sm:px-7 sm:py-7 lg:border-t-0 lg:border-l">
+        // El acento de marca en gradiente sobre la surface: es el equivalente
+        // oscuro del panel azul lleno. Un celeste sólido acá obligaría a texto
+        // oscuro y sería lo único claro de toda la app.
+        <aside className="border-t border-swc-accent/20 bg-[linear-gradient(160deg,rgba(117,170,219,0.22),rgba(117,170,219,0.05))] px-4 py-5 sm:px-7 sm:py-7 lg:border-t-0 lg:border-l">
           {contexto}
         </aside>
       )}

@@ -1,6 +1,9 @@
 import { useState } from 'react'
+import { Boton, Pildoras, type Opcion } from '../ui/Acciones'
+import { Dato, Datos, Rotulo } from '../ui/Campos'
 import { Barra, Cargando, Roto, Tarjeta, Tarjetas } from '../ui/Estado'
-import { traerMetricas, useRecurso, type Cuenta, type Metricas as DatosMetricas } from '../lib/admin'
+import { Bloque, Limite, Operacion } from '../ui/Operacion'
+import { traerMetricas, useRecurso, type Cuenta } from '../lib/admin'
 
 /**
  * El pulso del evento: cuántos entraron, cuándo y por qué puerta.
@@ -20,12 +23,60 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
   const activo = datos.porDia[dia]
   const entradosTotal = datos.porDia.reduce((a, d) => a + d.entraron, 0)
 
+  const opcionesDia: Opcion<string>[] = datos.porDia.map((d, i) => ({
+    id: String(i),
+    label: d.nombre,
+    cuenta: d.entraron,
+  }))
+
   return (
-    <>
-      {/* La plata y el cupo salen de las MISMAS cuentas que sirven Ventas y
-          Stock, calculadas una sola vez en el servidor. Están acá porque
-          "cómo viene el evento" no se contesta sin ellas, y hasta ahora había
-          que abrir tres pestañas y sumar de cabeza. */}
+    <Operacion
+      contexto={
+        <>
+          <Bloque titulo="El evento entero">
+            <Datos>
+              <Dato label="Personas">{datos.resumen.personas}</Dato>
+              <Dato label="Entraron" tono="ok">{datos.resumen.entraron}</Dato>
+              <Dato label="No show" tono={datos.resumen.noShow ? 'warn' : undefined}>
+                {datos.resumen.noShow}
+              </Dato>
+              <Dato label="Ingresos registrados">{entradosTotal}</Dato>
+            </Datos>
+            <p className="mt-2 text-xs leading-relaxed text-gray-500">
+              Acá se cuentan personas. El número de ingresos es mayor: quien salió y volvió
+              aparece dos veces.
+            </p>
+          </Bloque>
+
+          {datos.resumen.recurrencia.length > 0 && (
+            <Bloque titulo="Cuántos días vino cada uno" className="mt-6">
+              <Datos>
+                {datos.resumen.recurrencia.map(r => (
+                  <Dato key={r.dias} label={r.dias === 1 ? '1 día' : `${r.dias} días`}>
+                    {r.personas}
+                  </Dato>
+                ))}
+              </Datos>
+            </Bloque>
+          )}
+
+          <Bloque titulo="Plata y cupo" className="mt-6">
+            <Datos>
+              <Dato label="Recaudado" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
+              <Dato label="Cupo web libre" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
+                {datos.cupo.libre} de {datos.cupo.total}
+              </Dato>
+            </Datos>
+          </Bloque>
+
+          <Limite>
+            Todo sale de las mismas cuentas que sirven «Ventas» y «Stock», calculadas una
+            sola vez en el servidor. Si un número no cierra, el problema está en el dato,
+            no en esta pantalla.
+          </Limite>
+        </>
+      }
+    >
       <Tarjetas>
         <Tarjeta
           label="Recaudado"
@@ -40,51 +91,22 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           detalle={`de ${datos.cupo.total} · ${datos.cupo.tomado} tomado`}
         />
         <Tarjeta label="En la lista" valor={datos.total} detalle="los tres canales" />
-        <Tarjeta label="Ingresos registrados" valor={entradosTotal} tono="ok" detalle="los tres días" />
-      </Tarjetas>
-
-      <Tarjetas>
-        <Tarjeta
-          label="Por canal"
-          valor={datos.porCanal.length}
-          detalle={datos.porCanal.map(c => `${c.clave}: ${c.total}`).join(' · ')}
-        />
-        <Tarjeta
-          label="Reservando cupo"
-          valor={datos.ventas.pendientes}
-          tono={datos.ventas.pendientes ? 'warn' : undefined}
-          detalle="pendientes sin vencer"
-        />
         <Tarjeta
           label="Sin día reconocido"
           valor={datos.sinDia}
           tono={datos.sinDia ? 'coral' : undefined}
-          detalle="no aparecen en ningún día"
+          detalle="no aparecen en ninguna puerta"
         />
-        <Tarjeta label="Compras pagadas" valor={datos.ventas.pagadas} detalle="por la web" />
       </Tarjetas>
 
-      <Resumen datos={datos.resumen} />
-
-      <div className="mb-5 flex flex-wrap gap-1.5">
-        {datos.porDia.map((d, i) => (
-          <button
-            key={d.id}
-            onClick={() => setDia(i)}
-            className={`rounded-full px-4 py-2 text-xs font-black transition-colors ${
-              i === dia ? 'bg-swc-accent text-swc-bg' : 'bg-white/[0.06] text-swc-muted'
-            }`}
-          >
-            {d.nombre}
-            <span className="ml-1.5 opacity-70">{d.entraron}/{d.esperados}</span>
-          </button>
-        ))}
-        <button
-          onClick={recargar}
-          className="rounded-full border border-white/15 px-4 py-2 text-xs font-black text-swc-muted active:scale-95"
-        >
-          Actualizar
-        </button>
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        <Pildoras
+          opciones={opcionesDia}
+          valor={String(dia)}
+          onCambio={id => setDia(Number(id))}
+          etiqueta="Día del evento"
+        />
+        <Boton tono="fantasma" tam="sm" onClick={recargar}>Actualizar</Boton>
       </div>
 
       {activo && (
@@ -115,123 +137,7 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           </div>
         </>
       )}
-    </>
-  )
-}
-
-/**
- * Los tres días juntos.
- *
- * El resto de la pantalla cuenta INGRESOS de un día. Acá se cuentan PERSONAS a
- * lo largo del evento, que es la única forma de contestar dos preguntas que un
- * día suelto no contesta: si el contenido retuvo, y qué canal trae gente que
- * efectivamente aparece.
- */
-function Resumen({ datos }: { datos: DatosMetricas['resumen'] }) {
-  const { personas, entraron, noShow, recurrencia, porCanal, altas } = datos
-  const tasaGeneral = personas ? Math.round((entraron / personas) * 100) : 0
-  const maxRec = Math.max(1, ...recurrencia.map(r => r.personas))
-
-  return (
-    <section className="mb-6 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
-      <h2 className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
-        Los tres días juntos · personas, no ingresos
-      </h2>
-
-      <div className="mb-5 grid gap-3 sm:grid-cols-3">
-        <Numero label="Aparecieron" valor={`${entraron}`} detalle={`de ${personas} · ${tasaGeneral}%`} tono="ok" />
-        <Numero
-          label="No vinieron"
-          valor={`${noShow}`}
-          detalle="en la lista, nunca entraron"
-          tono={noShow > personas * 0.4 ? 'coral' : undefined}
-        />
-        <Numero
-          label="Vinieron más de un día"
-          valor={`${recurrencia.filter(r => r.dias > 1).reduce((a, r) => a + r.personas, 0)}`}
-          detalle="volvieron al menos una vez"
-        />
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-2">
-        <div>
-          <h3 className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
-            Cuántos días vino cada uno
-          </h3>
-          <ul className="flex flex-col gap-2.5">
-            {recurrencia.map(r => (
-              <li key={r.dias}>
-                <div className="mb-1 flex justify-between gap-3 text-xs">
-                  <span className="text-gray-300">{r.dias === 1 ? '1 día' : `${r.dias} días`}</span>
-                  <span className="font-bold tabular-nums text-swc-light">{r.personas}</span>
-                </div>
-                <Barra valor={r.personas} maximo={maxRec} tono={r.dias === 3 ? 'ok' : undefined} />
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-xs text-gray-600">
-            Mucha gente de un solo día es un evento que se vació; mucha de tres, uno que retuvo.
-          </p>
-        </div>
-
-        <div>
-          <h3 className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
-            Asistencia por canal
-          </h3>
-          {porCanal.length === 0 ? (
-            <p className="text-sm text-gray-600">Sin datos todavía.</p>
-          ) : (
-            <ul className="flex flex-col gap-2.5">
-              {porCanal.map(c => (
-                <li key={c.clave}>
-                  <div className="mb-1 flex justify-between gap-3 text-xs">
-                    <span className="truncate text-gray-300">{c.clave}</span>
-                    <span className="shrink-0 tabular-nums text-gray-400">
-                      <span className="font-bold text-swc-light">{c.entraron}</span>
-                      /{c.esperados} · {c.tasa}%
-                    </span>
-                  </div>
-                  <Barra valor={c.tasa} maximo={100} tono={c.tasa >= 70 ? 'ok' : undefined} />
-                </li>
-              ))}
-            </ul>
-          )}
-          <p className="mt-3 text-xs text-gray-600">
-            Un canal que trae 200 y vienen 40 vale menos que uno que trae 60 y vienen 55.
-          </p>
-        </div>
-      </div>
-
-      {altas.length > 0 && (
-        <div className="mt-5 border-t border-white/5 pt-4">
-          <h3 className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
-            Altas hechas en el check-in
-          </h3>
-          <p className="text-sm text-gray-300">
-            {altas.map(a => `${a.clave}: ${a.total}`).join(' · ')}
-          </p>
-        </div>
-      )}
-    </section>
-  )
-}
-
-function Numero({ label, valor, detalle, tono }: {
-  label: string
-  valor: string
-  detalle: string
-  tono?: 'ok' | 'coral'
-}) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-      <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">{label}</p>
-      <p className={`mt-1 text-2xl font-black tabular-nums ${
-        tono === 'ok' ? 'text-swc-ok' : tono === 'coral' ? 'text-swc-coral' : 'text-swc-light'
-      }`}>
-        {valor}
-      </p>
-      <p className="mt-0.5 text-xs text-gray-500">{detalle}</p>
-    </div>
+    </Operacion>
   )
 }
 
@@ -245,9 +151,7 @@ function Serie({ titulo, datos, vacio, nota }: {
 
   return (
     <section className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
-      <h3 className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">
-        {titulo}
-      </h3>
+      <Rotulo className="mb-3">{titulo}</Rotulo>
 
       {datos.length === 0 ? (
         <p className="text-sm text-gray-600">{vacio}</p>

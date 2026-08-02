@@ -1,6 +1,12 @@
 import { useMemo, useState } from 'react'
-import Tabla, { type Columna } from '../ui/Tabla'
+import { Boton, Tabs, type Opcion } from '../ui/Acciones'
+import { Aviso } from '../ui/Aviso'
+import { Dato, Datos } from '../ui/Campos'
 import { Cargando, Chip, Roto, Tarjeta, Tarjetas } from '../ui/Estado'
+import { Hoja } from '../ui/Hoja'
+import { Bloque, Limite, Operacion } from '../ui/Operacion'
+import { Recurso } from '../ui/Recurso'
+import Tabla, { type Columna } from '../ui/Tabla'
 import { mensajeDeError } from '../lib/api'
 import {
   accionOrden, fechaCorta, pesos, reenviarMail, traerOrdenes, useRecurso, type Orden,
@@ -9,10 +15,10 @@ import {
 /**
  * Las compras de la venta propia.
  *
- * Hasta ahora esto no existía en ninguna pantalla: ver una orden era una query
- * en el SQL Editor, y destrabar una que Mercado Pago aprobó pero el webhook no
- * acreditó dependía de que el comprador volviera solo al sitio. Si no volvía,
- * no la destrababa nadie.
+ * Hasta hace poco esto no existía en ninguna pantalla: ver una orden era una
+ * query en el SQL Editor, y destrabar una que Mercado Pago aprobó pero el
+ * webhook no acreditó dependía de que el comprador volviera solo al sitio. Si no
+ * volvía, no la destrababa nadie.
  */
 const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'coral' | 'neutro' }> = {
   paid: { label: 'pagada', tono: 'ok' },
@@ -24,13 +30,6 @@ const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'c
 
 type Filtro = 'todas' | 'paid' | 'pending' | 'problema'
 
-const FILTROS: { id: Filtro; label: string }[] = [
-  { id: 'todas', label: 'Todas' },
-  { id: 'paid', label: 'Pagadas' },
-  { id: 'pending', label: 'Reservando cupo' },
-  { id: 'problema', label: 'Con problema' },
-]
-
 function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   const { datos, error, cargando, recargar } = useRecurso(traerOrdenes, onSinSesion)
   const [filtro, setFiltro] = useState<Filtro>('todas')
@@ -40,13 +39,20 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   // se recalcularía siempre.
   const ordenes = useMemo(() => datos?.ordenes || [], [datos])
 
+  /** Lo que alguien tiene que mirar: pagada sin mail confirmado, o rechazada. */
+  const esProblema = (o: Orden) => o.status === 'rejected' || (o.status === 'paid' && !o.mailEnviado)
+
+  const cuentas = useMemo(() => ({
+    todas: ordenes.length,
+    paid: ordenes.filter(o => o.status === 'paid').length,
+    pending: ordenes.filter(o => o.reservaCupo).length,
+    problema: ordenes.filter(esProblema).length,
+  }), [ordenes])
+
   const visibles = useMemo(() => {
     if (filtro === 'paid') return ordenes.filter(o => o.status === 'paid')
     if (filtro === 'pending') return ordenes.filter(o => o.reservaCupo)
-    // Lo que alguien tiene que mirar: pagada sin mail confirmado, o rechazada.
-    if (filtro === 'problema') {
-      return ordenes.filter(o => o.status === 'rejected' || (o.status === 'paid' && !o.mailEnviado))
-    }
+    if (filtro === 'problema') return ordenes.filter(esProblema)
     return ordenes
   }, [ordenes, filtro])
 
@@ -82,41 +88,74 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
 
   const t = datos?.totales
 
+  const filtros: Opcion<Filtro>[] = [
+    { id: 'todas', label: 'Todas', cuenta: cuentas.todas },
+    { id: 'paid', label: 'Pagadas', cuenta: cuentas.paid },
+    { id: 'pending', label: 'Reservando cupo', cuenta: cuentas.pending },
+    { id: 'problema', label: 'Con problema', cuenta: cuentas.problema },
+  ]
+
   return (
     <>
-      <Tarjetas>
-        <Tarjeta label="Recaudado" valor={t?.recaudadoTexto || '—'} detalle="cargo de servicio incluido" tono="ok" />
-        <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} />
-        <Tarjeta label="Entradas vendidas" valor={t?.entradas ?? 0} detalle="por la web" />
-        <Tarjeta
-          label="Reservando cupo"
-          valor={t?.pendientes ?? 0}
-          tono={t?.pendientes ? 'warn' : undefined}
-          detalle="pendientes sin vencer"
-        />
-      </Tarjetas>
+      <Operacion
+        contexto={
+          <>
+            <Bloque titulo="La caja">
+              <Datos>
+                <Dato label="Recaudado" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
+                <Dato label="Compras pagadas">{t?.pagadas ?? 0}</Dato>
+                <Dato label="Entradas vendidas">{t?.entradas ?? 0}</Dato>
+                <Dato label="Reservando cupo" tono={t?.pendientes ? 'warn' : undefined}>
+                  {t?.pendientes ?? 0}
+                </Dato>
+              </Datos>
+            </Bloque>
 
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        {FILTROS.map(f => (
-          <button
-            key={f.id}
-            onClick={() => setFiltro(f.id)}
-            className={`rounded-full px-3 py-1.5 text-xs font-black transition-colors ${
-              f.id === filtro ? 'bg-swc-accent text-swc-bg' : 'bg-white/[0.06] text-swc-muted'
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+            <Bloque titulo="Qué mirar primero" className="mt-6">
+              <p className="text-xs leading-relaxed text-gray-500">
+                «Con problema» junta las rechazadas y las pagadas cuyo mail nunca salió. Son
+                las dos que tienen a alguien esperando del otro lado: una porque no pudo
+                pagar y otra porque pagó y no recibió la entrada.
+              </p>
+              {cuentas.problema > 0 && (
+                <Boton tono="secundario" tam="sm" className="mt-3" onClick={() => setFiltro('problema')}>
+                  Ver las {cuentas.problema}
+                </Boton>
+              )}
+            </Bloque>
 
-      <Tabla
-        columnas={columnas}
-        filas={visibles}
-        claveDe={o => o.id}
-        onFila={setAbierta}
-        vacio="No hay compras con ese filtro."
-      />
+            <Limite>
+              Marcar una orden como reembolsada saca sus entradas de la lista y devuelve el
+              cupo, pero <strong>no mueve plata</strong>: la devolución se hace en Mercado
+              Pago.
+            </Limite>
+          </>
+        }
+      >
+        <Tarjetas>
+          <Tarjeta label="Recaudado" valor={t?.recaudadoTexto || '—'} detalle="cargo de servicio incluido" tono="ok" />
+          <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} />
+          <Tarjeta label="Entradas vendidas" valor={t?.entradas ?? 0} detalle="por la web" />
+          <Tarjeta
+            label="Reservando cupo"
+            valor={t?.pendientes ?? 0}
+            tono={t?.pendientes ? 'warn' : undefined}
+            detalle="pendientes sin vencer"
+          />
+        </Tarjetas>
+
+        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar las compras" />
+
+        <div className="mt-4">
+          <Tabla
+            columnas={columnas}
+            filas={visibles}
+            claveDe={o => o.id}
+            onFila={setAbierta}
+            vacio="No hay compras con ese filtro."
+          />
+        </div>
+      </Operacion>
 
       {abierta && (
         <FichaOrden
@@ -154,108 +193,102 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center" role="dialog" aria-modal="true">
-      <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Cerrar" />
+    <Hoja
+      titulo={orden.nombre}
+      subtitulo={orden.email}
+      onCerrar={onCerrar}
+      chips={<Chip tono={ESTADOS[orden.status].tono}>{ESTADOS[orden.status].label}</Chip>}
+    >
+      <Recurso
+        titulo={orden.tier}
+        subtitulo={`${orden.cantidad} ${orden.cantidad === 1 ? 'entrada' : 'entradas'} · ${fechaCorta(orden.creadaEn)}`}
+        valor={pesos(orden.total, true)}
+        detalle="total"
+        tono={orden.status === 'paid' ? 'ok' : 'accent'}
+      />
 
-      <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-2xl border-t border-swc-accent/30 bg-swc-surface px-5 pt-6 pb-8 sm:rounded-2xl sm:border">
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <h2 className="text-xl font-black text-swc-light">{orden.nombre}</h2>
-          <Chip tono={ESTADOS[orden.status].tono}>{ESTADOS[orden.status].label}</Chip>
-        </div>
-        <p className="mb-5 text-sm text-swc-muted">{orden.email}</p>
+      <div className="mt-5">
+        <Datos>
+          <Dato label="Subtotal">{pesos(orden.subtotal, true)}</Dato>
+          <Dato label="Cargo de servicio">{pesos(orden.cargo, true)}</Dato>
+          {orden.status === 'pending' && <Dato label="Vence">{fechaCorta(orden.venceEn)}</Dato>}
+          {orden.pagoId && <Dato label="Pago en MP">{orden.pagoId}</Dato>}
+          {orden.detalle && <Dato label="Detalle">{orden.detalle}</Dato>}
+          <Dato label="Mail de la entrada" tono={orden.mailEnviado ? undefined : 'coral'}>
+            {orden.mailEnviado ? fechaCorta(orden.mailEnviado) : 'no salió'}
+          </Dato>
+        </Datos>
+      </div>
 
-        <dl className="mb-5 text-sm">
-          <Dato label="Tier" valor={orden.tier} />
-          <Dato label="Entradas" valor={String(orden.cantidad)} />
-          <Dato label="Subtotal" valor={pesos(orden.subtotal, true)} />
-          <Dato label="Cargo de servicio" valor={pesos(orden.cargo, true)} />
-          <Dato label="Total" valor={pesos(orden.total, true)} />
-          <Dato label="Creada" valor={fechaCorta(orden.creadaEn)} />
-          {orden.status === 'pending' && <Dato label="Vence" valor={fechaCorta(orden.venceEn)} />}
-          {orden.pagoId && <Dato label="Pago en MP" valor={orden.pagoId} />}
-          {orden.detalle && <Dato label="Detalle" valor={orden.detalle} />}
-          <Dato label="Mail de la entrada" valor={orden.mailEnviado ? fechaCorta(orden.mailEnviado) : 'no salió'} />
-        </dl>
+      {error && <Aviso tono="error" className="mt-4">{error}</Aviso>}
+      {aviso && <Aviso tono="ok" className="mt-4">{aviso}</Aviso>}
 
-        {error && (
-          <p className="mb-4 rounded-xl border border-swc-coral/40 bg-swc-coral/10 px-4 py-3 text-sm font-bold text-swc-coral">{error}</p>
+      <div className="mt-5 flex flex-col gap-2">
+        {/* Preguntarle a Mercado Pago por esta orden y acreditarla si el pago
+            está aprobado. Es idempotente: si ya estaba, no vuelve a mandar el
+            mail ni a emitir tokens. */}
+        {orden.status !== 'paid' && (
+          <Boton
+            tam="lg"
+            ancho
+            onClick={() => correr('rec', () => accionOrden(orden.id, 'reconciliar'))}
+            ocupado={ocupado === 'rec' ? 'Preguntando a Mercado Pago…' : undefined}
+            disabled={Boolean(ocupado)}
+          >
+            Reconciliar contra Mercado Pago
+          </Boton>
         )}
-        {aviso && (
-          <p className="mb-4 rounded-xl border border-swc-ok/40 bg-swc-ok/10 px-4 py-3 text-sm font-bold text-swc-ok">{aviso}</p>
-        )}
-
-        <div className="flex flex-col gap-2">
-          {/* Preguntarle a Mercado Pago por esta orden y acreditarla si el pago
-              está aprobado. Es idempotente: si ya estaba, no vuelve a mandar el
-              mail ni a emitir tokens. */}
-          {orden.status !== 'paid' && (
-            <button
-              disabled={Boolean(ocupado)}
-              onClick={() => correr('rec', () => accionOrden(orden.id, 'reconciliar'))}
-              className="w-full rounded-full bg-swc-accent px-6 py-3.5 text-sm font-black text-swc-bg disabled:opacity-40"
-            >
-              {ocupado === 'rec' ? 'Preguntando a Mercado Pago…' : 'Reconciliar contra Mercado Pago'}
-            </button>
-          )}
-
-          {orden.status === 'paid' && (
-            <button
-              disabled={Boolean(ocupado)}
-              onClick={() => correr('mail', () => reenviarMail({ orden: orden.id }), 'Mail reenviado.')}
-              className="w-full rounded-full border border-swc-accent/40 px-6 py-3 text-sm font-black text-swc-accent disabled:opacity-40"
-            >
-              {ocupado === 'mail' ? 'Enviando…' : 'Reenviar el mail de la entrada'}
-            </button>
-          )}
-
-          {/* Liberar = vencerla. `stock_disponible` sólo cuenta las pendientes
-              con `expires_at > now()`, así que con esto el cupo vuelve a la
-              venta. No se borra nada. */}
-          {orden.reservaCupo && (
-            <button
-              disabled={Boolean(ocupado)}
-              onClick={() => correr('lib', () => accionOrden(orden.id, 'liberar'))}
-              className="w-full rounded-full border border-white/20 px-6 py-3 text-sm font-black text-gray-300 disabled:opacity-40"
-            >
-              {ocupado === 'lib' ? 'Liberando…' : 'Liberar el cupo que reserva'}
-            </button>
-          )}
-
-          {orden.status === 'paid' && (
-            <button
-              disabled={Boolean(ocupado)}
-              onClick={() => correr('ree', () => accionOrden(orden.id, 'reembolsar'))}
-              className="w-full rounded-full border border-swc-coral/40 px-6 py-3 text-sm font-black text-swc-coral disabled:opacity-40"
-            >
-              {ocupado === 'ree' ? 'Marcando…' : 'Marcar como reembolsada'}
-            </button>
-          )}
-        </div>
 
         {orden.status === 'paid' && (
-          <p className="mt-3 text-xs text-gray-500">
-            Marcarla reembolsada saca sus {orden.cantidad === 1 ? 'entrada' : `${orden.cantidad} entradas`} de
-            la lista de la puerta y devuelve el cupo. La plata se devuelve en Mercado Pago, no acá.
-          </p>
+          <Boton
+            tono="secundario"
+            tam="lg"
+            ancho
+            onClick={() => correr('mail', () => reenviarMail({ orden: orden.id }), 'Mail reenviado.')}
+            ocupado={ocupado === 'mail' ? 'Enviando…' : undefined}
+            disabled={Boolean(ocupado)}
+          >
+            Reenviar el mail de la entrada
+          </Boton>
         )}
 
-        <button
-          onClick={onCerrar}
-          className="mt-5 w-full text-center text-xs font-bold uppercase tracking-[0.14em] text-gray-500"
-        >
-          Cerrar
-        </button>
-      </div>
-    </div>
-  )
-}
+        {/* Liberar = vencerla. `stock_disponible` sólo cuenta las pendientes con
+            `expires_at > now()`, así que con esto el cupo vuelve a la venta. No
+            se borra nada. */}
+        {orden.reservaCupo && (
+          <Boton
+            tono="fantasma"
+            tam="lg"
+            ancho
+            onClick={() => correr('lib', () => accionOrden(orden.id, 'liberar'))}
+            ocupado={ocupado === 'lib' ? 'Liberando…' : undefined}
+            disabled={Boolean(ocupado)}
+          >
+            Liberar el cupo que reserva
+          </Boton>
+        )}
 
-function Dato({ label, valor }: { label: string; valor: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4 border-t border-white/5 py-1.5 first:border-t-0">
-      <dt className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-gray-500">{label}</dt>
-      <dd className="text-right break-all text-swc-light">{valor}</dd>
-    </div>
+        {orden.status === 'paid' && (
+          <Boton
+            tono="peligro"
+            tam="lg"
+            ancho
+            onClick={() => correr('ree', () => accionOrden(orden.id, 'reembolsar'))}
+            ocupado={ocupado === 'ree' ? 'Marcando…' : undefined}
+            disabled={Boolean(ocupado)}
+          >
+            Marcar como reembolsada
+          </Boton>
+        )}
+      </div>
+
+      {orden.status === 'paid' && (
+        <Aviso tono="info" className="mt-4">
+          Marcarla reembolsada saca sus {orden.cantidad === 1 ? 'entrada' : `${orden.cantidad} entradas`} de
+          la lista de la puerta y devuelve el cupo. La plata se devuelve en Mercado Pago, no acá.
+        </Aviso>
+      )}
+    </Hoja>
   )
 }
 

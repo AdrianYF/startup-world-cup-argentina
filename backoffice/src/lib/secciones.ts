@@ -48,7 +48,3 @@ export const SECCIONES: Seccion[] = [
 export function seccionDe(ruta: string): Seccion {
   return SECCIONES.find(s => s.id === ruta) || SECCIONES[0]
 }
-
-export function nombreDe(ruta: string): string {
-  return SECCIONES.find(s => s.id === ruta)?.label || 'Backoffice'
-}
