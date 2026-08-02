@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import jsQR from 'jsqr'
 import { acreditarPorToken } from '../lib/acreditar'
-import { mensajeDeError } from '../lib/api'
+import { PuertaError, mensajeDeError } from '../lib/api'
 import type { Checkin, Persona } from '../lib/tipos'
 
 /**
@@ -24,6 +24,12 @@ const TOKEN_EN_URL = /\/entrada\/([A-Za-z0-9_-]{20,64})/
 const MS_ENTRE_LECTURAS = 120
 /** Tras un QR que no sirve, un respiro: si no, el mismo código dispara en loop. */
 const ESPERA_TRAS_ERROR_MS = 1500
+
+/** Un pedazo de lo leído, para poder ver de qué QR se trata sin llenar la pantalla. */
+function recortar(texto: string, max = 28): string {
+  const limpio = texto.replace(/^https?:\/\//, '').trim()
+  return limpio.length > max ? limpio.slice(0, max) + '…' : limpio
+}
 
 type Props = {
   dia: string
@@ -94,7 +100,11 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
       if (!token) {
         // No es un error de la persona: Startup Grind emite su propio QR, y no es
         // el nuestro. Se avisa y se sigue escaneando.
-        setAviso('Ese QR no es de acá — buscalo por apellido.')
+        //
+        // Se muestra un pedazo de lo leído: sin eso, este caso y el de "el token
+        // no está en la base" daban el MISMO texto y no había forma de saber
+        // cuál de los dos estabas mirando.
+        setAviso(`Ese QR no es una entrada nuestra (${recortar(texto)}). Buscá por apellido.`)
         return
       }
 
@@ -105,7 +115,16 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
         const r = await acreditarPorToken({ dia, token })
         avisar.current(r.checkin, r.persona)
       } catch (err) {
-        setAviso(mensajeDeError(err))
+        // El QR SÍ era nuestro y el token tiene la forma correcta, pero la base
+        // no lo conoce. Pasa siempre que la app apunta a un Supabase distinto
+        // del que emitió la entrada — típicamente probando en local contra
+        // `npm run dev:local` con un QR emitido en producción.
+        const codigo = err instanceof PuertaError ? err.codigo : ''
+        setAviso(
+          codigo === 'entrada_inexistente'
+            ? 'Entrada válida, pero no está en esta base. ¿La app apunta al Supabase correcto?'
+            : mensajeDeError(err),
+        )
         setEstado('buscando')
         window.setTimeout(() => { ocupado.current = false }, ESPERA_TRAS_ERROR_MS)
       }
@@ -125,7 +144,14 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
       <canvas ref={canvas} className="hidden" />
 
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <div className="h-56 w-56 rounded-2xl border-2 border-white/70" />
+        {/* El cuadro sigue al ancho de la pantalla en vez de ser 224px fijos.
+            Apuntar es más fácil cuanto más grande es el blanco, y el QR de una
+            entrada impresa o en la pantalla de otro celular entra bastante más
+            chico de lo que uno espera. El tope evita que en tablet se coma todo. */}
+        <div
+          className="rounded-2xl border-2 border-white/70"
+          style={{ width: 'min(78vw, 78vh, 420px)', aspectRatio: '1' }}
+        />
         <p className="mt-5 text-sm font-bold text-white drop-shadow">
           {estado === 'pidiendo' && 'Abriendo la cámara…'}
           {estado === 'buscando' && 'Apuntá al QR de la entrada'}

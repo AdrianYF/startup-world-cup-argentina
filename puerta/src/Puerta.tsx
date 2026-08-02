@@ -4,7 +4,8 @@ import Cabecera from './componentes/Cabecera'
 import FilaPersona from './componentes/FilaPersona'
 import Panel from './componentes/Panel'
 import BarraAcciones from './componentes/BarraAcciones'
-import { sesion } from './lib/almacen'
+import Agregar from './componentes/Agregar'
+import { quien, sesion } from './lib/almacen'
 import { filtrar, ordenarPorApellido } from './lib/buscar'
 import { useLista } from './lib/useLista'
 import type { Persona } from './lib/tipos'
@@ -25,20 +26,33 @@ const Escaner = lazy(() => import('./componentes/Escaner'))
 function Puerta() {
   const [autenticado, setAutenticado] = useState(() => Boolean(sesion.token()))
 
+  /**
+   * Salir. Borra el token y vuelve al PIN.
+   *
+   * NO borra la lista cacheada ni la cola de ingresos pendientes: si alguien
+   * sale con cosas sin sincronizar, esas cosas tienen que seguir ahí cuando el
+   * siguiente entre. Lo único que se va es la sesión.
+   */
+  const salir = useCallback(() => {
+    sesion.borrar()
+    setAutenticado(false)
+  }, [])
+
   return autenticado
-    ? <Tablero onSinSesion={() => setAutenticado(false)} />
+    ? <Tablero onSinSesion={() => setAutenticado(false)} onSalir={salir} />
     : <Pin onListo={() => setAutenticado(true)} />
 }
 
-function Tablero({ onSinSesion }: { onSinSesion: () => void }) {
+function Tablero({ onSinSesion, onSalir }: { onSinSesion: () => void; onSalir: () => void }) {
   const {
     lista, ingresos, error, sinConexion, enCola, ultimo,
-    cambiarDia, anotar, anotarEscaneado, deshacer,
+    cambiarDia, anotar, anotarEscaneado, deshacer, agregarYAcreditar,
   } = useLista(onSinSesion)
 
   const [busqueda, setBusqueda] = useState('')
   const [seleccion, setSeleccion] = useState<Persona | null>(null)
   const [escaneando, setEscaneando] = useState(false)
+  const [agregando, setAgregando] = useState(false)
 
   const personas = useMemo(
     () => ordenarPorApellido(filtrar(lista?.personas || [], busqueda)),
@@ -81,6 +95,8 @@ function Tablero({ onSinSesion }: { onSinSesion: () => void }) {
         onDia={id => { cambiarDia(id); setBusqueda(''); setSeleccion(null) }}
         adentro={totales.adentro}
         total={totales.entradas}
+        quien={quien.leer()}
+        onSalir={onSalir}
         busqueda={busqueda}
         onBusqueda={setBusqueda}
         sinConexion={sinConexion}
@@ -89,11 +105,22 @@ function Tablero({ onSinSesion }: { onSinSesion: () => void }) {
 
       <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-40">
         {personas.length === 0 ? (
-          <p className="py-16 text-center text-sm text-gray-500">
-            {busqueda
-              ? `Nadie con ese nombre en la lista del ${lista.dia.nombre.toLowerCase()}.`
-              : 'La lista de este día está vacía.'}
-          </p>
+          // La búsqueda vacía es EL momento en que se descubre que alguien no
+          // está, así que el alta se ofrece acá mismo y con el nombre ya
+          // tipeado, en vez de obligar a escribirlo dos veces.
+          <div className="py-16 text-center">
+            <p className="text-sm text-gray-500">
+              {busqueda
+                ? `Nadie con ese nombre en la lista del ${lista.dia.nombre.toLowerCase()}.`
+                : 'La lista de este día está vacía.'}
+            </p>
+            <button
+              onClick={() => setAgregando(true)}
+              className="mt-5 rounded-full border border-swc-ok/40 bg-swc-ok/10 px-6 py-3 text-sm font-black text-swc-ok active:scale-95"
+            >
+              {busqueda ? `Agregar a "${busqueda}"` : 'Agregar a alguien'}
+            </button>
+          </div>
         ) : (
           <ul>
             {personas.map(p => (
@@ -112,6 +139,7 @@ function Tablero({ onSinSesion }: { onSinSesion: () => void }) {
         ultimo={ultimo}
         onDeshacer={deshacer}
         onEscanear={() => setEscaneando(true)}
+        onAgregar={() => setAgregando(true)}
       />
 
       {seleccion && (
@@ -120,6 +148,19 @@ function Tablero({ onSinSesion }: { onSinSesion: () => void }) {
           ingresos={ingresos.get(seleccion.id) || []}
           onAcreditar={() => acreditarA(seleccion)}
           onCerrar={() => setSeleccion(null)}
+        />
+      )}
+
+      {agregando && (
+        <Agregar
+          inicial={busqueda}
+          dia={lista.dia.nombre.toLowerCase()}
+          onCerrar={() => setAgregando(false)}
+          onAgregar={datos => {
+            agregarYAcreditar(datos)
+            setAgregando(false)
+            setBusqueda('')
+          }}
         />
       )}
 
