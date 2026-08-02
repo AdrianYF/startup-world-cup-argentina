@@ -73,7 +73,7 @@
         },
         {
           "hora": "14:30 - 15:00",
-          "titulo": "Sub20",
+          "titulo": "Generación Sub20",
           "categoria": "Charla",
           "speakers": [
             {
@@ -97,6 +97,11 @@
               "nombre": "Gustavo Nusenovich",
               "empresa": "Otro Punto de Vista",
               "img": "/participan/gustavo-nusenovich.webp"
+            },
+            {
+              "nombre": "Alejandrina Vendrell",
+              "empresa": "",
+              "img": "/participan/alejandrina-vendrell.webp"
             }
           ]
         },
@@ -104,7 +109,18 @@
           "hora": "15:30 - 16:00",
           "titulo": "Tendencias antes que el mercado",
           "categoria": "Charla",
-          "speakers": []
+          "speakers": [
+            {
+              "nombre": "Gaba Najmanovich",
+              "empresa": "",
+              "img": "/participan/gaba-najmanovich.webp"
+            },
+            {
+              "nombre": "Mariela Mociulsky",
+              "empresa": "Trendsity",
+              "img": "/participan/mariela-mociulsky.webp"
+            }
+          ]
         },
         {
           "hora": "16:00 - 16:30",
@@ -114,9 +130,15 @@
         },
         {
           "hora": "16:30 - 17:00",
-          "titulo": "Growth",
-          "categoria": "Coming Soon",
-          "speakers": []
+          "titulo": "Cómo hacen las grandes empresas Growth (y cómo copiarlo sin tener su presupuesto)",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Denis Balitskiy",
+              "empresa": "Borton",
+              "img": "/participan/denis-balitskiy.webp"
+            }
+          ]
         },
         {
           "hora": "17:00 - 18:30",
@@ -232,7 +254,33 @@
           "hora": "14:00 - 15:30",
           "titulo": "Panel VC + Speed Dating",
           "categoria": "Investors",
-          "speakers": []
+          "speakers": [
+            {
+              "nombre": "John Newkirk",
+              "empresa": "Kamay",
+              "img": "/participan/john-newkirk.webp"
+            },
+            {
+              "nombre": "Francis Perelman",
+              "empresa": "Capria Ventures",
+              "img": "/participan/francis-perelman.webp"
+            },
+            {
+              "nombre": "Micaela Bacher",
+              "empresa": "Natan.VC",
+              "img": "/participan/micaela-bacher.webp"
+            },
+            {
+              "nombre": "Nicolai Ivansson",
+              "empresa": "Ingenerate VC",
+              "img": "/participan/nicolai-ivansson.webp"
+            },
+            {
+              "nombre": "Diego Gonzalez",
+              "empresa": "Alina VC",
+              "img": "/participan/diego-gonzalez-a.webp"
+            }
+          ]
         },
         {
           "hora": "15:30 - 16:00",
@@ -307,8 +355,25 @@
           "speakers": []
         },
         {
-          "hora": "21:00 - 21:30",
-          "titulo": "Deliberación, premiación y cierre",
+          "hora": "21:00 - 21:20",
+          "titulo": "Emprender sin guión: herramientas de Impro para liderar y conectar",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Gabriel Aufgang",
+              "empresa": "",
+              "img": "/participan/gabriel-aufgang.webp"
+            },
+            {
+              "nombre": "Santiago Beldi",
+              "empresa": "",
+              "img": "/participan/santiago-beldi.webp"
+            }
+          ]
+        },
+        {
+          "hora": "21:20 - 21:30",
+          "titulo": "Premiación y cierre",
           "categoria": "Coming Soon",
           "speakers": []
         },

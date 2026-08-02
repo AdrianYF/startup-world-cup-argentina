@@ -52,7 +52,8 @@
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
-      "Matchmaking digital"
+      "Matchmaking digital",
+      "Acceso a Speed Dating Inversores"
     ]
   },
   {
@@ -60,13 +61,13 @@
     "nombre": "Entrada VIP",
     "precio": "$65.000",
     "cupos": "30 unidades",
-    "descripcion": "Acceso a conexiones top, con comida del 6/08 y cocktail de cierre incluidos.",
+    "descripcion": "Todo lo de la general, más conexiones top y el evento VIP de cierre.",
     "estado": "venta",
     "badge": null,
     "features": [
-      "Todo lo de la entrada general",
-      "Comida del jueves 6",
-      "Cocktail de cierre con cata de vino"
+      "Todo lo de la entrada General",
+      "Acceso a Conexiones Top",
+      "Ingreso a evento VIP de cierre"
     ]
   }
 ]
