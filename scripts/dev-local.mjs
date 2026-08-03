@@ -35,6 +35,10 @@ if (!url || !key) {
 console.log(`\n  Supabase local: ${url}`)
 console.log('  (Mercado Pago sigue usando las credenciales de .env.local)\n')
 
+// Igual que `npm run dev`: los templates de mail se compilan antes de levantar,
+// porque `acreditar.js` importa el `.js` y no el `.tsx`. Ver build-emails.mjs.
+execSync('node scripts/build-emails.mjs', { stdio: 'inherit' })
+
 spawn('npx', ['vite'], {
   stdio: 'inherit',
   env: { ...process.env, SUPABASE_URL: url, SUPABASE_SECRET_KEY: key },

@@ -11,7 +11,10 @@
 // transform JSX clásico y revienta con "React is not defined" en producción)
 import { Resend } from 'resend'
 import { formatARS } from './http.js'
-import { EntradaEmail } from './emails/entrada.tsx'
+// Con extensión `.js` y no `.tsx`: TypeScript resuelve el `.tsx` igual, y así
+// el specifier ya apunta al archivo compilado que es lo que corre en Vercel.
+// Ver scripts/build-emails.mjs.
+import { EntradaEmail } from './emails/entrada.js'
 
 type Orden = {
   id: string
