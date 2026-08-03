@@ -29,8 +29,27 @@ export function supabaseLocal() {
     const leer = clave => env.match(new RegExp(`^${clave}="?([^"\n]+)"?$`, 'm'))?.[1]
     const url = leer('API_URL')
     const key = leer('SERVICE_ROLE_KEY')
-    return url && key ? { url, key } : null
-  } catch {
+    if (!url || !key) return null
+
+    // El cerrojo. Estos tests BORRAN órdenes y entradas, así que apuntar a la
+    // base del evento sería destruir entradas vendidas.
+    //
+    // Hoy `supabase status` sólo puede devolver el Docker local, así que esto no
+    // debería dispararse nunca. Está igual porque el costo de equivocarse es
+    // asimétrico: si algún día `status` cambia de significado —o alguien mete un
+    // `SUPABASE_URL` acá creyendo que ayuda— quiero que reviente y no que limpie
+    // la base de producción en silencio.
+    if (!/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:|\/|$)/.test(url)) {
+      throw new Error(
+        `Los tests de integración sólo corren contra Postgres local, y esto apunta a ${url}. `
+        + 'Se corta antes de tocar nada.',
+      )
+    }
+    return { url, key }
+  } catch (err) {
+    // El cerrojo de arriba sí tiene que llegar a quien corre los tests: si lo
+    // tragamos acá, se vería como «Supabase apagado» y los tests se saltearían.
+    if (err instanceof Error && err.message.includes('sólo corren contra')) throw err
     return null
   }
 }
