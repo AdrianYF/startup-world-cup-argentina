@@ -1,4 +1,5 @@
 // Utilidades compartidas por las funciones de la API.
+import { valorDe } from './entorno.js'
 
 /** Respuesta JSON sin caché. Nada de lo que devuelve esta API se puede cachear. */
 export function json(res, status, body) {
@@ -45,7 +46,10 @@ export function first(value) {
  * flujo sigue andando en los previews de Vercel y detrás de un túnel.
  */
 export function siteUrl(req) {
-  const fromEnv = process.env.PUBLIC_SITE_URL
+  // Del entorno activo: PUBLIC_TEST_SITE_URL en desarrollo, que es donde vive
+  // el túnel de Cloudflare. Opcional a propósito — el fallback de abajo es lo
+  // que hace que un preview de Vercel ande sin configurar nada.
+  const fromEnv = valorDe('PUBLIC_SITE_URL', { obligatoria: false })
   if (fromEnv) return fromEnv.replace(/\/$/, '')
   const proto = first(req.headers['x-forwarded-proto']) || 'https'
   const host = first(req.headers['x-forwarded-host']) || req.headers.host || ''

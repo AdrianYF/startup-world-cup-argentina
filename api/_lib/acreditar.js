@@ -22,13 +22,15 @@ import { credencialesMP } from './entorno.js'
 // `/api/backoffice` — el check-in incluido.
 import { enviarEntrada } from './email.js'
 
-function cliente() {
-  return new MercadoPagoConfig({ accessToken: credencialesMP().accessToken })
+// Async porque en desarrollo `credencialesMP()` le pregunta a Mercado Pago si la
+// cuenta del token es de prueba — una vez por proceso, ver `entorno.js`.
+async function cliente() {
+  return new MercadoPagoConfig({ accessToken: (await credencialesMP()).accessToken })
 }
 
 /** Un pago puntual, por id. */
 export async function traerPago(paymentId) {
-  return new Payment(cliente()).get({ id: String(paymentId) })
+  return new Payment(await cliente()).get({ id: String(paymentId) })
 }
 
 /**
@@ -40,7 +42,7 @@ export async function traerPago(paymentId) {
  * falló.
  */
 export async function buscarPagoDeOrden(ordenId) {
-  const r = await new Payment(cliente()).search({
+  const r = await new Payment(await cliente()).search({
     options: { external_reference: ordenId, sort: 'date_created', criteria: 'desc' },
   })
   const pagos = r?.results || []

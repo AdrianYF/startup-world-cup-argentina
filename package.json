@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "npm run build:emails && vite",
     "dev:local": "node scripts/dev-local.mjs",
+    "entorno": "node scripts/entorno.mjs",
+    "tunel": "node scripts/tunel.mjs",
     "build": "npm run build:emails && tsc -b && vite build",
     "build:emails": "node scripts/build-emails.mjs",
     "lint": "eslint .",

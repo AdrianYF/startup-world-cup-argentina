@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
   let secret, accessToken
   try {
-    ({ webhookSecret: secret, accessToken } = credencialesMP())
+    ({ webhookSecret: secret, accessToken } = await credencialesMP())
   } catch (err) {
     console.error('[webhook]', err.message)
   }

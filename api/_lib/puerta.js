@@ -4,6 +4,7 @@
 // Vive en api/_lib/ (con guión bajo) para que Vercel no lo exponga como ruta.
 // `scripts/lista-puerta.mjs` importa DIAS de acá para no tener su propia copia.
 import crypto from 'node:crypto'
+import { valorDe } from './entorno.js'
 
 /**
  * Los tres días del evento.
@@ -51,9 +52,10 @@ const VENCE = Date.UTC(2026, 7, 9) // 9 de agosto de 2026, 00:00 UTC
 const b64 = buf => Buffer.from(buf).toString('base64url')
 
 function secreto() {
-  const s = process.env.PUERTA_SECRET
-  if (!s) throw new Error('falta PUERTA_SECRET (ver .env.example)')
-  return s
+  // `valorDe` ya tira nombrando la variable del entorno activo
+  // (PUERTA_SECRET o PUERTA_TEST_SECRET), que es la mitad del problema cuando
+  // esto falla en un preview.
+  return valorDe('PUERTA_SECRET')
 }
 
 function firmar(payload) {
@@ -69,7 +71,7 @@ function igual(a, b) {
 
 /** True si el PIN es el correcto. False si no lo es o si no hay PIN configurado. */
 export function pinValido(pin) {
-  const esperado = process.env.PUERTA_PIN
+  const esperado = valorDe('PUERTA_PIN', { obligatoria: false })
   // Sin PIN configurado no se entra: un `if (!esperado) return true` acá dejaría
   // la lista de asistentes abierta en cuanto alguien olvide cargar la variable.
   if (!esperado || typeof pin !== 'string' || !pin) return false

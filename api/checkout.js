@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   // producción esto tira antes de crear nada — ver `_lib/entorno.js`.
   let credenciales
   try {
-    credenciales = credencialesMP()
+    credenciales = await credencialesMP()
   } catch (err) {
     console.error('[checkout]', err.message)
     return json(res, 503, { error: 'checkout_no_configurado' })

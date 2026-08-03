@@ -11,6 +11,10 @@
  */
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+// Sólo las dos funciones puras: reciben el entorno por parámetro, así que
+// importarlas antes de leer el `.env.local` no tiene el problema de orden que sí
+// tendría usar el `ENTORNO` que el módulo resuelve al cargarse.
+import { nombreEn, diagnosticoMP } from '../api/_lib/entorno.js'
 
 /** Vercel agrega status()/send()/json() al `res` de node. Acá se replican. */
 function vercelizar(req, res, url) {
@@ -77,22 +81,41 @@ export function apiFunctions({ raiz }) {
       const antes = { ...process.env }
       if (existsSync(env)) process.loadEnvFile(env)
 
-      if (!process.env.PUBLIC_SITE_URL) {
-        process.env.PUBLIC_SITE_URL = 'http://localhost:5173'
+      // Qué entorno, y por lo tanto qué juego de credenciales.
+      //
+      // El valor se calcula acá y no se toma del que exporta `entorno.js`: ese
+      // módulo lo resuelve cuando se carga, y cuando se carga este archivo el
+      // `.env.local` —que es donde vive ENTORNO— todavía no se leyó. La REGLA,
+      // en cambio, se importa: `nombreEn` la recibe por parámetro justamente
+      // para poder usarla desde acá.
+      const entorno = (process.env.ENTORNO || '').trim().toLowerCase() === 'production'
+        ? 'production'
+        : 'development'
+      const clave = nombre => nombreEn(nombre, entorno)
+      const del = nombre => process.env[clave(nombre)]
+
+      if (!del('PUBLIC_SITE_URL')) {
+        process.env[clave('PUBLIC_SITE_URL')] = 'http://localhost:5173'
       }
 
       // A qué base y a qué Mercado Pago le está hablando este dev server, en una
       // línea y sin secretos. Es la pregunta que uno se hace cuando los números
       // no cierran.
+      //
+      // La línea de `mp` dice de antemano lo que el cerrojo de entorno.js va a
+      // hacer en el primer checkout. Enterarse al arrancar es gratis; enterarse
+      // cuando alguien está pagando, no.
       const url = process.env.SUPABASE_URL || ''
       const local = /127\.0\.0\.1|localhost/.test(url)
-      const pisadas = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'MP_ACCESS_TOKEN', 'PUBLIC_SITE_URL']
+      const pisadas = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', clave('MP_ACCESS_TOKEN'), clave('PUBLIC_SITE_URL')]
         .filter(k => antes[k] !== undefined && antes[k] !== '')
 
       console.log('')
+      console.log(`  entorno    ${entorno}${entorno === 'production' ? '  ← cobra de verdad' : ''}`)
       console.log(`  base       ${url || '(sin configurar)'}${local ? '  ← Supabase LOCAL, no la de producción' : ''}`)
-      console.log(`  mp         ${/^TEST-/.test(process.env.VITE_MP_PUBLIC_KEY || '') ? 'credenciales de test' : (process.env.MP_ACCESS_TOKEN ? 'configurado' : '(sin configurar)')}`)
-      console.log(`  sitio      ${process.env.PUBLIC_SITE_URL}`)
+      const mp = diagnosticoMP(del('MP_ACCESS_TOKEN'), entorno)
+      console.log(`  mp         ${mp.texto}${mp.ok ? '' : '  ←'}`)
+      console.log(`  sitio      ${del('PUBLIC_SITE_URL')}`)
       if (pisadas.length) {
         console.log(`\n  ⚠ el shell pisa a .env.local en: ${pisadas.join(', ')}`)
         console.log(`    (loadEnvFile no sobrescribe lo ya exportado — usá \`unset\` si no era a propósito)`)

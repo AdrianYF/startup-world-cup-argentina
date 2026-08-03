@@ -15,12 +15,24 @@
  */
 import { execSync, spawn } from 'node:child_process'
 
+const estado = () =>
+  execSync('supabase status -o env', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+
 let status
 try {
-  status = execSync('supabase status -o env', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+  status = estado()
 } catch {
-  console.error('\n  ✗ El Supabase local no está corriendo. Levantalo con:\n\n      supabase start\n')
-  process.exit(1)
+  // Levantarlo acá en vez de mandar a correr `supabase start`: era un paso
+  // manual que sólo servía para fallar la primera vez. La primera corrida baja
+  // las imágenes y tarda; las siguientes son segundos.
+  console.log('\n  El Supabase local no estaba corriendo. Levantándolo…\n')
+  try {
+    execSync('supabase start', { stdio: 'inherit' })
+    status = estado()
+  } catch {
+    console.error('\n  ✗ No pude levantar el Supabase local. ¿Docker está andando?\n')
+    process.exit(1)
+  }
 }
 
 const leer = clave => (status.match(new RegExp(`^${clave}="?([^"\n]+)"?`, 'm')) || [])[1]

@@ -11,6 +11,7 @@
 // transform JSX clásico y revienta con "React is not defined" en producción)
 import { Resend } from 'resend'
 import { formatARS } from './http.js'
+import { ENTORNO, valorDe } from './entorno.js'
 // Con extensión `.js` y no `.tsx`: TypeScript resuelve el `.tsx` igual, y así
 // el specifier ya apunta al archivo compilado que es lo que corre en Vercel.
 // Ver scripts/build-emails.mjs.
@@ -49,10 +50,15 @@ export async function enviarEntrada({
   tierNombre: string
   entradas: EntradaMail[]
 }): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY
-  const from = process.env.RESEND_FROM
+  // Del entorno activo: en desarrollo son RESEND_TEST_*. Es lo que separa
+  // "probé el checkout" de "le mandé un mail a alguien con el remitente real".
+  const apiKey = valorDe('RESEND_API_KEY', { obligatoria: false })
+  const from = valorDe('RESEND_FROM', { obligatoria: false })
   if (!apiKey || !from) {
-    console.warn('[email] sin RESEND_API_KEY o RESEND_FROM: no se manda el mail')
+    // No tira: mandar el mail es lo último del webhook y el pago YA está
+    // acreditado. Avisa con el nombre de la variable del entorno en que corre,
+    // que si no en desarrollo se busca la que no es.
+    console.warn(`[email] sin credenciales de Resend en ${ENTORNO}: no se manda el mail`)
     return false
   }
 
@@ -68,7 +74,7 @@ export async function enviarEntrada({
     const { error } = await new Resend(apiKey).emails.send({
       from,
       to: orden.buyer_email,
-      replyTo: process.env.RESEND_REPLY_TO || undefined,
+      replyTo: valorDe('RESEND_REPLY_TO', { obligatoria: false }) || undefined,
       subject: varias
         ? `Tus ${entradas.length} entradas para Startup World Cup Argentina 2026 · ${tierNombre}`
         : `Tu entrada para Startup World Cup Argentina 2026 · ${tierNombre}`,
