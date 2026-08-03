@@ -43,8 +43,15 @@ async function tandasActivas(url, key) {
   }
 }
 
-/** Vercel agrega status()/send()/json() al `res` de node. Acá se replican. */
-function vercelizar(req, res, url) {
+/**
+ * Vercel agrega status()/send()/json() al `res` de node. Acá se replican.
+ *
+ * Exportado para que los tests de integración usen ESTE shim y no uno propio.
+ * Con dos copias, un handler podría pasar en los tests y fallar en `vite dev` —o
+ * al revés— por una diferencia entre dos imitaciones de lo mismo. Ya hay dos
+ * runtimes (este y el de Vercel); un tercero de mentira no ayuda a nadie.
+ */
+export function vercelizar(req, res, url) {
   req.query = Object.fromEntries(url.searchParams)
 
   res.status = code => {

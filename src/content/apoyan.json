@@ -172,6 +172,13 @@
         "img": "/logos/imatchin-white.svg",
         "scale": 0.6,
         "url": "https://imatchin.com"
+      },
+      {
+        "nombre": "Ciudad de Buenos Aires",
+        "img": "/logos/ba-white.webp",
+        "scale": 0.75,
+        "muted": true,
+        "url": "https://buenosaires.gob.ar/"
       }
     ]
   }
