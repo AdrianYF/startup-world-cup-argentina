@@ -58,12 +58,19 @@ function Footer() {
               Buenos Aires para potenciar el ecosistema regional.
             </p>
 
-            {/* Recordatorio fecha + lugar */}
-            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold">
-              <CalendarIcon />
-              <span className="text-[#75AADB]">
-                {fechas}
-              </span>
+            {/* Recordatorio fecha + lugar. El «+ lugar» que decía el comentario
+                faltaba: mostraba sólo la fecha. */}
+            <div className="flex flex-col gap-2">
+              <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold">
+                <CalendarIcon />
+                <span className="text-[#75AADB]">
+                  {fechas}
+                </span>
+              </div>
+              <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-gray-400">
+                <span className="shrink-0"><PinIcon /></span>
+                <span>{cfg.evento.lugar} · {cfg.evento.direccion}</span>
+              </div>
             </div>
           </div>
 
@@ -121,9 +128,17 @@ function Footer() {
                   {links.emailGeneral}
                 </a>
               </li>
-              <li className="inline-flex items-center gap-2 text-gray-400 text-[15px] font-medium">
-                <PinIcon />
-                Buenos Aires, Argentina
+              {/* La sede, con dirección: es el dato que se busca el día antes.
+                  Sale de config.json y ya no está escrita acá — `evento.lugar`
+                  existía y no lo usaba nadie, así que el footer decía «Buenos
+                  Aires, Argentina» a mano y el JSON no servía para nada. */}
+              <li className="flex items-start gap-2 text-gray-400 text-[15px] font-medium">
+                <span className="mt-0.5 shrink-0"><PinIcon /></span>
+                <span>
+                  {cfg.evento.lugar}
+                  <br />
+                  <span className="text-gray-500">{cfg.evento.direccion}</span>
+                </span>
               </li>
             </ul>
 
