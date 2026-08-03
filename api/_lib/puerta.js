@@ -85,9 +85,26 @@ export function esDiaConocido(dias) {
 /* Sesión                                                                      */
 /* -------------------------------------------------------------------------- */
 
-// Después del evento la sesión no sirve para nada, así que no tiene sentido que
-// siga viva.
-const VENCE = Date.UTC(2026, 7, 9) // 9 de agosto de 2026, 00:00 UTC
+/**
+ * Cuánto dura una sesión, contada desde que se firma.
+ *
+ * Era una FECHA FIJA (`Date.UTC(2026, 7, 9)`) y eso tenía un final malo escrito
+ * adentro: pasada esa fecha, `firmarSesion()` emitía tokens YA vencidos. O sea
+ * que el backoffice no se quedaba sin sesión — se volvía imposible de abrir, con
+ * 401 permanente y sin forma de entrar ni sabiendo el PIN. La única salida era
+ * tocar el código.
+ *
+ * Y el backoffice no muere con el evento: los reembolsos, Ventas y Métricas se
+ * miran la semana siguiente, que es justo cuando la fecha fija ya había pasado.
+ *
+ * Siete días desde cada login. Cubre los tres días del evento sin que a nadie se
+ * le corte la sesión en el medio —quien entra el miércoles sigue adentro el
+ * viernes— y acota lo que puede hacer un celular perdido: en esa pantalla queda
+ * cacheada la lista entera, con el mail y el teléfono de cada persona.
+ *
+ * Para revocar todo de una sigue estando cambiar `PUERTA_SECRET`.
+ */
+const DURACION_MS = 7 * 24 * 60 * 60 * 1000
 
 const b64 = buf => Buffer.from(buf).toString('base64url')
 
@@ -124,8 +141,8 @@ export function pinValido(pin) {
  * Sin estado en la base, igual que `ticket_token`: no hay usuarios que listar ni
  * sesiones que expirar a mano. Para revocar todo, se cambia `PUERTA_SECRET`.
  */
-export function firmarSesion() {
-  const payload = b64(JSON.stringify({ exp: VENCE }))
+export function firmarSesion(ahora = Date.now()) {
+  const payload = b64(JSON.stringify({ exp: ahora + DURACION_MS }))
   return `${payload}.${firmar(payload)}`
 }
 
