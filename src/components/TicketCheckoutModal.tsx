@@ -75,6 +75,15 @@ function TicketCheckoutModal({
   const [asistentes, setAsistentes] = useState<string[]>([''])
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
   const [publicKey, setPublicKey] = useState<string | null>(null)
+  /**
+   * La orden que ya creamos en este modal, si el comprador volvió a editar.
+   *
+   * Se manda en el próximo intento para que el servidor la libere: si no, cada
+   * "volver y corregir" dejaba otra orden pendiente comiéndose el cupo por media
+   * hora, y con cinco entradas por compra alcanzaba para agotar la tanda sin que
+   * nadie hubiera pagado nada.
+   */
+  const [ordenPrevia, setOrdenPrevia] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
 
@@ -92,7 +101,9 @@ function TicketCheckoutModal({
     trackEvent('checkout_start', { tier, cantidad })
 
     try {
-      const { preferenceId: pref, publicKey: clave } = await crearCheckout(tier, cantidad, comprador, asistentes)
+      const { orderId, preferenceId: pref, publicKey: clave } =
+        await crearCheckout(tier, cantidad, comprador, asistentes, ordenPrevia)
+      setOrdenPrevia(orderId)
       setPublicKey(clave || null)
       setPreferenceId(pref)
       setPaso('pago')

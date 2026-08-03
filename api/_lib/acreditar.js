@@ -64,8 +64,23 @@ export async function acreditar({ orden, pago, baseUrl }) {
     return { orden, cambio: false }
   }
 
+  // Una orden paga no vuelve atrás por un pago que NO es el que la pagó.
+  //
+  // Mercado Pago reintenta las notificaciones de los intentos viejos, y una
+  // compra puede tener varios: rechazado, rechazado, aprobado. Si el reintento
+  // del primer rechazo llega después de que el tercero acreditó, sin esto pisaba
+  // el `paid` y dejaba la orden en `rejected`. Consecuencia concreta: esa fila
+  // sale de la vista `acreditacion` y la persona desaparece de la lista de la
+  // puerta el día del evento, con la entrada pagada en la mano.
+  if (orden.status === 'paid' && pago.status !== 'approved') {
+    return { orden, cambio: false }
+  }
+
   if (pago.status !== 'approved') {
-    const { data } = await db()
+    // Los mismos cerrojos que la rama de abajo. `refunded` tampoco se pisa: lo
+    // puso una persona a mano desde el backoffice y una notificación vieja no
+    // tiene por qué deshacerlo.
+    const { data, error } = await db()
       .from('orders')
       .update({
         status: pago.status === 'pending' || pago.status === 'in_process' ? 'pending' : 'rejected',
@@ -73,9 +88,19 @@ export async function acreditar({ orden, pago, baseUrl }) {
         mp_status_detail: pago.status_detail || pago.status,
       })
       .eq('id', orden.id)
+      .neq('status', 'paid')
+      .neq('status', 'refunded')
       .select('*')
       .maybeSingle()
-    return { orden: data || orden, cambio: true }
+
+    // 23505 = ese `mp_payment_id` ya está en otra orden (el UNIQUE de la
+    // migración 0001). No es un fallo nuestro: significa que esa notificación ya
+    // se aplicó. Dejarlo tirar acá devuelve 500 y MP reintenta para siempre.
+    if (error && error.code !== '23505') throw error
+
+    // `cambio` dice si esto tocó algo de verdad — es lo que el webhook devuelve
+    // como `idempotente`. Antes iba `true` fijo, aun cuando no se actualizó nada.
+    return { orden: data || orden, cambio: Boolean(data) }
   }
 
   // Se compara lo cobrado con lo que la orden dice. Si no coincide se acredita
@@ -92,6 +117,9 @@ export async function acreditar({ orden, pago, baseUrl }) {
 
   // El `.neq('status','paid')` es lo que hace que dos ejecuciones simultáneas no
   // acrediten las dos: sólo una encuentra la fila todavía sin pagar.
+  //
+  // `refunded` va por la misma razón que arriba: si alguien ya la reembolsó a
+  // mano, una notificación que llega tarde no la vuelve a poner en la lista.
   const { data: acreditada, error } = await db()
     .from('orders')
     .update({
@@ -101,10 +129,13 @@ export async function acreditar({ orden, pago, baseUrl }) {
     })
     .eq('id', orden.id)
     .neq('status', 'paid')
+    .neq('status', 'refunded')
     .select('*')
     .maybeSingle()
 
-  if (error) throw error
+  // Ver la nota del 23505 en la rama de arriba: es «esto ya se aplicó», no un
+  // fallo. Cae al re-read de abajo, que devuelve el estado real.
+  if (error && error.code !== '23505') throw error
 
   if (!acreditada) {
     // Otra ejecución ganó la carrera. Se relee para devolver el estado real.

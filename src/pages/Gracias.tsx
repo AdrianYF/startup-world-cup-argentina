@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { PageLayout } from '../components/ui/PageLayout'
 import { SectionGlow } from '../components/ui/SectionGlow'
-import { fetchOrden, formatARS, type Orden } from '../lib/checkout'
+import { formatARS, type Orden } from '../lib/checkout'
+import { useOrdenPolling } from '../lib/useOrdenPolling'
 
 /**
  * Vuelta desde Mercado Pago.
@@ -15,49 +15,14 @@ import { fetchOrden, formatARS, type Orden } from '../lib/checkout'
  * son parte de una URL que cualquiera puede escribir a mano.
  */
 
-/** Cada cuánto se vuelve a preguntar mientras la orden está pendiente. */
-const POLL_MS = 2500
-
-/** Cuánto se espera antes de bajar los brazos (~40s). */
-const POLL_MAX = 16
-
 function Gracias() {
   const [params] = useSearchParams()
   const ordenId = params.get('orden')
 
-  const [orden, setOrden] = useState<Orden | null>(null)
-  const [agotado, setAgotado] = useState(false)
-  const [error, setError] = useState(false)
-  const intentos = useRef(0)
-
-  useEffect(() => {
-    if (!ordenId) return
-    const ac = new AbortController()
-    let timer: number | undefined
-
-    async function mirar() {
-      try {
-        const o = await fetchOrden(ordenId!, ac.signal)
-        setOrden(o)
-        if (o.status !== 'pending') return
-
-        intentos.current += 1
-        if (intentos.current >= POLL_MAX) {
-          setAgotado(true)
-          return
-        }
-        timer = window.setTimeout(mirar, POLL_MS)
-      } catch {
-        if (!ac.signal.aborted) setError(true)
-      }
-    }
-
-    mirar()
-    return () => {
-      ac.abort()
-      if (timer) clearTimeout(timer)
-    }
-  }, [ordenId])
+  // Compartido con el modal del landing: son la misma espera. Ver
+  // `lib/useOrdenPolling.ts`, que además reintenta ante un error pasajero en vez
+  // de decirle «no encontramos la compra» a alguien que acaba de pagar.
+  const { orden, agotado, error } = useOrdenPolling(ordenId)
 
   return (
     <PageLayout>

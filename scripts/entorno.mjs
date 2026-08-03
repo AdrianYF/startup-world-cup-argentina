@@ -58,7 +58,7 @@ const VARIABLES = [
 const pistaDe = (v, entorno) => (typeof v.pista === 'function' ? v.pista(entorno) : v.pista)
 
 /** Lo que NO conmuta, para que se vea que es a propósito y no un olvido. */
-const COMPARTIDAS = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY']
+const COMPARTIDAS = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'VENTA_PROPIA']
 
 const OK = '✓'
 const MAL = '✗'
@@ -100,13 +100,64 @@ for (const entorno of ['development', 'production']) {
   console.log('')
 }
 
-console.log('  las dos puntas comparten')
+console.log('  igual en los dos entornos')
 for (const nombre of COMPARTIDAS) {
   const valor = process.env[nombre]
+  // La venta propia se muestra por lo que hace, no por si está cargada: apagada
+  // es un estado legítimo y es el default.
+  if (nombre === 'VENTA_PROPIA') {
+    const on = ['on', 'true', '1'].includes((valor || '').trim().toLowerCase())
+    console.log(`    ${on ? OK : NADA} ${nombre.padEnd(26)} `
+      + (on ? 'on · el sitio cobra con Mercado Pago' : 'off · el botón lleva a Startup Grind'))
+    continue
+  }
   console.log(`    ${valor ? OK : MAL} ${nombre.padEnd(26)} ${valor && !/KEY|SECRET/.test(nombre) ? valor : (valor ? 'cargada' : 'falta')}`)
 }
 console.log('\n    Supabase no conmuta a propósito: una sola base para los dos.')
 console.log('    Para no escribir en la del evento: npm run dev:local\n')
+
+/**
+ * ¿Por qué no sale Mercado Pago?
+ *
+ * Es LA pregunta, y la respuesta nunca está entera en el `.env`: para que el
+ * sitio ofrezca pagar hacen falta `VENTA_PROPIA=on` **y** al menos una tanda con
+ * `activo = true` en la base a la que ese server le pregunta. Con la variable en
+ * `on` y cero tandas, el botón se va a Startup Grind exactamente igual que si
+ * estuviera apagada, y desde afuera las dos situaciones se ven idénticas.
+ */
+const ventaOn = ['on', 'true', '1'].includes((process.env.VENTA_PROPIA || '').trim().toLowerCase())
+if (ventaOn && process.env.SUPABASE_URL && process.env.SUPABASE_SECRET_KEY) {
+  const key = process.env.SUPABASE_SECRET_KEY
+  try {
+    const r = await fetch(`${process.env.SUPABASE_URL}/rest/v1/tiers?select=id,nombre,activo`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(8000),
+    })
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const filas = /** @type {{ id: string, nombre: string, activo: boolean }[]} */ (
+      await r.json()
+    )
+    const activas = filas.filter(t => t.activo)
+    console.log('  las tandas, en esa base')
+    if (!filas.length) {
+      console.log(`    ${MAL} la tabla tiers está vacía`)
+    } else {
+      for (const t of filas) {
+        console.log(`    ${t.activo ? OK : NADA} ${String(t.id).padEnd(26)} ${t.nombre}`
+          + `${t.activo ? '' : ' · activo = false'}`)
+      }
+    }
+    if (!activas.length) {
+      console.log('')
+      console.log('    Con VENTA_PROPIA=on pero 0 tandas activas, el botón lleva a Startup')
+      console.log('    Grind igual: /api/tiers devuelve una lista vacía y el sitio no tiene')
+      console.log('    qué vender. Activar una en la base de la nube ABRE la venta al público.')
+    }
+    console.log('')
+  } catch (err) {
+    console.log(`  (no pude leer las tandas: ${err.message})\n`)
+  }
+}
 
 /**
  * Lo único que se le pregunta a la red, y es la misma pregunta que hace el
@@ -124,6 +175,7 @@ if (tokenDev?.startsWith('APP_USR-')) {
       signal: AbortSignal.timeout(8000),
     })
     if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    /** @type {{ id?: number, nickname?: string, tags?: string[] }} */
     const cuenta = await r.json()
     const esDePrueba = (cuenta.tags || []).includes('test_user')
     console.log('  la cuenta de desarrollo, según Mercado Pago')

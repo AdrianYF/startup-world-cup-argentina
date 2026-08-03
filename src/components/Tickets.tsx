@@ -42,11 +42,18 @@ function Tickets() {
   // segundo se corregirían.
   const [consultado, setConsultado] = useState(false)
 
+  // El interruptor de la venta propia. Arranca apagado: mientras no se sepa, el
+  // botón lleva al canal que siempre está abierto.
+  const [ventaPropia, setVentaPropia] = useState(false)
+
   useEffect(() => {
     const ac = new AbortController()
-    fetchTiers(ac.signal).then(tiers => {
+    fetchTiers(ac.signal).then(venta => {
       if (ac.signal.aborted) return
-      if (tiers) setLive(Object.fromEntries(tiers.map(t => [t.id, t])))
+      if (venta) {
+        setVentaPropia(venta.ventaPropia)
+        setLive(Object.fromEntries(venta.tiers.map(t => [t.id, t])))
+      }
       setConsultado(true)
     })
     return () => ac.abort()
@@ -107,15 +114,16 @@ function Tickets() {
             const precio = datos ? formatARS(datos.precio) : plan.precio
             const estadoLabel = agotado ? 'agotado' : plan.estado
 
-            // `/api/tiers` sólo devuelve los tiers activos. Que una tanda a la
-            // venta no tenga datos vivos significa que la venta propia está
-            // cerrada — o que la API no contestó, que para el comprador es lo
-            // mismo: por ese camino hoy no puede comprar.
+            // Dos motivos distintos para no abrir el modal, y ahora se
+            // distinguen: `ventaPropia` en false es «todavía no abrimos la venta
+            // por acá», decidido con una variable; sin `datos` es «esa tanda no
+            // está activa, o la API no contestó», que para el comprador da igual
+            // — por ese camino hoy no puede comprar.
             //
             // No se apaga el botón: Startup Grind sigue vendiendo su propio cupo.
             // Se lo manda derecho allá en vez de abrir un modal cuyo botón de
-            // Mercado Pago devolvería 404.
-            const soloStartupGrind = disponible && consultado && !datos
+            // Mercado Pago devolvería 403.
+            const soloStartupGrind = disponible && consultado && (!ventaPropia || !datos)
 
             // La VIP se destaca con el dorado, no con la escala: dos cards
             // agrandadas al lado compiten y ninguna gana.

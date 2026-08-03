@@ -27,11 +27,15 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
  * detrás del mismo PIN y no se abre en la fila de entrada.
  */
 export async function asistentes(res) {
-  const [{ data: filas, error }, { data: ambos }] = await Promise.all([
+  const [{ data: filas, error }, { data: ambos, error: errAmbos }] = await Promise.all([
     db().from('acreditacion').select('*'),
     db().from('acreditacion_ambos_canales').select('email, origenes'),
   ])
   if (error) throw error
+  // Se tira, no se ignora: si esta vista falla y seguimos, la pantalla dice
+  // «nadie pagó dos veces», que es una respuesta y no un error. El aviso de pago
+  // doble desaparecería del backoffice entero sin que nadie se entere.
+  if (errAmbos) throw errAmbos
 
   const dobles = new Set(
     (ambos || [])
@@ -143,11 +147,19 @@ export async function bajaPersona(res, body) {
   if (!UUID_RE.test(id)) return json(res, 400, { error: 'id_invalido' })
   if (String(body.origen) === 'web') return json(res, 400, { error: 'baja_web_no' })
 
-  const { error } = await db()
+  // El `.select().maybeSingle()` no es decoración: sin él, un id que no existe
+  // —o el de una entrada web mandado con `origen: 'luma'`, que el chequeo de
+  // arriba no atrapa porque confía en lo que dice el cliente— actualizaba cero
+  // filas y contestaba `200 {ok:true}` igual. Del otro lado alguien creía haber
+  // dado de baja a una persona que sigue entrando. `editarTier` ya lo hace así.
+  const { data, error } = await db()
     .from('asistentes_externos')
     .update({ estado_norm: body.deshacer ? 'confirmado' : 'rechazado' })
     .eq('id', id)
+    .select('id')
+    .maybeSingle()
   if (error) throw error
+  if (!data) return json(res, 404, { error: 'persona_inexistente' })
 
   json(res, 200, { ok: true })
 }
@@ -193,14 +205,6 @@ export async function reenviar(res, body, baseUrl) {
 /* Ventas                                                                      */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Las compras, con su estado y su plata.
- *
- * Las `pending` que todavía no vencieron RESERVAN cupo (ver `stock_disponible`):
- * por eso viaja `expires_at` y por eso se las puede liberar a mano. Hasta ahora
- * una orden abandonada se comía una entrada hasta que vencía sola, y no había
- * dónde verlo.
- */
 /**
  * Las compras, con su plata ya resuelta.
  *
@@ -276,6 +280,14 @@ export function totalesCupo(filas) {
   }
 }
 
+/**
+ * Las compras, con su estado y su plata.
+ *
+ * Las `pending` que todavía no vencieron RESERVAN cupo (ver `stock_disponible`):
+ * por eso viaja `expires_at` y por eso se las puede liberar a mano. Hasta ahora
+ * una orden abandonada se comía una entrada hasta que vencía sola, y no había
+ * dónde verlo.
+ */
 export async function ordenes(res) {
   const filas = await traerOrdenes()
   json(res, 200, { ordenes: filas, totales: totalesVentas(filas) })
@@ -299,12 +311,24 @@ export async function accionOrden(res, body, baseUrl) {
   if (!orden) return json(res, 404, { error: 'orden_inexistente' })
 
   if (accion === 'reconciliar') {
-    // Import perezoso: `acreditar.js` levanta el SDK de Mercado Pago, y las
-    // otras acciones no lo necesitan.
+    // Estos dos se importan acá y no arriba sólo por cercanía: son lo único que
+    // usa esta rama. NO es un import perezoso —`acreditar.js` ya entra estático
+    // en la línea 12 y se trae el SDK de Mercado Pago con él— y decir que lo era
+    // hacía creer que las otras acciones no lo pagaban. Lo pagan.
     const { buscarPagoDeOrden, acreditar } = await import('./acreditar.js')
-    if (!process.env.MP_ACCESS_TOKEN) return json(res, 503, { error: 'mp_no_configurado' })
+    const { ErrorDeEntorno } = await import('./entorno.js')
 
-    const pago = await buscarPagoDeOrden(orden.id)
+    // El chequeo lo hace `credencialesMP()` adentro de `buscarPagoDeOrden`, que
+    // sabe qué variable mira cada entorno: en desarrollo es MP_TEST_ACCESS_TOKEN
+    // y mirar la de producción a mano daba 503 con todo bien configurado.
+    let pago
+    try {
+      pago = await buscarPagoDeOrden(orden.id)
+    } catch (err) {
+      if (!(err instanceof ErrorDeEntorno)) throw err
+      console.error('[admin:reconciliar]', err.message)
+      return json(res, 503, { error: 'mp_no_configurado' })
+    }
     if (!pago) return json(res, 404, { error: 'sin_pagos_en_mp' })
 
     const r = await acreditar({ orden, pago, baseUrl })
@@ -327,8 +351,25 @@ export async function accionOrden(res, body, baseUrl) {
   if (accion === 'reembolsar') {
     // El reembolso se hace en Mercado Pago, no acá: esto sólo deja constancia y
     // saca a esas entradas de la lista de la puerta.
-    const { error: err } = await db().from('orders').update({ status: 'refunded' }).eq('id', id)
+    //
+    // Sólo sobre una orden PAGA, como `liberar` sólo actúa sobre una pendiente.
+    // Marcar reembolsada una `pending` o una `expired` no describe nada que haya
+    // pasado, y sobre una ya reembolsada pisaba el detalle de la primera vez.
+    const { data, error: err } = await db()
+      .from('orders')
+      .update({
+        status: 'refunded',
+        // Queda escrito cuándo, porque la pregunta llega siempre una semana
+        // después. El quién necesita una columna propia — está anotado para
+        // después del evento.
+        mp_status_detail: `reembolsada a mano ${new Date().toISOString()}`,
+      })
+      .eq('id', id)
+      .eq('status', 'paid')
+      .select('id')
+      .maybeSingle()
     if (err) throw err
+    if (!data) return json(res, 409, { error: 'orden_no_paga' })
     return json(res, 200, { ok: true })
   }
 
@@ -339,7 +380,6 @@ export async function accionOrden(res, body, baseUrl) {
 /* Stock                                                                       */
 /* -------------------------------------------------------------------------- */
 
-/** Los tiers con su cupo libre. Hasta ahora esto era un UPDATE en el SQL Editor. */
 /** Los tiers con su cupo libre. Los comparten `tiers()` y `metricas()`. */
 async function traerTiers() {
   const { data, error } = await db()

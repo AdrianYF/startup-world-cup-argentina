@@ -66,6 +66,24 @@ export function nombreEn(nombre, entorno = ENTORNO) {
 }
 
 /**
+ * ¿El sitio ofrece pagar con Mercado Pago?
+ *
+ * Es una decisión de negocio, no de configuración: «¿ya abrimos la venta
+ * propia?». Por eso NO se desdobla con `TEST_` como las credenciales — es la
+ * misma pregunta en los dos entornos, con distinta respuesta según el deploy.
+ *
+ * Existe porque hasta ahora el único interruptor era `tiers.activo`, que hace
+ * dos trabajos a la vez: decide qué tanda se vende Y si la venta propia existe.
+ * Con eso, la única forma de ver el checkout era abrirle la venta al público.
+ *
+ * Apagada por omisión. Un deploy al que se le olvidó la variable vende por el
+ * canal de siempre; al revés, cobra sin que nadie lo haya decidido.
+ */
+export function ventaPropiaAbierta() {
+  return ['on', 'true', '1'].includes((process.env.VENTA_PROPIA || '').trim().toLowerCase())
+}
+
+/**
  * El id de la cuenta que emitió un token de Mercado Pago.
  *
  * Va adentro del propio token, en el último segmento:
@@ -96,6 +114,7 @@ const cuentasVerificadas = new Map()
 async function esCuentaDePrueba(token) {
   if (cuentasVerificadas.has(token)) return cuentasVerificadas.get(token)
 
+  /** @type {{ tags?: string[] }} */
   let cuenta
   try {
     const r = await fetch('https://api.mercadopago.com/users/me', {
@@ -103,7 +122,7 @@ async function esCuentaDePrueba(token) {
       signal: AbortSignal.timeout(8000),
     })
     if (!r.ok) throw new Error(`HTTP ${r.status}`)
-    cuenta = await r.json()
+    cuenta = /** @type {{ tags?: string[] }} */ (await r.json())
   } catch (err) {
     throw new ErrorDeEntorno(
       `No pude confirmar con Mercado Pago que la cuenta ${cuentaDe(token)} sea de `

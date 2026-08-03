@@ -16,8 +16,19 @@ import { dia as buscarDia, rejectSinSesion } from './_lib/puerta.js'
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const CAMPOS = 'id, origen, nombre, email, telefono, empresa, entrada, dias'
 
-/** Todos los altas de puerta viven bajo el mismo "evento". */
-const EVENTO = 'puerta'
+/**
+ * El "evento" de un alta lleva la fecha, y eso no es cosmético.
+ *
+ * `asistentes_externos` tiene un índice único `(origen, evento, email)` (ver la
+ * migración 0004). Hasta acá todos los altas entraban con `evento = 'puerta'`
+ * fijo, así que la regla que dice el comentario de más abajo —«si vuelve mañana,
+ * se lo agrega de nuevo»— chocaba contra ese índice: al día siguiente es el mismo
+ * (origen, evento, email) y el insert reventaba.
+ *
+ * Con la fecha adentro, un alta es para HOY y mañana es otra fila, que es
+ * exactamente lo que `dias` ya venía diciendo.
+ */
+const eventoDe = d => `puerta-${d.fecha}`
 
 /**
  * Por qué se dio de alta. Termina en `acreditacion.entrada`, así que se ve en la
@@ -63,7 +74,7 @@ export default async function handler(req, res) {
     const fila = {
       id,
       origen: 'puerta',
-      evento: EVENTO,
+      evento: eventoDe(d),
       nombre,
       // Vacío queda NULL, no cadena vacía: el índice único trata a los NULL como
       // distintos, así que varios altas sin mail conviven.
@@ -86,17 +97,39 @@ export default async function handler(req, res) {
       .from('asistentes_externos')
       .upsert(fila, { onConflict: 'id', ignoreDuplicates: true })
 
-    if (error) throw error
+    // 23505 = ya había un alta de hoy con ese mail, con OTRO id. En la puerta eso
+    // no es un error: quiere decir «esta persona ya está en la lista», y lo que
+    // sigue es acreditarla. Abajo se relee la que está y se devuelve esa.
+    //
+    // Contestar 5xx acá era peor que inútil. La cola offline da los 5xx por
+    // reintentables y `vaciarCola()` corta en el primero (ver
+    // backoffice/src/lib/acreditar.ts), así que este alta se quedaba en la cabeza
+    // de la cola trabando TODOS los ingresos encolados detrás: una persona
+    // repetida y la puerta entera dejaba de sincronizar. Una constraint que va a
+    // fallar siempre igual nunca puede devolver un error que invita a reintentar.
+    if (error && error.code !== '23505') throw error
 
     // Se devuelve como la ve la lista, para que la pantalla la agregue sin
     // tener que recargar todo.
-    const { data: persona, error: errLeer } = await db()
-      .from('acreditacion')
-      .select(CAMPOS)
-      .eq('id', id)
-      .maybeSingle()
+    let persona = await leerDeAcreditacion(id)
 
-    if (errLeer) throw errLeer
+    if (!persona && fila.email) {
+      // No está por su id: el alta chocó con una anterior, que tiene otro id. Se
+      // la busca por donde chocó —(origen, evento, email), que es el índice
+      // único— y de paso se la reconfirma: si alguien le había dado de baja, que
+      // el staff la esté dando de alta en la puerta es la decisión más nueva.
+      const { data: previa, error: errPrevia } = await db()
+        .from('asistentes_externos')
+        .update({ nombre: fila.nombre, dias: fila.dias, estado_norm: 'confirmado' })
+        .eq('origen', 'puerta')
+        .eq('evento', fila.evento)
+        .eq('email', fila.email)
+        .select('id')
+        .maybeSingle()
+      if (errPrevia) throw errPrevia
+      if (previa) persona = await leerDeAcreditacion(previa.id)
+    }
+
     if (!persona) return json(res, 500, { error: 'alta_no_visible' })
 
     json(res, 201, { persona })
@@ -104,4 +137,15 @@ export default async function handler(req, res) {
     console.error('[puerta-agregar]', err)
     json(res, 500, { error: 'alta_fallo' })
   }
+}
+
+/** La fila como la ve la lista de la puerta, o null si todavía no está ahí. */
+async function leerDeAcreditacion(id) {
+  const { data, error } = await db()
+    .from('acreditacion')
+    .select(CAMPOS)
+    .eq('id', id)
+    .maybeSingle()
+  if (error) throw error
+  return data || null
 }

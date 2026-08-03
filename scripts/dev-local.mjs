@@ -18,6 +18,26 @@ import { execSync, spawn } from 'node:child_process'
 const estado = () =>
   execSync('supabase status -o env', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
 
+const dormir = ms => new Promise(r => setTimeout(r, ms))
+
+/**
+ * Espera a que la base esté para atender, no a que el comando termine.
+ *
+ * `supabase start` vuelve —o falla con «is already running»— antes de que el
+ * contenedor de Postgres esté healthy, así que preguntar una sola vez pierde por
+ * carrera. Lo que decide es `supabase status`: cuando contesta, la base está.
+ */
+async function esperarBase(segundos = 90) {
+  for (let i = 0; i < segundos / 2; i++) {
+    try {
+      return estado()
+    } catch {
+      await dormir(2000)
+    }
+  }
+  return null
+}
+
 let status
 try {
   status = estado()
@@ -26,11 +46,16 @@ try {
   // manual que sólo servía para fallar la primera vez. La primera corrida baja
   // las imágenes y tarda; las siguientes son segundos.
   console.log('\n  El Supabase local no estaba corriendo. Levantándolo…\n')
+  // El fallo de `start` no es concluyente: también dice que falla cuando ya hay
+  // otro arranque en curso, que es el caso en que sólo hay que esperar.
   try {
     execSync('supabase start', { stdio: 'inherit' })
-    status = estado()
-  } catch {
-    console.error('\n  ✗ No pude levantar el Supabase local. ¿Docker está andando?\n')
+  } catch { /* lo resuelve la espera de abajo */ }
+
+  status = await esperarBase()
+  if (!status) {
+    console.error('\n  ✗ El Supabase local no llegó a levantar.')
+    console.error('    Mirá qué dice:  supabase status   ·   docker ps --filter name=supabase\n')
     process.exit(1)
   }
 }

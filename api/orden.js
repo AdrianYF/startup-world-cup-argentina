@@ -40,7 +40,13 @@ export default async function handler(req, res) {
 
     let orden = data
 
-    if (orden.status === 'pending' && process.env.MP_ACCESS_TOKEN) {
+    // Sin chequear ninguna variable acá: quién sabe si Mercado Pago está
+    // configurado es `credencialesMP()`, y si no lo está tira adentro del try.
+    // Mirar `process.env.MP_ACCESS_TOKEN` a mano era saberlo dos veces, y en
+    // desarrollo la respuesta correcta vive en MP_TEST_ACCESS_TOKEN: con la
+    // producción vacía —que es lo normal en local— la reconciliación no corría
+    // nunca y la compra se quedaba en `pending` para siempre.
+    if (orden.status === 'pending') {
       try {
         const pago = await buscarPagoDeOrden(orden.id)
         if (pago) {

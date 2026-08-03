@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { Modal } from './ui/Modal'
 import { trackEvent } from '../lib/analytics'
-import { fetchOrden, formatARS, type Orden } from '../lib/checkout'
+import { formatARS, type Orden } from '../lib/checkout'
+import { useOrdenPolling } from '../lib/useOrdenPolling'
 
 /**
  * Vuelta de Mercado Pago: felicitaciones y la entrada, sin salir del landing.
@@ -15,47 +15,16 @@ import { fetchOrden, formatARS, type Orden } from '../lib/checkout'
  * Pago con nuestro access token y acredita si corresponde.
  */
 
-/** Cada cuánto se vuelve a preguntar mientras el pago no está confirmado. */
-const POLL_MS = 2500
-/** Cuántos intentos antes de bajar los brazos (~40s). */
-const POLL_MAX = 16
-
 const TITLE_ID = 'compra-titulo'
 
 type Props = { ordenId: string; onClose: () => void }
 
 function CompraExitosaModal({ ordenId, onClose }: Props) {
-  const [orden, setOrden] = useState<Orden | null>(null)
-  const [agotado, setAgotado] = useState(false)
-  const [error, setError] = useState(false)
-  const intentos = useRef(0)
-
-  useEffect(() => {
-    const ac = new AbortController()
-    let timer: number | undefined
-
-    async function mirar() {
-      try {
-        const o = await fetchOrden(ordenId, ac.signal)
-        setOrden(o)
-        if (o.status !== 'pending') {
-          if (o.status === 'paid') trackEvent('purchase_confirmed', { tier: o.tier, value: o.total })
-          return
-        }
-        intentos.current += 1
-        if (intentos.current >= POLL_MAX) return setAgotado(true)
-        timer = window.setTimeout(mirar, POLL_MS)
-      } catch {
-        if (!ac.signal.aborted) setError(true)
-      }
-    }
-
-    mirar()
-    return () => {
-      ac.abort()
-      if (timer) clearTimeout(timer)
-    }
-  }, [ordenId])
+  // El poll vive en `useOrdenPolling`, compartido con /gracias: son la misma
+  // espera y tenían dos implementaciones que se habían ido separando.
+  const { orden, agotado, error } = useOrdenPolling(ordenId, o => {
+    if (o.status === 'paid') trackEvent('purchase_confirmed', { tier: o.tier, value: o.total })
+  })
 
   return (
     <Modal onClose={onClose} titleId={TITLE_ID} size="md">

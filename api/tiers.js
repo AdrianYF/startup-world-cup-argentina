@@ -4,13 +4,19 @@
 // (incluidas las tandas agotadas, que son historia), pero el precio que se
 // cobra sale siempre de la base: es la única fuente de verdad.
 import { tiersActivos } from './_lib/db.js'
+import { ventaPropiaAbierta } from './_lib/entorno.js'
 import { json, rejectMethod } from './_lib/http.js'
 
 export default async function handler(req, res) {
   if (rejectMethod(req, res, 'GET')) return
 
   try {
-    json(res, 200, { tiers: await tiersActivos() })
+    // `ventaPropia` viaja aparte y no se deduce de que la lista venga vacía:
+    // vacía puede significar «la venta está cerrada» o «la API no contestó», y
+    // el front necesita distinguirlas para saber si el botón manda a Mercado
+    // Pago o a Startup Grind.
+    const ventaPropia = ventaPropiaAbierta()
+    json(res, 200, { ventaPropia, tiers: ventaPropia ? await tiersActivos() : [] })
   } catch (err) {
     console.error('[tiers]', err)
     // El front cae a los precios de tickets.json y deja las cards mostrando

@@ -89,24 +89,48 @@ async function anotar(res, body) {
   }
 
   // `ignoreDuplicates` = el reintento de la cola offline no duplica el ingreso.
-  const { error } = await db()
+  const { data: insertado, error } = await db()
     .from('checkins')
     .upsert(nuevo, { onConflict: 'id', ignoreDuplicates: true })
+    .select('id, por, anulado_en, creado_en')
+    .maybeSingle()
   if (error) throw error
 
-  await marcarPrimerIngreso(fila)
+  // Sin filas = ese ingreso ya estaba, o sea que esto es el reintento de la cola.
+  //
+  // Se relee el que quedó guardado en vez de armar uno con `new Date()`: la hora
+  // del ingreso original es justamente el dato que la cola existe para no perder,
+  // y contestar `anuladoEn: null` sobre un ingreso que mientras tanto se anuló lo
+  // resucitaba en la pantalla de la puerta.
+  const guardado = insertado || await leerCheckin(checkin)
+  if (!guardado) throw new Error(`el checkin ${checkin} no quedó guardado`)
 
-  json(res, 201, {
+  // Sólo si el ingreso está vigente: reponer `usada_en` sobre uno anulado sería
+  // volver a marcar como usada una entrada que alguien deshizo a propósito.
+  if (!guardado.anulado_en) await marcarPrimerIngreso(fila)
+
+  json(res, insertado ? 201 : 200, {
     checkin: {
-      id: checkin,
+      id: guardado.id,
       ref: fila.id,
       origen: fila.origen,
-      por: nuevo.por,
-      anuladoEn: null,
-      creadoEn: new Date().toISOString(),
+      por: guardado.por,
+      anuladoEn: guardado.anulado_en,
+      creadoEn: guardado.creado_en,
     },
     persona: fila,
   })
+}
+
+/** El ingreso ya guardado, para no inventar sus datos en el reintento. */
+async function leerCheckin(id) {
+  const { data, error } = await db()
+    .from('checkins')
+    .select('id, por, anulado_en, creado_en')
+    .eq('id', id)
+    .maybeSingle()
+  if (error) throw error
+  return data || null
 }
 
 async function anular(res, id) {
