@@ -52,7 +52,8 @@
     "features": [
       "Acceso general",
       "Expo & Pitch Battle",
-      "Matchmaking digital"
+      "Matchmaking digital",
+      "Acceso a Speed Dating Inversores"
     ]
   },
   {
@@ -60,12 +61,14 @@
     "nombre": "Entrada VIP",
     "precio": "$65.000",
     "cupos": "30 unidades",
-    "descripcion": "Acceso a conexiones top.",
+    "descripcion": "Todo lo de la general, más conexiones top y el evento VIP de cierre.",
     "estado": "venta",
     "badge": "VIP",
-    "acento": "oro",
     "features": [
-      "Todo lo de la entrada general"
-    ]
+      "Todo lo de la entrada General",
+      "Acceso a Conexiones Top",
+      "Ingreso a evento VIP de cierre"
+    ],
+    "acento": "oro"
   }
 ]

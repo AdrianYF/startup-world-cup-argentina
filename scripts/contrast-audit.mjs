@@ -75,8 +75,8 @@ const checks = [
 ]
 
 /**
- * Combinaciones que NO se usan y por qué. El audit las verifica al revés: si
- * alguna empezara a pasar, es que se cambió un token y hay que revisar la nota.
+ * Combinaciones que NO se usan, y por qué. El audit las verifica al revés: si
+ * alguna empezara a pasar, es que cambió un token y hay que revisar la nota.
  */
 const prohibidas = [
   ['white', 'oro', 'Blanco sobre dorado — por eso el botón VIP lleva texto oscuro'],
@@ -107,11 +107,11 @@ console.log('\n  Combinaciones prohibidas (tienen que seguir fallando):')
 for (const [fgKey, bgKey, motivo] of prohibidas) {
   const r = contrast(tokens[fgKey], tokens[bgKey])
   const sigueMal = r < required.normal
-  if (!sigueMal) {
+  if (sigueMal) pass++
+  else {
     fail++
-    failures.push({ fgKey, bgKey, ratio: r, need: required.normal, label: `${motivo} — YA NO FALLA: revisar la nota`, type: 'normal' })
-  } else {
-    pass++
+    failures.push({ fgKey, bgKey, ratio: r, need: required.normal, type: 'normal',
+      label: `${motivo} — YA NO FALLA: revisar la nota` })
   }
   console.log(`  ${fgKey.padEnd(11)}/ ${bgKey.padEnd(8)} ${r.toFixed(2).padStart(5)}   ${sigueMal ? 'OK (no se usa)' : 'REVISAR'}   ${motivo}`)
 }

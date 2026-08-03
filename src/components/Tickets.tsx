@@ -128,7 +128,7 @@ function Tickets() {
               key={plan.id}
               // Dónde abre el carrusel. Sigue siendo la tanda general aunque la
               // VIP también tenga badge: es la de volumen, y abrir en $65.000
-              // sería una primera impresión distinta de la que queremos.
+              // sería otra primera impresión.
               ref={destacado ? destacadaRef : undefined}
               className="relative shrink-0 w-[280px] snap-center"
             >

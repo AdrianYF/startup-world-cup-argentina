@@ -22,12 +22,20 @@ function Imatchin() {
           Versión en blanco, como el resto de public/logos/*-white. El original
           es #0a66c2 y sobre el fondo dark daba 3.39:1: "atchin" se perdía. Acá
           la tinta va en blanco y el "im" queda calado, dejando ver el fondo.
+
+          SVG y no el webp: el raster venía de un original de 101x43 y a 40px de
+          alto en pantallas retina ya se veía blando. El vectorial no tiene ese
+          techo.
+
+          width/height son los del viewBox (923x464): reservan la proporción
+          correcta antes de que cargue. Con los del raster viejo (101x43) el
+          espacio quedaba más ancho de la cuenta y la caja saltaba al pintar.
         */}
         <img
-          src="/logos/imatchin-white.webp"
+          src="/logos/imatchin-white.svg"
           alt="imatchin"
-          width={101}
-          height={43}
+          width={923}
+          height={464}
           loading="lazy"
           decoding="async"
           draggable={false}
