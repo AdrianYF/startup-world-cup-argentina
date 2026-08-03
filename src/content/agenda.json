@@ -10,23 +10,21 @@
           "hora": "16:00 - 20:00",
           "titulo": "Speed Mentoring + SWC 26",
           "categoria": "Side Events",
-          "speakers": []
+          "speakers": [],
+          "cta": {
+            "label": "Speed Mentoring",
+            "url": "https://luma.com/y2beab80"
+          }
         },
         {
           "hora": "16:00 - 20:00",
           "titulo": "Investor Room - Entrá en el criterio del inversor · WIP Club",
           "categoria": "Side Events",
-          "speakers": []
-        }
-      ],
-      "ctas": [
-        {
-          "label": "Speed Mentoring",
-          "url": "https://luma.com/y2beab80"
-        },
-        {
-          "label": "Investor Room",
-          "url": "https://luma.com/tte5wgfx"
+          "speakers": [],
+          "cta": {
+            "label": "Investor Room",
+            "url": "https://luma.com/tte5wgfx"
+          }
         }
       ]
     },
@@ -141,8 +139,8 @@
           ]
         },
         {
-          "hora": "17:00 - 18:30",
-          "titulo": "Builders Arena",
+          "hora": "17:00 - 18:00",
+          "titulo": "Builders Arena — Fondos y mentores",
           "categoria": "Builders Arena",
           "speakers": [
             {
@@ -151,7 +149,7 @@
               "img": "/participan/silvia-marra.webp"
             },
             {
-              "nombre": "Nicolai Ivansson",
+              "nombre": "Nikolai Ivansson",
               "empresa": "Ingenerate VC",
               "img": "/participan/nicolai-ivansson.webp"
             },
@@ -169,6 +167,18 @@
               "nombre": "Gustavo Nusenovich",
               "empresa": "Otro Punto de Vista",
               "img": "/participan/gustavo-nusenovich.webp"
+            }
+          ]
+        },
+        {
+          "hora": "18:00 - 18:30",
+          "titulo": "Matías Massotti",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Matías Massotti",
+              "empresa": "Massotti Ventures",
+              "img": "/participan/matias-massotti.webp"
             }
           ]
         },
@@ -271,7 +281,7 @@
               "img": "/participan/micaela-bacher.webp"
             },
             {
-              "nombre": "Nicolai Ivansson",
+              "nombre": "Nikolai Ivansson",
               "empresa": "Ingenerate VC",
               "img": "/participan/nicolai-ivansson.webp"
             },
