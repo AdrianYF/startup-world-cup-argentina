@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run build:emails && vite",
     "dev:local": "node scripts/dev-local.mjs",
-    "build": "tsc -b && vite build",
+    "build": "npm run build:emails && tsc -b && vite build",
+    "build:emails": "node scripts/build-emails.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
