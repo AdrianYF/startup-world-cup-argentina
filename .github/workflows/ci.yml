@@ -20,7 +20,20 @@ jobs:
           node-version: 24
           cache: npm
 
-      - run: npm ci
+      # `npm install` y no `npm ci`, que sería lo correcto.
+      #
+      # `npm ci` exige que el lock esté completo, y este no lo está: rolldown y
+      # tailwind traen bindings `wasm32-wasi` como dependencia OPCIONAL, y en macOS
+      # —donde se generó el lock— npm resuelve el binding nativo y nunca baja los
+      # wasm, así que sus dependencias (`@emnapi/core`, `@emnapi/runtime`) no quedan
+      # anotadas. En Linux npm las pide y `npm ci` corta con «Missing from lock file».
+      # Regenerar el lock en macOS no las agrega: hay que generarlo en Linux.
+      #
+      # Lo que se pierde es la reproducibilidad exacta que da `npm ci`. Lo que se
+      # conserva es todo lo que esta CI vino a hacer: tipos, linter, tests y build.
+      # Cuando alguien corra `npm install` en Linux y commitee ese lock, esto vuelve
+      # a ser `npm ci`.
+      - run: npm install --no-audit --no-fund
 
       # Antes que nada: `acreditar.js` importa el `.js` generado del template de
       # mail, así que sin esto no carga ni el guardia ni los tests.
