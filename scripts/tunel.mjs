@@ -23,8 +23,36 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+
+// La regla de nombres, importada y no repetida: es la misma que usan las
+// funciones de `api/` para saber qué variable mirar.
+const { nombreEn } = await import('../api/_lib/entorno.js')
 const ENV = join(RAIZ, '.env.local')
-const CLAVE = 'PUBLIC_TEST_SITE_URL'
+/**
+ * A qué variable se escribe la URL: la del entorno que va a correr.
+ *
+ * Escribía `PUBLIC_TEST_SITE_URL` fijo, y eso rompía justo el caso para el que
+ * existe la escotilla `ENTORNO=production`: hacer una compra real de verificación
+ * desde local. En producción `valorDe()` lee `PUBLIC_SITE_URL` —sin `TEST`— así
+ * que el túnel dejaba la URL en la variable que nadie iba a mirar, y el checkout
+ * cortaba con «no sé cuál es la URL pública del sitio».
+ *
+ * `ENTORNO` se lee del ambiente y del `.env.local`, en ese orden, porque es
+ * exactamente como lo va a resolver el server que se levante después.
+ */
+const CLAVE = nombreEn('PUBLIC_SITE_URL', entornoActivo())
+
+function entornoActivo() {
+  const delShell = (process.env.ENTORNO || '').trim().toLowerCase()
+  if (delShell === 'production' || delShell === 'development') return delShell
+  const archivo = join(RAIZ, '.env.local')
+  try {
+    const m = readFileSync(archivo, 'utf8').match(/^ENTORNO=(.*)$/m)
+    const v = (m?.[1] || '').trim().toLowerCase().replace(/^["']|["']$/g, '')
+    if (v === 'production') return 'production'
+  } catch { /* sin archivo, es desarrollo */ }
+  return 'development'
+}
 
 const puerto = process.argv[2] || '5173'
 const URL_TUNEL = /https:\/\/[a-z0-9-]+\.trycloudflare\.com/
