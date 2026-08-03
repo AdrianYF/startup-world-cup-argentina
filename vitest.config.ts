@@ -18,9 +18,21 @@ export default defineConfig({
     projects: [
       {
         test: {
-          name: 'node',
+          name: 'unit',
           environment: 'node',
-          include: ['test/**/*.test.{js,ts}'],
+          include: ['test/*.test.{js,ts}'],
+        },
+      },
+      {
+        // Contra el Postgres local. Se saltean solos si Supabase no está
+        // levantado, así que `npm test` sigue andando en cualquier máquina.
+        // Corren en serie: comparten una base y se pisarían el stock.
+        test: {
+          name: 'integracion',
+          environment: 'node',
+          include: ['test/integracion/**/*.test.{js,ts}'],
+          fileParallelism: false,
+          testTimeout: 20_000,
         },
       },
     ],

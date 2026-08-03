@@ -122,9 +122,20 @@
         },
         {
           "hora": "16:00 - 16:30",
-          "titulo": "Panel legales",
-          "categoria": "Coming Soon",
-          "speakers": []
+          "titulo": "Blindá tu startup para que te digan que sí",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Mariano Davo",
+              "empresa": "",
+              "img": "/participan/mariano-davo.webp"
+            },
+            {
+              "nombre": "Paula Arenzo",
+              "empresa": "",
+              "img": "/participan/paula-arenzo.webp"
+            }
+          ]
         },
         {
           "hora": "16:30 - 17:00",

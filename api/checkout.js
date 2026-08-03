@@ -13,7 +13,10 @@
 // Esta función NO acredita nada. La orden queda pendiente hasta que
 // /api/mp-webhook confirme el pago contra Mercado Pago.
 import { MercadoPagoConfig, Preference } from 'mercadopago'
-import { db, stockDisponible } from './_lib/db.js'
+// `stockDisponible` ya no se importa acá: contar el cupo y reservarlo pasaron a
+// ser la misma operación, adentro de `crear_orden()`. Leerlo antes por separado
+// era justamente el bug.
+import { db } from './_lib/db.js'
 import { desglose } from './_lib/precios.js'
 import { json, rejectMethod, readBody, siteUrl, esMailValido } from './_lib/http.js'
 import { credencialesMP, ventaPropiaAbierta } from './_lib/entorno.js'
@@ -99,59 +102,54 @@ export default async function handler(req, res) {
     // mismo se choca con su propia reserva.
     await liberarPrevia(body.ordenPrevia, email)
 
-    // Chequeo de stock ANTES de crear la orden. No es una garantía absoluta
-    // contra dos requests simultáneos, pero la ventana es de milisegundos y la
-    // orden pendiente que se crea abajo reserva el cupo por 30 minutos, así que
-    // el segundo comprador rebota acá.
-    const libre = await stockDisponible(tierId)
-    if (libre < quantity) {
-      return json(res, 409, { error: 'sin_stock', disponible: Math.max(0, libre) })
-    }
-
     const expiresAt = new Date(Date.now() + RESERVA_MINUTOS * 60_000)
     // Precio y cargo se congelan en la orden: si mañana cambian, esta compra
     // tiene que seguir mostrando lo que la persona efectivamente pagó.
     const montos = desglose(tier.price_ars, quantity)
 
-    const { data: orden, error: ordenErr } = await db()
-      .from('orders')
-      .insert({
-        tier_id: tier.id,
-        quantity,
-        unit_price_ars: tier.price_ars, // la fuente del precio es la base, nunca el request
-        service_fee_ars: montos.cargo,
-        buyer_name: nombre,
-        buyer_email: email,
-        buyer_telefono: telefono || null,
-        buyer_empresa: empresa || null,
-        status: 'pending',
-        expires_at: expiresAt.toISOString(),
-      })
-      .select('id')
-      .single()
+    // Verificar el cupo y crear la orden, en una sola transacción de la base.
+    //
+    // Antes esto eran tres pasos sueltos —leer el stock, insertar la orden,
+    // insertar las entradas— y entre el primero y el segundo no había nada. Dos
+    // compras simultáneas de la última entrada leían las dos el mismo cupo libre
+    // y las dos seguían de largo: se vendía una entrada que no existía. Hay un
+    // test que lo reproduce.
+    //
+    // `crear_orden()` toma un lock por tier antes de contar, así que la segunda
+    // espera y ve el cupo ya tomado. Y mete orden y entradas juntas: antes un
+    // fallo entre medio dejaba una orden pagable con cero entradas, o sea alguien
+    // pagando por nada. Ver la migración 0011.
+    const { data: creada, error: crearErr } = await db().rpc('crear_orden', {
+      p_tier: tier.id,
+      p_cantidad: quantity,
+      p_precio: tier.price_ars, // la fuente del precio es la base, nunca el request
+      p_cargo: montos.cargo,
+      p_nombre: nombre,
+      p_email: email,
+      p_telefono: telefono,
+      p_empresa: empresa,
+      p_nombres: nombres,
+      p_expira: expiresAt.toISOString(),
+    })
 
-    if (ordenErr) throw ordenErr
+    if (crearErr) throw crearErr
+
+    const fila = Array.isArray(creada) ? creada[0] : creada
+    // Sin `orden_id` es que no había cupo. La función no insertó nada.
+    if (!fila?.orden_id) {
+      return json(res, 409, { error: 'sin_stock', disponible: Math.max(0, fila?.disponible ?? 0) })
+    }
+    const orden = { id: fila.orden_id }
 
     // Desde acá la orden EXISTE, y mientras siga `pending` sin vencer le está
-    // reservando su cupo por 30 minutos. Si algo de lo que viene abajo falla —el
-    // insert de las entradas, o Mercado Pago al crear la preferencia— esa reserva
-    // queda tomada por una compra que nadie va a poder pagar nunca: entradas que
-    // no se venden y que no figuran en ningún lado. Con la última tanda eso es
-    // agotar el evento por un timeout.
+    // reservando su cupo por 30 minutos. Si Mercado Pago falla al crear la
+    // preferencia, esa reserva queda tomada por una compra que nadie va a poder
+    // pagar nunca: entradas que no se venden y que no figuran en ningún lado. Con
+    // la última tanda eso es agotar el evento por un timeout.
     //
-    // Por eso todo lo que sigue va adentro de un try que la vence antes de
-    // propagar. Es exactamente lo que hace el botón «liberar» del backoffice.
+    // Por eso lo que sigue va adentro de un try que la vence antes de propagar.
+    // Es exactamente lo que hace el botón «liberar» del backoffice.
     try {
-      // Una fila por asistente, todavía sin token: la credencial se emite cuando
-      // el pago se aprueba (ver api/_lib/acreditar.js). Guardar los nombres acá y
-      // no al acreditar es lo que permite que el mail y la puerta sepan quién es
-      // cada uno sin volver a preguntar.
-      const { error: entradasErr } = await db()
-        .from('entradas')
-        .insert(nombres.map((n, i) => ({ order_id: orden.id, numero: i + 1, nombre: n })))
-
-      if (entradasErr) throw entradasErr
-
       return await crearPreferencia({
         req, res, orden, tier, quantity, montos, expiresAt, credenciales,
         comprador: { nombre, email },
