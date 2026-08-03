@@ -16,6 +16,25 @@
     "jsx": "react-jsx",
     "resolveJsonModule": true,
 
+    /* Tipos */
+    // Estaba apagado, que es raro para un proyecto que cobra: sin `strict` no
+    // hay chequeo de null y todo lo que TS no puede inferir es `any` en silencio.
+    // Salió barato prenderlo porque el código ya estaba escrito como si lo
+    // estuviera — cero `any` y cero `@ts-ignore` en todo el repo.
+    "strict": true,
+
+    // `noUncheckedIndexedAccess` NO está, y es a propósito, no un olvido.
+    //
+    // Prenderlo da 50 errores, todos de la misma forma: indexar un array pasa a
+    // devolver `T | undefined`. La mitad cae en los loops de render de Three.js
+    // (`MysteryBoxes3D`, `Trophy3D`, `ScrollStack`), donde el índice sale de un
+    // `forEach` sobre la misma lista y no puede fallar. Ahí el flag no encuentra
+    // un bug: pide 25 `!` en el código con menos tests del repo.
+    //
+    // Los otros 25 sí valen —`Speakers`, `shortlink`, `backoffice/lib`— y hay que
+    // hacerlos. Queda para después del evento: es trabajo mecánico con riesgo real
+    // y ninguna urgencia, y `strict` ya trajo lo que de verdad faltaba.
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

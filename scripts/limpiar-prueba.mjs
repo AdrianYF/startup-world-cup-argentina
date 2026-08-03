@@ -72,7 +72,9 @@ const db = async (ruta, opciones = {}) => {
     },
   })
   if (!res.ok) throw new Error(`${ruta} → ${res.status} ${await res.text()}`)
-  return res.status === 204 ? [] : res.json()
+  // `json()` viene como `unknown` en los tipos de Node. Acá siempre es una
+  // lista de filas de PostgREST, y anotarlo es lo que deja chequear el resto.
+  return res.status === 204 ? [] : /** @type {Promise<any[]>} */ (res.json())
 }
 
 const pesos = n => '$' + Number(n).toLocaleString('es-AR', { minimumFractionDigits: 2 })
@@ -116,6 +118,7 @@ for (const o of conPago) {
   const res = await fetch(`https://api.mercadopago.com/v1/payments/${o.mp_payment_id}`, {
     headers: { Authorization: `Bearer ${MP_TOKEN}` },
   })
+  /** @type {any} */
   const p = await res.json()
 
   if (!res.ok) {

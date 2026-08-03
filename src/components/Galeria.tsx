@@ -42,6 +42,18 @@ const TWEET_TEXT = 'Yo también participo de la Startup World Cup Argentina\n@St
 const SRC_BY_CODE = codeTable(ALL)
 const srcFromCode = (code: string) => SRC_BY_CODE[code.toUpperCase()] ?? null
 
+/**
+ * La foto que pide la URL, o null.
+ *
+ * Devuelve null también cuando el código es de otra sección —el comité y las
+ * startups comparten el mismo espacio de códigos—, que es lo que hace que
+ * `/swc/<code>` de un miembro del comité no abra una foto de la galería.
+ */
+function fotoDelLink(): string | null {
+  const code = codeFromUrl('g')
+  return code ? srcFromCode(code) : null
+}
+
 function Strip({
   imgs,
   reverse = false,
@@ -82,17 +94,17 @@ function Strip({
 }
 
 function Galeria() {
-  const [open, setOpen] = useState<string | null>(null)
+  // Si llegan con un short link (ruta /swc/<code>, /g/<code> o ?g=<code>), esa
+  // foto ya está elegida antes del primer render: sale de la URL, que está ahí
+  // desde el principio. Antes se resolvía con un setState adentro de un efecto,
+  // así que la galería se pintaba una vez cerrada y recién después abría el
+  // lightbox.
+  const [open, setOpen] = useState<string | null>(fotoDelLink)
 
-  // Si llegan con un short link (ruta /swc/<code>, /g/<code> o ?g=<code>), abrir esa foto
-  // y limpiar la URL (el lightbox es modal, no hace falta scrollear).
+  // Limpiar la URL sí es un efecto: toca el historial, que es de afuera de React.
+  // Sólo al montar — después el lightbox se abre y se cierra sin tocarla.
   useEffect(() => {
-    const code = codeFromUrl('g')
-    if (!code) return
-    const src = srcFromCode(code)
-    if (!src) return // el código es de otra sección (ej. el comité)
-    setOpen(src)
-    window.history.replaceState({}, '', '/galeria')
+    if (fotoDelLink()) window.history.replaceState({}, '', '/galeria')
   }, [])
 
   return (

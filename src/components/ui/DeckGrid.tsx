@@ -29,12 +29,18 @@ export function DeckGrid({
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const layout = useDeckLayout(ref, columns, gap)
-  const [activo, setActivo] = useState(false)
   const items = Children.toArray(children)
 
-  const reduce =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // Se pregunta una vez, al montar, y no en cada render: `matchMedia` durante el
+  // render es una lectura del navegador en medio de algo que tiene que ser puro.
+  const [reduce] = useState(
+    () => typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+
+  // Sin animación la deck ya está repartida: se arranca activa en vez de
+  // prenderla con un setState adentro del efecto.
+  const [activo, setActivo] = useState(reduce)
 
   // Dispara el reparto cuando la grilla entra en viewport. Mismo rootMargin que
   // FadeInSection en el resto del sitio.
@@ -48,10 +54,9 @@ export function DeckGrid({
     const el = ref.current
     if (!el) return
 
-    if (reduce) {
-      setActivo(true)
-      return
-    }
+    // Con `reduce` ya arrancó activa (ver el useState de arriba): no hay reparto
+    // que precargar ni que animar.
+    if (reduce) return
 
     let cancelado = false
 

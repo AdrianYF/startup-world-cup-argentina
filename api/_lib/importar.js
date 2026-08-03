@@ -67,6 +67,10 @@ const norm = s => s.toLowerCase().replace(/[\s-]+/g, '_')
  */
 export function detectar(columnas, alias, forzado = {}) {
   const porNombre = new Map(columnas.map(c => [norm(c), c]))
+  // Las claves salen de `alias` en runtime, así que el compilador no las puede
+  // inferir del literal vacío. Anotarlo es lo que deja ver los `_nombre` /
+  // `_apellido` que se agregan más abajo.
+  /** @type {Record<string, string>} */
   const mapa = {}
 
   for (const [destino, nombres] of Object.entries(alias)) {
@@ -210,7 +214,11 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
  * en vez de duplicar, que es lo que permite volver a bajarlo a mitad del evento
  * para traer las ventas nuevas.
  */
-export async function importar({ csv, origen, evento, dias, seco = false, forzado }) {
+// `forzado` con default, igual que `preparar()` y `detectar()`: lo manda sólo el
+// CLI (`scripts/importar-asistentes.mjs`), donde se pueden mapear columnas a
+// mano. Desde el backoffice no viaja — esa pantalla muestra el mapeo detectado
+// pero no deja cambiarlo — y sin el default la firma decía que era obligatorio.
+export async function importar({ csv, origen, evento, dias, seco = false, forzado = {} }) {
   const previa = preparar({ csv, origen, evento, dias, forzado })
   if (previa.error) return previa
 

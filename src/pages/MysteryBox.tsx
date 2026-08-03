@@ -148,7 +148,7 @@ function MysteryBox() {
   // Init lazy desde localStorage: si ya jugó, arranca en 'revealed' con su perk (bloqueado).
   const [wonPerk, setWonPerk] = useState<Perk | null>(initialWon)
   const [phase, setPhase] = useState<Phase>(() => (wonPerk ? 'revealed' : 'idle'))
-  const [revealShow, setRevealShow] = useState(false)
+  const [revealListo, setRevealListo] = useState(false)
   const [locked, setLocked] = useState(() => wonPerk !== null) // ya usó su tirada de hoy
 
   useEffect(() => {
@@ -156,14 +156,22 @@ function MysteryBox() {
   }, [])
 
   // Pequeño delay para animar la entrada del reveal.
+  //
+  // Que esté apagado fuera de la fase de reveal es DERIVADO —`revealShow`, abajo—
+  // y no un setState: apagarlo desde el cuerpo del efecto era un render de más
+  // cada vez que cambiaba la fase. Lo único que sigue siendo un efecto es el
+  // timer, que es lo que de verdad pasa afuera de React.
   useEffect(() => {
-    if (phase !== 'revealed') {
-      setRevealShow(false)
-      return
+    if (phase !== 'revealed') return
+    const t = setTimeout(() => setRevealListo(true), 30)
+    return () => {
+      clearTimeout(t)
+      // Al salir de la fase se apaga, así que volver a entrar vuelve a animar.
+      setRevealListo(false)
     }
-    const t = setTimeout(() => setRevealShow(true), 30)
-    return () => clearTimeout(t)
   }, [phase])
+
+  const revealShow = phase === 'revealed' && revealListo
 
   // Red de seguridad: el reveal normalmente lo dispara la animación 3D
   // (onRevealReady), pero si WebGL está trabado/pausado/no disponible igual

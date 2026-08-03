@@ -20,6 +20,9 @@ const BLANCO = rgb(1, 1, 1)
 const GRIS = rgb(0.61, 0.64, 0.69)
 
 /** Helvetica va en WinAnsi, que cubre los acentos y la ñ del castellano. */
+/** @type {[number, number]} */
+// La tupla anotada y no un array suelto: `addPage` pide exactamente dos números,
+// y con `number[]` el compilador no puede saber que son dos.
 const A4 = [595.28, 841.89]
 
 export default async function handler(req, res) {

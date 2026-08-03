@@ -81,15 +81,18 @@ function CountUp({ value, delay = 0 }: { value: string; delay?: number }) {
   const target = parseInt(match?.[2] ?? '0', 10)
   const suffix = match?.[3] ?? ''
 
-  const [current, setCurrent] = useState(0)
+  // Sin animación el número ya está en su valor final: se arranca ahí en vez de
+  // contar desde 0 y corregirlo con un setState adentro del efecto, que además
+  // dejaba un frame con el 0 pintado.
+  const [reducedMotion] = useState(
+    () => typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  const [current, setCurrent] = useState(() => (reducedMotion ? target : 0))
 
   useEffect(() => {
     if (!ref.current) return
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reducedMotion) {
-      setCurrent(target)
-      return
-    }
+    if (reducedMotion) return
 
     let raf = 0
     let timeoutId = 0
@@ -121,7 +124,7 @@ function CountUp({ value, delay = 0 }: { value: string; delay?: number }) {
       if (raf) cancelAnimationFrame(raf)
       if (timeoutId) clearTimeout(timeoutId)
     }
-  }, [target, delay])
+  }, [target, delay, reducedMotion])
 
   return (
     <span ref={ref}>

@@ -52,7 +52,7 @@ const cf = spawn('cloudflared', ['tunnel', '--url', `http://localhost:${puerto}`
   stdio: ['ignore', 'pipe', 'pipe'],
 })
 
-cf.on('error', err => {
+cf.on('error', (/** @type {NodeJS.ErrnoException} */ err) => {
   console.error(
     err.code === 'ENOENT'
       ? '\n  ✗ No está cloudflared. Instalalo con `brew install cloudflared`.\n'

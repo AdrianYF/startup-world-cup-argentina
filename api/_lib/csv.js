@@ -10,7 +10,12 @@
 /** Filas como array de arrays, respetando comillas y saltos embebidos. */
 export function parseCSV(texto) {
   // BOM: Excel lo mete al guardar y se pega al nombre de la primera columna.
-  const s = texto.replace(/^﻿/, '')
+  //
+  // Escapado como \uFEFF y no con el carácter literal, que es como estaba: el
+  // literal es INVISIBLE en el editor —la regex parece un `/^/` que no matchea
+  // nada— y cualquier herramienta que normalice espacios se lo lleva puesto sin
+  // que nadie lo note. Sería un bug mudo: los CSV de Excel dejarían de importar.
+  const s = texto.replace(/^\uFEFF/, '')
   const filas = []
   let fila = []
   let campo = ''
