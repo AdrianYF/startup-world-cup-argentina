@@ -3,6 +3,7 @@ import { content } from '../lib/content'
 import { SectionGlow } from './ui/SectionGlow'
 import TicketCheckoutModal from './TicketCheckoutModal'
 import { fetchTiers, formatARS, TIER_POR_TICKET, type TierId, type TierLive } from '../lib/checkout'
+import { openTicketing } from '../lib/ticketing'
 
 /** Copy del botón por estado. */
 const CTA: Record<string, string> = {
@@ -35,11 +36,18 @@ function Tickets() {
   // y la sección sigue mostrando los valores del JSON: preferimos eso a romperla.
   const [live, setLive] = useState<Record<string, TierLive> | null>(null)
 
+  // `live` en null es ambiguo: es lo mismo mientras carga que si la API falló.
+  // Para decidir a dónde manda el botón hace falta saber que ya se preguntó, o
+  // en el primer render todas las cards dirían que se compra afuera y al
+  // segundo se corregirían.
+  const [consultado, setConsultado] = useState(false)
+
   useEffect(() => {
     const ac = new AbortController()
     fetchTiers(ac.signal).then(tiers => {
-      if (!tiers) return
-      setLive(Object.fromEntries(tiers.map(t => [t.id, t])))
+      if (ac.signal.aborted) return
+      if (tiers) setLive(Object.fromEntries(tiers.map(t => [t.id, t])))
+      setConsultado(true)
     })
     return () => ac.abort()
   }, [])
@@ -99,6 +107,16 @@ function Tickets() {
             const precio = datos ? formatARS(datos.precio) : plan.precio
             const estadoLabel = agotado ? 'agotado' : plan.estado
 
+            // `/api/tiers` sólo devuelve los tiers activos. Que una tanda a la
+            // venta no tenga datos vivos significa que la venta propia está
+            // cerrada — o que la API no contestó, que para el comprador es lo
+            // mismo: por ese camino hoy no puede comprar.
+            //
+            // No se apaga el botón: Startup Grind sigue vendiendo su propio cupo.
+            // Se lo manda derecho allá en vez de abrir un modal cuyo botón de
+            // Mercado Pago devolvería 404.
+            const soloStartupGrind = disponible && consultado && !datos
+
             // La VIP se destaca con el dorado, no con la escala: dos cards
             // agrandadas al lado compiten y ninguna gana.
             const oro = plan.acento === 'oro'
@@ -157,12 +175,20 @@ function Tickets() {
                 ))}
               </ul>
               <button
-                onClick={disponible && tier ? () => setComprando(tier) : undefined}
+                onClick={
+                  !disponible || !tier
+                    ? undefined
+                    : soloStartupGrind
+                      ? () => openTicketing(`card-${tier}`)
+                      : () => setComprando(tier)
+                }
                 disabled={!disponible}
                 aria-label={
-                  disponible
-                    ? `Comprar ${plan.nombre}`
-                    : `${plan.nombre}: ${CTA[estadoLabel]}`
+                  soloStartupGrind
+                    ? `Comprar ${plan.nombre} en Startup Grind, se abre en una pestaña nueva`
+                    : disponible
+                      ? `Comprar ${plan.nombre}`
+                      : `${plan.nombre}: ${CTA[estadoLabel]}`
                 }
                 style={destacado ? { backgroundImage: 'var(--gradient-cta)' } : undefined}
                 className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all ${
@@ -180,6 +206,13 @@ function Tickets() {
               {disponible && datos && datos.disponible <= 5 && (
                 <p className="mt-2.5 text-center text-[11px] font-bold uppercase tracking-wider text-[#ff7675]">
                   {datos.disponible === 1 ? 'Queda 1' : `Quedan ${datos.disponible}`}
+                </p>
+              )}
+              {/* Mandar a otro dominio sin avisar es una sorpresa, y peor con
+                  una pestaña nueva de por medio. */}
+              {soloStartupGrind && (
+                <p className="mt-2.5 text-center text-[11px] text-gray-500">
+                  Se compra en Startup Grind
                 </p>
               )}
               </div>
