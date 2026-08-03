@@ -1,9 +1,11 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { content } from '../lib/content'
-import { openTicketing } from '../lib/ticketing'
 import { SectionGlow } from './ui/SectionGlow'
+import TicketCheckoutModal from './TicketCheckoutModal'
+import { fetchTiers, formatARS, TIER_POR_TICKET, type TierId, type TierLive } from '../lib/checkout'
+import { openTicketing } from '../lib/ticketing'
 
-/** Copy del botón por estado. Solo la tanda a la venta linkea a Startup Grind. */
+/** Copy del botón por estado. */
 const CTA: Record<string, string> = {
   venta: 'Conseguir Ticket',
   agotado: 'Agotado',
@@ -13,9 +15,42 @@ const CTA: Record<string, string> = {
 /** Ancho de cada tanda. Se usa para el padding que permite centrar cualquiera. */
 const CARD_W = 280
 
+/**
+ * "$35.000" → 35000. Sólo se usa como respaldo si /api/tiers no contestó: el
+ * precio que se cobra siempre lo pone el backend, esto es para no mostrar un
+ * hueco en el modal mientras tanto.
+ */
+function precioDesdeTexto(precio: string): number {
+  return Number(precio.replace(/[^\d]/g, '')) || 0
+}
+
 function Tickets() {
   const scrollerRef = useRef<HTMLDivElement>(null)
   const destacadaRef = useRef<HTMLDivElement>(null)
+
+  // Tier abierto en el modal de compra (null = cerrado).
+  const [comprando, setComprando] = useState<TierId | null>(null)
+
+  // Precio y cupo reales. La tabla `tiers` del backend es la fuente de verdad;
+  // tickets.json sólo pinta las cards. Si la API no contesta, `live` queda null
+  // y la sección sigue mostrando los valores del JSON: preferimos eso a romperla.
+  const [live, setLive] = useState<Record<string, TierLive> | null>(null)
+
+  // `live` en null es ambiguo: es lo mismo mientras carga que si la API falló.
+  // Para decidir a dónde manda el botón hace falta saber que ya se preguntó, o
+  // en el primer render todas las cards dirían que se compra afuera y al
+  // segundo se corregirían.
+  const [consultado, setConsultado] = useState(false)
+
+  useEffect(() => {
+    const ac = new AbortController()
+    fetchTiers(ac.signal).then(tiers => {
+      if (ac.signal.aborted) return
+      if (tiers) setLive(Object.fromEntries(tiers.map(t => [t.id, t])))
+      setConsultado(true)
+    })
+    return () => ac.abort()
+  }, [])
 
   // El carrusel arranca centrado en la tanda a la venta: es la única accionable
   // y antes quedaba fuera de pantalla en mobile, detrás de dos tandas agotadas.
@@ -59,8 +94,29 @@ function Tickets() {
             style={{ paddingInline: `calc(50% - ${CARD_W / 2}px)` }}
           >
             {content.tickets.map((plan) => {
-            const disponible = plan.estado === 'venta'
-            const agotado = plan.estado === 'agotado'
+            // El tier del backend que corresponde a esta card (las tandas viejas
+            // no tienen: son historia, no se venden).
+            const tier = TIER_POR_TICKET[plan.id]
+            const datos = tier && live ? live[tier] : undefined
+
+            // Sin datos vivos mandamos el JSON; con datos vivos manda la base,
+            // que es la única que sabe cuánto queda del cupo web.
+            const sinCupo = datos ? datos.disponible <= 0 : false
+            const disponible = plan.estado === 'venta' && Boolean(tier) && !sinCupo
+            const agotado = plan.estado === 'agotado' || sinCupo
+            const precio = datos ? formatARS(datos.precio) : plan.precio
+            const estadoLabel = agotado ? 'agotado' : plan.estado
+
+            // `/api/tiers` sólo devuelve los tiers activos. Que una tanda a la
+            // venta no tenga datos vivos significa que la venta propia está
+            // cerrada — o que la API no contestó, que para el comprador es lo
+            // mismo: por ese camino hoy no puede comprar.
+            //
+            // No se apaga el botón: Startup Grind sigue vendiendo su propio cupo.
+            // Se lo manda derecho allá en vez de abrir un modal cuyo botón de
+            // Mercado Pago devolvería 404.
+            const soloStartupGrind = disponible && consultado && !datos
+
             // La VIP se destaca con el dorado, no con la escala: dos cards
             // agrandadas al lado compiten y ninguna gana.
             const oro = plan.acento === 'oro'
@@ -77,15 +133,15 @@ function Tickets() {
               className="relative shrink-0 w-[280px] snap-center"
             >
               <div
-                // La tanda destacada (badge "FINALIZA PRONTO") lleva más padding-top para
-                // que el título despegue del badge que asoma arriba.
+                // Las cards con badge llevan más padding-top para que el título
+                // despegue del badge que asoma arriba.
                 style={conBadge ? { paddingTop: '28px' } : undefined}
                 className={`relative rounded-2xl p-6 sm:p-8 border-[0.5px] transition-all ${
                   oro
                     ? 'bg-[#d4af37]/[0.07] border-[#d4af37]/45 shadow-[0_0_24px_-6px_rgba(212,175,55,0.35)] hover:border-[#d4af37]/70'
                     : destacado
-                    ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
-                    : 'bg-white/5 border-[#75AADB]/10 hover:border-[#75AADB]/25 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]'
+                      ? 'bg-white/10 border-[#75AADB]/35 sm:scale-105 shadow-[0_0_20px_-6px_rgba(117,170,219,0.2)]'
+                      : 'bg-white/5 border-[#75AADB]/10 hover:border-[#75AADB]/25 shadow-[0_0_14px_-8px_rgba(117,170,219,0.1)] hover:shadow-[0_0_18px_-6px_rgba(117,170,219,0.15)]'
                 } ${agotado ? 'opacity-60' : ''}`}
               >
               {plan.badge && (
@@ -105,7 +161,7 @@ function Tickets() {
                 </span>
               </div>
               <div className={`text-4xl font-black ${agotado ? 'text-gray-500 line-through' : 'text-white'}`}>
-                {plan.precio}
+                {precio}
               </div>
               <p className="text-gray-500 text-xs mt-1 mb-5 min-h-4">
                 {disponible ? '+ cargo de servicio' : ''}
@@ -119,12 +175,20 @@ function Tickets() {
                 ))}
               </ul>
               <button
-                onClick={disponible ? () => openTicketing(`tickets-${plan.id}`) : undefined}
+                onClick={
+                  !disponible || !tier
+                    ? undefined
+                    : soloStartupGrind
+                      ? () => openTicketing(`card-${tier}`)
+                      : () => setComprando(tier)
+                }
                 disabled={!disponible}
                 aria-label={
-                  disponible
-                    ? `Conseguir ticket ${plan.nombre} (abre Startup Grind en una nueva pestaña)`
-                    : `${plan.nombre}: ${CTA[plan.estado]}`
+                  soloStartupGrind
+                    ? `Comprar ${plan.nombre} en Startup Grind, se abre en una pestaña nueva`
+                    : disponible
+                      ? `Comprar ${plan.nombre}`
+                      : `${plan.nombre}: ${CTA[estadoLabel]}`
                 }
                 style={destacado ? { backgroundImage: 'var(--gradient-cta)' } : undefined}
                 className={`block w-full text-center font-black py-3 rounded-full uppercase tracking-wide transition-all ${
@@ -137,8 +201,20 @@ function Tickets() {
                       : `cursor-pointer active:scale-95 ${plan.badge ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)] hover:scale-105' : 'border border-white/30 hover:border-[#ff7675] text-white'}`
                 }`}
               >
-                {CTA[plan.estado]}
+                {CTA[estadoLabel]}
               </button>
+              {disponible && datos && datos.disponible <= 5 && (
+                <p className="mt-2.5 text-center text-[11px] font-bold uppercase tracking-wider text-[#ff7675]">
+                  {datos.disponible === 1 ? 'Queda 1' : `Quedan ${datos.disponible}`}
+                </p>
+              )}
+              {/* Mandar a otro dominio sin avisar es una sorpresa, y peor con
+                  una pestaña nueva de por medio. */}
+              {soloStartupGrind && (
+                <p className="mt-2.5 text-center text-[11px] text-gray-500">
+                  Se compra en Startup Grind
+                </p>
+              )}
               </div>
             </div>
             )
@@ -147,6 +223,27 @@ function Tickets() {
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB] to-transparent" />
+
+      {comprando && (() => {
+        // La card de la que salió el modal: de ahí vienen los perks y el badge.
+        const card = content.tickets.find(t => TIER_POR_TICKET[t.id] === comprando)
+        const datos = live?.[comprando]
+        if (!card) return null
+        return (
+          <TicketCheckoutModal
+            tier={comprando}
+            nombre={datos?.nombre || card.nombre}
+            precio={datos?.precio ?? precioDesdeTexto(card.precio)}
+            cargo={datos?.cargo ?? null}
+            disponible={datos?.disponible ?? null}
+            perks={card.features}
+            badge={card.badge}
+            descripcion={card.descripcion}
+            acento={card.acento}
+            onClose={() => setComprando(null)}
+          />
+        )
+      })()}
     </section>
   )
 }
