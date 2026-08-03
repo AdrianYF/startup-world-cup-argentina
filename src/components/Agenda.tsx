@@ -262,7 +262,7 @@ function Agenda() {
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: 'linear-gradient(96deg, #7DB2E8 0%, #3B82F6 45%, #6366F1 100%)' }}
             >
-              TENTATIVA
+              DEL EVENTO
             </span>
             <span className="text-[#ff6600]">*</span>
           </h2>
