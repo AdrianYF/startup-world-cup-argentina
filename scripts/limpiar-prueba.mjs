@@ -50,15 +50,54 @@ try {
 
 const SUPABASE_URL = env.SUPABASE_URL
 const SUPABASE_KEY = env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY
-const MP_TOKEN = env.MP_ACCESS_TOKEN
+
+/**
+ * Los DOS juegos de credenciales, no sólo el de producción.
+ *
+ * Miraba únicamente `MP_ACCESS_TOKEN`, y eso lo dejaba inservible justo cuando
+ * hacía falta. El motivo es que **Supabase no conmuta con `ENTORNO`**: una sola
+ * base para los dos entornos, a propósito. Así que la misma tabla `orders` tiene
+ * pagos de la cuenta real Y de la cuenta de prueba, mezclados.
+ *
+ * Con un solo token, los pagos de la otra cuenta daban «Payment not found», el
+ * script los contaba como plata sin devolver y se negaba a borrar nada — para
+ * siempre, porque no hay reembolso que arregle un pago que no existe en esa
+ * cuenta. Se probaba a mano cuál era y ahí aparecía.
+ *
+ * Ahora se prueban las dos y gana la que encuentra el pago. De paso queda dicho
+ * de qué cuenta es cada uno, que es el dato que separa «hay que devolver
+ * $36.952» de «era de prueba, no hay nada afuera».
+ */
+const TOKENS = [
+  { nombre: 'producción', token: env.MP_ACCESS_TOKEN },
+  { nombre: 'prueba', token: env.MP_TEST_ACCESS_TOKEN },
+].filter(t => t.token)
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error('\n  ✗ Faltan SUPABASE_URL y/o SUPABASE_SECRET_KEY.\n')
   exit(1)
 }
-if (!MP_TOKEN) {
-  console.error('\n  ✗ Falta MP_ACCESS_TOKEN: sin eso no se puede verificar si la plata volvió.\n')
+if (TOKENS.length === 0) {
+  console.error('\n  ✗ Falta MP_ACCESS_TOKEN y MP_TEST_ACCESS_TOKEN: sin ninguno de los dos')
+  console.error('    no se puede verificar si la plata volvió.\n')
   exit(1)
+}
+
+/** Las cuentas de cada token, para poder decir si un pago fue de prueba. */
+const CUENTAS = new Map()
+for (const { nombre, token } of TOKENS) {
+  try {
+    const r = await fetch('https://api.mercadopago.com/users/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!r.ok) continue
+    /** @type {any} */
+    const u = await r.json()
+    CUENTAS.set(u.id, { nombre, esDePrueba: (u.tags || []).includes('test_user') })
+  } catch {
+    // Sin red se sigue: abajo cada pago que no se pueda consultar se trata como
+    // no devuelto, que es el lado seguro.
+  }
 }
 
 const db = async (ruta, opciones = {}) => {
@@ -113,31 +152,50 @@ const conPago = ordenes.filter(o => o.mp_payment_id)
 console.log(`\n  ── Mercado Pago: ${conPago.length} pagos a verificar ──`)
 
 const sinDevolver = []
+/** Los que SÍ movieron plata real, para no decir «volvió» de los de prueba. */
+const reales = []
 
 for (const o of conPago) {
-  const res = await fetch(`https://api.mercadopago.com/v1/payments/${o.mp_payment_id}`, {
-    headers: { Authorization: `Bearer ${MP_TOKEN}` },
-  })
+  // Se prueban las dos cuentas y gana la que lo encuentra. Ver la nota de TOKENS.
   /** @type {any} */
-  const p = await res.json()
+  let p = null
+  let ultimoError = 'no se pudo consultar'
+  for (const { token } of TOKENS) {
+    const res = await fetch(`https://api.mercadopago.com/v1/payments/${o.mp_payment_id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    /** @type {any} */
+    const cuerpo = await res.json().catch(() => ({}))
+    if (res.ok && cuerpo.id) { p = cuerpo; break }
+    ultimoError = cuerpo.message || `HTTP ${res.status}`
+  }
 
-  if (!res.ok) {
-    console.log(`   ? ${o.mp_payment_id} — no se pudo consultar (${p.message || res.status})`)
+  if (!p) {
+    console.log(`   ? ${o.mp_payment_id} — no aparece en ninguna cuenta (${ultimoError})`)
     // No se puede verificar ⇒ se trata como "no devuelto". Preferimos no borrar
     // por las dudas antes que borrar el registro de una plata que sigue afuera.
-    sinDevolver.push({ id: o.mp_payment_id, motivo: 'no se pudo consultar' })
+    sinDevolver.push({ id: o.mp_payment_id, motivo: 'no aparece en ninguna cuenta' })
     continue
   }
 
   const cobrado = Number(p.transaction_amount || 0)
   const devuelto = Number(p.transaction_amount_refunded || 0)
+  const cuenta = CUENTAS.get(p.collector_id)
+
+  // Un pago cobrado por una cuenta de PRUEBA de Mercado Pago no movió un peso,
+  // por más que `live_mode` diga true — los test users operan sobre la
+  // infraestructura de producción. Lo que decide es de quién es la cuenta, y eso
+  // lo dice el tag `test_user` que devuelve /users/me.
+  const dePrueba = cuenta?.esDePrueba === true
   // `cancelled` es el pago que nunca llegó a acreditarse: no hay nada que
   // devolver. `refunded` con el total devuelto es el caso feliz.
-  const cerrado = p.status === 'cancelled' || p.status === 'rejected' || devuelto >= cobrado
+  const cerrado = dePrueba || p.status === 'cancelled' || p.status === 'rejected' || devuelto >= cobrado
 
+  const quien = cuenta ? `${cuenta.nombre}${dePrueba ? ' · de prueba' : ''}` : `cuenta ${p.collector_id}`
   console.log(`   ${cerrado ? '✓' : '✗'} ${o.mp_payment_id} | ${String(p.status).padEnd(9)}`
-    + ` | cobrado ${pesos(cobrado)} | devuelto ${pesos(devuelto)}`)
+    + ` | ${quien.padEnd(22)} | cobrado ${pesos(cobrado)} | devuelto ${pesos(devuelto)}`)
 
+  if (!dePrueba) reales.push(o.mp_payment_id)
   if (!cerrado) {
     sinDevolver.push({ id: o.mp_payment_id, motivo: `${pesos(cobrado - devuelto)} sin devolver` })
   }
@@ -151,7 +209,13 @@ if (sinDevolver.length > 0) {
   exit(1)
 }
 
-console.log('\n  ✓ Toda la plata volvió.')
+// Decía «toda la plata volvió», que es falso cuando los pagos eran de una cuenta
+// de prueba: de ahí nunca salió nada. Se distingue, porque no es lo mismo haber
+// reembolsado $147.809 que no haberlos cobrado nunca.
+const dePruebaN = conPago.length - reales.length
+console.log(reales.length === 0 && dePruebaN > 0
+  ? `\n  ✓ Los ${dePruebaN} pagos eran de una cuenta de prueba: no hubo plata real.`
+  : '\n  ✓ No queda plata afuera.')
 
 /* ── 3. Qué se lleva puesto ──────────────────────────────────────────────── */
 
