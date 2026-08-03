@@ -147,14 +147,16 @@ export async function crearCheckout(
   cantidad: number,
   buyer: Comprador,
   asistentes: string[],
-): Promise<{ orderId: string; preferenceId: string }> {
+): Promise<{ orderId: string; preferenceId: string; publicKey?: string }> {
   const res = await fetch('/api/checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ tier, quantity: cantidad, buyer, asistentes }),
   })
   if (!res.ok) await parseError(res)
-  return jsonSeguro<{ orderId: string; preferenceId: string }>(res)
+  // `publicKey` la manda el servidor: sigue el flag de entorno, así que un
+  // preview nunca queda con la clave de producción incrustada en el bundle.
+  return jsonSeguro<{ orderId: string; preferenceId: string; publicKey?: string }>(res)
 }
 
 /** Estado de una orden. Lo poletea /gracias esperando el webhook. */

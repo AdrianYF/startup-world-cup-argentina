@@ -16,6 +16,7 @@ import { MercadoPagoConfig, Preference } from 'mercadopago'
 import { db, stockDisponible } from './_lib/db.js'
 import { desglose } from './_lib/precios.js'
 import { json, rejectMethod, readBody, siteUrl, esMailValido } from './_lib/http.js'
+import { credencialesMP } from './_lib/entorno.js'
 
 /** Minutos que una orden pendiente mantiene reservado su cupo. */
 const RESERVA_MINUTOS = 30
@@ -26,11 +27,16 @@ const MAX_UNIDADES = 5
 export default async function handler(req, res) {
   if (rejectMethod(req, res, 'POST')) return
 
-  const accessToken = process.env.MP_ACCESS_TOKEN
-  if (!accessToken) {
-    console.error('[checkout] falta MP_ACCESS_TOKEN')
+  // Las credenciales del entorno. En desarrollo son las de prueba, y si son de
+  // producción esto tira antes de crear nada — ver `_lib/entorno.js`.
+  let credenciales
+  try {
+    credenciales = credencialesMP()
+  } catch (err) {
+    console.error('[checkout]', err.message)
     return json(res, 503, { error: 'checkout_no_configurado' })
   }
+  const { accessToken } = credenciales
 
   const body = readBody(req)
   const tierId = String(body.tier || '').trim()
@@ -171,7 +177,15 @@ export default async function handler(req, res) {
       .update({ mp_preference_id: preference.id })
       .eq('id', orden.id)
 
-    return json(res, 201, { orderId: orden.id, preferenceId: preference.id })
+    // La clave pública viaja acá y ya no se inlinea en el build con `VITE_`.
+    // Dos motivos: sigue el mismo flag de entorno que el resto —un preview no
+    // puede quedar con la clave de producción— y cambiarla deja de exigir un
+    // redeploy.
+    return json(res, 201, {
+      orderId: orden.id,
+      preferenceId: preference.id,
+      publicKey: credenciales.publicKey,
+    })
   } catch (err) {
     console.error('[checkout]', err)
     return json(res, 500, { error: 'checkout_fallo' })
