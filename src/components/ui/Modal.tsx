@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom'
 import { useEscape } from '../../lib/useEscape'
 
 /**
- * Modal primitivo único - reemplaza los popups duplicados en PitchBattle,
- * BuildersArena y Partners. Aplica los principios de Don Norman:
+ * Modal primitivo único - reemplaza los popups duplicados que había en cada
+ * sección (PitchBattle, Participan, Footer). Aplica los principios de Don Norman:
  *  - Error recovery: ESC + click outside + botón Cerrar (3 caminos para salir)
  *  - Visibility: foco visible (heredado de :focus-visible global)
  *  - Constraints: focus-trap impide salir con TAB → keyboard users no se pierden

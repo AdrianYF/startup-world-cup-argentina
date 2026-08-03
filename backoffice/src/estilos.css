@@ -64,6 +64,33 @@ button {
   100% { opacity: 0; }
 }
 
+/* === El escáner ========================================================== */
+/*
+ * Afuera de la ventana de escaneo la pantalla es azul, casi opaca.
+ *
+ * Casi opaca a propósito: con la cámara a la vista, la pantalla se lee como una
+ * cámara con un recuadro encima, y en la fila hay caras, remeras y sol tirando
+ * del ojo justo cuando hay que apuntar. Tapada, queda un solo lugar donde mirar
+ * y es exactamente donde tiene que entrar el QR.
+ *
+ * Es tinte y nada más. El desenfoque se probó y se sacó: se repinta con cada
+ * cuadro de la cámara —teléfono caliente en la puerta— y no ayudaba a apuntar.
+ */
+
+/* Va como box-shadow gigante de la ventana y no como un panel aparte porque así
+   respeta el border-radius: la esquina redondeada queda limpia en vez de tener
+   un mordisco cuadrado.
+
+   Las dos sombras se apilan, la primera arriba de la segunda: el celeste dice
+   de qué azul es, el fondo cuánto tapa. Juntas dan ~#0e1c33 al 93%, o sea el
+   dark de la app apenas azulado, con lo de atrás insinuado y sin detalle.
+   Son las dos perillas de esto: primera, cuánto azul; segunda, cuánto tapa. */
+.swc-ventana {
+  box-shadow:
+    0 0 0 100vmax color-mix(in srgb, var(--color-swc-accent) 13%, transparent),
+    0 0 0 100vmax color-mix(in srgb, var(--color-swc-bg) 92%, transparent);
+}
+
 /* La persona recién agregada entra desde abajo, para que se vea de dónde salió
    la fila nueva en una lista que ya tenía cien. */
 .swc-entra {
@@ -73,6 +100,45 @@ button {
 @keyframes swc-entra {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
+}
+
+/* El brillo que cruza los esqueletos de carga.
+   Es lo único perpetuo de toda la app, y sólo existe mientras se espera: dice
+   «esto está viniendo» sin un spinner que gire para siempre sobre una pantalla
+   que ya falló. Anima `background-position`, que no toca el layout. */
+.swc-esqueleto {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: swc-brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes swc-brillo {
+  from { background-position: 150% 0; }
+  to   { background-position: -150% 0; }
+}
+
+/* La paleta baja dos píxeles y se asienta. Corta a propósito: se abre para
+   escribir, y una entrada de medio segundo se come las primeras letras. */
+.swc-paleta {
+  animation: swc-paleta 170ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes swc-paleta {
+  from { opacity: 0; transform: translateY(-10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Las filas de la paleta caen en cascada. El `--i` lo pone el componente y está
+   topeado: a partir de la novena el retraso deja de crecer, o las últimas
+   aparecerían después de que ya elegiste. */
+.swc-cascada {
+  animation: swc-entra 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 18ms);
 }
 
 /* El contador late cuando sube: es el único número que la gente mira de lejos. */
@@ -89,6 +155,7 @@ button {
    app sigue diciendo exactamente lo mismo. */
 @media (prefers-reduced-motion: reduce) {
   .swc-tick, .swc-circulo { animation: none; stroke-dashoffset: 0; }
-  .swc-flash, .swc-entra, .swc-late { animation: none; }
+  .swc-flash, .swc-entra, .swc-late, .swc-esqueleto,
+  .swc-paleta, .swc-cascada { animation: none; }
   .swc-flash { opacity: 0; }
 }

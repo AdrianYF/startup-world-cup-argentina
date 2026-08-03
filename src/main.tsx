@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
+import { ErrorBoundary } from './components/ui/ErrorBoundary.tsx'
 import { initAnalytics, trackPageView } from './lib/analytics'
 
 // Páginas de ruta → lazy para mantener liviano el bundle del landing.
@@ -46,31 +47,36 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <RouteAnalytics />
-      <Suspense fallback={<div className="min-h-screen bg-[#020618]" />}>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/road-to-swc" element={<RoadToSwcPage />} />
-          <Route path="/agenda" element={<AgendaPage />} />
-          <Route path="/pitch-battle" element={<PitchBattlePage />} />
-          <Route path="/startups" element={<StartupsPage />} />
-          <Route path="/voluntarios" element={<VoluntariosPage />} />
-          <Route path="/galeria" element={<GaleriaPage />} />
-          <Route path="/speakers" element={<SpeakersAll />} />
-          {/* Short links (galería/comité/startups): /swc/<CODE> → OG redirige a la ruta correcta.
-              En prod lo intercepta el rewrite de vercel.json; acá quedan como fallback. */}
-          <Route path="/swc/:code" element={<App />} />
-          <Route path="/g/:code" element={<App />} />
-          {/* Sección oculta: se llega escaneando el QR del ticket */}
-          <Route path="/mystery-box" element={<MysteryBox />} />
-          {/* Compra de entradas. `back_urls` de Mercado Pago vuelve a /gracias;
-              /entrada/:token es el link del mail y el destino del QR. */}
-          <Route path="/gracias" element={<Gracias />} />
-          <Route path="/entrada/:token" element={<Entrada />} />
-          {/* /puerta NO está acá: la acreditación es otra app, con su propio
-              bundle y su propio index.html (ver puerta/). El rewrite de
-              vercel.json la deja afuera del catch-all de esta SPA. */}
-        </Routes>
-      </Suspense>
+      {/* Afuera del Suspense: el Suspense cubre "todavía no cargó", y esto cubre
+          "cargó mal o no existe más". Son dos cosas distintas y hasta ahora la
+          segunda terminaba en una pantalla negra. */}
+      <ErrorBoundary>
+        <Suspense fallback={<div className="min-h-screen bg-[#020618]" />}>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/road-to-swc" element={<RoadToSwcPage />} />
+            <Route path="/agenda" element={<AgendaPage />} />
+            <Route path="/pitch-battle" element={<PitchBattlePage />} />
+            <Route path="/startups" element={<StartupsPage />} />
+            <Route path="/voluntarios" element={<VoluntariosPage />} />
+            <Route path="/galeria" element={<GaleriaPage />} />
+            <Route path="/speakers" element={<SpeakersAll />} />
+            {/* Short links (galería/comité/startups): /swc/<CODE> → OG redirige a la ruta correcta.
+                En prod lo intercepta el rewrite de vercel.json; acá quedan como fallback. */}
+            <Route path="/swc/:code" element={<App />} />
+            <Route path="/g/:code" element={<App />} />
+            {/* Sección oculta: se llega escaneando el QR del ticket */}
+            <Route path="/mystery-box" element={<MysteryBox />} />
+            {/* Compra de entradas. `back_urls` de Mercado Pago vuelve a /gracias;
+                /entrada/:token es el link del mail y el destino del QR. */}
+            <Route path="/gracias" element={<Gracias />} />
+            <Route path="/entrada/:token" element={<Entrada />} />
+            {/* /puerta NO está acá: la acreditación es otra app, con su propio
+                bundle y su propio index.html (ver puerta/). El rewrite de
+                vercel.json la deja afuera del catch-all de esta SPA. */}
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </BrowserRouter>
   </StrictMode>,
 )

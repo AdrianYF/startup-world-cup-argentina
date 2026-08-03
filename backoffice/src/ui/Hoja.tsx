@@ -11,8 +11,34 @@ import { useEffect, useId, type FormEvent, type ReactNode } from 'react'
  * Sale de abajo y no del centro porque la mitad de las veces se abre con una
  * mano en la puerta: lo que se toca tiene que caer donde está el pulgar.
  */
+/**
+ * Dónde se para la hoja.
+ *
+ *   · `auto`     — abajo en el celular, centrada desde `sm:`. Es el default y lo
+ *                  que corresponde a casi todo: en el teléfono lo que se toca
+ *                  tiene que caer donde está el pulgar.
+ *   · `abajo`    — pegada abajo también en pantalla grande, para lo que es parte
+ *                  del trabajo de la puerta.
+ *   · `centrada` — centrada en todos los anchos. Para lo que se completa mirando
+ *                  la pantalla, no tanteando: un formulario con varios campos
+ *                  pegado al borde inferior queda medio tapado por el teclado.
+ */
+type Posicion = 'auto' | 'abajo' | 'centrada'
+
+const MARCO: Record<Posicion, string> = {
+  auto: 'items-end sm:items-center sm:justify-center',
+  abajo: 'items-end',
+  centrada: 'items-center justify-center p-4',
+}
+
+const CAJA: Record<Posicion, string> = {
+  auto: 'rounded-t-2xl border-t sm:rounded-2xl sm:border',
+  abajo: 'rounded-t-2xl border-t',
+  centrada: 'rounded-2xl border',
+}
+
 export function Hoja({
-  titulo, subtitulo, chips, onCerrar, onSubmit, anclada, cerrar = 'Cerrar', children,
+  titulo, subtitulo, chips, onCerrar, onSubmit, posicion = 'auto', cerrar = 'Cerrar', children,
 }: {
   titulo: ReactNode
   subtitulo?: ReactNode
@@ -21,11 +47,7 @@ export function Hoja({
   onCerrar: () => void
   /** Con esto la hoja es un `<form>` y el submit es su acción principal. */
   onSubmit?: (e: FormEvent<HTMLFormElement>) => void
-  /**
-   * Pegada abajo también en pantalla grande. Es lo que corresponde cuando la
-   * hoja es parte del trabajo de la puerta; las de la mesa se centran.
-   */
-  anclada?: boolean
+  posicion?: Posicion
   cerrar?: string
   children: ReactNode
 }) {
@@ -37,10 +59,12 @@ export function Hoja({
     return () => window.removeEventListener('keydown', alTecla)
   }, [onCerrar])
 
+  // El 90vh deja aire arriba y abajo también cuando el marco pone padding: con
+  // el viewport más chico que se usa, ese 10% ya es más que los 32px del `p-4`.
   const clases =
-    'relative mx-auto max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-2xl ' +
-    'border-t border-swc-accent/30 bg-swc-surface px-5 pt-6 pb-8' +
-    (anclada ? '' : ' sm:rounded-2xl sm:border')
+    'relative mx-auto max-h-[90vh] w-full max-w-lg overflow-y-auto ' +
+    'border-swc-accent/30 bg-swc-surface px-5 pt-6 pb-8 ' +
+    CAJA[posicion]
 
   const contenido = (
     <>
@@ -69,7 +93,7 @@ export function Hoja({
       role="dialog"
       aria-modal="true"
       aria-labelledby={id}
-      className={`fixed inset-0 z-50 flex ${anclada ? 'items-end' : 'items-end sm:items-center sm:justify-center'}`}
+      className={`fixed inset-0 z-50 flex ${MARCO[posicion]}`}
     >
       <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Cerrar" />
       {onSubmit

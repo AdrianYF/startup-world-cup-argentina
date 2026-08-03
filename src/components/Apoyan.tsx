@@ -1,7 +1,39 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { content } from '../lib/content'
 import { LogoProtegido } from './ui/LogoProtegido'
 import { SectionGlow } from './ui/SectionGlow'
+
+/**
+ * La celda de un logo: un `<a>` si la marca tiene link, un `<div>` si no.
+ *
+ * Vive acá afuera y no adentro del `.map`, que es donde estaba. Definido adentro
+ * era una función NUEVA en cada render, así que React lo tomaba como otro tipo de
+ * componente y desmontaba y volvía a montar todo el subárbol de logos cada vez
+ * que el padre renderizaba. Dos consecuencias visibles: la animación de entrada
+ * arrancaba de cero una y otra vez, y el hover tuvo que hacerse mutando el DOM a
+ * mano porque con CSS no llegaba a correr.
+ */
+function CeldaLogo({ url, nombre, className, style, children }: {
+  url?: string
+  nombre: string
+  className: string
+  style?: CSSProperties
+  children: ReactNode
+}) {
+  if (!url) return <div className={className} style={style}>{children}</div>
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Visitar ${nombre} (abre en una nueva pestaña)`}
+      className={className}
+      style={style}
+    >
+      {children}
+    </a>
+  )
+}
 
 type Categoria = (typeof content.apoyan)[number]
 
@@ -76,13 +108,13 @@ function Apoyan() {
 function CategoriaLogos({ cat }: { cat: Categoria }) {
   const ref = useRef<HTMLDivElement>(null)
   const [reduced] = useState(prefiereMenosMovimiento)
-  const [visible, setVisible] = useState(false)
+  // Con `reduced` no hay reveal que hacer, así que se arranca visible en vez de
+  // prenderlo desde el efecto: eso era un setState sincrónico, o sea un render de
+  // más y un frame en el que los logos no estaban.
+  const [visible, setVisible] = useState(reduced)
 
   useEffect(() => {
-    if (reduced) {
-      setVisible(true)
-      return
-    }
+    if (reduced) return
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
@@ -159,25 +191,14 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                 transition: 'opacity 380ms ease, transform 380ms cubic-bezier(0.22,1,0.36,1)',
                 transitionDelay: visible ? `${j * 40}ms` : '0ms',
               }
-          const Wrapper = ({ children }: { children: ReactNode }) =>
-            url ? (
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Visitar ${logo.nombre} (abre en una nueva pestaña)`}
-                className={`flex items-center justify-center ${anchoClass}${spanClass} ${cellHClass}`}
-                style={revealStyle}
-              >
-                {children}
-              </a>
-            ) : (
-              <div className={`flex items-center justify-center ${anchoClass}${spanClass} ${cellHClass}`} style={revealStyle}>
-                {children}
-              </div>
-            )
           return (
-            <Wrapper key={j}>
+            <CeldaLogo
+              key={j}
+              url={url}
+              nombre={logo.nombre}
+              className={`flex items-center justify-center ${anchoClass}${spanClass} ${cellHClass}`}
+              style={revealStyle}
+            >
               {esProtegido && logo.img ? (
                 <LogoProtegido
                   src={logo.img}
@@ -240,7 +261,7 @@ function CategoriaLogos({ cat }: { cat: Categoria }) {
                   {logo.nombre}
                 </span>
               )}
-            </Wrapper>
+            </CeldaLogo>
           )
         })}
       </div>

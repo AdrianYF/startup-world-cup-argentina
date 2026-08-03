@@ -1,5 +1,10 @@
 /**
- * Las secciones del backoffice.
+ * Las secciones de ADMINISTRACIÓN.
+ *
+ * La puerta no está acá a propósito: no es una sección entre otras, es la raíz.
+ * Quien acredita abre la app y ya está donde tiene que estar, sin barra de
+ * navegación y sin elegir nada. Todo lo de este archivo es lo otro: lo que se
+ * mira sentado, con wifi, para entender algo o para arreglarlo.
  *
  * En su propio archivo y no dentro de `Shell.tsx` porque las usan el shell, el
  * router y el encabezado de cada pantalla — y un módulo que exporta componentes
@@ -7,31 +12,32 @@
  *
  * La bajada vive acá y no en cada sección por la misma razón que el label: es
  * copy, lo lee gente del staff que no escribió el código, y tenerlo junto es lo
- * que hace que las cinco suenen a la misma app.
+ * que hace que todas suenen a la misma app.
  */
-import { PERSONAS } from './ruta'
-
 export type Seccion = { id: string; label: string; bajada: string }
 
+/** La lista completa: los tres días juntos, sin filtro, editable. */
+export const INSCRIPTOS = 'inscriptos'
+
 /**
- * El orden es el de uso, no el del organigrama: Personas primero porque es lo
- * que se abre el 95% de las veces.
+ * El orden es el de uso. Inscriptos primero porque responde «¿esta persona
+ * está?», que es la pregunta que más sube desde la puerta.
  */
 export const SECCIONES: Seccion[] = [
   {
-    id: PERSONAS,
-    label: 'Personas',
-    bajada: 'La lista de acreditación y el padrón completo. Acá se acredita, se corrige y se da de baja.',
+    id: INSCRIPTOS,
+    label: 'Inscriptos',
+    bajada: 'La lista entera de los tres días: corregir un dato, reenviar la entrada, dar de baja — y acreditar, sin volver a la puerta.',
   },
   {
     id: 'ventas',
     label: 'Ventas',
-    bajada: 'Las compras de la venta propia: destrabar un pago, reenviar la entrada, liberar un cupo reservado.',
+    bajada: 'Las compras por Mercado Pago: destrabar un pago, reenviar la entrada, liberar un cupo reservado.',
   },
   {
     id: 'stock',
     label: 'Stock',
-    bajada: 'El cupo y el precio de cada tier de la web. Startup Grind vende su propio stock, aparte.',
+    bajada: 'El cupo y el precio de cada tier que se vende por Mercado Pago. Luma y Startup Grind manejan el suyo.',
   },
   {
     id: 'importar',

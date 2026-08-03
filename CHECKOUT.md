@@ -103,11 +103,16 @@ update tiers set stock_total = 25 where id = 'general';
 App **startupworldcupar** (`1003572338407990`) en
 [Tus integraciones](https://www.mercadopago.com.ar/developers/panel/app).
 
-1. Copiá la **public key** y el **access token**. Arrancá con los de *test*.
+Hay dos solapas de credenciales, *producción* y *prueba*, y son dos juegos que no
+se mezclan: las de prueba (`TEST-`) van a `MP_TEST_*` y las de producción
+(`APP_USR-`) a `MP_*`. Ver [la regla](#dos-entornos-una-regla).
+
+1. Copiá la **public key** y el **access token**. Arrancá con los de *prueba*.
 2. Webhooks → Configurar notificación:
    - URL: `https://<tu-dominio>/api/mp-webhook`
    - Evento: **Pagos**
-   - Revelá la **clave secreta** → esa es `MP_WEBHOOK_SECRET`.
+   - Revelá la **clave secreta** → `MP_WEBHOOK_SECRET`, o `MP_TEST_WEBHOOK_SECRET`
+     si la URL que cargaste es la de un túnel.
 
 Ver **[Probar en local](#probar-en-local)** más abajo.
 
@@ -120,7 +125,9 @@ componentes ya resuelven las tablas anidadas y los estilos inline que los
 clientes de mail necesitan — el render sale con 14 tablas, 48 estilos inline y
 cero bloques `<style>`, que es lo que Gmail descarta.
 
-1. Alta en [resend.com](https://resend.com), API key → `RESEND_API_KEY`.
+1. Alta en [resend.com](https://resend.com), API key → `RESEND_API_KEY` (en
+   desarrollo, `RESEND_TEST_API_KEY`; vacía = no sale ningún mail, que es el
+   default a propósito).
 2. Verificá el dominio (SPF + DKIM). **Son registros DNS que tenés que cargar
    donde esté hosteado el dominio** — es el paso más lento, conviene arrancarlo
    primero.
@@ -140,11 +147,61 @@ RESEND_FROM="Startup World Cup Argentina <onboarding@resend.dev>"
 
 ## 4 · Variables
 
-Copiá `.env.example` a `.env.local` y completalo. Después, las mismas en Vercel:
+Copiá `.env.example` a `.env.local` y completalo.
+
+### Dos entornos, una regla
+
+`ENTORNO` decide con qué juego de credenciales corre todo — Mercado Pago, Resend,
+el PIN de la puerta, la URL del sitio. Se nombran igual, con `TEST_` metido
+después del servicio:
+
+| producción | desarrollo |
+| --- | --- |
+| `MP_ACCESS_TOKEN` | `MP_TEST_ACCESS_TOKEN` |
+| `MP_PUBLIC_KEY` | `MP_TEST_PUBLIC_KEY` |
+| `MP_WEBHOOK_SECRET` | `MP_TEST_WEBHOOK_SECRET` |
+| `RESEND_API_KEY`, `RESEND_FROM`, `RESEND_REPLY_TO` | `RESEND_TEST_*` |
+| `PUERTA_PIN`, `PUERTA_SECRET` | `PUERTA_TEST_*` |
+| `PUBLIC_SITE_URL` | `PUBLIC_TEST_SITE_URL` |
+
+Si en desarrollo falta la `_TEST_`, **no se cae a la de producción**: corta y
+dice cuál falta. Ese silencio es el que cobró $147.809 de verdad — ver
+`api/_lib/entorno.js`.
+
+Supabase es la excepción a propósito: una sola base para los dos entornos. Para
+no escribir en la del evento está `npm run dev:local`.
 
 ```bash
-vercel env add MP_ACCESS_TOKEN production
+npm run entorno   # qué tiene cargado cada entorno y qué falta
 ```
+
+### Producción
+
+Los valores de producción **no van en `.env.local`**: viven en Vercel, así un
+local mal arrancado no puede usarlos. El checklist es este, con los nombres SIN
+prefijo:
+
+```bash
+vercel env add MP_ACCESS_TOKEN production      # APP_USR-… de la cuenta que cobra
+vercel env add MP_PUBLIC_KEY production        # APP_USR-…
+vercel env add MP_WEBHOOK_SECRET production    # el de la app, no el de otra cuenta
+vercel env add PUERTA_PIN production
+vercel env add PUERTA_SECRET production        # openssl rand -base64 32
+vercel env add RESEND_API_KEY production
+vercel env add RESEND_FROM production
+vercel env add RESEND_REPLY_TO production
+vercel env add PUBLIC_SITE_URL production      # el dominio real
+vercel env add SUPABASE_URL production
+vercel env add SUPABASE_SECRET_KEY production
+```
+
+> El `MP_WEBHOOK_SECRET` tiene que ser el de **la misma app** que emitió el
+> access token. Si se cambia de cuenta de Mercado Pago y no se cambia este, las
+> notificaciones fallan la firma, `api/mp-webhook.js` contesta 401 y el pago
+> entra sin que la entrada se acredite sola.
+
+Un cambio de variable en Vercel no toca lo que está deployado: recién aplica en
+el próximo deploy.
 
 Sólo `VITE_MP_PUBLIC_KEY` lleva el prefijo `VITE_`. Todo lo prefijado así se
 inlinea en el JavaScript público: si le ponés `VITE_` a un secreto, queda
@@ -152,13 +209,21 @@ expuesto en el bundle.
 
 ## Probar en local
 
-Dos procesos, y con eso `npm run dev` en **:5173** sirve el sitio *y* las
-funciones:
+Para probar una **compra**, un comando:
 
 ```bash
-supabase start   # Postgres local en Docker; aplica supabase/migrations/ solo
-npm run dev      # http://localhost:5173
+npm run dev:local
 ```
+
+Levanta el Supabase de Docker si no está, siembra los tiers (`supabase/seed.sql`,
+que es lo que hace que la venta propia exista y el botón no se vaya a Startup
+Grind) y arranca el dev server apuntando ahí. Mercado Pago sigue con las
+credenciales de prueba de `.env.local`, así que se puede comprar sin mover un
+peso y sin escribir en la base del evento.
+
+Para trabajar contra la base de la nube —lo que hace falta para ver los datos
+reales— es `npm run dev`, y ahí la venta propia depende de que los tiers estén
+`activo = true` en esa base.
 
 Las funciones corren dentro del dev server gracias a `scripts/vite-plugin-api.mjs`.
 Sin ese plugin, Vite no conoce `/api/*` y cae al fallback de la SPA: un GET
@@ -166,8 +231,13 @@ devuelve el index.html con 200 pero **un POST devuelve 404**, porque el fallback
 sólo aplica a GET/HEAD. Ese 404 parecía un bug del checkout y no lo era.
 
 `supabase start` imprime la **API URL** y la **Secret key**: van a `SUPABASE_URL`
-y `SUPABASE_SERVICE_ROLE_KEY`. Son de un Postgres en tu máquina, no tocan nada
-remoto. `supabase stop` lo baja.
+y `SUPABASE_SECRET_KEY`. Son de un Postgres en tu máquina, no tocan nada remoto.
+`supabase stop` lo baja. Más cómodo todavía: `npm run dev:local` las lee de
+`supabase status` y las inyecta sin tocar `.env.local`.
+
+Supabase es lo único que NO conmuta con `ENTORNO` — una sola base para los dos
+entornos, así que en desarrollo se escribe en la del evento salvo que uses el
+Postgres local.
 
 Comprobá que están vivas:
 
@@ -180,11 +250,13 @@ curl localhost:5173/api/tiers
 
 ### Sin túnel
 
-Con `PUBLIC_SITE_URL=http://localhost:5173` el pago funciona de punta a punta.
+Con `PUBLIC_TEST_SITE_URL=http://localhost:5173` el pago funciona de punta a
+punta.
 
 No llegan webhooks (MP no alcanza `localhost`), pero **no hace falta**: al volver
 al sitio, la reconciliación de `/api/orden` le pregunta a MP y acredita sola. La
-única diferencia es que el mail no se manda hasta que haya `RESEND_API_KEY`.
+única diferencia es que el mail no se manda hasta que haya
+`RESEND_TEST_API_KEY`.
 
 El límite real es de Mercado Pago: **no hay `auto_return`**, porque lo rechaza si
 `back_urls.success` no es pública (la preferencia falla entera con
@@ -194,14 +266,17 @@ sitio" a mano; ahí sí se abre el modal de felicitaciones.
 ### Con túnel, para probar el webhook de verdad
 
 ```bash
-cloudflared tunnel --url http://localhost:5173
+npm run tunel            # contra :5173
+npm run tunel -- 5175    # si Vite se corrió de puerto
 ```
 
-1. Poné esa URL en `PUBLIC_SITE_URL` y reiniciá `npm run dev`. Sin esto las
-   `back_urls` apuntan a localhost y al pagar no volvés a ningún lado.
-2. Cargala en el panel de MP como `https://<túnel>/api/mp-webhook`, evento
-   **Pagos**.
-3. Copiá la clave secreta que revela el panel a `MP_WEBHOOK_SECRET`.
+Levanta `cloudflared`, escribe la URL en `PUBLIC_TEST_SITE_URL` y te dice lo que
+falta. Sin esa variable las `back_urls` apuntan a localhost y al pagar no volvés
+a ningún lado.
+
+1. Reiniciá `npm run dev`: el env se lee al arrancar.
+2. Cargá `https://<túnel>/api/mp-webhook` en el panel de MP, evento **Pagos**.
+3. Copiá la clave secreta que revela el panel a `MP_TEST_WEBHOOK_SECRET`.
 
 > El túnel es público mientras el proceso viva: cualquiera con el link entra a tu
 > máquina. Cortalo cuando termines.
@@ -312,9 +387,10 @@ escriben en el **primer** ingreso, y son lo que leen `/entrada/<token>` y
 Lo único que necesita red es el escaneo: el token no viaja al celular del staff
 —es la credencial de quien compró—, así que lo resuelve el servidor.
 
-**Configuración**: `PUERTA_PIN` y `PUERTA_SECRET` (ver `.env.example`). El PIN
-tiene que ser largo: detrás está la lista completa con mails y teléfonos. Sin
-las dos variables, el login devuelve 503.
+**Configuración**: `PUERTA_PIN` y `PUERTA_SECRET` en producción,
+`PUERTA_TEST_PIN` y `PUERTA_TEST_SECRET` en desarrollo (ver `.env.example`). El
+PIN tiene que ser largo: detrás está la lista completa con mails y teléfonos. Sin
+las dos variables del entorno activo, el login devuelve 503.
 
 ```bash
 vercel env add PUERTA_PIN production

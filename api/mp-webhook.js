@@ -16,6 +16,7 @@
 import { WebhookSignatureValidator, InvalidWebhookSignatureError } from 'mercadopago'
 import { db } from './_lib/db.js'
 import { json, first, siteUrl } from './_lib/http.js'
+import { credencialesMP } from './_lib/entorno.js'
 import { traerPago, acreditar } from './_lib/acreditar.js'
 
 /** Ventana de tolerancia del timestamp firmado. Acota los replays. */
@@ -37,10 +38,14 @@ export default async function handler(req, res) {
     return json(res, 405, { error: 'method_not_allowed' })
   }
 
-  const secret = process.env.MP_WEBHOOK_SECRET
-  const accessToken = process.env.MP_ACCESS_TOKEN
+  let secret, accessToken
+  try {
+    ({ webhookSecret: secret, accessToken } = await credencialesMP())
+  } catch (err) {
+    console.error('[webhook]', err.message)
+  }
   if (!secret || !accessToken) {
-    console.error('[webhook] falta MP_WEBHOOK_SECRET o MP_ACCESS_TOKEN')
+    console.error('[webhook] falta el secreto o el token del entorno actual')
     // 500 y no 200: que MP reintente cuando esté bien configurado, en vez de
     // dar la notificación por entregada y perder el pago.
     return json(res, 500, { error: 'webhook_no_configurado' })

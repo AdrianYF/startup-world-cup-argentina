@@ -13,11 +13,13 @@ import participan from '../content/participan.json'
 /**
  * Datos que usa el landing (y que por lo tanto viven en el bundle inicial).
  *
- * `perks`, `startups`, `partners` y `buildersArena` NO están acá a propósito:
- * los consume código que sólo se carga en rutas lazy (o componentes hoy sin
- * uso), y al estar en este objeto se bundleaban igual en el landing — 33 KB de
- * JSON que ningún visitante de la home necesita. Cada consumidor los importa
- * directo desde `src/content/`, así caen en el chunk de su propia ruta.
+ * `perks` y `startups` NO están acá a propósito: los consume código que sólo se
+ * carga en rutas lazy, y al estar en este objeto se bundleaban igual en el
+ * landing — KB de JSON que ningún visitante de la home necesita. Cada consumidor
+ * los importa directo desde `src/content/`, así caen en el chunk de su ruta.
+ *
+ * `partners` y `buildersArena` estaban en esa misma lista: se fueron con sus
+ * componentes, que no los importaba nadie.
  */
 export const content = {
   config,

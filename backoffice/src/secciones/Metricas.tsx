@@ -3,6 +3,7 @@ import { Boton, Pildoras, type Opcion } from '../ui/Acciones'
 import { Dato, Datos, Rotulo } from '../ui/Campos'
 import { Barra, Cargando, Roto, Tarjeta, Tarjetas } from '../ui/Estado'
 import { Bloque, Limite, Operacion } from '../ui/Operacion'
+import { nombreCanal } from '../lib/canales'
 import { traerMetricas, useRecurso, type Cuenta } from '../lib/admin'
 
 /**
@@ -48,6 +49,31 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
             </p>
           </Bloque>
 
+          {/* La comparación que antes no se podía hacer: cuánta gente trajo cada
+              canal y qué proporción de esa gente terminó entrando. Con «venta
+              propia» como bucket único, Mercado Pago no se podía cruzar contra
+              Luma ni contra Startup Grind. */}
+          {datos.resumen.porCanal.length > 0 && (
+            <Bloque titulo="Por canal" className="mt-6">
+              <ul className="flex flex-col gap-2.5">
+                {datos.resumen.porCanal.map(c => (
+                  <li key={c.clave}>
+                    <div className="mb-1 flex justify-between gap-3 text-xs">
+                      <span className="truncate text-gray-300">{nombreCanal(c.clave)}</span>
+                      <span className="shrink-0 font-bold tabular-nums text-swc-light">
+                        {c.entraron}/{c.esperados}
+                        {/* `tasa` ya viene redondeada a porcentaje entero desde
+                            el servidor (api/_lib/admin.js). */}
+                        <span className="ml-1.5 font-normal text-gray-500">{c.tasa}%</span>
+                      </span>
+                    </div>
+                    <Barra valor={c.entraron} maximo={c.esperados} tono="ok" />
+                  </li>
+                ))}
+              </ul>
+            </Bloque>
+          )}
+
           {datos.resumen.recurrencia.length > 0 && (
             <Bloque titulo="Cuántos días vino cada uno" className="mt-6">
               <Datos>
@@ -63,7 +89,7 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           <Bloque titulo="Plata y cupo" className="mt-6">
             <Datos>
               <Dato label="Recaudado" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
-              <Dato label="Cupo web libre" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
+              <Dato label="Cupo MP libre" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
                 {datos.cupo.libre} de {datos.cupo.total}
               </Dato>
             </Datos>
@@ -82,10 +108,10 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           label="Recaudado"
           valor={datos.ventas.recaudadoTexto}
           tono="ok"
-          detalle={`${datos.ventas.entradas} entradas por la web`}
+          detalle={`${datos.ventas.entradas} entradas por Mercado Pago`}
         />
         <Tarjeta
-          label="Cupo web libre"
+          label="Cupo MP libre"
           valor={datos.cupo.libre}
           tono={datos.cupo.libre === 0 ? 'coral' : datos.cupo.libre <= 5 ? 'warn' : undefined}
           detalle={`de ${datos.cupo.total} · ${datos.cupo.tomado} tomado`}
@@ -127,7 +153,11 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
 
           <div className="grid gap-4 lg:grid-cols-3">
             <Serie titulo="Por hora" datos={activo.porHora} vacio="Todavía no entró nadie." />
-            <Serie titulo="Por canal" datos={activo.porCanal} vacio="Sin ingresos." />
+            <Serie
+              titulo="Por canal"
+              datos={activo.porCanal.map(c => ({ ...c, clave: nombreCanal(c.clave) }))}
+              vacio="Sin ingresos."
+            />
             <Serie
               titulo="Por quién acreditó"
               datos={activo.porPuerta}

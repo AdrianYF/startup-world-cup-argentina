@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from 'react'
-import { Boton, Pildoras, type Opcion } from '../ui/Acciones'
+import { Boton, Pildoras, PildorasMulti, type Opcion } from '../ui/Acciones'
 import { Aviso } from '../ui/Aviso'
-import { Campo, Dato, Datos, Opcional, Rotulo } from '../ui/Campos'
+import { Campo, Dato, Datos, Rotulo } from '../ui/Campos'
 import { Chip } from '../ui/Estado'
 import { Bloque, Limite, Operacion } from '../ui/Operacion'
 import { Pasos, type Paso } from '../ui/Pasos'
@@ -19,11 +19,49 @@ import { importarCSV, type ResumenImport } from '../lib/admin'
  * Es la pantalla que más justifica el panel de contexto: escribe sobre la lista
  * de acreditación, con el evento encima, y no tiene deshacer. El paso que se
  * saltea —la vista previa— es el único que separa un upsert correcto de haber
- * pisado el padrón.
+ * pisado la lista.
  */
 const CANALES = [
-  { id: 'luma', label: 'Luma', ayuda: 'slug del evento, ej. quzhnee8', dias: 'Mié 5' },
-  { id: 'startupgrind', label: 'Startup Grind', ayuda: 'id del evento, ej. 31263', dias: 'Jue 6 + Vie 7' },
+  {
+    id: 'luma',
+    label: 'Luma',
+    ayuda: 'slug del evento, ej. quzhnee8',
+    // Sin prefijo de días a propósito: Luma corre un evento por día y no hay uno
+    // que esté bien la mayoría de las veces. Antes había un default de «Mié 5» y
+    // era una trampa: importar el CSV del jueves sin tocar nada etiquetaba a esa
+    // gente con el día equivocado, no aparecían en ninguna lista, y como el día
+    // existe tampoco saltaba la alarma de «sin día».
+    dias: [] as string[],
+    aviso: 'Luma tiene un evento por día. Elegí cuál estás importando — no hay valor por defecto justamente porque adivinarlo mal deja a esa gente afuera de la puerta.',
+  },
+  {
+    id: 'startupgrind',
+    label: 'Startup Grind',
+    ayuda: 'id del evento, ej. 31263',
+    // Una sola tanda que habilita los dos días. Viene marcado, pero se ve y se
+    // puede desmarcar: es un prefijo, no un default invisible.
+    dias: ['Jue 6', 'Vie 7'],
+    aviso: '',
+  },
+]
+
+/**
+ * Los días asignables, en el formato EXACTO que espera `acreditacion.dias`.
+ *
+ * Duplica `DIAS_EVENTO` de `api/_lib/puerta.js`, y por eso se elige en vez de
+ * escribirse: el match es un `includes` sobre texto libre, así que un «Jueves 6»
+ * o un «jue 6» tipeados a mano no coinciden con nada y esa persona no aparece en
+ * ninguna lista. El servidor valida igual — si esto se desincroniza, el import
+ * falla con un error legible en vez de dejar gente invisible.
+ *
+ * «Mié 5» sigue asignable aunque esta puerta no lo atienda: es el side event en
+ * otro venue y su gente igual entra al padrón, que es lo que hace que el cruce
+ * por canal y la detección de pagos dobles funcionen.
+ */
+const DIAS_IMPORT: Opcion<string>[] = [
+  { id: 'Mié 5', label: 'Mié 5' },
+  { id: 'Jue 6', label: 'Jue 6' },
+  { id: 'Vie 7', label: 'Vie 7' },
 ]
 
 const PASOS: Paso[] = [
@@ -35,7 +73,9 @@ const PASOS: Paso[] = [
 function Importar({ onSinSesion }: { onSinSesion: () => void }) {
   const [origen, setOrigen] = useState('startupgrind')
   const [evento, setEvento] = useState('')
-  const [dias, setDias] = useState('')
+  const [dias, setDias] = useState<string[]>(
+    () => CANALES.find(c => c.id === 'startupgrind')!.dias,
+  )
   const [csv, setCsv] = useState('')
   const [archivo, setArchivo] = useState('')
   const [previa, setPrevia] = useState<ResumenImport | null>(null)
@@ -44,7 +84,10 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
   const [ocupado, setOcupado] = useState('')
 
   const canal = CANALES.find(c => c.id === origen)!
-  const listo = Boolean(csv && evento.trim())
+  // El texto tal cual va a quedar en la base. Se arma en el orden de
+  // `DIAS_IMPORT`, no en el de los clicks: es un dato, no una preferencia.
+  const textoDias = dias.join(' + ')
+  const listo = Boolean(csv && evento.trim() && dias.length)
 
   // El paso en curso sale del estado, no de un contador: si alguien cambia el
   // archivo después de la previa, la previa deja de valer y el flujo retrocede.
@@ -70,7 +113,7 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
     setOcupado(seco ? 'previa' : 'import')
     setError('')
     try {
-      const r = await importarCSV({ csv, origen, evento: evento.trim(), dias: dias.trim() || undefined, seco })
+      const r = await importarCSV({ csv, origen, evento: evento.trim(), dias: textoDias, seco })
       if (r.error) {
         setError(r.error + (r.columnas ? ` · columnas del archivo: ${r.columnas.join(', ')}` : ''))
         setPrevia(null)
@@ -101,7 +144,9 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
             <Datos>
               <Dato label="Clave del upsert">canal + evento + mail</Dato>
               <Dato label="Mail repetido">actualiza la fila</Dato>
-              <Dato label="Días por defecto">{canal.dias}</Dato>
+              <Dato label="Días" tono={dias.length ? undefined : 'coral'}>
+                {textoDias || 'sin elegir'}
+              </Dato>
             </Datos>
           </Bloque>
 
@@ -119,7 +164,13 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
           <Pildoras
             opciones={opcionesCanal}
             valor={origen}
-            onCambio={id => { setOrigen(id); invalidar() }}
+            onCambio={id => {
+              setOrigen(id)
+              // Los días vuelven al prefijo del canal nuevo: los del anterior
+              // describían otro evento.
+              setDias(CANALES.find(c => c.id === id)!.dias)
+              invalidar()
+            }}
             etiqueta="Canal del export"
           />
         </div>
@@ -134,15 +185,24 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
           ayuda="Es la clave del upsert junto con el canal y el mail: reimportar el mismo evento actualiza en vez de duplicar."
         />
 
-        <Campo
-          id="im-dias"
-          label={<>Días<Opcional /></>}
-          value={dias}
-          onChange={e => { setDias(e.target.value); invalidar() }}
-          placeholder={`por defecto: ${canal.dias}`}
-          autoComplete="off"
-          ayuda="Tiene que contener «Mié», «Jue» o «Vie» tal cual: la puerta los busca dentro de este texto. Lo que no coincida no aparece en ninguna lista."
-        />
+        <div>
+          <Rotulo className="mb-1.5">Días que habilita esta tanda</Rotulo>
+          <PildorasMulti
+            opciones={DIAS_IMPORT}
+            valores={dias}
+            onCambio={ids => { setDias(ids); invalidar() }}
+            etiqueta="Días que habilita esta tanda"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            {dias.length
+              ? <>Se guarda como «<span className="text-gray-300">{textoDias}</span>».{' '}</>
+              : 'Elegí al menos uno: sin días, esa gente no aparece en ninguna lista. '}
+            El miércoles 5 es el side event en otro venue — entra al padrón pero no abre
+            puerta acá.
+          </p>
+        </div>
+
+        {canal.aviso && <Aviso tono="info">{canal.aviso}</Aviso>}
 
         <div>
           <Rotulo className="mb-1.5">Archivo CSV</Rotulo>

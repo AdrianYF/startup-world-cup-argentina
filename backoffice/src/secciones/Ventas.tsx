@@ -13,7 +13,11 @@ import {
 } from '../lib/admin'
 
 /**
- * Las compras de la venta propia.
+ * Las compras que entraron por Mercado Pago.
+ *
+ * Es uno de los tres canales del evento —los otros dos, Luma y Startup Grind,
+ * cobran por su cuenta y sólo llegan acá como CSV—, así que esta sección es la
+ * única donde hay plata que se puede destrabar, liberar o marcar reembolsada.
  *
  * Hasta hace poco esto no existía en ninguna pantalla: ver una orden era una
  * query en el SQL Editor, y destrabar una que Mercado Pago aprobó pero el
@@ -135,7 +139,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
         <Tarjetas>
           <Tarjeta label="Recaudado" valor={t?.recaudadoTexto || '—'} detalle="cargo de servicio incluido" tono="ok" />
           <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} />
-          <Tarjeta label="Entradas vendidas" valor={t?.entradas ?? 0} detalle="por la web" />
+          <Tarjeta label="Entradas vendidas" valor={t?.entradas ?? 0} detalle="por Mercado Pago" />
           <Tarjeta
             label="Reservando cupo"
             valor={t?.pendientes ?? 0}

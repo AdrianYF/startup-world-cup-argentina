@@ -142,11 +142,16 @@ export function Campos({ columnas = 2, children }: { columnas?: 1 | 2 | 3; child
 }
 
 /** Un buscador. Es el control más usado del backoffice, así que tiene su forma. */
-export function Buscador({ valor, onCambio, placeholder, autoFocus, id = 'buscador' }: {
+export function Buscador({ valor, onCambio, placeholder, autoFocus, onKeyDown, id = 'buscador' }: {
   valor: string
   onCambio: (v: string) => void
   placeholder: string
   autoFocus?: boolean
+  /**
+   * Para manejar las flechas y el Enter sin sacar el foco del campo. Es lo que
+   * deja recorrer los resultados y abrir el elegido sin tocar el mouse.
+   */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
   id?: string
 }) {
   return (
@@ -155,6 +160,7 @@ export function Buscador({ valor, onCambio, placeholder, autoFocus, id = 'buscad
       type="search"
       value={valor}
       onChange={e => onCambio(e.target.value)}
+      onKeyDown={onKeyDown}
       placeholder={placeholder}
       aria-label={placeholder}
       autoFocus={autoFocus}

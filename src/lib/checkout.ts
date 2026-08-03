@@ -27,6 +27,18 @@ export type TierLive = {
   disponible: number
 }
 
+/**
+ * El estado de la venta propia, tal como lo cuenta `/api/tiers`.
+ *
+ * `ventaPropia` viaja aparte de la lista y no se deduce de que venga vacía: una
+ * lista vacía puede ser «la venta está cerrada» o «no quedan tandas activas», y
+ * el botón manda a un lado o al otro según cuál sea.
+ */
+export type Venta = {
+  ventaPropia: boolean
+  tiers: TierLive[]
+}
+
 export type Comprador = {
   nombre: string
   email: string
@@ -68,13 +80,37 @@ export class CheckoutError extends Error {
   // prohíbe los parameter properties del constructor.
   codigo: string
   disponible?: number
+  /**
+   * El status HTTP. 0 cuando no hubo respuesta.
+   *
+   * Es lo que separa «esto no se arregla reintentando» (4xx) de «probá más
+   * tarde» (5xx, o la API caída). El código de error solo no alcanza: un 500
+   * también viene con su `{ error: … }`.
+   */
+  status: number
 
-  constructor(codigo: string, disponible?: number) {
+  constructor(codigo: string, disponible?: number, status = 0) {
     super(codigo)
     this.name = 'CheckoutError'
     this.codigo = codigo
     this.disponible = disponible
+    this.status = status
   }
+}
+
+/**
+ * True si vale la pena volver a intentarlo: la API no respondió, o falló ella.
+ *
+ * Existe por la pantalla de «confirmando tu pago». Ahí hay alguien que YA pagó,
+ * y hasta acá cualquier excepción pasajera —un 502, el 4G que se corta un
+ * segundo— mataba el poll para siempre y le mostraba «no encontramos la compra».
+ * Un 404 sí es definitivo; un 503 no.
+ *
+ * Es la misma regla que usa la puerta desde siempre (`backoffice/src/lib/api.ts`).
+ */
+export function esReintentable(err: unknown): boolean {
+  if (!(err instanceof CheckoutError)) return true // sin red
+  return err.status === 0 || err.status >= 500
 }
 
 const MENSAJES: Record<string, string> = {
@@ -84,6 +120,9 @@ const MENSAJES: Record<string, string> = {
   nombre_requerido: 'Escribí tu nombre y apellido.',
   asistente_requerido: 'Falta el nombre de alguna de las entradas.',
   cantidad_invalida: 'Cantidad inválida.',
+  // Dos cosas distintas que antes se veían igual: la venta propia todavía no
+  // abrió (decisión, VENTA_PROPIA) o el pago está mal configurado (accidente).
+  venta_cerrada: 'La venta por acá todavía no abrió. Podés comprar en Startup Grind.',
   checkout_no_configurado: 'El pago online todavía no está habilitado.',
   api_no_disponible: 'El pago online no está disponible en este momento.',
 }
@@ -105,7 +144,7 @@ async function parseError(res: Response): Promise<never> {
   } catch {
     /* respuesta sin JSON: cae al código genérico */
   }
-  throw new CheckoutError(cuerpo.error || `http_${res.status}`, cuerpo.disponible)
+  throw new CheckoutError(cuerpo.error || `http_${res.status}`, cuerpo.disponible, res.status)
 }
 
 /**
@@ -125,12 +164,13 @@ async function jsonSeguro<T>(res: Response): Promise<T> {
 }
 
 /** Precio y cupo reales. Devuelve null si la API no responde: el sitio sigue andando. */
-export async function fetchTiers(signal?: AbortSignal): Promise<TierLive[] | null> {
+export async function fetchTiers(signal?: AbortSignal): Promise<Venta | null> {
   try {
     const res = await fetch('/api/tiers', { signal })
     if (!res.ok) return null
-    const data = await jsonSeguro<{ tiers?: TierLive[] }>(res)
-    return Array.isArray(data.tiers) ? data.tiers : null
+    const data = await jsonSeguro<{ ventaPropia?: boolean; tiers?: TierLive[] }>(res)
+    if (!Array.isArray(data.tiers)) return null
+    return { ventaPropia: Boolean(data.ventaPropia), tiers: data.tiers }
   } catch {
     return null
   }
@@ -147,14 +187,24 @@ export async function crearCheckout(
   cantidad: number,
   buyer: Comprador,
   asistentes: string[],
-): Promise<{ orderId: string; preferenceId: string }> {
+  /**
+   * La orden que este mismo modal dejó pendiente, si hubo una.
+   *
+   * Volver a «mis datos», cambiar algo y reenviar creaba una orden nueva cada
+   * vez, y cada una se quedaba con su cupo reservado 30 minutos. Mandando la
+   * anterior, el servidor la libera antes de contar el stock.
+   */
+  ordenPrevia?: string | null,
+): Promise<{ orderId: string; preferenceId: string; publicKey?: string }> {
   const res = await fetch('/api/checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tier, quantity: cantidad, buyer, asistentes }),
+    body: JSON.stringify({ tier, quantity: cantidad, buyer, asistentes, ordenPrevia }),
   })
   if (!res.ok) await parseError(res)
-  return jsonSeguro<{ orderId: string; preferenceId: string }>(res)
+  // `publicKey` la manda el servidor: sigue el flag de entorno, así que un
+  // preview nunca queda con la clave de producción incrustada en el bundle.
+  return jsonSeguro<{ orderId: string; preferenceId: string; publicKey?: string }>(res)
 }
 
 /** Estado de una orden. Lo poletea /gracias esperando el webhook. */

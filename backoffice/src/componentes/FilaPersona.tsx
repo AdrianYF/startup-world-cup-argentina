@@ -1,4 +1,5 @@
 import { hora } from '../lib/buscar'
+import { siglaCanal } from '../lib/canales'
 import type { Checkin, Persona } from '../lib/tipos'
 import { IconoAlerta, IconoTick } from '../ui/Iconos'
 
@@ -9,10 +10,15 @@ import { IconoAlerta, IconoTick } from '../ui/Iconos'
  * nombre, mail y empresa. A la derecha, o la hora a la que entró o de qué canal
  * viene — nunca las dos, porque una vez que entró el canal ya no importa.
  */
-function FilaPersona({ persona, ingresos, onClick }: {
+function FilaPersona({ persona, ingresos, onClick, activa }: {
   persona: Persona
   ingresos: Checkin[]
   onClick: () => void
+  /**
+   * La fila donde están paradas las flechas del buscador. Sólo aparece cuando
+   * alguien navega con teclado: con el dedo no hay «fila actual».
+   */
+  activa?: boolean
 }) {
   const ultimo = ingresos[ingresos.length - 1]
 
@@ -20,7 +26,10 @@ function FilaPersona({ persona, ingresos, onClick }: {
     <li>
       <button
         onClick={onClick}
-        className="flex w-full items-center gap-3 border-b border-white/5 py-3.5 text-left active:bg-white/[0.04]"
+        aria-current={activa}
+        className={`flex w-full items-center gap-3 border-b border-white/5 py-3.5 pr-1 text-left transition-colors active:bg-white/[0.04] ${
+          activa ? 'bg-swc-accent/10 pl-2 shadow-[inset_2px_0_0_var(--color-swc-accent)]' : 'pl-0'
+        }`}
       >
         <div className="min-w-0 flex-1">
           <p className="truncate font-bold text-swc-light">
@@ -43,7 +52,7 @@ function FilaPersona({ persona, ingresos, onClick }: {
             </p>
           ) : (
             <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-gray-600">
-              {persona.origen === 'startupgrind' ? 'SG' : persona.origen}
+              {siglaCanal(persona.origen)}
             </p>
           )}
         </div>

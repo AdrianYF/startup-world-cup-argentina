@@ -14,19 +14,34 @@ import { useCallback, useEffect, useState } from 'react'
 
 export const BASE = '/backoffice'
 
-/** Personas es la raíz: es lo que se abre el 95% de las veces. */
-export const PERSONAS = ''
+/**
+ * La puerta es la raíz.
+ *
+ * No es «la sección que más se usa»: es para lo que existe la app. Quien abre
+ * `/backoffice/` está por acreditar a alguien que tiene enfrente, y lo primero
+ * que ve tiene que ser el buscador — no un menú.
+ */
+export const PUERTA = ''
 
 /**
  * Rutas viejas que ya no existen.
  *
- * «Check-in» y «Asistentes» eran dos secciones y ahora son una. Los links
- * quedaron en chats de WhatsApp del staff y en pestañas abiertas desde ayer:
- * mapearlas es más barato que explicar por qué dejaron de andar.
+ * Los links quedaron en chats de WhatsApp del staff y en pestañas abiertas
+ * desde ayer: mapearlas es más barato que explicar por qué dejaron de andar.
+ *
+ * `asistentes`, `personas` y `padron` fueron, en ese orden, la misma pantalla:
+ * la lista completa del evento. Las tres caen en `inscriptos`, que es lo que
+ * quien guardó el link estaba mirando.
+ *
+ * El destino va como literal y no importado de `secciones.ts`: ese módulo ya
+ * importa `PUERTA` de acá, y cerrar el círculo por una constante de cuatro
+ * letras es peor que repetirla.
  */
 const HEREDADAS: Record<string, string> = {
-  puerta: PERSONAS,
-  asistentes: PERSONAS,
+  puerta: PUERTA,
+  asistentes: 'inscriptos',
+  personas: 'inscriptos',
+  padron: 'inscriptos',
 }
 
 function leerRuta(): string {

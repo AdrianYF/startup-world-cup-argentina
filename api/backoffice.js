@@ -23,6 +23,7 @@
 // así que `PUERTA_PIN` tiene que ser largo, no cuatro dígitos.
 import { json, rejectMethod, readBody, first, siteUrl } from './_lib/http.js'
 import { pinValido, firmarSesion, rejectSinSesion, DIAS } from './_lib/puerta.js'
+import { valorDe } from './_lib/entorno.js'
 import * as admin from './_lib/admin.js'
 
 /**
@@ -78,7 +79,12 @@ async function login(req, res) {
 
   const { pin } = readBody(req)
 
-  if (!process.env.PUERTA_PIN || !process.env.PUERTA_SECRET) {
+  // Del entorno activo: en desarrollo son PUERTA_TEST_PIN y PUERTA_TEST_SECRET.
+  // El 503 separa «esto no está configurado» de «ese PIN no es», que desde el
+  // celular en la puerta son dos problemas muy distintos.
+  const configurada = valorDe('PUERTA_PIN', { obligatoria: false })
+    && valorDe('PUERTA_SECRET', { obligatoria: false })
+  if (!configurada) {
     return json(res, 503, { error: 'puerta_no_configurada' })
   }
 

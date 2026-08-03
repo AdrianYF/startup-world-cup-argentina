@@ -1,0 +1,41 @@
+{
+  // `api/` y `scripts/` bajo el compilador, sin dejar de ser JavaScript.
+  //
+  // Hasta acá no los miraba NADIE: `tsconfig.app.json` incluye sólo `src` y
+  // `backoffice`, y el glob de eslint era `**/*.{ts,tsx}`. O sea que toda la
+  // lógica de cobro —`checkout.js`, `acreditar.js`, `entorno.js`, `admin.js`—
+  // no pasaba ni por el compilador ni por el linter. Los dos `.tsx` de los
+  // mails eran TypeScript que `tsc` nunca veía.
+  //
+  // `allowJs` + `checkJs` en vez de convertir todo a `.ts` porque la razón por la
+  // que `api/` es JS sigue vigente: Vercel lo corre tal cual está escrito, y el
+  // paso de compilación de los mails ya se llevó puesto el deploy una vez
+  // (ver scripts/build-emails.mjs). Esto le pone un compilador encima sin tocar
+  // lo que se despliega.
+  //
+  // `strict` queda apagado por ahora: prenderlo sobre JS sin anotaciones es
+  // pelear con inferencias, no encontrar bugs. Lo que sí atrapa hoy es lo que
+  // importa — typos en nombres, argumentos de más, imports que no existen.
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.api.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "strict": false,
+    "noImplicitAny": false
+  },
+  // `api/_lib/email.js` y `emails/entrada.js` quedan afuera: son output de
+  // `build-emails.mjs`, se regeneran en cada build y la fuente —el `.tsx` de al
+  // lado— sí se chequea.
+  "include": ["api", "scripts"],
+  "exclude": ["api/_lib/email.js", "api/_lib/emails/entrada.js"]
+}

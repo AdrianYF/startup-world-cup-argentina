@@ -1,0 +1,59 @@
+# Lo mínimo para que no se despliegue algo roto.
+#
+# Hasta ahora la única verificación automática era que el build de Vercel saliera,
+# y eso no mira ni los tipos ni el linter ni que `api/` cargue en Node.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # `npm install` y no `npm ci`, que sería lo correcto.
+      #
+      # `npm ci` exige que el lock esté completo, y este no lo está: rolldown y
+      # tailwind traen bindings `wasm32-wasi` como dependencia OPCIONAL, y en macOS
+      # —donde se generó el lock— npm resuelve el binding nativo y nunca baja los
+      # wasm, así que sus dependencias (`@emnapi/core`, `@emnapi/runtime`) no quedan
+      # anotadas. En Linux npm las pide y `npm ci` corta con «Missing from lock file».
+      # Regenerar el lock en macOS no las agrega: hay que generarlo en Linux.
+      #
+      # Lo que se pierde es la reproducibilidad exacta que da `npm ci`. Lo que se
+      # conserva es todo lo que esta CI vino a hacer: tipos, linter, tests y build.
+      # Cuando alguien corra `npm install` en Linux y commitee ese lock, esto vuelve
+      # a ser `npm ci`.
+      - run: npm install --no-audit --no-fund
+
+      # Antes que nada: `acreditar.js` importa el `.js` generado del template de
+      # mail, así que sin esto no carga ni el guardia ni los tests.
+      - name: Compilar los templates de mail
+        run: npm run build:emails
+
+      # La más importante y la más barata: que api/ siga entrando en el plan
+      # Hobby de Vercel y que sus 12 funciones carguen en Node pelado. Pasarse
+      # del tope no da error en ningún lado — simplemente el deploy no sale.
+      - name: api/ desplegable
+        run: npm run guardia:api
+
+      - name: Tipos
+        run: npm run typecheck
+
+      - name: Linter
+        run: npm run lint
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build

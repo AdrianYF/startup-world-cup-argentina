@@ -8,6 +8,7 @@
 // exactamente lo mismo.
 import { db } from './db.js'
 import { parseCSVObjetos } from './csv.js'
+import { DIAS_EVENTO, esDiaConocido, etiquetaDia } from './puerta.js'
 
 /**
  * Cada plataforma nombra las columnas y los estados a su manera. Todo lo
@@ -15,7 +16,12 @@ import { parseCSVObjetos } from './csv.js'
  */
 export const CANALES = {
   luma: {
-    dias: 'Mié 5',
+    // A propósito SIN `dias` por defecto: Luma corre varios eventos del ciclo en
+    // días distintos, así que no hay uno que esté bien la mayoría de las veces.
+    // Con un default acá, importar el CSV del jueves sin tocar nada etiquetaba a
+    // toda esa gente con el día del otro evento: no aparecían en ninguna lista,
+    // no disparaban la alarma de `sinDia` —porque el día existe— y el problema
+    // se descubría con la persona parada en la puerta.
     columnas: {
       externo_id: ['api_id', 'guest_api_id', 'id'],
       nombre: ['name', 'full_name', 'nombre'],
@@ -61,6 +67,10 @@ const norm = s => s.toLowerCase().replace(/[\s-]+/g, '_')
  */
 export function detectar(columnas, alias, forzado = {}) {
   const porNombre = new Map(columnas.map(c => [norm(c), c]))
+  // Las claves salen de `alias` en runtime, así que el compilador no las puede
+  // inferir del literal vacío. Anotarlo es lo que deja ver los `_nombre` /
+  // `_apellido` que se agregan más abajo.
+  /** @type {Record<string, string>} */
   const mapa = {}
 
   for (const [destino, nombres] of Object.entries(alias)) {
@@ -130,7 +140,22 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
     }
   }
 
-  const diasFinal = dias || canal.dias
+  // Los días se validan ACÁ y no sólo en la pantalla: el CLI entra por la misma
+  // puerta, y una etiqueta que no matchea ningún día del evento deja a toda la
+  // tanda invisible en la acreditación sin que nada falle.
+  const diasFinal = (dias || canal.dias || '').trim()
+  const etiquetas = DIAS_EVENTO.map(etiquetaDia)
+  if (!diasFinal) {
+    return {
+      error: `falta indicar los días: este canal corre más de un evento y no tiene uno por defecto (opciones: ${etiquetas.join(', ')})`,
+    }
+  }
+  if (!esDiaConocido(diasFinal)) {
+    return {
+      error: `«${diasFinal}» no contiene ningún día del evento, así que esa gente no aparecería en ninguna lista (esperado: ${etiquetas.join(', ')})`,
+    }
+  }
+
   const mapeadas = new Set(Object.values(mapa))
   const porEmail = new Map()
   let sinEmail = 0
@@ -189,7 +214,11 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
  * en vez de duplicar, que es lo que permite volver a bajarlo a mitad del evento
  * para traer las ventas nuevas.
  */
-export async function importar({ csv, origen, evento, dias, seco = false, forzado }) {
+// `forzado` con default, igual que `preparar()` y `detectar()`: lo manda sólo el
+// CLI (`scripts/importar-asistentes.mjs`), donde se pueden mapear columnas a
+// mano. Desde el backoffice no viaja — esa pantalla muestra el mapeo detectado
+// pero no deja cambiarlo — y sin el default la firma decía que era obligatorio.
+export async function importar({ csv, origen, evento, dias, seco = false, forzado = {} }) {
   const previa = preparar({ csv, origen, evento, dias, forzado })
   if (previa.error) return previa
 

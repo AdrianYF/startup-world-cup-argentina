@@ -74,6 +74,16 @@ function TicketCheckoutModal({
   // con el campo "Nombre y apellido": pedirlo dos veces sería absurdo.
   const [asistentes, setAsistentes] = useState<string[]>([''])
   const [preferenceId, setPreferenceId] = useState<string | null>(null)
+  const [publicKey, setPublicKey] = useState<string | null>(null)
+  /**
+   * La orden que ya creamos en este modal, si el comprador volvió a editar.
+   *
+   * Se manda en el próximo intento para que el servidor la libere: si no, cada
+   * "volver y corregir" dejaba otra orden pendiente comiéndose el cupo por media
+   * hora, y con cinco entradas por compra alcanzaba para agotar la tanda sin que
+   * nadie hubiera pagado nada.
+   */
+  const [ordenPrevia, setOrdenPrevia] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
 
@@ -91,7 +101,10 @@ function TicketCheckoutModal({
     trackEvent('checkout_start', { tier, cantidad })
 
     try {
-      const { preferenceId: pref } = await crearCheckout(tier, cantidad, comprador, asistentes)
+      const { orderId, preferenceId: pref, publicKey: clave } =
+        await crearCheckout(tier, cantidad, comprador, asistentes, ordenPrevia)
+      setOrdenPrevia(orderId)
+      setPublicKey(clave || null)
       setPreferenceId(pref)
       setPaso('pago')
     } catch (err) {
@@ -322,7 +335,7 @@ function TicketCheckoutModal({
           <Volver onClick={() => setPaso('elegir')}>← Cambiar forma de pago</Volver>
         </form>
       ) : (
-        <PasoPago preferenceId={preferenceId} onVolver={() => setPaso('datos')} />
+        <PasoPago preferenceId={preferenceId} publicKey={publicKey} onVolver={() => setPaso('datos')} />
       )}
     </Modal>
   )
@@ -563,10 +576,20 @@ function Monto({
  */
 let sdkListo = false
 
-/** La clave pública es una constante del build: se lee en render, no en un efecto. */
-const MP_PUBLIC_KEY = import.meta.env.VITE_MP_PUBLIC_KEY
-
-function PasoPago({ preferenceId, onVolver }: { preferenceId: string | null; onVolver: () => void }) {
+/**
+ * La clave pública la manda el servidor en la respuesta del checkout.
+ *
+ * Antes era `import.meta.env.VITE_MP_PUBLIC_KEY`, o sea una constante del
+ * build. Eso tenía dos problemas: cambiarla exigía redeployar, y —el grave— un
+ * preview compilado con la clave de producción cobraba de verdad mientras uno
+ * creía estar probando. Ahora sigue el mismo flag de entorno que el token del
+ * servidor. Ver `api/_lib/entorno.js`.
+ */
+function PasoPago({ preferenceId, publicKey, onVolver }: {
+  preferenceId: string | null
+  publicKey: string | null
+  onVolver: () => void
+}) {
   const [Wallet, setWallet] = useState<ComponentType<{
     initialization: { preferenceId: string }
     customization?: { texts?: { valueProp?: 'security_safety' }; visual?: { buttonBackground?: 'blue'; borderRadius?: string } }
@@ -575,14 +598,14 @@ function PasoPago({ preferenceId, onVolver }: { preferenceId: string | null; onV
   const montado = useRef(true)
 
   useEffect(() => {
-    if (!MP_PUBLIC_KEY) return
+    if (!publicKey) return
     montado.current = true
 
     import('@mercadopago/sdk-react')
       .then(({ initMercadoPago, Wallet: W }) => {
         if (!montado.current) return
         if (!sdkListo) {
-          initMercadoPago(MP_PUBLIC_KEY, { locale: 'es-AR' })
+          initMercadoPago(publicKey, { locale: 'es-AR' })
           sdkListo = true
         }
         setWallet(() => W as never)
@@ -594,9 +617,9 @@ function PasoPago({ preferenceId, onVolver }: { preferenceId: string | null; onV
     return () => {
       montado.current = false
     }
-  }, [])
+  }, [publicKey])
 
-  const error = !MP_PUBLIC_KEY
+  const error = !publicKey
     ? 'Falta configurar la clave pública de Mercado Pago.'
     : fallo
       ? 'No pudimos cargar el pago. Probá de nuevo.'

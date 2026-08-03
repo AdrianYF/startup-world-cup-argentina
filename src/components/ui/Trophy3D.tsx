@@ -30,19 +30,30 @@ function TrophyModel({ rotTarget }: { rotTarget: { current: number } }) {
   // baseColor original del GLB con el oro recoloreado a amarillo mate (madera intacta).
   // Color (copa oro + base blanca) + mapas de metalness/roughness para que la copa
   // sea oro metálico y la base blanco MATE (no-metálico).
-  const [base, metalMap, roughMap] = useTexture([
-    '/trophy-base.jpg',
-    '/trophy-metal.jpg',
-    '/trophy-rough.jpg',
-  ])
-  base.flipY = false
-  base.colorSpace = SRGBColorSpace
-  base.anisotropy = 8
-  for (const t of [metalMap, roughMap]) {
-    t.flipY = false
-    t.colorSpace = NoColorSpace
-    t.anisotropy = 8
-  }
+  // La configuración va en el `onLoad` de `useTexture` y no suelta en el cuerpo
+  // del componente, que es donde estaba: ahí se corría en CADA render y además
+  // era mutar lo que devuelve un hook, que es lo que React 19 no deja hacer
+  // durante el render.
+  //
+  // El GLB trae las UV al derecho, por eso `flipY = false` en las tres. La base
+  // lleva color (sRGB) y los mapas de metalness/roughness son datos, no color
+  // (NoColorSpace): tratarlos como sRGB los aclara y la copa deja de verse
+  // metálica.
+  const [base, metalMap, roughMap] = useTexture(
+    ['/trophy-base.jpg', '/trophy-metal.jpg', '/trophy-rough.jpg'],
+    texturas => {
+      const [color, metal, rough] = Array.isArray(texturas) ? texturas : [texturas]
+      color.flipY = false
+      color.colorSpace = SRGBColorSpace
+      color.anisotropy = 8
+      for (const t of [metal, rough]) {
+        if (!t) continue
+        t.flipY = false
+        t.colorSpace = NoColorSpace
+        t.anisotropy = 8
+      }
+    },
+  )
 
   const { object, scale } = useMemo(() => {
     const obj = scene.clone(true)

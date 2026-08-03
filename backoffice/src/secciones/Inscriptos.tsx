@@ -4,15 +4,17 @@ import { Buscador, Dato, Datos } from '../ui/Campos'
 import { Cargando, Chip, Roto, Tarjeta, Tarjetas } from '../ui/Estado'
 import { Bloque, Limite, Operacion } from '../ui/Operacion'
 import Tabla, { type Columna } from '../ui/Tabla'
+import { aCSV } from '../../../api/_lib/csv.js'
 import { filtrar, ordenarPorApellido } from '../lib/buscar'
+import { nombreCanal, ordenarCanales } from '../lib/canales'
 import { fechaCorta, traerAsistentes, useRecurso, type Asistente } from '../lib/admin'
 import type { Dia } from '../lib/tipos'
 
 /**
- * El padrón: la lista entera, sin filtro de día.
+ * Los inscriptos: la lista entera, sin filtro de día.
  *
  * Es la mitad «sentado» de Personas y por eso vive en su propio chunk: trae la
- * tabla, el cliente de `/api/backoffice` y el padrón completo con teléfono y
+ * tabla, el cliente de `/api/backoffice` y la lista completa con teléfono y
  * empresa de cada persona. Nada de eso tiene que bajarse en el celular que abre
  * la lista parado en la fila de entrada.
  *
@@ -22,7 +24,7 @@ import type { Dia } from '../lib/tipos'
  */
 type Filtro = 'todos' | 'entraron' | 'faltan' | 'problemas'
 
-function Padron({
+function Inscriptos({
   busqueda, onBusqueda, onAbrir, onSinSesion, recarga, dia, adentro, total, enCola, onPendientes,
 }: {
   busqueda: string
@@ -54,7 +56,7 @@ function Padron({
   const personas = useMemo(() => datos?.personas || [], [datos])
 
   const canales = useMemo(
-    () => [...new Set(personas.map(p => p.origen))].sort(),
+    () => ordenarCanales([...new Set(personas.map(p => p.origen))]),
     [personas],
   )
 
@@ -105,7 +107,7 @@ function Padron({
       clave: 'origen',
       titulo: 'Canal',
       orden: p => p.origen,
-      celda: p => (p.origen === 'web' ? 'Venta propia' : p.origen),
+      celda: p => nombreCanal(p.origen),
     },
     {
       clave: 'usadaEn',
@@ -116,6 +118,39 @@ function Padron({
         : <span className="text-gray-600">—</span>),
     },
   ], [])
+
+  /**
+   * Baja lo que se está viendo, con los filtros puestos.
+   *
+   * Que exporte la vista y no el padrón entero es todo el punto: lo que se pide
+   * el día del evento es «pasame los que faltan de Startup Grind», y eso antes
+   * salía corriendo el CLI con el `.env.local` cargado. Reusa el mismo `aCSV`
+   * que usa el importador, así el archivo que sale de acá y el que sale de la
+   * terminal escapan las comas igual.
+   */
+  function exportar() {
+    const columnas = ['nombre', 'email', 'telefono', 'empresa', 'entrada', 'dias', 'canal', 'ingreso']
+    const csv = aCSV(columnas, visibles.map(p => ({
+      nombre: p.nombre || '',
+      email: p.email,
+      telefono: p.telefono || '',
+      empresa: p.empresa || '',
+      entrada: p.entrada,
+      dias: p.dias,
+      canal: nombreCanal(p.origen),
+      ingreso: p.usadaEn ? fechaCorta(p.usadaEn) : '',
+    })))
+
+    // El nombre del archivo dice qué filtros tenía puestos: tres exports
+    // seguidos en la carpeta de descargas, si no, son tres «inscriptos.csv».
+    const partes = ['inscriptos', filtro !== 'todos' ? filtro : '', canal].filter(Boolean)
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${partes.join('-')}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   if (cargando && !datos) return <Cargando />
   if (error && !datos) return <Roto error={error} onReintentar={recargar} />
@@ -129,7 +164,11 @@ function Padron({
 
   const opcionesCanal: Opcion<string>[] = [
     { id: '', label: 'Todos los canales' },
-    ...canales.map(c => ({ id: c, label: c === 'web' ? 'Venta propia' : c })),
+    ...canales.map(c => ({
+      id: c,
+      label: nombreCanal(c),
+      cuenta: personas.filter(p => p.origen === c).length,
+    })),
   ]
 
   return (
@@ -147,6 +186,26 @@ function Padron({
                 Ver pendientes
               </Boton>
             )}
+          </Bloque>
+
+          {/* Segmentado por canal y no por «propia vs. externos»: son tres
+              medios distintos —Mercado Pago, Luma, Startup Grind— y lo que se
+              mira acá es cuál está trayendo gente y cuál no. */}
+          <Bloque titulo="Por canal" className="mt-6">
+            <Datos>
+              {canales.map(c => {
+                const delCanal = personas.filter(p => p.origen === c)
+                const entraron = delCanal.filter(p => p.usadaEn).length
+                return (
+                  <Dato key={c} label={nombreCanal(c)}>
+                    {delCanal.length}
+                    <span className="ml-1.5 font-normal text-gray-500">
+                      · {entraron} {entraron === 1 ? 'entró' : 'entraron'}
+                    </span>
+                  </Dato>
+                )
+              })}
+            </Datos>
           </Bloque>
 
           <Bloque titulo="Para revisar" className="mt-6">
@@ -174,7 +233,11 @@ function Padron({
       <Tarjetas>
         <Tarjeta label="En la lista" valor={personas.length} />
         <Tarjeta label="Ya entraron" valor={cuentas.entraron} tono="ok" detalle="los tres días" />
-        <Tarjeta label="Canales" valor={canales.length} detalle={canales.join(' · ')} />
+        <Tarjeta
+          label="Canales"
+          valor={canales.length}
+          detalle={canales.map(nombreCanal).join(' · ')}
+        />
         <Tarjeta
           label="Para revisar"
           valor={cuentas.problemas}
@@ -183,12 +246,12 @@ function Padron({
         />
       </Tarjetas>
 
-      <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar el padrón" />
+      <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar los inscriptos" />
 
       <div className="mt-4 mb-4 flex flex-col gap-3">
         <div className="md:max-w-md">
           <Buscador
-            id="buscar-padron"
+            id="buscar-inscriptos"
             valor={busqueda}
             onCambio={onBusqueda}
             placeholder="Buscar por nombre, mail o empresa"
@@ -201,7 +264,14 @@ function Padron({
           etiqueta="Canal"
           tam="sm"
         />
-        <p className="text-xs text-gray-500">{visibles.length} de {personas.length}</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-xs text-gray-500">{visibles.length} de {personas.length}</p>
+          {visibles.length > 0 && (
+            <Boton tono="fantasma" tam="sm" onClick={exportar}>
+              Exportar {visibles.length === personas.length ? 'todo' : 'lo filtrado'}
+            </Boton>
+          )}
+        </div>
       </div>
 
       <Tabla
@@ -215,4 +285,4 @@ function Padron({
   )
 }
 
-export default Padron
+export default Inscriptos

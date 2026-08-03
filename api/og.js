@@ -15,6 +15,8 @@
 // está disponible, las previews del comité caen al placeholder pero la galería
 // (que no depende de ese import) sigue intacta.
 
+import { rejectMethod, siteUrl } from './_lib/http.js'
+
 // Mantener en sync con src/components/Galeria.tsx (mismas filas y conteos).
 const ROW1_COUNT = 39
 const ROW2_COUNT = 36
@@ -73,10 +75,24 @@ try {
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
 export default function handler(req, res) {
+  // Como todas las demás rutas. Sin esto contestaba 200 con HTML a un POST o a un
+  // DELETE, que es la única función de `api/` sin guard de método.
+  if (rejectMethod(req, res, 'GET')) return
+
   const code = String((req.query && req.query.code) || '').toUpperCase()
-  const proto = req.headers['x-forwarded-proto'] || 'https'
-  const host = req.headers['x-forwarded-host'] || req.headers.host || ''
-  const origin = `${proto}://${host}`
+
+  // De `siteUrl()` y no leyendo los headers acá: era la segunda copia de esa
+  // lectura, y la que no tenía el cuidado de la primera. El origen termina en el
+  // `og:image` y en el `og:url` que ven las redes.
+  //
+  // Si falta la configuración, esta página igual tiene que salir: una preview sin
+  // imagen es mejor que un 500 en el link que alguien acaba de compartir.
+  let origin = ''
+  try {
+    origin = siteUrl(req)
+  } catch {
+    /* sin origen las URLs quedan relativas; el redirect de abajo funciona igual */
+  }
 
   // Mismo código para las tres secciones: probamos galería, comité y startups.
   const photo = SRC_BY_CODE[code] || null

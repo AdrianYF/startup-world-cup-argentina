@@ -9,7 +9,7 @@ import type { Persona } from '../lib/tipos'
 /**
  * Lo que se hace sentado: corregir los datos, reenviar la entrada, dar de baja.
  *
- * Va en un chunk aparte y se carga sólo desde el padrón. Es la mitad de la ficha
+ * Va en un chunk aparte y se carga sólo desde Inscriptos. Es la mitad de la ficha
  * que trae `lib/admin.ts` —el cliente entero de `/api/backoffice`— y no tiene
  * por qué bajarse en el celular que abre la lista parado en la fila de entrada.
  *
@@ -80,7 +80,7 @@ function AccionesPersona({ persona, onGuardado }: {
           autoCapitalize="none"
           inputMode="email"
           ayuda={esWeb
-            ? 'Es el del comprador: lo comparten todas las entradas de la misma compra.'
+            ? 'Es el del comprador de Mercado Pago: lo comparten todas las entradas de la misma compra.'
             : undefined}
         />
         <Campos>
@@ -114,7 +114,7 @@ function AccionesPersona({ persona, onGuardado }: {
       </Boton>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        {/* El token es la credencial: sólo existe del lado de la venta propia,
+        {/* El token es la credencial: sólo existe del lado de Mercado Pago,
             porque Luma y Startup Grind emiten los suyos. */}
         {linkEntrada && (
           <>
@@ -130,7 +130,7 @@ function AccionesPersona({ persona, onGuardado }: {
               href={linkEntrada}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-white/15 bg-white/[0.02] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-swc-muted active:scale-95"
+              className="rounded-full border border-white/15 bg-white/[0.02] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-swc-muted active:scale-[0.98]"
             >
               Ver entrada
             </a>

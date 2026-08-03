@@ -5,6 +5,7 @@ import { Dato, Datos, Rotulo } from '../ui/Campos'
 import { Chip } from '../ui/Estado'
 import { Hoja } from '../ui/Hoja'
 import { hora } from '../lib/buscar'
+import { nombreCanal } from '../lib/canales'
 import { esAsistente, fechaCorta, type Asistente } from '../lib/admin'
 import type { Checkin, Dia, Persona } from '../lib/tipos'
 
@@ -20,7 +21,7 @@ import type { Checkin, Dia, Persona } from '../lib/tipos'
  * habilita el contexto:
  *
  *   · desde el día  — acreditar y anular ingresos; nada que se pueda romper
- *   · desde el padrón — además, corregir los datos, reenviar el mail y dar de baja
+ *   · desde Inscriptos — además, corregir los datos, reenviar el mail y dar de baja
  *
  * Las acciones de la mesa van en un chunk aparte a propósito: se abren sentado y
  * con wifi, y no tienen por qué viajar en el bundle que se baja parado en la
@@ -36,7 +37,7 @@ function FichaPersona({
   ingresos: Checkin[]
   /** El día contra el que se acredita. Sin día no se puede dejar entrar a nadie. */
   dia: Dia | null
-  /** Modo padrón: habilita edición y las acciones de soporte. */
+  /** Modo inscriptos: habilita edición y las acciones de soporte. */
   editable: boolean
   onAcreditar: () => void
   onAnular: (checkin: Checkin) => void
@@ -45,17 +46,19 @@ function FichaPersona({
 }) {
   const completa = esAsistente(persona) ? persona : null
   const yaEntro = ingresos.length > 0
-  const esWeb = persona.origen === 'web'
+  const canal = nombreCanal(persona.origen)
 
   return (
     <Hoja
       titulo={persona.nombre || 'Sin nombre'}
       subtitulo={persona.email}
-      anclada={!editable}
+      // En la puerta va pegada abajo —el botón de acreditar tiene que caer donde
+      // está el pulgar—; en Inscriptos se lee sentado y se centra.
+      posicion={editable ? 'auto' : 'abajo'}
       onCerrar={onCerrar}
       chips={
         <>
-          <Chip tono="neutro">{esWeb ? 'venta propia' : persona.origen}</Chip>
+          <Chip tono="neutro">{canal}</Chip>
           {persona.pagoDoble && <Chip tono="warn">2 pagos</Chip>}
           {completa?.sinDia && <Chip tono="coral">sin día</Chip>}
         </>
@@ -70,7 +73,7 @@ function FichaPersona({
 
       {persona.pagoDoble && (
         <Aviso tono="warn" className="mb-4" titulo="Pagó dos veces la misma entrada">
-          Figura en Startup Grind y en la venta propia. El reembolso se hace en el canal
+          Figura en Startup Grind y en Mercado Pago. El reembolso se hace en el canal
           donde se cobró de más; acá se marca desde «Ventas».
         </Aviso>
       )}
@@ -78,7 +81,7 @@ function FichaPersona({
       <Datos>
         <Dato label="Entrada">{persona.entrada}</Dato>
         <Dato label="Días">{persona.dias}</Dato>
-        <Dato label="Canal">{esWeb ? 'Venta propia' : persona.origen}</Dato>
+        <Dato label="Canal">{canal}</Dato>
         {persona.empresa && <Dato label="Empresa">{persona.empresa}</Dato>}
         {persona.telefono && <Dato label="Teléfono">{persona.telefono}</Dato>}
         {completa && <Dato label="Registrada">{fechaCorta(completa.registradoEn)}</Dato>}
@@ -120,6 +123,12 @@ function FichaPersona({
           ancho
           onClick={onAcreditar}
           className="mt-5"
+          // En la puerta la ficha se abre con Enter desde el buscador, así que el
+          // botón llega enfocado y un segundo Enter acredita: tipear tres letras
+          // y dos veces Enter, sin tocar el mouse. En el celular no cambia nada
+          // —enfocar un botón no abre teclado— y en Inscriptos no va, porque ahí
+          // la acción de la pantalla es corregir datos, no dejar entrar.
+          autoFocus={!editable}
         >
           {yaEntro ? 'Acreditar igual' : `Acreditar${editable ? ` para el ${dia.nombre}` : ''}`}
         </Boton>

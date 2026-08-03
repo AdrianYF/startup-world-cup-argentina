@@ -29,7 +29,7 @@ function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar,
   const vacio = cola.length === 0 && descartados.length === 0
 
   return (
-    <Hoja titulo="Sin sincronizar" onCerrar={onCerrar} anclada>
+    <Hoja titulo="Sin sincronizar" onCerrar={onCerrar} posicion="abajo">
       {vacio && (
         <Aviso tono="ok">
           Todo lo que se anotó en este dispositivo llegó al servidor.

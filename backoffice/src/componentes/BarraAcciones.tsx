@@ -40,7 +40,7 @@ function BarraAcciones({ ultimo, onDeshacer, onEscanear, onAgregar }: {
         <div className="flex gap-2">
           <button
             onClick={onEscanear}
-            className="flex flex-1 items-center justify-center gap-2 rounded-full border border-swc-accent/40 bg-white/[0.04] px-6 py-3.5 text-sm font-black text-swc-accent active:scale-95"
+            className="flex flex-1 items-center justify-center gap-2 rounded-full border border-swc-accent/40 bg-white/[0.04] px-6 py-3.5 text-sm font-black text-swc-accent active:scale-[0.98]"
            >
             <IconoQR tam={18} />
             Escanear QR
@@ -48,7 +48,7 @@ function BarraAcciones({ ultimo, onDeshacer, onEscanear, onAgregar }: {
           <button
             onClick={onAgregar}
             aria-label="Agregar a alguien que no está en la lista"
-            className="flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3.5 text-sm font-black text-swc-muted active:scale-95"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3.5 text-sm font-black text-swc-muted active:scale-[0.98]"
            >
             <IconoSumarPersona tam={18} />
             Agregar

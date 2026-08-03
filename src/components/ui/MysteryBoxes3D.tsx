@@ -21,6 +21,25 @@ const BOX_POSITIONS: [number, number, number][] = [
 const GROW_TIME = 0.45 // s creciendo antes de explotar
 const REVEAL_DELAY = 1.6 // s desde el click hasta revelar
 
+/**
+ * Un aleatorio reproducible (xorshift32).
+ *
+ * `Math.random()` en el cuerpo de un `useMemo` rompe la regla de que el render
+ * sea puro, y no en abstracto: React 19 en StrictMode renderiza dos veces y tira
+ * uno de los dos resultados, así que las partículas se calculaban con valores
+ * distintos de los que terminaban dibujándose. Con una semilla fija el confeti se
+ * ve igual de disperso y además sale igual las dos veces.
+ */
+function aleatorio(semilla: number) {
+  let s = semilla || 1
+  return () => {
+    s ^= s << 13
+    s ^= s >>> 17
+    s ^= s << 5
+    return ((s >>> 0) % 100_000) / 100_000
+  }
+}
+
 const GIFT_MODEL = '/models/gift.glb'
 const GIFT_BASECOLOR = '/models/gift-basecolor.png' // textura base recoloreada (blanco + celeste)
 
@@ -194,18 +213,21 @@ function Confetti({
       ? ['#75AADB', '#ffffff', '#bcd5ea', '#cfe6ff']
       : ['#7b8794', '#aab4be', '#ffffff']
     const count = win ? 110 : 45
+    // Semilla fija por rama: ver `aleatorio()`. Se ve igual de disperso, pero da
+    // lo mismo en los dos renders que hace StrictMode.
+    const azar = aleatorio(win ? 7919 : 104729)
     return Array.from({ length: count }).map((_, i) => {
       const dir = new Vector3(
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
+        azar() * 2 - 1,
+        azar() * 2 - 1,
+        azar() * 2 - 1,
       ).normalize()
       return {
         dir,
-        speed: 2.2 + Math.random() * 3.4,
-        size: 0.06 + Math.random() * 0.08,
+        speed: 2.2 + azar() * 3.4,
+        size: 0.06 + azar() * 0.08,
         color: palette[i % palette.length],
-        spin: 3 + Math.random() * 5,
+        spin: 3 + azar() * 5,
       }
     })
   }, [win])
