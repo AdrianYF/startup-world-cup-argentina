@@ -184,7 +184,7 @@ const { acreditar } = await import('../api/_lib/acreditar.js')
 // que para cuando alguien lo abre ya no existe. Pasó con una compra real.
 const base = env.SITIO_DE_PRUEBA
   || env.PUBLIC_SITE_URL
-  || 'https://startup-world-cup-argentina.vercel.app'
+  || 'https://www.startupworldcupargentina.com'
 
 const r = await acreditar({
   orden,
