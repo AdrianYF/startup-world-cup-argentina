@@ -277,11 +277,6 @@
           "categoria": "Investors",
           "speakers": [
             {
-              "nombre": "John Newkirk",
-              "empresa": "Kamay",
-              "img": "/participan/john-newkirk.webp"
-            },
-            {
               "nombre": "Francis Perelman",
               "empresa": "Capria Ventures",
               "img": "/participan/francis-perelman.webp"
