@@ -18,9 +18,12 @@ const CompraExitosaModal = lazy(() => import('./components/CompraExitosaModal'))
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /**
- * Landing: Hero + Entradas (pricing) + intro/números + Quiénes nos apoyan +
- * Partners (planes) + FAQ. El resto del contenido vive en rutas propias
- * (Road to SWC, Agenda, Pitch Battle, Startups, Voluntarios, Galería).
+ * Landing: Hero + Entradas + Participan + imatchin + Quiénes nos apoyan + FAQ.
+ * El resto del contenido vive en rutas propias (Road to SWC, Agenda, Pitch
+ * Battle, Startups, Voluntarios, Galería).
+ *
+ * Decía «intro/números + Partners (planes)» y hacía rato que no era cierto:
+ * `Stats` se mudó a /road-to-swc y `Partners` no lo montaba nadie — se borró.
  */
 function App() {
   // Vuelta de Mercado Pago: `?compra=<uuid>` abre el modal de felicitaciones.
