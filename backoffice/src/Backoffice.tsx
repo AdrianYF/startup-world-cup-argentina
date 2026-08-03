@@ -5,8 +5,8 @@ import Personas from './secciones/Personas'
 import { Cargando } from './ui/Estado'
 import { Encabezado } from './ui/Encabezado'
 import { cache, quien, sesion } from './lib/almacen'
-import { PERSONAS, useRuta } from './lib/ruta'
-import { seccionDe } from './lib/secciones'
+import { PUERTA, useRuta } from './lib/ruta'
+import { PADRON, seccionDe } from './lib/secciones'
 
 /**
  * El backoffice del evento.
@@ -15,13 +15,14 @@ import { seccionDe } from './lib/secciones'
  * sin animaciones, y en su propio bundle para que abrir la puerta no baje el
  * landing entero con su Three.js.
  *
- * Personas se importa derecho y las demás secciones con `lazy()`. No es un
- * detalle: Personas se abre parado en la fila de entrada con el 4G del venue, y
- * no tiene por qué bajar la pantalla de ventas para mostrar una lista de
- * nombres. Las otras se usan sentado, con wifi, y un chunk de más no se nota.
+ * **La puerta no vive adentro del Shell.** Es la única pantalla que se usa de
+ * pie, con una mano, con alguien esperando enfrente: ahí una barra con cinco
+ * secciones de administración no ayuda a nadie y sí se toca sin querer. La raíz
+ * es la puerta sola, y la administración es un lugar al que se entra.
  *
- * Su propia mitad «de mesa» —el padrón, la tabla, el cliente de admin— también
- * va lazy, adentro de la sección.
+ * La puerta se importa derecho y todo lo demás con `lazy()`. No es un detalle:
+ * se abre parado en la fila con el 4G del venue, y no tiene por qué bajar la
+ * pantalla de ventas para mostrar una lista de nombres.
  */
 const Ventas = lazy(() => import('./secciones/Ventas'))
 const Stock = lazy(() => import('./secciones/Stock'))
@@ -52,26 +53,31 @@ function Backoffice() {
 
   if (!autenticado) return <Pin onListo={() => setAutenticado(true)} />
 
+  // La puerta, sola y sin marco. Arma su propia cabecera pegajosa y su barra de
+  // acciones abajo, y ocupa la pantalla entera.
+  if (ruta === PUERTA) {
+    return <Personas modo="dia" ir={ir} onSalir={salir} onSinSesion={sinSesion} />
+  }
+
   return (
     <Shell ruta={ruta} ir={ir} quien={quien.leer()} onSalir={salir}>
-      {ruta === PERSONAS ? (
-        // Personas arma su propio marco: en modo día ocupa la pantalla entera,
-        // con su cabecera pegajosa y la barra de acciones abajo.
-        <Personas onSinSesion={sinSesion} />
-      ) : (
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-8">
-          <Encabezado titulo={seccionDe(ruta).label} bajada={seccionDe(ruta).bajada} />
-          <Suspense fallback={<Cargando />}>
-            <Seccion ruta={ruta} onSinSesion={sinSesion} />
-          </Suspense>
-        </main>
-      )}
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-8">
+        <Encabezado titulo={seccionDe(ruta).label} bajada={seccionDe(ruta).bajada} />
+        <Suspense fallback={<Cargando />}>
+          <Seccion ruta={ruta} ir={ir} onSinSesion={sinSesion} />
+        </Suspense>
+      </main>
     </Shell>
   )
 }
 
-function Seccion({ ruta, onSinSesion }: { ruta: string; onSinSesion: () => void }) {
+function Seccion({ ruta, ir, onSinSesion }: {
+  ruta: string
+  ir: (id: string) => void
+  onSinSesion: () => void
+}) {
   switch (ruta) {
+    case PADRON: return <Personas modo="padron" ir={ir} onSinSesion={onSinSesion} />
     case 'ventas': return <Ventas onSinSesion={onSinSesion} />
     case 'stock': return <Stock onSinSesion={onSinSesion} />
     case 'importar': return <Importar onSinSesion={onSinSesion} />
@@ -82,7 +88,7 @@ function Seccion({ ruta, onSinSesion }: { ruta: string; onSinSesion: () => void 
       return (
         <p className="text-sm text-gray-500">
           Esa sección no existe.{' '}
-          <a href="/backoffice/" className="text-swc-accent underline">Volver a Personas</a>
+          <a href="/backoffice/" className="text-swc-accent underline">Volver a la puerta</a>
         </p>
       )
   }

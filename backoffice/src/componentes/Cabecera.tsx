@@ -5,20 +5,24 @@ import type { EstadoCola } from '../lib/acreditar'
 import type { Dia } from '../lib/tipos'
 
 /**
- * Lo que queda fijo arriba en el modo día: qué día, cuánta gente entró, el
+ * Lo que queda fijo arriba en la puerta: qué día, cuánta gente entró, el
  * buscador y —cuando corresponde— los avisos de que algo no está bien.
  *
  * El buscador es lo que más se usa, así que va pegado al pulgar y con autofocus:
  * en la puerta se tipean tres letras del apellido y listo.
  *
- * La última píldora es «Todos», y no es un día: es la salida al padrón completo.
- * Está acá y no en el menú porque es la misma pregunta —a quién estoy mirando—
- * y separarla en dos secciones era lo que obligaba a buscar dos veces a la misma
- * persona.
+ * Las píldoras son SÓLO días. «Todos» estaba acá y se fue: no era un día, era la
+ * salida al padrón completo —con el mail y el teléfono de cada persona— a un
+ * dedo del día que estás acreditando.
+ *
+ * Esta cabecera reemplaza a la barra de navegación del backoffice, que en la
+ * puerta no pintaba nada: cinco secciones de administración arriba de la pantalla
+ * que se usa de pie y con una mano. Queda una sola salida, «Admin», y la de
+ * cerrar sesión.
  */
 type Props = {
   dias: Dia[]
-  /** El día activo, o `padron`. */
+  /** El día activo. */
   vista: string
   onVista: (id: string) => void
   adentro: number
@@ -32,30 +36,43 @@ type Props = {
   sincronizando: boolean
   /** Filas de la lista que no caen en ningún día del evento. */
   sinDia?: number
+  /** La salida a administración. */
+  onAdmin: () => void
+  onSalir?: () => void
 }
-
-export const PADRON = 'padron'
 
 function Cabecera({
   dias, vista, onVista, adentro, total, busqueda, onBusqueda, sinConexion, estadoCola,
-  onPendientes, onRecargar, sincronizando, sinDia,
+  onPendientes, onRecargar, sincronizando, sinDia, onAdmin, onSalir,
 }: Props) {
   const pendientes = estadoCola.enCola + estadoCola.descartados
 
-  const opciones: Opcion<string>[] = [
-    ...dias.map(d => ({ id: d.id, label: `${d.label} ${d.fecha.slice(-2).replace(/^0/, '')}` })),
-    { id: PADRON, label: 'Todos' },
-  ]
+  const opciones: Opcion<string>[] = dias.map(d => ({
+    id: d.id,
+    label: `${d.label} ${d.fecha.slice(-2).replace(/^0/, '')}`,
+  }))
 
   return (
-    <header className="sticky top-14 z-20 border-b border-white/10 bg-swc-bg/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-swc-bg/95 backdrop-blur">
       <div className="mx-auto max-w-lg px-4 py-3">
+        {/* Fila de servicio: chiquita y arriba, lejos del pulgar. Nada de acá se
+            toca durante una acreditación. */}
+        <div className="mb-2.5 flex items-center justify-between gap-3">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-swc-accent">
+            Acreditación
+          </p>
+          <div className="flex items-center gap-3 text-[11px] font-bold text-swc-muted">
+            <button onClick={onAdmin} className="hover:text-swc-light">Admin</button>
+            {onSalir && <button onClick={onSalir} className="hover:text-swc-light">Salir</button>}
+          </div>
+        </div>
+
         <div className="flex items-center justify-between gap-3">
           <Pildoras
             opciones={opciones}
             valor={vista}
             onCambio={onVista}
-            etiqueta="Día o padrón completo"
+            etiqueta="Día del evento"
             tam="sm"
           />
           <div className="flex shrink-0 items-center gap-2">

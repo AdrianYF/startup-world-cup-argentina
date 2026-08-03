@@ -2,19 +2,21 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Boton } from '../ui/Acciones'
 import { IconoSalir } from '../ui/Iconos'
 import { SECCIONES } from '../lib/secciones'
-import { PERSONAS } from '../lib/ruta'
+import { PUERTA } from '../lib/ruta'
 
 /**
- * El marco del backoffice: la navegación, quién está adentro y la salida.
+ * El marco de ADMINISTRACIÓN: la navegación, quién está adentro y la salida.
+ *
+ * La puerta no pasa por acá. Es a propósito: esta barra tiene cinco secciones
+ * que no sirven para acreditar a nadie, y arriba de la pantalla que se usa de
+ * pie eran cinco formas de irse a cualquier otro lado sin querer —incluida
+ * Ventas, que tiene el botón de reembolsar—. Quien acredita abre la raíz y no ve
+ * nada de esto.
  *
  * Era un sidebar fijo de 56 y pasó a ser una franja arriba. El motivo es la
  * sección que más se mira sentado: las tablas de Ventas y del padrón usan todo
  * el ancho que se les dé, y 224px de sidebar permanente eran 224px que no tenía
  * la tabla. Arriba, la navegación ocupa alto —que sobra— en vez de ancho.
- *
- * En el celular la franja es la misma, y el resto se abre en un cajón. **La
- * franja de abajo no se toca**: ahí vive el «Escanear» y el «Deshacer», que es
- * donde está el pulgar. Una tab bar abajo competiría justo con eso.
  */
 function Shell({ ruta, ir, quien, onSalir, children }: {
   ruta: string
@@ -67,15 +69,17 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-swc-bg/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4">
+          {/* Vuelve a la puerta, que es la raíz. Es la salida más usada de acá:
+              se entra a administración a responder una pregunta y se vuelve. */}
           <button
-            onClick={() => irYCerrar(PERSONAS)}
+            onClick={() => irYCerrar(PUERTA)}
             className="flex shrink-0 items-baseline gap-2"
-            aria-label="Ir a Personas"
+            aria-label="Volver a la acreditación"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-swc-accent">
               SWC
             </span>
-            <span className="text-base font-black text-swc-light">Backoffice</span>
+            <span className="text-base font-black text-swc-light">Admin</span>
           </button>
 
           <div className="ml-4 hidden lg:block">{enlaces(false)}</div>
