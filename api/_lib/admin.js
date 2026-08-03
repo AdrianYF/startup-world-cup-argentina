@@ -7,7 +7,7 @@
 // protegida por `rejectSinSesion` en un solo archivo fácil de auditar.
 import { db, stockDisponible } from './db.js'
 import { json, esMailValido, formatARS } from './http.js'
-import { DIAS, habilitaDia } from './puerta.js'
+import { DIAS, esDiaConocido, habilitaDia } from './puerta.js'
 import { desglose } from './precios.js'
 import { reenviarEntrada } from './acreditar.js'
 import { importar } from './importar.js'
@@ -55,7 +55,7 @@ export async function asistentes(res) {
       pagoDoble: dobles.has(f.email),
       // Que la pantalla pueda avisar por qué esta persona no aparece en ninguna
       // puerta, en vez de dejar que se descubra el día del evento.
-      sinDia: !DIAS.some(d => habilitaDia(f.dias, d.label)),
+      sinDia: !esDiaConocido(f.dias),
     })),
   })
 }
@@ -485,7 +485,7 @@ export async function metricas(res) {
     total: (filas || []).length,
     // Los que no caen en ningún día: no aparecen en ninguna puerta y hasta ahora
     // no había forma de enterarse.
-    sinDia: (filas || []).filter(f => !DIAS.some(d => habilitaDia(f.dias, d.label))).length,
+    sinDia: (filas || []).filter(f => !esDiaConocido(f.dias)).length,
     // Las MISMAS cuentas que sirven Ventas y Stock, no unas parecidas.
     ventas: totalesVentas(compras),
     cupo: totalesCupo(cupos),

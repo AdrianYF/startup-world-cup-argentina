@@ -57,7 +57,7 @@ export function Boton({
     <button
       {...props}
       disabled={disabled || Boolean(ocupado)}
-      className={`rounded-full font-black transition-transform active:scale-95 disabled:pointer-events-none disabled:opacity-40 ${
+      className={`rounded-full font-black transition-transform active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40 ${
         TONOS[tono]
       } ${TAMANOS[tam]} ${ancho ? 'w-full' : ''} ${className}`}
     >
@@ -142,22 +142,72 @@ export function Pildoras<T extends string>({ opciones, valor, onCambio, etiqueta
   return (
     <div role="group" aria-label={etiqueta} className="flex flex-wrap gap-1.5">
       {opciones.map(o => (
-        <button
-          key={o.id}
-          onClick={() => onCambio(o.id)}
-          aria-pressed={o.id === valor}
-          className={`rounded-full font-black transition-colors ${
-            tam === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-xs'
-          } ${
-            o.id === valor
-              ? 'bg-swc-accent text-swc-bg'
-              : 'bg-white/[0.06] text-swc-muted hover:text-swc-light'
-          }`}
-        >
-          {o.label}
-          {o.cuenta !== undefined && <span className="ml-1.5 tabular-nums opacity-70">{o.cuenta}</span>}
-        </button>
+        <Pildora key={o.id} opcion={o} activa={o.id === valor} tam={tam} onClick={() => onCambio(o.id)} />
       ))}
     </div>
+  )
+}
+
+/**
+ * Píldoras de selección múltiple.
+ *
+ * Para cuando la respuesta puede ser más de una: los días que habilita una
+ * tanda del import, por ejemplo. Devuelve los elegidos en el orden de
+ * `opciones` y no en el de los clicks — el texto que se arma con eso termina en
+ * la base y tiene que ser el mismo siempre.
+ */
+export function PildorasMulti<T extends string>({ opciones, valores, onCambio, etiqueta, tam = 'md' }: {
+  opciones: Opcion<T>[]
+  valores: T[]
+  onCambio: (ids: T[]) => void
+  etiqueta: string
+  tam?: 'sm' | 'md'
+}) {
+  const alternar = (id: T) => {
+    const elegidos = new Set(valores)
+    if (elegidos.has(id)) elegidos.delete(id)
+    else elegidos.add(id)
+    onCambio(opciones.map(o => o.id).filter(x => elegidos.has(x)))
+  }
+
+  return (
+    <div role="group" aria-label={etiqueta} className="flex flex-wrap gap-1.5">
+      {opciones.map(o => (
+        <Pildora
+          key={o.id}
+          opcion={o}
+          activa={valores.includes(o.id)}
+          tam={tam}
+          onClick={() => alternar(o.id)}
+        />
+      ))}
+    </div>
+  )
+}
+
+function Pildora<T extends string>({ opcion, activa, tam, onClick }: {
+  opcion: Opcion<T>
+  activa: boolean
+  tam: 'sm' | 'md'
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={activa}
+      className={`rounded-full font-black transition-colors ${
+        tam === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-xs'
+      } ${
+        activa
+          ? 'bg-swc-accent text-swc-bg'
+          : 'bg-white/[0.06] text-swc-muted hover:text-swc-light'
+      }`}
+    >
+      {opcion.label}
+      {opcion.cuenta !== undefined && (
+        <span className="ml-1.5 tabular-nums opacity-70">{opcion.cuenta}</span>
+      )}
+    </button>
   )
 }

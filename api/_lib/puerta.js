@@ -7,7 +7,7 @@ import crypto from 'node:crypto'
 import { valorDe } from './entorno.js'
 
 /**
- * Los tres días del evento.
+ * Los días que atiende ESTA puerta.
  *
  * `label` es lo que hay que buscar dentro de `acreditacion.dias`, que es texto
  * libre ('Mié 5', 'Jue 6 + Vie 7') porque lo escribe cada canal. Es frágil, pero
@@ -16,9 +16,25 @@ import { valorDe } from './entorno.js'
  * `fecha` es lo que se guarda en `checkins.dia`.
  */
 export const DIAS = [
-  { id: 'mie', fecha: '2026-08-05', label: 'Mié', nombre: 'Miércoles 5' },
   { id: 'jue', fecha: '2026-08-06', label: 'Jue', nombre: 'Jueves 6' },
   { id: 'vie', fecha: '2026-08-07', label: 'Vie', nombre: 'Viernes 7' },
+]
+
+/**
+ * Días del evento que esta puerta NO atiende.
+ *
+ * El miércoles 5 es un side event en otro venue, con su propia acreditación. Su
+ * gente sigue entrando al padrón —el import de Luma es el mismo— pero no abre
+ * una lista acá ni se le puede anotar un ingreso.
+ *
+ * Existen como constante en vez de borrarse por una sola razón: sin esto, cada
+ * fila que dice «Mié 5» pasaría a no coincidir con ningún día y caería en
+ * `sinDia`, que es el cartel rojo de «revisar el import». Esa alarma tiene que
+ * seguir queriendo decir «este dato está roto», no «esta persona es del otro
+ * evento».
+ */
+export const DIAS_AJENOS = [
+  { id: 'mie', fecha: '2026-08-05', label: 'Mié', nombre: 'Miércoles 5' },
 ]
 
 /** El día por su id ('jue'), o null. */
@@ -39,6 +55,30 @@ export function diaDeHoy(ahora = new Date()) {
 /** Los días que habilita una fila de `acreditacion`, por su texto libre. */
 export function habilitaDia(dias, label) {
   return String(dias || '').includes(label)
+}
+
+/** Todos los días del evento, los atienda esta puerta o no, en orden. */
+export const DIAS_EVENTO = [...DIAS, ...DIAS_AJENOS]
+  .sort((a, b) => a.fecha.localeCompare(b.fecha))
+
+/**
+ * El texto que espera `acreditacion.dias` para un día: 'Jue 6'.
+ *
+ * La convención está acá y no repetida en cada lado que la arma, porque el
+ * match es un `includes` sobre texto libre: un «Jueves 6» o un «jue 6» no
+ * coinciden con nada y esa persona no aparece en ninguna lista.
+ */
+export function etiquetaDia(d) {
+  return `${d.label} ${Number(d.fecha.slice(-2))}`
+}
+
+/**
+ * True si el texto libre cae en algún día del evento, lo atienda esta puerta o
+ * no. Lo que devuelve false es lo que hay que ir a mirar: un CSV que exportó
+ * «6/8» o «Jueves» y dejó a esa gente invisible en todos lados.
+ */
+export function esDiaConocido(dias) {
+  return DIAS_EVENTO.some(d => habilitaDia(dias, d.label))
 }
 
 /* -------------------------------------------------------------------------- */

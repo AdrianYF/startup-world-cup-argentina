@@ -2,12 +2,12 @@
 /**
  * Importa a Supabase el CSV de asistentes de un canal externo.
  *
- *   node scripts/importar-asistentes.mjs <archivo.csv> --origen luma --evento quzhnee8
+ *   node scripts/importar-asistentes.mjs <archivo.csv> --origen luma --evento quzhnee8 --dias "Jue 6"
  *   node scripts/importar-asistentes.mjs <archivo.csv> --origen startupgrind --evento 31263
  *
  * Opciones:
  *   --dry                 muestra el mapeo y los estados sin escribir
- *   --dias "Jue 6"        pisa los días por defecto del canal
+ *   --dias "Jue 6"        qué días habilita esta tanda (obligatorio en Luma)
  *   --map estado=Status   fuerza el mapeo de una columna que no se detectó
  *
  * Las entradas del evento salen por tres lugares —Luma el miércoles, Startup
@@ -59,7 +59,8 @@ if (!archivo || !evento) {
 
     --origen   ${Object.keys(CANALES).join(' | ')}
     --evento   slug de Luma (quzhnee8) o id de Startup Grind (31263)
-    --dias     pisa los días por defecto del canal
+    --dias     qué días habilita: "Mié 5", "Jue 6", "Vie 7" o su suma con " + ".
+               Obligatorio en Luma, que corre un evento por día.
     --map      fuerza una columna, ej: --map estado=Order\\ Status
     --dry      no escribe
 `)

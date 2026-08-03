@@ -261,7 +261,7 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
             entrada impresa o en la pantalla de otro celular entra bastante más
             chico de lo que uno espera. El tope evita que en tablet se coma todo. */}
         <div
-          className="relative rounded-2xl border-2 border-white/70"
+          className="swc-ventana relative rounded-2xl border-2 border-white/70"
           style={{ width: 'min(78vw, 78vh, 420px)', aspectRatio: '1' }}
         >
           <IconoQR
@@ -321,14 +321,14 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
           <div className="mt-5 flex gap-2">
             <button
               onClick={descartarConflicto}
-              className="flex-1 rounded-full border border-white/20 px-5 py-3.5 text-sm font-black text-gray-300 active:scale-95"
+              className="flex-1 rounded-full border border-white/20 px-5 py-3.5 text-sm font-black text-gray-300 active:scale-[0.98]"
             >
               No acreditar
             </button>
             <button
               onClick={forzar}
               disabled={estado === 'enviando'}
-              className="flex-1 rounded-full bg-swc-warn px-5 py-3.5 text-sm font-black text-swc-bg disabled:opacity-40 active:scale-95"
+              className="flex-1 rounded-full bg-swc-warn px-5 py-3.5 text-sm font-black text-swc-bg disabled:opacity-40 active:scale-[0.98]"
             >
               {estado === 'enviando' ? 'Acreditando…' : 'Acreditar igual'}
             </button>

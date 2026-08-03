@@ -4,7 +4,7 @@
  *
  *   node scripts/lista-puerta.mjs              # tabla en pantalla
  *   node scripts/lista-puerta.mjs --csv        # CSV a stdout
- *   node scripts/lista-puerta.mjs --dia mie    # sólo un día (mie|jue|vie)
+ *   node scripts/lista-puerta.mjs --dia jue    # sólo un día (jue|vie)
  *
  * Sale de la vista `acreditacion`: los `orders` pagados de la venta propia más
  * los confirmados de Luma y Startup Grind. Ordena por apellido, que es lo que

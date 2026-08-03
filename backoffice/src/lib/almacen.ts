@@ -52,7 +52,7 @@ export const cache = {
   /**
    * Borra las listas guardadas. Se llama al salir.
    *
-   * La lista es el padrón entero del evento —nombre, mail y teléfono de cada
+   * La lista es la lista entera del evento —nombre, mail y teléfono de cada
    * persona— y no tiene por qué sobrevivir a la sesión: es un celular prestado
    * entre el staff, y cualquiera que lo agarre después no debería poder leerla
    * desde el devtools sin siquiera saber el PIN.

@@ -6,7 +6,7 @@ import { Cargando } from './ui/Estado'
 import { Encabezado } from './ui/Encabezado'
 import { cache, quien, sesion } from './lib/almacen'
 import { PUERTA, useRuta } from './lib/ruta'
-import { PADRON, seccionDe } from './lib/secciones'
+import { INSCRIPTOS, seccionDe } from './lib/secciones'
 
 /**
  * El backoffice del evento.
@@ -36,7 +36,7 @@ function Backoffice() {
   /**
    * Salir. Borra el token, los días y las listas cacheadas, y vuelve al PIN.
    *
-   * Las listas se van porque son el padrón entero del evento —nombre, mail y
+   * Las listas se van porque son la lista entera del evento —nombre, mail y
    * teléfono de cada persona— y no tienen por qué sobrevivir a la sesión en un
    * celular que se pasa de mano en mano entre el staff.
    *
@@ -77,7 +77,7 @@ function Seccion({ ruta, ir, onSinSesion }: {
   onSinSesion: () => void
 }) {
   switch (ruta) {
-    case PADRON: return <Personas modo="padron" ir={ir} onSinSesion={onSinSesion} />
+    case INSCRIPTOS: return <Personas modo="inscriptos" ir={ir} onSinSesion={onSinSesion} />
     case 'ventas': return <Ventas onSinSesion={onSinSesion} />
     case 'stock': return <Stock onSinSesion={onSinSesion} />
     case 'importar': return <Importar onSinSesion={onSinSesion} />

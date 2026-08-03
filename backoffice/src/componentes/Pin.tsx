@@ -37,7 +37,7 @@ function Pin({ onListo }: { onListo: () => void }) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-10">
+    <div className="flex min-h-[100dvh] items-center justify-center px-4 py-10">
       <div className="w-full max-w-3xl">
         <Operacion
           contexto={
@@ -47,9 +47,9 @@ function Pin({ onListo }: { onListo: () => void }) {
             <div className="flex h-full flex-col justify-between gap-8">
               <Bloque titulo="Qué es esto">
                 <p className="text-sm leading-relaxed text-swc-muted">
-                  La herramienta de acreditación del evento. Con este PIN se ve el padrón
-                  completo —nombre, mail y teléfono de cada persona—, así que no se comparte
-                  fuera del staff.
+                  La herramienta de acreditación del evento. Con este PIN se ve la lista
+                  completa de inscriptos —nombre, mail y teléfono de cada persona—, así que
+                  no se comparte fuera del staff.
                 </p>
               </Bloque>
 

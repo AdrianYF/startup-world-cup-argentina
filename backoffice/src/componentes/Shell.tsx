@@ -1,8 +1,16 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react'
 import { Boton } from '../ui/Acciones'
-import { IconoSalir } from '../ui/Iconos'
+import { IconoBuscar, IconoSalir } from '../ui/Iconos'
 import { SECCIONES } from '../lib/secciones'
 import { PUERTA } from '../lib/ruta'
+
+// Sólo pesa cuando alguien la abre — y se abre únicamente en administración.
+const Paleta = lazy(() => import('../ui/Paleta'))
+
+/** El modificador que corresponde al teclado de quien está mirando. */
+const CMD = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent)
+  ? '⌘K'
+  : 'Ctrl K'
 
 /**
  * El marco de ADMINISTRACIÓN: la navegación, quién está adentro y la salida.
@@ -14,7 +22,7 @@ import { PUERTA } from '../lib/ruta'
  * nada de esto.
  *
  * Era un sidebar fijo de 56 y pasó a ser una franja arriba. El motivo es la
- * sección que más se mira sentado: las tablas de Ventas y del padrón usan todo
+ * sección que más se mira sentado: las tablas de Ventas y de Inscriptos usan todo
  * el ancho que se les dé, y 224px de sidebar permanente eran 224px que no tenía
  * la tabla. Arriba, la navegación ocupa alto —que sobra— en vez de ancho.
  */
@@ -26,6 +34,21 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
   children: ReactNode
 }) {
   const [menu, setMenu] = useState(false)
+  const [paleta, setPaleta] = useState(false)
+
+  /* ⌘K desde cualquier lado. Es el atajo que la gente ya prueba sin que se lo
+     digan, y acá contesta las dos preguntas de administración: dónde está una
+     sección y si tal persona está anotada. */
+  useEffect(() => {
+    const alTecla = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaleta(true)
+      }
+    }
+    window.addEventListener('keydown', alTecla)
+    return () => window.removeEventListener('keydown', alTecla)
+  }, [])
 
   // Navegar cierra el cajón acá y no en un efecto sobre `ruta`: es una
   // consecuencia del click, no una sincronización con nada de afuera.
@@ -66,7 +89,7 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
   )
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-[100dvh] flex-col">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-swc-bg/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4">
           {/* Vuelve a la puerta, que es la raíz. Es la salida más usada de acá:
@@ -83,6 +106,15 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
           </button>
 
           <div className="ml-4 hidden lg:block">{enlaces(false)}</div>
+
+          <button
+            onClick={() => setPaleta(true)}
+            className="ml-auto hidden items-center gap-2 rounded-lg border border-white/12 bg-white/[0.03] px-3 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:border-white/25 hover:text-swc-muted sm:flex"
+          >
+            <IconoBuscar tam={14} />
+            Buscar
+            <kbd className="rounded border border-white/15 px-1 text-[10px] tracking-wide">{CMD}</kbd>
+          </button>
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
             {quien && (
@@ -130,6 +162,12 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
             </div>
           </div>
         </div>
+      )}
+
+      {paleta && (
+        <Suspense fallback={null}>
+          <Paleta ruta={ruta} ir={irYCerrar} onCerrar={() => setPaleta(false)} />
+        </Suspense>
       )}
 
       <div className="flex-1">{children}</div>

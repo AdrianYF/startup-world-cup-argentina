@@ -9,14 +9,14 @@ import { mensajeDeError } from '../lib/api'
 import { editarTier, pesos, traerTiers, useRecurso, type Tier } from '../lib/admin'
 
 /**
- * El cupo y el precio de la venta propia.
+ * El cupo y el precio de lo que se vende por Mercado Pago.
  *
  * Hasta hace poco esto era `update tiers set stock_total = 25` en el SQL Editor
  * de Supabase, que es exactamente lo que nadie quiere hacer un sábado a la
  * mañana con las entradas por agotarse.
  *
- * Es el cupo de la WEB: Startup Grind vende su propio stock y los dos son
- * independientes.
+ * Es SÓLO el cupo de Mercado Pago. Luma y Startup Grind venden su propio stock
+ * y los tres son independientes: agotar acá no cierra los otros dos.
  */
 function Stock({ onSinSesion }: { onSinSesion: () => void }) {
   const { datos, error, cargando, recargar } = useRecurso(traerTiers, onSinSesion)
@@ -34,7 +34,7 @@ function Stock({ onSinSesion }: { onSinSesion: () => void }) {
     <Operacion
       contexto={
         <>
-          <Bloque titulo="Cupo de la web">
+          <Bloque titulo="Cupo de Mercado Pago">
             <Datos>
               <Dato label="Total">{t?.total ?? 0}</Dato>
               <Dato label="Tomado" tono="warn">{t?.tomado ?? 0}</Dato>
@@ -51,7 +51,7 @@ function Stock({ onSinSesion }: { onSinSesion: () => void }) {
             <Datos>
               <Dato label="Compras hechas">quedan como están</Dato>
               <Dato label="Precio cobrado">congelado en cada orden</Dato>
-              <Dato label="Stock de Startup Grind">independiente</Dato>
+              <Dato label="Stock de Luma y SG">independiente</Dato>
             </Datos>
           </Bloque>
 
@@ -64,7 +64,7 @@ function Stock({ onSinSesion }: { onSinSesion: () => void }) {
       }
     >
       <Tarjetas>
-        <Tarjeta label="Cupo web total" valor={t?.total ?? 0} />
+        <Tarjeta label="Cupo Mercado Pago" valor={t?.total ?? 0} detalle="total" />
         <Tarjeta label="Tomado" valor={t?.tomado ?? 0} detalle="pagadas + pendientes sin vencer" />
         <Tarjeta label="Libre" valor={t?.libre ?? 0} tono={t?.libre === 0 ? 'coral' : 'ok'} />
         <Tarjeta label="Tiers activos" valor={t?.activos ?? 0} />

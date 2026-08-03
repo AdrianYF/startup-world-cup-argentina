@@ -10,7 +10,7 @@
 // resuelve el servidor (ver api/puerta-checkin.js).
 import { db } from './_lib/db.js'
 import { json, rejectMethod, first } from './_lib/http.js'
-import { DIAS, dia as buscarDia, diaDeHoy, habilitaDia, rejectSinSesion } from './_lib/puerta.js'
+import { DIAS, dia as buscarDia, diaDeHoy, esDiaConocido, habilitaDia, rejectSinSesion } from './_lib/puerta.js'
 
 const CAMPOS = 'id, origen, nombre, email, telefono, empresa, entrada, dias'
 
@@ -108,9 +108,11 @@ async function traerPersonas(d, desde) {
     personas: todas
       .filter(f => habilitaDia(f.dias, d.label))
       .map(({ registrado_en: _, ...f }) => ({ ...f, pagoDoble: dobles.has(f.email) })),
+    // Contra TODOS los días del evento, no sólo los que atiende esta puerta: el
+    // miércoles es un side event en otro venue, y su gente no es un import roto.
     sinDia: desde
       ? null
-      : todas.filter(f => !DIAS.some(x => habilitaDia(f.dias, x.label))).length,
+      : todas.filter(f => !esDiaConocido(f.dias)).length,
   }
 }
 

@@ -16,28 +16,28 @@
  */
 export type Seccion = { id: string; label: string; bajada: string }
 
-/** El padrón completo: los tres días juntos, sin filtro, editable. */
-export const PADRON = 'padron'
+/** La lista completa: los tres días juntos, sin filtro, editable. */
+export const INSCRIPTOS = 'inscriptos'
 
 /**
- * El orden es el de uso. El padrón primero porque responde «¿esta persona
+ * El orden es el de uso. Inscriptos primero porque responde «¿esta persona
  * está?», que es la pregunta que más sube desde la puerta.
  */
 export const SECCIONES: Seccion[] = [
   {
-    id: PADRON,
-    label: 'Padrón',
-    bajada: 'La lista entera de los tres días. Acá se corrige un dato y se da de baja.',
+    id: INSCRIPTOS,
+    label: 'Inscriptos',
+    bajada: 'La lista entera de los tres días: corregir un dato, reenviar la entrada, dar de baja — y acreditar, sin volver a la puerta.',
   },
   {
     id: 'ventas',
     label: 'Ventas',
-    bajada: 'Las compras de la venta propia: destrabar un pago, reenviar la entrada, liberar un cupo reservado.',
+    bajada: 'Las compras por Mercado Pago: destrabar un pago, reenviar la entrada, liberar un cupo reservado.',
   },
   {
     id: 'stock',
     label: 'Stock',
-    bajada: 'El cupo y el precio de cada tier de la web. Startup Grind vende su propio stock, aparte.',
+    bajada: 'El cupo y el precio de cada tier que se vende por Mercado Pago. Luma y Startup Grind manejan el suyo.',
   },
   {
     id: 'importar',

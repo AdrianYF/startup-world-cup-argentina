@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Agregar from '../componentes/Agregar'
 import BarraAcciones from '../componentes/BarraAcciones'
 import Cabecera from '../componentes/Cabecera'
@@ -6,21 +6,22 @@ import FichaPersona from '../componentes/FichaPersona'
 import FilaPersona from '../componentes/FilaPersona'
 import Pendientes from '../componentes/Pendientes'
 import { Boton } from '../ui/Acciones'
-import { Cargando } from '../ui/Estado'
+import { Cargando, Vacio } from '../ui/Estado'
 import { olvidar, reintentar } from '../lib/acreditar'
 import { cola, descartados } from '../lib/almacen'
 import { filtrar, ordenarPorApellido } from '../lib/buscar'
-import { PADRON } from '../lib/secciones'
+import { INSCRIPTOS } from '../lib/secciones'
 import { PUERTA } from '../lib/ruta'
+import * as traspaso from '../lib/traspaso'
 import { useLista } from '../lib/useLista'
 import type { Asistente } from '../lib/admin'
 import type { Checkin, Persona } from '../lib/tipos'
 
 // La cámara sólo pesa cuando alguien la abre.
 const Escaner = lazy(() => import('../componentes/Escaner'))
-// El padrón también: la lista entera, la tabla y el cliente de `/api/backoffice`
+// Inscriptos también: la lista entera, la tabla y el cliente de `/api/backoffice`
 // se usan sentado y con wifi, no parado en la fila de entrada.
-const Padron = lazy(() => import('./Padron'))
+const Inscriptos = lazy(() => import('./Inscriptos'))
 
 /**
  * Las personas del evento. Un componente, dos pantallas muy distintas.
@@ -29,7 +30,7 @@ const Padron = lazy(() => import('./Padron'))
  *     escáner y la barra de abajo. Nada más. Es la raíz de la app y se usa de
  *     pie, con una mano, con alguien esperando enfrente.
  *
- *   · **padrón** — la lista entera sin filtro de día, con la tabla ordenable,
+ *   · **inscriptos** — la lista entera sin filtro de día, con la tabla ordenable,
  *     los filtros de problema y la edición. Vive en administración y se usa
  *     sentado.
  *
@@ -37,26 +38,16 @@ const Padron = lazy(() => import('./Padron'))
  * `useLista`; duplicarlo era duplicar tres cosas que tienen que comportarse
  * igual. Lo que **no** comparten es la fuente: el modo día come de `/api/puerta`
  * con su caché, sus deltas y su cola offline, porque esas garantías son las que
- * hacen que un ingreso no se pierda. El padrón pide `/api/backoffice` recién
+ * hacen que un ingreso no se pierda. Inscriptos pide `/api/backoffice` recién
  * cuando alguien entra a mirarlo.
  *
  * El modo lo decide la RUTA, no el ancho de pantalla. Antes una tablet en la
- * puerta abría el padrón —con el mail y el teléfono de todo el mundo— porque
+ * puerta abría Inscriptos —con el mail y el teléfono de todo el mundo— porque
  * medía más de 1024px.
  */
 
-/**
- * El apellido que se venía tipeando, para que cruzar de la puerta al padrón no
- * obligue a escribirlo de nuevo.
- *
- * Una variable de módulo y no la URL: el cruce pasa una vez cada tanto, dura lo
- * que dura la pregunta «¿estará en otro día?», y no vale ensuciar el router de
- * treinta líneas con parseo de query string.
- */
-let apellidoQueVenia = ''
-
 function Personas({ modo, ir, onSalir, onSinSesion }: {
-  modo: 'dia' | 'padron'
+  modo: 'dia' | 'inscriptos'
   ir: (id: string) => void
   /** Sólo en la puerta: en administración la salida la pone el Shell. */
   onSalir?: () => void
@@ -68,20 +59,22 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
     agregarYAcreditar, setEstadoCola,
   } = useLista(onSinSesion)
 
-  const enPadron = modo === 'padron'
+  const enInscriptos = modo === 'inscriptos'
 
   // Al entrar se recupera lo que se venía tipeando del otro lado y se limpia,
   // para que la próxima visita arranque en blanco.
-  const [busqueda, setBusqueda] = useState(() => {
-    const heredado = apellidoQueVenia
-    apellidoQueVenia = ''
-    return heredado
-  })
+  const [busqueda, setBusqueda] = useState(traspaso.tomar)
+  // La fila donde están paradas las flechas, y si alguien las usó. Sin esto la
+  // primera fila aparecería resaltada siempre, que en el celular es ruido: ahí
+  // no hay «fila actual», hay un dedo.
+  const [activo, setActivo] = useState(0)
+  const [conTeclado, setConTeclado] = useState(false)
+  const listaRef = useRef<HTMLUListElement>(null)
   const [seleccion, setSeleccion] = useState<Persona | Asistente | null>(null)
   const [escaneando, setEscaneando] = useState(false)
   const [agregando, setAgregando] = useState(false)
   const [viendoPendientes, setViendoPendientes] = useState(false)
-  // Se incrementa al guardar algo desde la ficha: es la señal para que el padrón
+  // Se incrementa al guardar algo desde la ficha: es la señal para que Inscriptos
   // vuelva a pedir la lista sin remontarse y perder el orden de la tabla.
   const [recarga, setRecarga] = useState(0)
 
@@ -114,6 +107,43 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
     [lista],
   )
 
+  /** Tipear vuelve al primer resultado. En el handler y no en un efecto sobre
+   *  `busqueda`: es la consecuencia de una tecla, no una sincronización. */
+  const buscar = useCallback((v: string) => {
+    setBusqueda(v)
+    setActivo(0)
+    setConTeclado(false)
+  }, [])
+
+  /**
+   * Recorrer la lista sin soltar el buscador.
+   *
+   * En la puerta con celular esto no existe. Donde cambia todo es en la mesa con
+   * notebook: se tipean tres letras del apellido, se baja a la persona y se abre
+   * su ficha sin tocar el mouse. Enter sin haber usado las flechas abre la
+   * primera, que es el caso de siempre.
+   */
+  const alTeclaBusqueda = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!personas.length) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setConTeclado(true)
+      setActivo(i => Math.min(i + 1, personas.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setConTeclado(true)
+      setActivo(i => Math.max(i - 1, 0))
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      setSeleccion(personas[Math.min(activo, personas.length - 1)])
+    }
+  }, [personas, activo])
+
+  /* Que la fila elegida quede a la vista al bajar con las flechas. */
+  useEffect(() => {
+    if (conTeclado) listaRef.current?.children[activo]?.scrollIntoView({ block: 'nearest' })
+  }, [activo, conTeclado])
+
   const anular = useCallback((checkin: Checkin) => {
     anularIngreso(checkin, seleccion || undefined)
   }, [anularIngreso, seleccion])
@@ -130,15 +160,15 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
     setSeleccion(null)
   }, [cambiarDia])
 
-  /** Cruzar al padrón llevándose lo que se venía tipeando. */
-  const irAlPadron = useCallback(() => {
-    apellidoQueVenia = busqueda
-    ir(PADRON)
+  /** Cruzar a Inscriptos llevándose lo que se venía tipeando. */
+  const irAInscriptos = useCallback(() => {
+    traspaso.dejar(busqueda)
+    ir(INSCRIPTOS)
   }, [busqueda, ir])
 
   /** Volver a la puerta. Misma cortesía en el otro sentido. */
   const irALaPuerta = useCallback(() => {
-    apellidoQueVenia = busqueda
+    traspaso.dejar(busqueda)
     ir(PUERTA)
   }, [busqueda, ir])
 
@@ -159,7 +189,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
       persona={seleccion}
       ingresos={ingresos.get(seleccion.id) || []}
       dia={lista.dia}
-      editable={enPadron}
+      editable={enInscriptos}
       onAcreditar={() => acreditarA(seleccion)}
       onAnular={anular}
       onGuardado={alGuardar}
@@ -167,9 +197,9 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
     />
   )
 
-  // El padrón. El marco —título, bajada, ancho— lo pone el Shell; acá sólo va
+  // Inscriptos. El marco —título, bajada, ancho— lo pone el Shell; acá sólo va
   // el contenido.
-  if (enPadron) {
+  if (enInscriptos) {
     return (
       <>
         <div className="mb-5">
@@ -179,7 +209,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
         </div>
 
         <Suspense fallback={<Cargando />}>
-          <Padron
+          <Inscriptos
             busqueda={busqueda}
             onBusqueda={setBusqueda}
             onAbrir={setSeleccion}
@@ -209,22 +239,21 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-[100dvh] flex-col">
       <Cabecera
         dias={lista.dias}
         vista={lista.dia.id}
         onVista={id => { cambiarVista(id); setBusqueda('') }}
-        adentro={totales.adentro}
-        total={totales.entradas}
         busqueda={busqueda}
-        onBusqueda={setBusqueda}
+        onBusqueda={buscar}
+        onTecla={alTeclaBusqueda}
         sinConexion={sinConexion}
         estadoCola={estadoCola}
         onPendientes={() => setViendoPendientes(true)}
         onRecargar={recargar}
         sincronizando={sincronizando}
         sinDia={lista.sinDia}
-        onAdmin={irAlPadron}
+        onAdmin={irAInscriptos}
         onSalir={onSalir}
       />
 
@@ -233,33 +262,37 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
           // La búsqueda vacía es EL momento en que se descubre que alguien no
           // está, así que el alta se ofrece acá mismo y con el nombre ya
           // tipeado, en vez de obligar a escribirlo dos veces.
-          <div className="py-16 text-center">
-            <p className="text-sm text-gray-500">
-              {busqueda
-                ? `Nadie con ese nombre en la lista del ${lista.dia.nombre.toLowerCase()}.`
-                : 'La lista de este día está vacía.'}
-            </p>
-            <Boton tono="ok" tam="lg" className="mt-5" onClick={() => setAgregando(true)}>
-              {busqueda ? `Agregar a "${busqueda}"` : 'Agregar a alguien'}
-            </Boton>
-            {busqueda && (
-              // El padrón es la otra respuesta posible a «no está»: puede estar
-              // en la lista de otro día, o dado de baja.
-              <p className="mt-4 text-xs text-gray-600">
-                ¿Puede estar en otro día?{' '}
-                <button onClick={irAlPadron} className="text-swc-accent underline">
-                  Buscar en el padrón completo
-                </button>
-              </p>
-            )}
+          <div className="pt-10">
+            <Vacio
+              titulo={busqueda ? `No está en la lista del ${lista.dia.nombre.toLowerCase()}` : 'La lista de este día está vacía'}
+              accion={
+                <Boton tono="ok" tam="lg" onClick={() => setAgregando(true)}>
+                  {busqueda ? `Agregar a "${busqueda}"` : 'Agregar a alguien'}
+                </Boton>
+              }
+            >
+              {busqueda ? (
+                // Inscriptos es la otra respuesta posible a «no está»: puede
+                // estar en la lista de otro día, o dado de baja.
+                <>
+                  Puede estar anotada para otro día.{' '}
+                  <button onClick={irAInscriptos} className="text-swc-accent underline">
+                    Buscar en la lista completa
+                  </button>
+                </>
+              ) : (
+                'Todavía no hay nadie anotado para este día.'
+              )}
+            </Vacio>
           </div>
         ) : (
-          <ul>
-            {personas.map(p => (
+          <ul ref={listaRef}>
+            {personas.map((p, i) => (
               <FilaPersona
                 key={`${p.origen}-${p.id}`}
                 persona={p}
                 ingresos={ingresos.get(p.id) || []}
+                activa={conTeclado && i === activo}
                 onClick={() => setSeleccion(p)}
               />
             ))}

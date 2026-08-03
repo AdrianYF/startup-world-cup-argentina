@@ -29,13 +29,19 @@ export const PUERTA = ''
  * Los links quedaron en chats de WhatsApp del staff y en pestañas abiertas
  * desde ayer: mapearlas es más barato que explicar por qué dejaron de andar.
  *
- * `asistentes` era el padrón y `personas` fue las dos cosas a la vez; las dos
- * caen en el padrón, que es lo que quien las guardó estaba mirando.
+ * `asistentes`, `personas` y `padron` fueron, en ese orden, la misma pantalla:
+ * la lista completa del evento. Las tres caen en `inscriptos`, que es lo que
+ * quien guardó el link estaba mirando.
+ *
+ * El destino va como literal y no importado de `secciones.ts`: ese módulo ya
+ * importa `PUERTA` de acá, y cerrar el círculo por una constante de cuatro
+ * letras es peor que repetirla.
  */
 const HEREDADAS: Record<string, string> = {
   puerta: PUERTA,
-  asistentes: 'padron',
-  personas: 'padron',
+  asistentes: 'inscriptos',
+  personas: 'inscriptos',
+  padron: 'inscriptos',
 }
 
 function leerRuta(): string {

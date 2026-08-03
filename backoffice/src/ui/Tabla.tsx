@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
+import { Vacio } from './Estado'
 
 /**
  * La tabla de las secciones de escritorio.
@@ -58,9 +59,9 @@ function Tabla<T>({ columnas, filas, claveDe, onFila, vacio }: Props<T>) {
 
   if (!filas.length) {
     return (
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-12 text-center">
-        <p className="text-sm text-gray-500">{vacio || 'No hay nada para mostrar.'}</p>
-      </div>
+      <Vacio titulo="Sin resultados">
+        {vacio || 'No hay nada para mostrar.'}
+      </Vacio>
     )
   }
 

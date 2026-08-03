@@ -91,7 +91,9 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
       subtitulo={`Queda acreditada para el ${dia}, como alta de check-in.`}
       onCerrar={onCerrar}
       onSubmit={enviar}
-      anclada
+      // Centrada en todos los anchos: son cinco campos y un aviso de duplicados,
+      // y pegada abajo el teclado del celular se come la mitad del formulario.
+      posicion="centrada"
       cerrar="Cancelar"
     >
       <div className="flex flex-col gap-4">

@@ -5,14 +5,19 @@ import type { EstadoCola } from '../lib/acreditar'
 import type { Dia } from '../lib/tipos'
 
 /**
- * Lo que queda fijo arriba en la puerta: qué día, cuánta gente entró, el
- * buscador y —cuando corresponde— los avisos de que algo no está bien.
+ * Lo que queda fijo arriba en la puerta: qué día, el buscador y —cuando
+ * corresponde— los avisos de que algo no está bien.
+ *
+ * El contador de acreditados no está acá. Vivía al lado del día y era un número
+ * que en la puerta no se usa para nada: nadie decide nada con «34/120» mientras
+ * tiene a alguien enfrente. El total sigue estando en administración, que es
+ * donde se mira el evento y no la fila.
  *
  * El buscador es lo que más se usa, así que va pegado al pulgar y con autofocus:
  * en la puerta se tipean tres letras del apellido y listo.
  *
  * Las píldoras son SÓLO días. «Todos» estaba acá y se fue: no era un día, era la
- * salida al padrón completo —con el mail y el teléfono de cada persona— a un
+ * salida a la lista completa —con el mail y el teléfono de cada persona— a un
  * dedo del día que estás acreditando.
  *
  * Esta cabecera reemplaza a la barra de navegación del backoffice, que en la
@@ -25,8 +30,6 @@ type Props = {
   /** El día activo. */
   vista: string
   onVista: (id: string) => void
-  adentro: number
-  total: number
   busqueda: string
   onBusqueda: (v: string) => void
   sinConexion: boolean
@@ -39,11 +42,13 @@ type Props = {
   /** La salida a administración. */
   onAdmin: () => void
   onSalir?: () => void
+  /** Flechas y Enter sobre la lista, sin soltar el buscador. */
+  onTecla?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 function Cabecera({
-  dias, vista, onVista, adentro, total, busqueda, onBusqueda, sinConexion, estadoCola,
-  onPendientes, onRecargar, sincronizando, sinDia, onAdmin, onSalir,
+  dias, vista, onVista, busqueda, onBusqueda, sinConexion, estadoCola,
+  onPendientes, onRecargar, sincronizando, sinDia, onAdmin, onSalir, onTecla,
 }: Props) {
   const pendientes = estadoCola.enCola + estadoCola.descartados
 
@@ -75,21 +80,16 @@ function Cabecera({
             etiqueta="Día del evento"
             tam="sm"
           />
-          <div className="flex shrink-0 items-center gap-2">
-            <p className="text-xs font-bold tabular-nums text-swc-muted">
-              <span className="text-swc-light">{adentro}</span>/{total}
-            </p>
-            {/* Recargar. Tocar el día ya activo no hace nada, así que sin esto la
-                única forma de volver a bajar la lista era recargar la página. */}
-            <button
-              onClick={onRecargar}
-              title="Recargar la lista"
-              aria-label="Recargar la lista"
-              className="rounded-full border border-white/15 p-2 text-swc-muted active:scale-95"
-            >
-              <IconoRecargar tam={14} className={sincronizando ? 'animate-spin' : undefined} />
-            </button>
-          </div>
+          {/* Recargar. Tocar el día ya activo no hace nada, así que sin esto la
+              única forma de volver a bajar la lista era recargar la página. */}
+          <button
+            onClick={onRecargar}
+            title="Recargar la lista"
+            aria-label="Recargar la lista"
+            className="shrink-0 rounded-full border border-white/15 p-2 text-swc-muted active:scale-[0.98]"
+          >
+            <IconoRecargar tam={14} className={sincronizando ? 'animate-spin' : undefined} />
+          </button>
         </div>
 
         <div className="mt-3">
@@ -97,6 +97,7 @@ function Cabecera({
             id="buscar-puerta"
             valor={busqueda}
             onCambio={onBusqueda}
+            onKeyDown={onTecla}
             placeholder="Buscar por apellido, mail o empresa"
             autoFocus
           />
