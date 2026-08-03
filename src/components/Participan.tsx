@@ -9,6 +9,22 @@ type Participante = (typeof content.participan)[number]
 /** Alta de perfil en imatchin, el matchmaking del evento. */
 const IMATCHIN_URL = 'https://imatchin.com'
 
+/**
+ * El orden de «Más participantes»: primero quien puede poner plata.
+ *
+ * Se ordena por el `tipo` del dato y no por la posición en el JSON, que es lo
+ * que había antes: con el orden metido a mano, el que agrega a alguien nuevo lo
+ * pega al final y la sección deja de estar ordenada sin que nadie se entere.
+ *
+ * Quien todavía no tiene `tipo` cae al final. Es a propósito: el tipo sale del
+ * cargo, y a quien no le sabemos el cargo tampoco le vamos a inventar la
+ * categoría.
+ */
+const RANGO: Record<string, number> = { vc: 0, manager: 1, empresa: 2, influencer: 3 }
+
+const rango = (p: Participante): number =>
+  RANGO[('tipo' in p ? (p as { tipo?: string }).tipo : '') || ''] ?? Object.keys(RANGO).length
+
 /** Los dos CTAs del pie de la sección comparten estilo. */
 const CTA_PARTICIPAN =
   'inline-flex items-center gap-2 border border-[#75AADB]/40 hover:bg-[#75AADB]/10 active:scale-95 text-[#75AADB] hover:text-white font-black text-sm px-7 py-3 rounded-full transition-all uppercase tracking-wide cursor-pointer text-center'
@@ -39,7 +55,11 @@ function ParticipanteCard({ p, compact = false }: { p: Participante; compact?: b
 function Participan() {
   const participan = content.participan
   const destacados = participan.filter(p => 'destacado' in p && (p as { destacado?: boolean }).destacado)
-  const otros = participan.filter(p => !('destacado' in p && (p as { destacado?: boolean }).destacado))
+  // `sort` mutaría el array del import; `filter` ya devuelve uno nuevo, así que
+  // acá es seguro. Estable: dentro de cada tipo se respeta el orden del JSON.
+  const otros = participan
+    .filter(p => !('destacado' in p && (p as { destacado?: boolean }).destacado))
+    .sort((a, b) => rango(a) - rango(b))
   const [modalOpen, setModalOpen] = useState(false)
 
   // Al cerrar el modal, volver a la sección de Entradas. Se difiere para que el

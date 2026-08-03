@@ -3,6 +3,7 @@
     "slug": "francis-perelman",
     "nombre": "Francis Perelman",
     "cargo": "Manager, Capria Ventures",
+    "tipo": "vc",
     "img": "/participan/francis-perelman.webp",
     "destacado": true
   },
@@ -10,6 +11,7 @@
     "slug": "esteban-wolf",
     "nombre": "Esteban Wolf",
     "cargo": "CEO · Chocorissimo · Guapaletas · Abuela Goye · Persicco",
+    "tipo": "empresa",
     "ticket": "Empresario, mentor e inversor ángel",
     "img": "/participan/esteban-wolf.webp",
     "destacado": true
@@ -18,87 +20,136 @@
     "slug": "john-newkirk",
     "nombre": "John Newkirk",
     "cargo": "Investments & Portfolio Mgmt, Kamay",
+    "tipo": "manager",
     "ticket": "Ticket de inversión: hasta USD 600k",
     "img": "/participan/john-newkirk.webp",
     "destacado": true
   },
   {
-    "slug": "tito-loizeau",
-    "nombre": "Tito Loizeau",
-    "cargo": "Emprendedor serial · Endeavor",
-    "img": "/participan/tito-loizeau.webp"
-  },
-  {
     "slug": "nicolai-ivansson",
-    "nombre": "Nicolai Ivansson",
+    "nombre": "Nikolai Ivansson",
     "cargo": "Ingenerate VC",
+    "tipo": "vc",
     "img": "/participan/nicolai-ivansson.webp"
   },
   {
     "slug": "micaela-bacher",
     "nombre": "Micaela Bacher",
     "cargo": "Natan.VC",
+    "tipo": "vc",
     "img": "/participan/micaela-bacher.webp"
+  },
+  {
+    "slug": "diego-gonzalez-a",
+    "nombre": "Diego Gonzalez",
+    "cargo": "Alina VC",
+    "tipo": "vc",
+    "img": "/participan/diego-gonzalez-a.webp"
+  },
+  {
+    "slug": "matias-massotti",
+    "nombre": "Matías Massotti",
+    "cargo": "Massotti Ventures",
+    "tipo": "vc",
+    "img": "/participan/matias-massotti.webp"
+  },
+  {
+    "slug": "tito-loizeau",
+    "nombre": "Tito Loizeau",
+    "cargo": "Emprendedor serial · Endeavor",
+    "tipo": "empresa",
+    "img": "/participan/tito-loizeau.webp"
   },
   {
     "slug": "marcelo-rabinovich",
     "nombre": "Marcelo Rabinovich",
     "cargo": "Fundador · Praxis Consulting",
+    "tipo": "empresa",
     "img": "/participan/marcelo-rabinovich.webp"
   },
   {
     "slug": "marcelo-de-vicenzi",
     "nombre": "Marcelo De Vicenzi",
     "cargo": "UAI",
+    "tipo": "empresa",
     "img": "/participan/marcelo-de-vicenzi.webp"
   },
   {
     "slug": "hernan-schuster",
     "nombre": "Hernán Schuster",
     "cargo": "Spiquers",
+    "tipo": "empresa",
     "img": "/participan/hernan-schuster.webp"
   },
   {
     "slug": "guido-kuznicki",
     "nombre": "Guido Kuznicki",
     "cargo": "Lara AI",
+    "tipo": "empresa",
     "img": "/participan/guido-kuznicki.webp"
-  },
-  {
-    "slug": "diego-gonzalez-a",
-    "nombre": "Diego Gonzalez",
-    "cargo": "Alina VC",
-    "img": "/participan/diego-gonzalez-a.webp"
   },
   {
     "slug": "anabella-guimarey",
     "nombre": "Anabella Guimarey",
     "cargo": "El Cero Km",
+    "tipo": "empresa",
     "img": "/participan/anabella-guimarey.webp"
   },
   {
     "slug": "lautaro-loguzzo",
     "nombre": "Lautaro Loguzzo",
     "cargo": "Canillita",
+    "tipo": "empresa",
     "img": "/participan/lautaro-loguzzo.webp"
   },
   {
     "slug": "claudia-casalongue",
     "nombre": "Claudia Casalongue",
     "cargo": "Unibaio",
+    "tipo": "empresa",
     "img": "/participan/claudia-casalongue.webp"
   },
   {
     "slug": "daniel-maquez",
     "nombre": "Daniel Maquez",
     "cargo": "Argenaura",
+    "tipo": "empresa",
     "img": "/participan/daniel-maquez.webp"
   },
   {
     "slug": "denis-balitskiy",
     "nombre": "Denis Balitskiy",
     "cargo": "Borton",
+    "tipo": "empresa",
     "img": "/participan/denis-balitskiy.webp"
+  },
+  {
+    "slug": "gustavo-nusenovich",
+    "nombre": "Gustavo Nusenovich",
+    "cargo": "Otro Punto de Vista",
+    "tipo": "vc",
+    "img": "/participan/gustavo-nusenovich.webp"
+  },
+  {
+    "slug": "ignacio-bivort",
+    "nombre": "Ignacio Bivort",
+    "cargo": "AltScore",
+    "tipo": "empresa",
+    "img": "/participan/ignacio-bivort.webp"
+  },
+  {
+    "slug": "matias-vigil",
+    "nombre": "Matias Vigil",
+    "cargo": "Arcor",
+    "tipo": "empresa",
+    "img": "/participan/matias-vigil.webp"
+  },
+  {
+    "slug": "mariela-mociulsky",
+    "nombre": "Mariela Mociulsky",
+    "cargo": "Trendsity",
+    "tipo": "empresa",
+    "img": "/participan/mariela-mociulsky.webp"
   },
   {
     "slug": "silvia-marra",
@@ -119,12 +170,6 @@
     "img": "/participan/ana-julia-gavilan.webp"
   },
   {
-    "slug": "gustavo-nusenovich",
-    "nombre": "Gustavo Nusenovich",
-    "cargo": "Otro Punto de Vista",
-    "img": "/participan/gustavo-nusenovich.webp"
-  },
-  {
     "slug": "carla-goglia",
     "nombre": "Carla Goglia",
     "cargo": "",
@@ -135,5 +180,25 @@
     "nombre": "Gaba Najmanovich",
     "cargo": "",
     "img": "/participan/gaba-najmanovich.webp"
+  },
+  {
+    "slug": "aldo-montefiore",
+    "nombre": "Aldo Montefiore",
+    "img": "/participan/aldo-montefiore.webp"
+  },
+  {
+    "slug": "gabriel-aufgang",
+    "nombre": "Gabriel Aufgang",
+    "img": "/participan/gabriel-aufgang.webp"
+  },
+  {
+    "slug": "alejandrina-vendrell",
+    "nombre": "Alejandrina Vendrell",
+    "img": "/participan/alejandrina-vendrell.webp"
+  },
+  {
+    "slug": "santiago-beldi",
+    "nombre": "Santiago Beldi",
+    "img": "/participan/santiago-beldi.webp"
   }
 ]

@@ -51,6 +51,15 @@ const CTA_DIA =
   'shrink-0 inline-flex items-center cursor-pointer rounded-full px-5 sm:px-6 py-2.5 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.14em] text-white transition-all hover:brightness-125 active:scale-95'
 
 /**
+ * CTA de un bloque puntual, al lado de su título.
+ *
+ * Más chico que el del día a propósito: es una acción de una fila, no de la
+ * jornada, y compite con el título que tiene al lado.
+ */
+const CTA_FILA =
+  'shrink-0 inline-flex items-center cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition-all hover:brightness-125 active:scale-95'
+
+/**
  * Los días sin un solo speaker (hoy los side events del miércoles) van a dos
  * columnas: la de speakers quedaba con el encabezado puesto y nada abajo.
  */
@@ -88,6 +97,13 @@ function Avatar({ speaker, accent }: { speaker: AgendaSpeaker; accent: string })
 function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
   const conSpeakers = dia.slots.some(s => s.speakers.length > 0)
   const cols = conSpeakers ? COLS : COLS_SIN_SPEAKERS
+  /**
+   * Días donde cada bloque se inscribe por su cuenta.
+   *
+   * El header no lleva botón: mandar a «conseguí tu ticket» desde un día cuyos
+   * bloques tienen inscripción propia en Luma es mandar al lugar equivocado.
+   */
+  const conCtaPorBloque = dia.slots.some(s => s.cta)
 
   return (
     <div
@@ -113,35 +129,20 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
 
         {/*
           Los side events del día 1 tienen inscripción propia en Luma, una por
-          evento. El resto de los días van al ticketing del evento.
+          bloque, y su botón vive en la fila del bloque. El resto de los días van
+          al ticketing del evento desde acá.
         */}
-        <div className="flex flex-wrap gap-2">
-          {dia.ctas?.length ? (
-            dia.ctas.map(cta => (
-              <a
-                key={cta.url}
-                href={cta.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Inscribite a ${cta.label} — ${dia.label} (abre Luma en una nueva pestaña)`}
-                className={CTA_DIA}
-                style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
-              >
-                {cta.label}
-              </a>
-            ))
-          ) : (
-            <button
-              type="button"
-              onClick={() => openTicketing(`agenda-${dia.id}`)}
-              aria-label={`Conseguí tu ticket para ${dia.label} (abre Startup Grind en una nueva pestaña)`}
-              className={CTA_DIA}
-              style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
-            >
-              Conseguí tu ticket
-            </button>
-          )}
-        </div>
+        {!conCtaPorBloque && (
+          <button
+            type="button"
+            onClick={() => openTicketing(`agenda-${dia.id}`)}
+            aria-label={`Conseguí tu ticket para ${dia.label} (abre Startup Grind en una nueva pestaña)`}
+            className={CTA_DIA}
+            style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
+          >
+            Conseguí tu ticket
+          </button>
+        )}
       </div>
 
       {/* Cabecera de la tabla - solo desde lg, donde las columnas existen de verdad */}
@@ -174,19 +175,39 @@ function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
               {slot.hora}
             </span>
 
-            <span
-              className={`text-sm lg:text-[16.5px] leading-snug text-white text-pretty ${
-                destacado ? 'font-extrabold' : 'font-semibold'
-              }`}
-            >
-              {slot.titulo}
-              {pendiente && (
-                <span
-                  className="ml-2 align-middle inline-block text-[10px] font-extrabold uppercase tracking-[0.18em] px-3 py-0.5 border rounded-full whitespace-nowrap"
-                  style={{ color: '#75AADB', borderColor: 'rgba(117,170,219,0.3)', background: 'rgba(117,170,219,0.08)' }}
+            {/* El título y, cuando el bloque se inscribe aparte, su botón. El
+                botón se va contra el borde derecho (`ml-auto`), así los dos
+                quedan alineados entre sí en vez de arrancar donde termina cada
+                título, que tienen largos muy distintos. Envuelven juntos: en el
+                celular el botón cae abajo del título en vez de comprimirlo. */}
+            <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span
+                className={`text-sm lg:text-[16.5px] leading-snug text-white text-pretty ${
+                  destacado ? 'font-extrabold' : 'font-semibold'
+                }`}
+              >
+                {slot.titulo}
+                {pendiente && (
+                  <span
+                    className="ml-2 align-middle inline-block text-[10px] font-extrabold uppercase tracking-[0.18em] px-3 py-0.5 border rounded-full whitespace-nowrap"
+                    style={{ color: '#75AADB', borderColor: 'rgba(117,170,219,0.3)', background: 'rgba(117,170,219,0.08)' }}
+                  >
+                    Coming Soon
+                  </span>
+                )}
+              </span>
+
+              {slot.cta && (
+                <a
+                  href={slot.cta.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Inscribite a ${slot.cta.label} — ${slot.hora}, ${dia.label} (abre Luma en una nueva pestaña)`}
+                  className={`${CTA_FILA} ml-auto`}
+                  style={{ background: rgba(accent, 0.22), border: `1px solid ${rgba(accent, 0.6)}` }}
                 >
-                  Coming Soon
-                </span>
+                  {slot.cta.label}
+                </a>
               )}
             </span>
 
