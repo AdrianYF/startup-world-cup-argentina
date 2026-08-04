@@ -40,3 +40,7 @@ skills-lock.json
 
 # Skills tooling artifacts (locks locales)
 .claude/
+
+# Servidores MCP: qué base o qué servicio conecta cada uno depende de la
+# máquina y de quién esté trabajando. No es configuración del proyecto.
+.mcp.json
