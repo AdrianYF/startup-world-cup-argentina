@@ -182,18 +182,6 @@
           ]
         },
         {
-          "hora": "18:00 - 18:30",
-          "titulo": "Matías Massotti",
-          "categoria": "Charla",
-          "speakers": [
-            {
-              "nombre": "Matías Massotti",
-              "empresa": "Massotti Ventures",
-              "img": "/participan/matias-massotti.webp"
-            }
-          ]
-        },
-        {
           "hora": "18:30 - 19:00",
           "titulo": "IA responsable aplicada a negocios",
           "categoria": "Charla",
@@ -295,11 +283,6 @@
               "nombre": "Diego Gonzalez",
               "empresa": "Alina VC",
               "img": "/participan/diego-gonzalez-a.webp"
-            },
-            {
-              "nombre": "Matías Massotti",
-              "empresa": "imatchin",
-              "img": "/participan/matias-massotti.webp"
             }
           ]
         },
