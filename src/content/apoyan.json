@@ -179,6 +179,30 @@
         "scale": 0.75,
         "muted": true,
         "url": "https://buenosaires.gob.ar/"
+      },
+      {
+        "nombre": "Cámara Argentina de Empresas Emergentes",
+        "img": "/logos/caee-white.webp",
+        "scale": 0.6,
+        "muted": true,
+        "url": "https://www.startups.org.ar/"
+      },
+      {
+        "nombre": "Andén",
+        "img": "/logos/anden-white.webp",
+        "scale": 0.55,
+        "muted": true
+      },
+      {
+        "nombre": "KO Agua",
+        "img": "/logos/ko-agua.webp",
+        "scale": 0.5
+      },
+      {
+        "nombre": "KillSed",
+        "img": "/logos/killsed-white.webp",
+        "scale": 0.6,
+        "muted": true
       }
     ]
   }
