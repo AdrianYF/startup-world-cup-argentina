@@ -230,5 +230,12 @@
     "slug": "danilo-picucci",
     "nombre": "Danilo Picucci",
     "img": "/participan/danilo-picucci.webp"
+  },
+  {
+    "slug": "alan-szpigiel",
+    "nombre": "Alan Szpigiel",
+    "cargo": "Lara AI",
+    "tipo": "empresa",
+    "img": "/participan/alan-szpigiel.webp"
   }
 ]
