@@ -218,5 +218,12 @@
     "slug": "juan-manuel-zanabria",
     "nombre": "Juan Manuel Zanabria",
     "img": "/participan/juan-manuel-zanabria.webp"
+  },
+  {
+    "slug": "andre-fuks",
+    "nombre": "Andre Fuks",
+    "cargo": "Shefa Ventures",
+    "tipo": "vc",
+    "img": "/participan/andre-fuks.webp"
   }
 ]
