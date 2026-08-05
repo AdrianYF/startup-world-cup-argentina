@@ -225,5 +225,10 @@
     "cargo": "Shefa Ventures",
     "tipo": "vc",
     "img": "/participan/andre-fuks.webp"
+  },
+  {
+    "slug": "danilo-picucci",
+    "nombre": "Danilo Picucci",
+    "img": "/participan/danilo-picucci.webp"
   }
 ]
