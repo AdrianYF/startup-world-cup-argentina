@@ -148,7 +148,7 @@ function TicketCheckoutModal({
   }
 
   return (
-    <Modal onClose={onClose} titleId={TITLE_ID} size="md">
+    <Modal onClose={onClose} titleId={TITLE_ID} size="md" scroll>
       <header className="mb-6">
         <div className="flex items-start justify-between gap-3 mb-3">
           <h2 id={TITLE_ID} className="text-white font-black text-2xl leading-tight">

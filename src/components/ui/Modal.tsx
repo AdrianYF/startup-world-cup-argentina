@@ -24,7 +24,33 @@ type Props = {
   /** label accesible si no hay título visible */
   ariaLabel?: string
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+  /**
+   * El panel se limita al alto de la pantalla y scrollea por dentro.
+   *
+   * Sin esto, un modal más alto que la pantalla no se puede leer entero: el
+   * contenido que sobra queda fuera del `inset-0`, y el `overflow: hidden` que
+   * este mismo componente le pone al body al abrirse deja al dedo sin nada que
+   * scrollear. En el checkout —título, precio, desglose, perks y cuatro
+   * campos— eso es el botón de pagar, que en un iPhone no aparece nunca.
+   *
+   * Va en `dvh` y no en `vh` porque en Safari de iOS `100vh` es la pantalla
+   * SIN la barra de direcciones: el modal termina más alto que lo visible y el
+   * último tramo queda tapado justo por la barra.
+   *
+   * Es opt-in y no el default para no cambiarle el alto a los modales que hoy
+   * resuelven el scroll adentro (Footer, Participan).
+   */
+  scroll?: boolean
 }
+
+/**
+ * El modo `scroll`. El `2rem` es el aire que queda arriba y abajo del panel.
+ *
+ * `overscroll-contain` es para el final del recorrido: sin eso, seguir tirando
+ * cuando ya no hay más contenido arrastra la página de atrás, que quedó fija a
+ * mitad de camino y aparece moviéndose detrás del fondo borroso.
+ */
+const SCROLL_CLASSES = 'max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain swc-scrollbar'
 
 const sizeClasses: Record<NonNullable<Props['size']>, string> = {
   sm: 'max-w-sm',
@@ -35,7 +61,7 @@ const sizeClasses: Record<NonNullable<Props['size']>, string> = {
   '3xl': 'max-w-3xl',
 }
 
-export function Modal({ onClose, children, titleId, ariaLabel, size = 'md' }: Props) {
+export function Modal({ onClose, children, titleId, ariaLabel, size = 'md', scroll = false }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
 
@@ -114,7 +140,7 @@ export function Modal({ onClose, children, titleId, ariaLabel, size = 'md' }: Pr
         aria-label={!titleId ? ariaLabel : undefined}
         tabIndex={-1}
         onClick={e => e.stopPropagation()}
-        className={`bg-[#0f172b] border border-[#75AADB]/40 rounded-2xl p-8 w-full ${sizeClasses[size]} shadow-2xl shadow-[#75AADB]/20 animate-[modal-in_0.25s_cubic-bezier(0.16,1,0.3,1)] outline-none`}
+        className={`bg-[#0f172b] border border-[#75AADB]/40 rounded-2xl p-8 w-full ${sizeClasses[size]} shadow-2xl shadow-[#75AADB]/20 animate-[modal-in_0.25s_cubic-bezier(0.16,1,0.3,1)] outline-none${scroll ? ` ${SCROLL_CLASSES}` : ''}`}
       >
         {children}
       </div>
