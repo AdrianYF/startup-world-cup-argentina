@@ -193,5 +193,20 @@
     "slug": "santiago-beldi",
     "nombre": "Santiago Beldi",
     "img": "/participan/santiago-beldi.webp"
+  },
+  {
+    "slug": "mariano-davo",
+    "nombre": "Mariano Davo",
+    "img": "/participan/mariano-davo.webp"
+  },
+  {
+    "slug": "paula-arenzo",
+    "nombre": "Paula Arenzo",
+    "img": "/participan/paula-arenzo.webp"
+  },
+  {
+    "slug": "fausto-geremia",
+    "nombre": "Fausto Geremia",
+    "img": "/participan/fausto-geremia.webp"
   }
 ]
