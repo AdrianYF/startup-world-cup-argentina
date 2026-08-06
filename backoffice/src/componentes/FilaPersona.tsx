@@ -1,6 +1,7 @@
 import { hora } from '../lib/buscar'
 import { siglaCanal } from '../lib/canales'
 import { esVip, type Checkin, type Persona } from '../lib/tipos'
+import { Chip } from '../ui/Estado'
 import { IconoAlerta, IconoTick } from '../ui/Iconos'
 
 /**
@@ -33,15 +34,12 @@ function FilaPersona({ persona, ingresos, onClick, activa }: {
       >
         <div className="min-w-0 flex-1">
           <p className="truncate font-bold text-swc-light">
-            {/* El VIP va ANTES del nombre y en dorado: en la puerta se decide
-                por dónde pasa la persona antes de terminar de leer quién es, y
-                un cartel al final de un nombre largo se pierde en el truncado. */}
+            {/* El VIP va ANTES del nombre: en la puerta se decide por dónde
+                pasa la persona antes de terminar de leer quién es, y un cartel
+                al final de un nombre largo se pierde en el truncado. */}
             {esVip(persona.entrada) && (
-              <span
-                className="mr-1.5 rounded px-1.5 py-0.5 align-[1px] text-[9px] font-black uppercase tracking-[0.1em] bg-[#d4af37]/20 text-[#d4af37] ring-1 ring-[#d4af37]/40"
-                title={persona.entrada}
-              >
-                VIP
+              <span className="mr-1.5 align-[1px]" title={persona.entrada}>
+                <Chip tono="oro">VIP</Chip>
               </span>
             )}
             {persona.nombre || <span className="text-gray-500">(sin nombre)</span>}

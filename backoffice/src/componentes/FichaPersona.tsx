@@ -59,11 +59,7 @@ function FichaPersona({
       chips={
         <>
           {/* Primero el VIP: es lo que cambia a dónde entra la persona. */}
-          {esVip(persona.entrada) && (
-            <span className="rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] bg-[#d4af37]/20 text-[#d4af37] ring-1 ring-[#d4af37]/40">
-              VIP
-            </span>
-          )}
+          {esVip(persona.entrada) && <Chip tono="oro">VIP</Chip>}
           <Chip tono="neutro">{canal}</Chip>
           {persona.pagoDoble && <Chip tono="warn">2 pagos</Chip>}
           {completa?.sinDia && <Chip tono="coral">sin día</Chip>}

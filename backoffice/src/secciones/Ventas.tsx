@@ -109,11 +109,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
       orden: v => `${esVip(v.entrada) ? 0 : 1}${v.entrada}`,
       celda: v => (
         <span className="flex items-center gap-1.5">
-          {esVip(v.entrada) && (
-            <span className="rounded px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] bg-[#d4af37]/20 text-[#d4af37] ring-1 ring-[#d4af37]/40">
-              VIP
-            </span>
-          )}
+          {esVip(v.entrada) && <Chip tono="oro">VIP</Chip>}
           {v.entrada}
         </span>
       ),
