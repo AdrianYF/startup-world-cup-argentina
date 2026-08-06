@@ -11,7 +11,7 @@ import { mensajeDeError } from '../lib/api'
 import {
   accionOrden, fechaCorta, pesos, reenviarMail, traerOrdenes, useRecurso, type Orden, type Venta,
 } from '../lib/admin'
-import { esVip } from '../lib/tipos'
+import { esVip, etiquetaVip } from '../lib/tipos'
 
 /**
  * Todas las entradas del evento, con su plata y su canal.
@@ -109,7 +109,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
       orden: v => `${esVip(v.entrada) ? 0 : 1}${v.entrada}`,
       celda: v => (
         <span className="flex items-center gap-1.5">
-          {esVip(v.entrada) && <Chip tono="oro">VIP</Chip>}
+          {etiquetaVip(v.entrada) && <Chip tono="oro">{etiquetaVip(v.entrada)}</Chip>}
           {v.entrada}
         </span>
       ),

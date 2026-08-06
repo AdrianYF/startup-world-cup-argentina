@@ -40,6 +40,26 @@ export type Persona = {
  */
 export const esVip = (entrada: string | null | undefined) => /vip/i.test(entrada || '')
 
+/**
+ * Qué dice la chapa dorada: «VIP + comida» o «VIP» a secas.
+ *
+ * No todos los VIP comen. La comida viene con la Entrada VIP —el producto que
+ * se vende, en Startup Grind y en la venta propia— y no con las invitaciones
+ * VIP de Luma, que dan acceso pero no cubierto. En la puerta esa diferencia se
+ * resuelve en dos segundos si está en la chapa, y en una discusión incómoda si
+ * hay que ir a preguntar.
+ *
+ * Se distingue por «invitado» y no por el precio porque el precio no llega a
+ * esta pantalla, y porque tampoco alcanzaría: una Entrada VIP entregada con
+ * código de cortesía sale $0 y sigue siendo la entrada que incluye la comida.
+ *
+ * Devuelve `null` para quien no es VIP: no hay chapa que poner.
+ */
+export function etiquetaVip(entrada: string | null | undefined): string | null {
+  if (!esVip(entrada)) return null
+  return /invitad/i.test(entrada || '') ? 'VIP' : 'VIP + comida'
+}
+
 export type Checkin = {
   id: string
   /** El `id` de la persona en la lista. */
