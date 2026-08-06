@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import { useState } from 'react'
 import { agendaDias } from '../lib/content'
 import { openTicketing } from '../lib/ticketing'
-import { estadoDeBloque, rangoDeHora, useMomento } from '../lib/momento'
 import { SectionGlow } from './ui/SectionGlow'
 import type { AgendaDay, AgendaSpeaker } from '../lib/content'
 
@@ -95,14 +94,7 @@ function Avatar({ speaker, accent }: { speaker: AgendaSpeaker; accent: string })
 }
 
 /** Un día completo: header con su CTA + la tabla de bloques. */
-function DiaPanel({ dia, accent, marca, refDestino }: {
-  dia: AgendaDay
-  accent: string
-  /** Qué bloque está en curso o es el próximo. `null` fuera del evento. */
-  marca: (indice: number) => 'ahora' | 'sigue' | 'pasado' | null
-  /** Se engancha al bloque al que hay que llevar la pantalla. */
-  refDestino: (indice: number) => RefObject<HTMLDivElement | null> | undefined
-}) {
+function DiaPanel({ dia, accent }: { dia: AgendaDay; accent: string }) {
   const conSpeakers = dia.slots.some(s => s.speakers.length > 0)
   const cols = conSpeakers ? COLS : COLS_SIN_SPEAKERS
   /**
@@ -164,54 +156,23 @@ function DiaPanel({ dia, accent, marca, refDestino }: {
       {dia.slots.map((slot, i) => {
         const destacado = DESTACADOS.has(slot.categoria)
         const pendiente = slot.categoria === COMING_SOON
-        const estado = marca(i)
-        const enCurso = estado === 'ahora'
 
         return (
           <div
             key={i}
-            ref={refDestino(i)}
-            // `aria-current` y no sólo color: quien escucha la página tiene que
-            // poder saber cuál es el bloque de ahora igual que quien la ve.
-            aria-current={enCurso ? 'time' : undefined}
-            className={`grid grid-cols-1 ${cols} gap-y-1.5 lg:gap-5 items-center px-5 sm:px-8 py-3.5 lg:py-4 border-b border-[#75AADB]/8 border-l-[3px] transition-[background-color,opacity] duration-500 last:border-b-0 hover:bg-[#75AADB]/[0.07] ${
-              pendiente && !enCurso ? 'opacity-60' : ''
-            } ${
-              // Lo que ya pasó se apaga en vez de desaparecer: durante el evento
-              // la agenda se lee para saber qué viene, y con treinta bloques
-              // iguales hay que buscar la hora a mano cada vez.
-              estado === 'pasado' ? 'opacity-40' : ''
+            className={`grid grid-cols-1 ${cols} gap-y-1.5 lg:gap-5 items-center px-5 sm:px-8 py-3.5 lg:py-4 border-b border-[#75AADB]/8 border-l-[3px] transition-colors last:border-b-0 hover:bg-[#75AADB]/[0.07] ${
+              pendiente ? 'opacity-60' : ''
             }`}
             style={{
-              background: enCurso
-                ? rgba(accent, 0.2)
-                : destacado ? rgba(accent, 0.1) : 'transparent',
-              borderLeftColor: enCurso ? accent : destacado ? accent : 'transparent',
-              boxShadow: enCurso ? `inset 0 0 0 1px ${rgba(accent, 0.45)}` : undefined,
+              background: destacado ? rgba(accent, 0.1) : 'transparent',
+              borderLeftColor: destacado ? accent : 'transparent',
             }}
           >
             <span
-              className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] lg:text-[15px] font-semibold tabular-nums whitespace-nowrap"
-              style={{ color: destacado || enCurso ? '#FFFFFF' : '#d1d5db' }}
+              className="text-[13px] lg:text-[15px] font-semibold tabular-nums whitespace-nowrap"
+              style={{ color: destacado ? '#FFFFFF' : '#d1d5db' }}
             >
               {slot.hora}
-              {estado === 'ahora' && (
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em]"
-                  style={{ background: accent, color: '#020618' }}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-current motion-safe:animate-pulse" />
-                  Ahora
-                </span>
-              )}
-              {estado === 'sigue' && (
-                <span
-                  className="inline-block rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em]"
-                  style={{ borderColor: rgba(accent, 0.5), color: accent }}
-                >
-                  Sigue
-                </span>
-              )}
             </span>
 
             {/* El título y, cuando el bloque se inscribe aparte, su botón. El
@@ -275,99 +236,20 @@ function DiaPanel({ dia, accent, marca, refDestino }: {
 
 function Agenda() {
   const [filter, setFilter] = useState<string | null>(null)
-  const ahora = useMomento()
-  const seccionRef = useRef<HTMLElement | null>(null)
-  const destinoRef = useRef<HTMLDivElement | null>(null)
-  /** El scroll automático se hace UNA vez: después manda quien lee. */
-  const yaLlevo = useRef(false)
 
   // El filtro es global: se aplica a los tres días y los que quedan sin bloques
   // no se dibujan (ej. Pitch Battle solo existe el viernes).
-  const dias = useMemo(() => (filter
+  const dias = filter
     ? agendaDias
         .map(d => ({ ...d, slots: d.slots.filter(s => s.categoria === filter) }))
         .filter(d => d.slots.length > 0)
-    : agendaDias), [filter])
-
-  /**
-   * Qué bloque está en curso, cuál sigue, y a cuál llevar la pantalla.
-   *
-   * «Sigue» sale de comparar TODOS los futuros y quedarse con el primero: desde
-   * un bloque solo no se puede saber si es el que viene o uno de la tarde. Y se
-   * calcula sobre los días ya filtrados, para que el filtro no marque un bloque
-   * que no está en pantalla.
-   */
-  const { enCurso, sigue } = useMemo(() => {
-    const enCurso = new Set<string>()
-    if (!ahora) return { enCurso, sigue: null as string | null }
-
-    let mejor: { clave: string; fecha: string; desde: number } | null = null
-    for (const d of dias) {
-      d.slots.forEach((s, i) => {
-        const clave = `${d.id}#${i}`
-        const estado = estadoDeBloque(d.fecha, s.hora, ahora)
-        if (estado === 'ahora') { enCurso.add(clave); return }
-        if (estado !== 'futuro') return
-        const r = rangoDeHora(s.hora)
-        if (!r) return
-        if (!mejor || d.fecha < mejor.fecha || (d.fecha === mejor.fecha && r.desde < mejor.desde)) {
-          mejor = { clave, fecha: d.fecha, desde: r.desde }
-        }
-      })
-    }
-    return { enCurso, sigue: mejor ? (mejor as { clave: string }).clave : null }
-  }, [dias, ahora])
-
-  // A dónde llevar la pantalla: al que está pasando, y si no hay ninguno, al
-  // que viene. Fuera del evento no hay destino y no se mueve nada.
-  const destino = enCurso.size ? [...enCurso][0] : sigue
-
-  useEffect(() => {
-    const seccion = seccionRef.current
-    if (!seccion || !destino || yaLlevo.current) return
-
-    /**
-     * Recién cuando la agenda está a la vista, y sólo si el bloque quedó fuera.
-     *
-     * Llevar la pantalla apenas carga la página sería secuestrarla: quien entra
-     * está mirando el hero. Y si el bloque ya se ve, mover la página es pelearle
-     * el scroll a alguien que está leyendo justo ahí — que es el «si es
-     * necesario» del pedido.
-     */
-    const io = new IntersectionObserver(entradas => {
-      for (const e of entradas) {
-        if (!e.isIntersecting || yaLlevo.current) continue
-        yaLlevo.current = true
-        io.disconnect()
-
-        const fila = destinoRef.current
-        if (!fila) return
-        const caja = fila.getBoundingClientRect()
-        const visible = caja.top >= 0 && caja.bottom <= window.innerHeight
-        if (visible) return
-
-        const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        fila.scrollIntoView({ block: 'center', behavior: quieto ? 'auto' : 'smooth' })
-      }
-      // `threshold: 0` —cualquier pedacito— y no un porcentaje: la agenda mide
-      // varios miles de píxeles y en una pantalla de mil no llega nunca a estar
-      // "25% visible". Con un umbral así esto no se disparaba jamás. Que el
-      // bloque valga la pena moverlo ya lo decide el chequeo de arriba.
-    }, { threshold: 0 })
-
-    io.observe(seccion)
-    return () => io.disconnect()
-  }, [destino])
+    : agendaDias
 
   const presentes = new Set(agendaDias.flatMap(d => d.slots.map(s => s.categoria)))
   const categorias = FILTROS.filter(c => presentes.has(c))
 
   return (
-    <section
-      id="agenda"
-      ref={seccionRef}
-      className="relative overflow-hidden bg-[#020618] text-white py-16 sm:py-24 px-4"
-    >
+    <section id="agenda" className="relative overflow-hidden bg-[#020618] text-white py-16 sm:py-24 px-4">
       <SectionGlow />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#75AADB]/50 to-transparent" />
 
@@ -423,14 +305,6 @@ function Agenda() {
               key={d.id}
               dia={d}
               accent={ACENTOS[agendaDias.findIndex(x => x.id === d.id) % ACENTOS.length]}
-              marca={i => {
-                if (!ahora) return null
-                const clave = `${d.id}#${i}`
-                if (enCurso.has(clave)) return 'ahora'
-                if (clave === sigue) return 'sigue'
-                return estadoDeBloque(d.fecha, d.slots[i].hora, ahora) === 'pasado' ? 'pasado' : null
-              }}
-              refDestino={i => (`${d.id}#${i}` === destino ? destinoRef : undefined)}
             />
           ))}
         </div>
