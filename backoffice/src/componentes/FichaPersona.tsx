@@ -7,7 +7,7 @@ import { Hoja } from '../ui/Hoja'
 import { hora } from '../lib/buscar'
 import { nombreCanal } from '../lib/canales'
 import { esAsistente, fechaCorta, type Asistente } from '../lib/admin'
-import type { Checkin, Dia, Persona } from '../lib/tipos'
+import { esVip, type Checkin, type Dia, type Persona } from '../lib/tipos'
 
 /**
  * La ficha de una persona. Una sola, para los dos modos.
@@ -58,6 +58,12 @@ function FichaPersona({
       onCerrar={onCerrar}
       chips={
         <>
+          {/* Primero el VIP: es lo que cambia a dónde entra la persona. */}
+          {esVip(persona.entrada) && (
+            <span className="rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] bg-[#d4af37]/20 text-[#d4af37] ring-1 ring-[#d4af37]/40">
+              VIP
+            </span>
+          )}
           <Chip tono="neutro">{canal}</Chip>
           {persona.pagoDoble && <Chip tono="warn">2 pagos</Chip>}
           {completa?.sinDia && <Chip tono="coral">sin día</Chip>}

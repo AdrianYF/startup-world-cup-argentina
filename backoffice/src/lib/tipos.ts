@@ -26,6 +26,20 @@ export type Persona = {
   pagoDoble?: boolean
 }
 
+/**
+ * Si esa entrada es VIP.
+ *
+ * Por el texto y no por una lista de etiquetas conocidas: cada canal la nombra
+ * a su manera —«Entrada VIP» en Startup Grind, «Invitado VIP» en Luma, «Entrada
+ * VIP» en la venta propia— y una lista fija se desactualiza en silencio la
+ * próxima vez que alguien crea una tanda con otro nombre. Lo que no cambia es
+ * que diga VIP.
+ *
+ * Vive acá y no en cada pantalla porque lo usan la lista, la ficha y Ventas: si
+ * una lo decidiera distinto, la misma persona sería VIP en un lado y no en otro.
+ */
+export const esVip = (entrada: string | null | undefined) => /vip/i.test(entrada || '')
+
 export type Checkin = {
   id: string
   /** El `id` de la persona en la lista. */

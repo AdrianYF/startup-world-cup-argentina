@@ -11,6 +11,7 @@ import { mensajeDeError } from '../lib/api'
 import {
   accionOrden, fechaCorta, pesos, reenviarMail, traerOrdenes, useRecurso, type Orden, type Venta,
 } from '../lib/admin'
+import { esVip } from '../lib/tipos'
 
 /**
  * Todas las entradas del evento, con su plata y su canal.
@@ -52,16 +53,6 @@ const NOMBRE_CANAL: Record<string, string> = {
 }
 
 type Filtro = 'todas' | 'vip' | 'MP' | 'startupgrind' | 'luma' | 'sinPagar' | 'problema'
-
-/**
- * Quién entra a lo VIP.
- *
- * Por el texto de la entrada y no por una lista de etiquetas: cada canal la
- * nombra a su manera —«Entrada VIP» en Startup Grind, «Invitado VIP» en Luma— y
- * una lista fija se desactualiza en silencio la próxima vez que alguien crea
- * una tanda con otro nombre. Lo que no cambia es que diga VIP.
- */
-const esVip = (entrada: string) => /vip/i.test(entrada || '')
 
 function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   const { datos, error, cargando, recargar } = useRecurso(traerOrdenes, onSinSesion)
@@ -111,7 +102,22 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
       orden: v => v.canal,
       celda: v => NOMBRE_CANAL[v.canal] || v.canal,
     },
-    { clave: 'entrada', titulo: 'Entrada', orden: v => v.entrada, celda: v => v.entrada },
+    {
+      clave: 'entrada',
+      titulo: 'Entrada',
+      // Los VIP primero al ordenar: son 10 sobre 154 y es lo que se busca.
+      orden: v => `${esVip(v.entrada) ? 0 : 1}${v.entrada}`,
+      celda: v => (
+        <span className="flex items-center gap-1.5">
+          {esVip(v.entrada) && (
+            <span className="rounded px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] bg-[#d4af37]/20 text-[#d4af37] ring-1 ring-[#d4af37]/40">
+              VIP
+            </span>
+          )}
+          {v.entrada}
+        </span>
+      ),
+    },
     {
       clave: 'monto',
       titulo: 'Precio',
