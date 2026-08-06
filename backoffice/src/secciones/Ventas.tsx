@@ -51,7 +51,17 @@ const NOMBRE_CANAL: Record<string, string> = {
   puerta: 'Puerta',
 }
 
-type Filtro = 'todas' | 'MP' | 'startupgrind' | 'luma' | 'sinPagar' | 'problema'
+type Filtro = 'todas' | 'vip' | 'MP' | 'startupgrind' | 'luma' | 'sinPagar' | 'problema'
+
+/**
+ * Quién entra a lo VIP.
+ *
+ * Por el texto de la entrada y no por una lista de etiquetas: cada canal la
+ * nombra a su manera —«Entrada VIP» en Startup Grind, «Invitado VIP» en Luma— y
+ * una lista fija se desactualiza en silencio la próxima vez que alguien crea
+ * una tanda con otro nombre. Lo que no cambia es que diga VIP.
+ */
+const esVip = (entrada: string) => /vip/i.test(entrada || '')
 
 function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   const { datos, error, cargando, recargar } = useRecurso(traerOrdenes, onSinSesion)
@@ -74,6 +84,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
 
   const cuentas = useMemo(() => ({
     todas: ventas.length,
+    vip: ventas.filter(v => esVip(v.entrada)).length,
     MP: ventas.filter(v => v.canal === 'MP').length,
     startupgrind: ventas.filter(v => v.canal === 'startupgrind').length,
     luma: ventas.filter(v => v.canal === 'luma').length,
@@ -83,6 +94,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   }), [ventas, ordenes])
 
   const visibles = useMemo(() => {
+    if (filtro === 'vip') return ventas.filter(v => esVip(v.entrada))
     if (filtro === 'sinPagar') return ventas.filter(v => !v.emitida)
     if (filtro === 'problema') return ventas.filter(esProblema)
     if (filtro !== 'todas') return ventas.filter(v => v.canal === filtro)
@@ -148,6 +160,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   // único canal donde una compra puede quedar a mitad de camino.
   const filtros: Opcion<Filtro>[] = [
     { id: 'todas', label: 'Todas', cuenta: cuentas.todas },
+    { id: 'vip', label: 'VIP', cuenta: cuentas.vip },
     { id: 'MP', label: 'Mercado Pago', cuenta: cuentas.MP },
     { id: 'startupgrind', label: 'Startup Grind', cuenta: cuentas.startupgrind },
     { id: 'luma', label: 'Luma', cuenta: cuentas.luma },
@@ -184,6 +197,11 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
                 {t?.entradasTotales ?? 0} emitidas más {cuentas.sinPagar} compras que nunca se
                 pagaron. Sólo las de Mercado Pago se pueden abrir — lo que le pase a una de
                 Startup Grind o de Luma se arregla en la plataforma del canal.
+              </p>
+              <p className="mt-3 text-xs leading-relaxed text-gray-500">
+                «VIP» junta los {cuentas.vip} de los tres canales, que cada uno nombra a su
+                manera: «Entrada VIP» en Startup Grind, «Invitado VIP» en Luma. Ordenando la
+                columna quedaban separados.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-gray-500">
                 «Sin pagar» son las que se empezaron y vencieron. No cuestan cupo ni plata,
