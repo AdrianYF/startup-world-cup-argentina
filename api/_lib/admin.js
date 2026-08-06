@@ -320,7 +320,7 @@ export function totalesVentas(filas, externos = []) {
 async function traerExternos() {
   const { data, error } = await db()
     .from('asistentes_externos')
-    .select('origen, precio_ars, estado_norm')
+    .select('id, origen, nombre, email, ticket, precio_ars, estado_norm, checkin_en')
   if (error) throw error
   return data || []
 }
@@ -346,9 +346,93 @@ export function totalesCupo(filas) {
  * una orden abandonada se comía una entrada hasta que vencía sola, y no había
  * dónde verlo.
  */
+/**
+ * Todas las entradas del evento, vengan de donde vengan: una fila por entrada.
+ *
+ * Existe porque la lista de Ventas mostraba `orders` —9 filas— debajo de un
+ * total que dice 148 entradas, y leído de corrido parecían faltar 139. No
+ * faltaban: Startup Grind y Luma no generan una orden nuestra, sólo la persona.
+ *
+ * La unidad es la ENTRADA y no la compra, que es como cuenta el número de
+ * arriba: una compra de dos entradas son dos filas, con su nombre cada una.
+ * Las compras que nunca se pagaron no emitieron entrada, así que van igual pero
+ * marcadas — son las que cuentan cuánta gente quiso comprar y no pudo.
+ */
+async function traerVentas(ordenesWeb, externos) {
+  const { data: entradas, error } = await db()
+    .from('entradas')
+    .select('id, order_id, numero, nombre, usada_en')
+  if (error) throw error
+
+  const filas = []
+
+  for (const o of ordenesWeb) {
+    const suyas = (entradas || []).filter(e => e.order_id === o.id)
+    if (o.status === 'paid' && suyas.length) {
+      // El total de la compra repartido: dos entradas de una compra de $73.904
+      // son $36.952 cada una, y así la columna suma el mismo recaudado.
+      const unitario = Math.round((o.total / (o.cantidad || 1)) * 100) / 100
+      for (const e of suyas) {
+        filas.push({
+          id: e.id,
+          canal: 'MP',
+          nombre: e.nombre || `${o.nombre} (${e.numero})`,
+          email: o.email,
+          entrada: o.tier === 'vip' ? 'Entrada VIP' : 'Última tanda',
+          monto: unitario,
+          emitida: true,
+          estado: 'pagada',
+          usadaEn: e.usada_en,
+          ordenId: o.id,
+        })
+      }
+    } else {
+      filas.push({
+        id: o.id,
+        canal: 'MP',
+        nombre: o.nombre,
+        email: o.email,
+        entrada: o.tier === 'vip' ? 'Entrada VIP' : 'Última tanda',
+        monto: o.status === 'paid' ? o.total : 0,
+        emitida: false,
+        estado: o.reservaCupo ? 'reservando' : ESTADO_ORDEN[o.status] || o.status,
+        usadaEn: null,
+        ordenId: o.id,
+      })
+    }
+  }
+
+  for (const e of externos.filter(x => x.estado_norm === 'confirmado')) {
+    filas.push({
+      id: e.id,
+      canal: e.origen,
+      nombre: e.nombre,
+      email: e.email,
+      entrada: e.ticket || 'Entrada',
+      // `null` viaja como null: la pantalla lo muestra como "sin dato" y no
+      // como $0, que significaría que esa entrada fue gratis.
+      monto: e.precio_ars === null || e.precio_ars === undefined ? null : Number(e.precio_ars),
+      emitida: true,
+      estado: 'confirmada',
+      usadaEn: e.checkin_en,
+      ordenId: null,
+    })
+  }
+
+  return filas.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || '', 'es'))
+}
+
+const ESTADO_ORDEN = {
+  pending: 'sin pagar',
+  expired: 'sin pagar',
+  rejected: 'rechazada',
+  refunded: 'reembolsada',
+}
+
 export async function ordenes(res) {
   const [filas, externos] = await Promise.all([traerOrdenes(), traerExternos()])
-  json(res, 200, { ordenes: filas, totales: totalesVentas(filas, externos) })
+  const ventas = await traerVentas(filas, externos)
+  json(res, 200, { ordenes: filas, ventas, totales: totalesVentas(filas, externos) })
 }
 
 /**

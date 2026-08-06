@@ -9,21 +9,33 @@ import { Recurso } from '../ui/Recurso'
 import Tabla, { type Columna } from '../ui/Tabla'
 import { mensajeDeError } from '../lib/api'
 import {
-  accionOrden, fechaCorta, pesos, reenviarMail, traerOrdenes, useRecurso, type Orden,
+  accionOrden, fechaCorta, pesos, reenviarMail, traerOrdenes, useRecurso, type Orden, type Venta,
 } from '../lib/admin'
 
 /**
- * Las compras que entraron por Mercado Pago.
+ * Todas las entradas del evento, con su plata y su canal.
  *
- * Es uno de los tres canales del evento —los otros dos, Luma y Startup Grind,
- * cobran por su cuenta y sólo llegan acá como CSV—, así que esta sección es la
- * única donde hay plata que se puede destrabar, liberar o marcar reembolsada.
+ * La unidad es la ENTRADA y no la compra. Antes era la compra, y la lista
+ * mostraba 9 filas —las órdenes de Mercado Pago— debajo de un total que decía
+ * 148 entradas: parecían faltar 139. No faltaban, pero tampoco estaban: Startup
+ * Grind y Luma cobran por su cuenta y no generan una orden nuestra, sólo la
+ * persona.
  *
- * Hasta hace poco esto no existía en ninguna pantalla: ver una orden era una
- * query en el SQL Editor, y destrabar una que Mercado Pago aprobó pero el
- * webhook no acreditó dependía de que el comprador volviera solo al sitio. Si no
- * volvía, no la destrababa nadie.
+ * Mercado Pago sigue siendo el único canal con plata que se puede destrabar,
+ * liberar o marcar reembolsada, así que sólo sus filas abren la ficha con
+ * acciones. Las otras son de lectura: lo que pasó con ellas pasó en la
+ * plataforma del canal, no acá.
  */
+const TONO_ESTADO: Record<string, 'ok' | 'warn' | 'coral' | 'neutro'> = {
+  pagada: 'ok',
+  confirmada: 'ok',
+  reservando: 'warn',
+  'sin pagar': 'neutro',
+  rechazada: 'coral',
+  reembolsada: 'neutro',
+}
+
+/** El estado de una orden de Mercado Pago, para la ficha. */
 const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'coral' | 'neutro' }> = {
   paid: { label: 'pagada', tono: 'ok' },
   pending: { label: 'pendiente', tono: 'warn' },
@@ -32,7 +44,14 @@ const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'c
   refunded: { label: 'reembolsada', tono: 'neutro' },
 }
 
-type Filtro = 'todas' | 'paid' | 'pending' | 'abandonadas' | 'problema'
+const NOMBRE_CANAL: Record<string, string> = {
+  MP: 'Mercado Pago',
+  startupgrind: 'Startup Grind',
+  luma: 'Luma',
+  puerta: 'Puerta',
+}
+
+type Filtro = 'todas' | 'MP' | 'startupgrind' | 'luma' | 'sinPagar' | 'problema'
 
 function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   const { datos, error, cargando, recargar } = useRecurso(traerOrdenes, onSinSesion)
@@ -42,78 +61,97 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   // En un memo: `|| []` devuelve un array nuevo en cada render y `visibles`
   // se recalcularía siempre.
   const ordenes = useMemo(() => datos?.ordenes || [], [datos])
+  const ventas = useMemo(() => datos?.ventas || [], [datos])
+
+  /** La orden detrás de una fila, si es de Mercado Pago. */
+  const ordenDe = (v: Venta) => (v.ordenId ? ordenes.find(o => o.id === v.ordenId) || null : null)
 
   /** Lo que alguien tiene que mirar: pagada sin mail confirmado, o rechazada. */
-  const esProblema = (o: Orden) => o.status === 'rejected' || (o.status === 'paid' && !o.mailEnviado)
-
-  /**
-   * Empezada y nunca pagada: venció sin plata, o el checkout la dejó a mitad.
-   *
-   * Tiene filtro propio porque si no, los números no cierran: «Todas» daba 9 y
-   * los otros tres filtros sumaban 3. Las 6 que faltaban eran éstas, y no había
-   * dónde verlas — que es justamente la lista que dice cuánta gente quiso
-   * comprar y no pudo.
-   */
-  const esAbandonada = (o: Orden) =>
-    o.status === 'expired' || (o.status === 'pending' && !o.reservaCupo)
+  const esProblema = (v: Venta) => {
+    const o = ordenDe(v)
+    return !!o && (o.status === 'rejected' || (o.status === 'paid' && !o.mailEnviado))
+  }
 
   const cuentas = useMemo(() => ({
-    todas: ordenes.length,
-    paid: ordenes.filter(o => o.status === 'paid').length,
-    pending: ordenes.filter(o => o.reservaCupo).length,
-    abandonadas: ordenes.filter(esAbandonada).length,
-    problema: ordenes.filter(esProblema).length,
-  }), [ordenes])
+    todas: ventas.length,
+    MP: ventas.filter(v => v.canal === 'MP').length,
+    startupgrind: ventas.filter(v => v.canal === 'startupgrind').length,
+    luma: ventas.filter(v => v.canal === 'luma').length,
+    sinPagar: ventas.filter(v => !v.emitida).length,
+    problema: ventas.filter(esProblema).length,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [ventas, ordenes])
 
   const visibles = useMemo(() => {
-    if (filtro === 'paid') return ordenes.filter(o => o.status === 'paid')
-    if (filtro === 'pending') return ordenes.filter(o => o.reservaCupo)
-    if (filtro === 'abandonadas') return ordenes.filter(esAbandonada)
-    if (filtro === 'problema') return ordenes.filter(esProblema)
-    return ordenes
-  }, [ordenes, filtro])
+    if (filtro === 'sinPagar') return ventas.filter(v => !v.emitida)
+    if (filtro === 'problema') return ventas.filter(esProblema)
+    if (filtro !== 'todas') return ventas.filter(v => v.canal === filtro)
+    return ventas
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ventas, ordenes, filtro])
 
-  const columnas: Columna<Orden>[] = useMemo(() => [
-    { clave: 'nombre', titulo: 'Comprador', orden: o => o.nombre, celda: o => o.nombre },
-    { clave: 'email', titulo: 'Email', orden: o => o.email, celda: o => o.email, soloTabla: true },
-    { clave: 'tier', titulo: 'Tier', orden: o => o.tier, celda: o => o.tier },
-    { clave: 'cantidad', titulo: 'Entradas', orden: o => o.cantidad, celda: o => o.cantidad, numerica: true },
-    { clave: 'total', titulo: 'Total', orden: o => o.total, celda: o => pesos(o.total), numerica: true },
+  const columnas: Columna<Venta>[] = useMemo(() => [
+    { clave: 'nombre', titulo: 'Persona', orden: v => v.nombre, celda: v => v.nombre },
+    { clave: 'email', titulo: 'Email', orden: v => v.email, celda: v => v.email, soloTabla: true },
     {
-      clave: 'status',
+      clave: 'canal',
+      titulo: 'Canal',
+      orden: v => v.canal,
+      celda: v => NOMBRE_CANAL[v.canal] || v.canal,
+    },
+    { clave: 'entrada', titulo: 'Entrada', orden: v => v.entrada, celda: v => v.entrada },
+    {
+      clave: 'monto',
+      titulo: 'Precio',
+      orden: v => v.monto ?? -1,
+      // `null` no es $0: el canal no informó el precio. Decirlo con un guion
+      // evita que una lista sin dato se lea como un evento regalado.
+      celda: v => (v.monto === null ? <span className="text-gray-600">sin dato</span> : pesos(v.monto)),
+      numerica: true,
+    },
+    {
+      clave: 'estado',
       titulo: 'Estado',
-      orden: o => o.status,
-      celda: o => (
-        <span className="flex flex-wrap items-center gap-1.5">
-          <Chip tono={ESTADOS[o.status].tono}>{ESTADOS[o.status].label}</Chip>
-          {o.reservaCupo && <Chip tono="warn">reserva cupo</Chip>}
-          {o.status === 'paid' && !o.mailEnviado && <Chip tono="coral">sin mail</Chip>}
-        </span>
-      ),
+      orden: v => v.estado,
+      celda: v => {
+        const o = ordenDe(v)
+        return (
+          <span className="flex flex-wrap items-center gap-1.5">
+            <Chip tono={TONO_ESTADO[v.estado] || 'neutro'}>{v.estado}</Chip>
+            {o?.reservaCupo && <Chip tono="warn">reserva cupo</Chip>}
+            {o?.status === 'paid' && !o.mailEnviado && <Chip tono="coral">sin mail</Chip>}
+            {v.usadaEn && <Chip tono="ok">acreditada</Chip>}
+          </span>
+        )
+      },
     },
     {
       clave: 'creadaEn',
       titulo: 'Fecha',
-      orden: o => o.creadaEn,
-      celda: o => fechaCorta(o.creadaEn),
+      orden: v => ordenDe(v)?.creadaEn || '',
+      celda: v => {
+        const o = ordenDe(v)
+        return o ? fechaCorta(o.creadaEn) : <span className="text-gray-600">—</span>
+      },
       soloTabla: true,
     },
-  ], [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [ordenes])
 
   if (cargando && !datos) return <Cargando />
   if (error && !datos) return <Roto error={error} onReintentar={recargar} />
 
   const t = datos?.totales
 
-  // «Todas» son todas las de ESTA lista, que es sólo Mercado Pago: las de
-  // Startup Grind y Luma no son compras nuestras y no tienen orden que mostrar.
-  // Las tres primeras parten el total sin superponerse — 3 + 0 + 6 = 9 —, y
-  // «Con problema» es una mirada transversal, no un pedazo más.
+  // Los tres canales parten el total sin superponerse. «Sin pagar» y «Con
+  // problema» son miradas transversales: caen dentro de Mercado Pago, que es el
+  // único canal donde una compra puede quedar a mitad de camino.
   const filtros: Opcion<Filtro>[] = [
-    { id: 'todas', label: 'Todas las de MP', cuenta: cuentas.todas },
-    { id: 'paid', label: 'Pagadas', cuenta: cuentas.paid },
-    { id: 'pending', label: 'Reservando cupo', cuenta: cuentas.pending },
-    { id: 'abandonadas', label: 'Sin pagar', cuenta: cuentas.abandonadas },
+    { id: 'todas', label: 'Todas', cuenta: cuentas.todas },
+    { id: 'MP', label: 'Mercado Pago', cuenta: cuentas.MP },
+    { id: 'startupgrind', label: 'Startup Grind', cuenta: cuentas.startupgrind },
+    { id: 'luma', label: 'Luma', cuenta: cuentas.luma },
+    { id: 'sinPagar', label: 'Sin pagar', cuenta: cuentas.sinPagar },
     { id: 'problema', label: 'Con problema', cuenta: cuentas.problema },
   ]
 
@@ -142,9 +180,10 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
 
             <Bloque titulo="Qué mirar primero" className="mt-6">
               <p className="text-xs leading-relaxed text-gray-500">
-                La lista de abajo es <strong>sólo Mercado Pago</strong>: en Startup Grind y
-                Luma no hay orden nuestra que mostrar, sólo la persona. Por eso «Todas» son{' '}
-                {cuentas.todas} y no las {t?.entradasTotales ?? 0} entradas del evento.
+                La lista son <strong>los tres canales</strong>, una fila por entrada: las{' '}
+                {t?.entradasTotales ?? 0} emitidas más {cuentas.sinPagar} compras que nunca se
+                pagaron. Sólo las de Mercado Pago se pueden abrir — lo que le pase a una de
+                Startup Grind o de Luma se arregla en la plataforma del canal.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-gray-500">
                 «Sin pagar» son las que se empezaron y vencieron. No cuestan cupo ni plata,
@@ -191,15 +230,18 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
           />
         </Tarjetas>
 
-        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar las compras" />
+        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar las entradas" />
 
         <div className="mt-4">
           <Tabla
             columnas={columnas}
             filas={visibles}
-            claveDe={o => o.id}
-            onFila={setAbierta}
-            vacio="No hay compras con ese filtro."
+            claveDe={v => v.id}
+            // Sólo Mercado Pago abre ficha: es el único canal donde hay algo que
+            // hacer. Lo que le pase a una entrada de Startup Grind o de Luma se
+            // arregla en la plataforma del canal, no acá.
+            onFila={v => setAbierta(ordenDe(v))}
+            vacio="No hay entradas con ese filtro."
           />
         </div>
       </Operacion>

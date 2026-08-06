@@ -60,6 +60,29 @@ export type Orden = {
   reservaCupo: boolean
 }
 
+/**
+ * Una entrada del evento, venga del canal que venga.
+ *
+ * La unidad es la ENTRADA y no la compra: una compra de dos son dos filas. Es
+ * lo que hace que la lista y el «recaudado» de arriba cuenten lo mismo.
+ */
+export type Venta = {
+  id: string
+  /** 'MP' | 'startupgrind' | 'luma' */
+  canal: string
+  nombre: string
+  email: string
+  entrada: string
+  /** `null` = el canal no informó precio. NO es lo mismo que gratis. */
+  monto: number | null
+  /** Si llegó a emitirse. Las compras que nunca se pagaron, no. */
+  emitida: boolean
+  estado: string
+  usadaEn: string | null
+  /** Sólo las de Mercado Pago tienen orden detrás, con sus acciones. */
+  ordenId: string | null
+}
+
 export type CanalVentas = {
   id: string
   nombre: string
@@ -151,7 +174,8 @@ export type ResumenImport = {
 }
 
 export const traerAsistentes = () => pedir<{ personas: Asistente[] }>(R('asistentes'))
-export const traerOrdenes = () => pedir<{ ordenes: Orden[]; totales: TotalesVentas }>(R('ordenes'))
+export const traerOrdenes = () =>
+  pedir<{ ordenes: Orden[]; ventas: Venta[]; totales: TotalesVentas }>(R('ordenes'))
 export const traerTiers = () => pedir<{ tiers: Tier[]; totales: TotalesCupo }>(R('tiers'))
 export const traerMetricas = () => pedir<Metricas>(R('metricas'))
 
