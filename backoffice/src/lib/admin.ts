@@ -60,12 +60,29 @@ export type Orden = {
   reservaCupo: boolean
 }
 
+export type CanalVentas = {
+  id: string
+  nombre: string
+  monto: number
+  montoTexto: string
+  entradas: number
+  /** Entradas de ese canal sin precio informado: no suman al monto. */
+  sinPrecio: number
+}
+
 export type TotalesVentas = {
+  /** Venta propia: lo que se concilia contra Mercado Pago. */
   pagadas: number
   entradas: number
+  pendientes: number
+  propia: number
+  propiaTexto: string
+  /** Los tres canales juntos. */
   recaudado: number
   recaudadoTexto: string
-  pendientes: number
+  entradasTotales: number
+  sinPrecio: number
+  canales: CanalVentas[]
 }
 
 export type TotalesCupo = {

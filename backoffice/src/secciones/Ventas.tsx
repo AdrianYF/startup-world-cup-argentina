@@ -106,9 +106,16 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
           <>
             <Bloque titulo="La caja">
               <Datos>
-                <Dato label="Recaudado" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
+                <Dato label="Recaudado · todo el evento" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
+                {/* Los canales por separado: sin esto, «recaudado» es un número
+                    que no se puede conciliar contra ninguna cuenta, porque
+                    ninguna cuenta cobró ese total. */}
+                {(t?.canales || []).filter(c => c.entradas > 0).map(c => (
+                  <Dato key={c.id} label={`· ${c.nombre}`}>
+                    {c.montoTexto} <span className="text-gray-500">· {c.entradas}</span>
+                  </Dato>
+                ))}
                 <Dato label="Compras pagadas">{t?.pagadas ?? 0}</Dato>
-                <Dato label="Entradas vendidas">{t?.entradas ?? 0}</Dato>
                 <Dato label="Reservando cupo" tono={t?.pendientes ? 'warn' : undefined}>
                   {t?.pendientes ?? 0}
                 </Dato>
@@ -137,9 +144,18 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
         }
       >
         <Tarjetas>
-          <Tarjeta label="Recaudado" valor={t?.recaudadoTexto || '—'} detalle="cargo de servicio incluido" tono="ok" />
-          <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} />
-          <Tarjeta label="Entradas vendidas" valor={t?.entradas ?? 0} detalle="por Mercado Pago" />
+          <Tarjeta
+            label="Recaudado"
+            valor={t?.recaudadoTexto || '—'}
+            detalle={`los ${t?.canales?.filter(c => c.entradas > 0).length ?? 0} canales · ${t?.entradasTotales ?? 0} entradas`}
+            tono="ok"
+          />
+          <Tarjeta
+            label="Por Mercado Pago"
+            valor={t?.propiaTexto || '—'}
+            detalle={`${t?.entradas ?? 0} entradas · lo que cobró el sitio`}
+          />
+          <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} detalle="venta propia" />
           <Tarjeta
             label="Reservando cupo"
             valor={t?.pendientes ?? 0}

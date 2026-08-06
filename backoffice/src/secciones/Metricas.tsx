@@ -88,7 +88,12 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
 
           <Bloque titulo="Plata y cupo" className="mt-6">
             <Datos>
-              <Dato label="Recaudado" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
+              <Dato label="Recaudado · todo el evento" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
+              {datos.ventas.canales.filter(c => c.entradas > 0).map(c => (
+                <Dato key={c.id} label={`· ${c.nombre}`}>
+                  {c.montoTexto} <span className="text-gray-500">· {c.entradas}</span>
+                </Dato>
+              ))}
               <Dato label="Cupo MP libre" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
                 {datos.cupo.libre} de {datos.cupo.total}
               </Dato>
@@ -108,7 +113,7 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           label="Recaudado"
           valor={datos.ventas.recaudadoTexto}
           tono="ok"
-          detalle={`${datos.ventas.entradas} entradas por Mercado Pago`}
+          detalle={`${datos.ventas.entradasTotales} entradas · todos los canales`}
         />
         <Tarjeta
           label="Cupo MP libre"

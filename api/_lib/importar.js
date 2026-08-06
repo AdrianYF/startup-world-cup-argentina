@@ -30,6 +30,9 @@ export const CANALES = {
       ticket: ['ticket_name', 'ticket_type'],
       registrado_en: ['created_at', 'registered_at'],
       checkin_en: ['checked_in_at', 'checkin_at'],
+      // En las listas de invitados viene "$0.00", que es un dato: dice que esa
+      // entrada fue gratis, y no lo mismo que no saber cuánto salió.
+      precio: ['amount', 'amount_paid', 'total'],
     },
     confirmado: ['approved', 'going', 'attending'],
     rechazado: ['declined', 'rejected', 'cancelled', 'canceled'],
@@ -46,6 +49,11 @@ export const CANALES = {
       ticket: ['ticket_type', 'ticket', 'ticket_name'],
       registrado_en: ['order_date', 'created', 'created_at', 'purchase_date'],
       checkin_en: ['checked_in', 'checkin_date', 'checked_in_at'],
+      // «Ticket Price Paid» antes que «Price»: el primero ya tiene aplicados los
+      // descuentos, y en el export del 6 de agosto 18 de 37 entradas salieron $0
+      // con el código SWC. Cobrar por el precio de lista contaría plata que
+      // nadie pagó.
+      precio: ['ticket_price_paid', 'price_paid', 'price', 'amount'],
     },
     confirmado: ['completed', 'complete', 'paid', 'confirmed', 'attending', 'active'],
     rechazado: ['refunded', 'cancelled', 'canceled', 'failed', 'declined'],
@@ -99,6 +107,23 @@ function fecha(v) {
   if (!v) return null
   const d = new Date(v)
   return Number.isNaN(d.getTime()) ? null : d.toISOString()
+}
+
+/**
+ * El precio, tal cual lo escribe cada plataforma: "36952.27", "$0.00", "1.234,56".
+ *
+ * Devuelve `null` y no `0` cuando no hay dato: en la base son cosas distintas
+ * —"esta entrada fue gratis" contra "este canal no informa precio"— y sumarlas
+ * como cero haría que un import sin precio pareciera un evento sin ingresos.
+ */
+function plata(v) {
+  const s = String(v ?? '').replace(/[^\d,.-]/g, '').trim()
+  if (!s) return null
+  // Formato local (1.234,56) sólo si la coma va después del último punto.
+  const n = Number(s.lastIndexOf(',') > s.lastIndexOf('.')
+    ? s.replace(/\./g, '').replace(',', '.')
+    : s.replace(/,/g, ''))
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : null
 }
 
 /** Traduce el estado de la plataforma al vocabulario único de la vista. */
@@ -191,6 +216,7 @@ export function preparar({ csv, origen, evento, dias, ticket = '', forzado = {} 
       // sus listas, así que sin esto los invitados VIP y los de cortesía
       // quedan con la misma etiqueta y la puerta no los puede distinguir.
       ticket: ticketFijo || (mapa.ticket ? f[mapa.ticket] || null : null),
+      precio_ars: mapa.precio ? plata(f[mapa.precio]) : null,
       registrado_en: mapa.registrado_en ? fecha(f[mapa.registrado_en]) : null,
       checkin_en: mapa.checkin_en ? fecha(f[mapa.checkin_en]) : null,
       // Todo lo que no se mapeó, incluidas las preguntas custom del evento.
