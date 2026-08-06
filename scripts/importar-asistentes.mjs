@@ -40,17 +40,25 @@ const seco = args.includes('--dry')
 const origen = (flag('origen') || 'luma').toLowerCase()
 const evento = flag('evento')
 const dias = flag('dias')
-// --map campo=Columna, repetible.
+// Etiqueta fija de entrada, para el canal que no la exporta útil: Luma manda
+// "Standard" en TODAS sus listas, así que sin esto los invitados VIP y los de
+// cortesía llegan a la puerta con el mismo cartel.
+const ticket = flag('ticket')
+/**
+ * --map campo=Columna, repetible.
+ *
+ * Se recorre por índice y no con `indexOf`: los `--map` son todos el mismo
+ * string, así que `indexOf` devolvía SIEMPRE el primero y los cuatro mapeos de
+ * un archivo terminaban valiendo el mismo. No fallaba nada — el resumen decía
+ * "(no encontrada)" y el import seguía sin la mitad de las columnas.
+ */
 const forzado = Object.fromEntries(
-  args
-    .filter(a => a.startsWith('--map'))
-    .map(a => (a.includes('=') ? a.split('=').slice(1).join('=') : args[args.indexOf(a) + 1]))
-    .filter(Boolean)
-    .map(v => {
-      const i = v.indexOf('=')
-      return i < 0 ? null : [v.slice(0, i), v.slice(i + 1)]
-    })
-    .filter(Boolean),
+  args.flatMap((a, i) => {
+    if (!a.startsWith('--map')) return []
+    const v = a.includes('=') ? a.slice(a.indexOf('=') + 1) : args[i + 1]
+    const corte = (v || '').indexOf('=')
+    return corte < 0 ? [] : [[v.slice(0, corte), v.slice(corte + 1)]]
+  }),
 )
 
 if (!archivo || !evento) {
@@ -61,6 +69,8 @@ if (!archivo || !evento) {
     --evento   slug de Luma (quzhnee8) o id de Startup Grind (31263)
     --dias     qué días habilita: "Mié 5", "Jue 6", "Vie 7" o su suma con " + ".
                Obligatorio en Luma, que corre un evento por día.
+    --ticket   etiqueta fija de entrada, en vez de la columna del archivo.
+               Para Luma, que exporta "Standard" en todas sus listas.
     --map      fuerza una columna, ej: --map estado=Order\\ Status
     --dry      no escribe
 `)
@@ -81,6 +91,7 @@ const r = await importar({
   origen,
   evento,
   dias,
+  ticket,
   seco,
   forzado,
 })

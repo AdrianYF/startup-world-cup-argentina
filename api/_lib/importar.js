@@ -119,7 +119,8 @@ export function normalizarEstado(valor, canal) {
  * CLI y la vista previa del backoffice: poder mirar qué va a pasar antes de que
  * pase.
  */
-export function preparar({ csv, origen, evento, dias, forzado = {} }) {
+export function preparar({ csv, origen, evento, dias, ticket = '', forzado = {} }) {
+  const ticketFijo = String(ticket || '').trim() || null
   const canal = CANALES[String(origen || '').toLowerCase()]
   if (!canal) {
     return { error: `canal desconocido "${origen}" (conocidos: ${Object.keys(CANALES).join(', ')})` }
@@ -157,7 +158,13 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
   }
 
   const mapeadas = new Set(Object.values(mapa))
-  const porEmail = new Map()
+  // La clave es la misma que la columna `clave` de la tabla: el id de la
+  // plataforma si el canal lo manda, si no el mail. Agrupar por mail —que es lo
+  // que hacía antes— pierde gente cuando el canal lo exporta enmascarado: en el
+  // CSV de Startup Grind del 6 de agosto, `c*******@rentify.com.ar` son dos
+  // personas distintas, y la segunda pisaba a la primera acá adentro, antes
+  // siquiera de llegar a la base. Ver `0012_clave_externa.sql`.
+  const porClave = new Map()
   let sinEmail = 0
 
   for (const f of filas) {
@@ -169,16 +176,21 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
       : [mapa._nombre && f[mapa._nombre], mapa._apellido && f[mapa._apellido]]
           .filter(Boolean).join(' ').trim()
 
-    porEmail.set(email, {
+    const externoId = mapa.externo_id ? (f[mapa.externo_id] || '').trim() || null : null
+
+    porClave.set(externoId || email, {
       origen: String(origen).toLowerCase(),
       evento: String(evento),
       email,
       dias: diasFinal,
-      externo_id: mapa.externo_id ? f[mapa.externo_id] || null : null,
+      externo_id: externoId,
       nombre: nombre || null,
       estado: mapa.estado ? f[mapa.estado] || null : null,
       estado_norm: normalizarEstado(mapa.estado ? f[mapa.estado] : '', canal),
-      ticket: mapa.ticket ? f[mapa.ticket] || null : null,
+      // `ticket` fijo gana sobre la columna: Luma exporta "Standard" en TODAS
+      // sus listas, así que sin esto los invitados VIP y los de cortesía
+      // quedan con la misma etiqueta y la puerta no los puede distinguir.
+      ticket: ticketFijo || (mapa.ticket ? f[mapa.ticket] || null : null),
       registrado_en: mapa.registrado_en ? fecha(f[mapa.registrado_en]) : null,
       checkin_en: mapa.checkin_en ? fecha(f[mapa.checkin_en]) : null,
       // Todo lo que no se mapeó, incluidas las preguntas custom del evento.
@@ -188,7 +200,7 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
     })
   }
 
-  const registros = [...porEmail.values()]
+  const registros = [...porClave.values()]
 
   return {
     mapa,
@@ -210,23 +222,27 @@ export function preparar({ csv, origen, evento, dias, forzado = {} }) {
 /**
  * Prepara y, si no es en seco, escribe.
  *
- * El upsert es por `(origen, evento, email)`: reimportar el mismo CSV actualiza
+ * El upsert es por `(origen, evento, clave)`: reimportar el mismo CSV actualiza
  * en vez de duplicar, que es lo que permite volver a bajarlo a mitad del evento
  * para traer las ventas nuevas.
+ *
+ * `clave` es el id de la plataforma y no el mail. Con el mail, dos tickets del
+ * mismo canal que llegan con el mismo mail enmascarado se pisaban y uno de los
+ * dos no entraba nunca. Ver `0012_clave_externa.sql`.
  */
 // `forzado` con default, igual que `preparar()` y `detectar()`: lo manda sólo el
 // CLI (`scripts/importar-asistentes.mjs`), donde se pueden mapear columnas a
 // mano. Desde el backoffice no viaja — esa pantalla muestra el mapeo detectado
 // pero no deja cambiarlo — y sin el default la firma decía que era obligatorio.
-export async function importar({ csv, origen, evento, dias, seco = false, forzado = {} }) {
-  const previa = preparar({ csv, origen, evento, dias, forzado })
+export async function importar({ csv, origen, evento, dias, ticket = '', seco = false, forzado = {} }) {
+  const previa = preparar({ csv, origen, evento, dias, ticket, forzado })
   if (previa.error) return previa
 
   if (seco) return { ...previa, escrito: false }
 
   const { error } = await db()
     .from('asistentes_externos')
-    .upsert(previa.registros, { onConflict: 'origen,evento,email' })
+    .upsert(previa.registros, { onConflict: 'origen,evento,clave' })
   if (error) return { error: error.message }
 
   return { ...previa, escrito: true }
