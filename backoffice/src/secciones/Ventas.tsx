@@ -32,7 +32,7 @@ const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'c
   refunded: { label: 'reembolsada', tono: 'neutro' },
 }
 
-type Filtro = 'todas' | 'paid' | 'pending' | 'problema'
+type Filtro = 'todas' | 'paid' | 'pending' | 'abandonadas' | 'problema'
 
 function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   const { datos, error, cargando, recargar } = useRecurso(traerOrdenes, onSinSesion)
@@ -46,16 +46,29 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   /** Lo que alguien tiene que mirar: pagada sin mail confirmado, o rechazada. */
   const esProblema = (o: Orden) => o.status === 'rejected' || (o.status === 'paid' && !o.mailEnviado)
 
+  /**
+   * Empezada y nunca pagada: venció sin plata, o el checkout la dejó a mitad.
+   *
+   * Tiene filtro propio porque si no, los números no cierran: «Todas» daba 9 y
+   * los otros tres filtros sumaban 3. Las 6 que faltaban eran éstas, y no había
+   * dónde verlas — que es justamente la lista que dice cuánta gente quiso
+   * comprar y no pudo.
+   */
+  const esAbandonada = (o: Orden) =>
+    o.status === 'expired' || (o.status === 'pending' && !o.reservaCupo)
+
   const cuentas = useMemo(() => ({
     todas: ordenes.length,
     paid: ordenes.filter(o => o.status === 'paid').length,
     pending: ordenes.filter(o => o.reservaCupo).length,
+    abandonadas: ordenes.filter(esAbandonada).length,
     problema: ordenes.filter(esProblema).length,
   }), [ordenes])
 
   const visibles = useMemo(() => {
     if (filtro === 'paid') return ordenes.filter(o => o.status === 'paid')
     if (filtro === 'pending') return ordenes.filter(o => o.reservaCupo)
+    if (filtro === 'abandonadas') return ordenes.filter(esAbandonada)
     if (filtro === 'problema') return ordenes.filter(esProblema)
     return ordenes
   }, [ordenes, filtro])
@@ -92,10 +105,15 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
 
   const t = datos?.totales
 
+  // «Todas» son todas las de ESTA lista, que es sólo Mercado Pago: las de
+  // Startup Grind y Luma no son compras nuestras y no tienen orden que mostrar.
+  // Las tres primeras parten el total sin superponerse — 3 + 0 + 6 = 9 —, y
+  // «Con problema» es una mirada transversal, no un pedazo más.
   const filtros: Opcion<Filtro>[] = [
-    { id: 'todas', label: 'Todas', cuenta: cuentas.todas },
+    { id: 'todas', label: 'Todas las de MP', cuenta: cuentas.todas },
     { id: 'paid', label: 'Pagadas', cuenta: cuentas.paid },
     { id: 'pending', label: 'Reservando cupo', cuenta: cuentas.pending },
+    { id: 'abandonadas', label: 'Sin pagar', cuenta: cuentas.abandonadas },
     { id: 'problema', label: 'Con problema', cuenta: cuentas.problema },
   ]
 
@@ -124,6 +142,15 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
 
             <Bloque titulo="Qué mirar primero" className="mt-6">
               <p className="text-xs leading-relaxed text-gray-500">
+                La lista de abajo es <strong>sólo Mercado Pago</strong>: en Startup Grind y
+                Luma no hay orden nuestra que mostrar, sólo la persona. Por eso «Todas» son{' '}
+                {cuentas.todas} y no las {t?.entradasTotales ?? 0} entradas del evento.
+              </p>
+              <p className="mt-3 text-xs leading-relaxed text-gray-500">
+                «Sin pagar» son las que se empezaron y vencieron. No cuestan cupo ni plata,
+                pero son gente que quiso comprar y no pudo: vale mirar por qué.
+              </p>
+              <p className="mt-3 text-xs leading-relaxed text-gray-500">
                 «Con problema» junta las rechazadas y las pagadas cuyo mail nunca salió. Son
                 las dos que tienen a alguien esperando del otro lado: una porque no pudo
                 pagar y otra porque pagó y no recibió la entrada.
