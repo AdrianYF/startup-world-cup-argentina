@@ -201,7 +201,7 @@
         {
           "hora": "19:00 - 19:30",
           "titulo": "Open Mic",
-          "categoria": "Coming Soon",
+          "categoria": "Charla",
           "speakers": []
         },
         {
@@ -414,13 +414,13 @@
         {
           "hora": "21:20 - 21:30",
           "titulo": "Premiación y cierre",
-          "categoria": "Coming Soon",
+          "categoria": "Pitch Battle",
           "speakers": []
         },
         {
           "hora": "21:30 - 22:00",
           "titulo": "Networking de cierre",
-          "categoria": "Coming Soon",
+          "categoria": "Networking",
           "speakers": []
         }
       ]
