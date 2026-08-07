@@ -225,5 +225,15 @@
     "cargo": "Lara AI",
     "tipo": "empresa",
     "img": "/participan/alan-szpigiel.webp"
+  },
+  {
+    "slug": "claudio-cocconi",
+    "nombre": "Claudio Cocconi",
+    "img": "/participan/claudio-cocconi.webp"
+  },
+  {
+    "slug": "mayra-regueira",
+    "nombre": "Mayra Regueira",
+    "img": ""
   }
 ]

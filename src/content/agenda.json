@@ -344,9 +344,20 @@
         },
         {
           "hora": "17:30 - 18:00",
-          "titulo": "Open Mic",
-          "categoria": "Coming Soon",
-          "speakers": []
+          "titulo": "Panel",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Claudio Cocconi",
+              "empresa": "",
+              "img": "/participan/claudio-cocconi.webp"
+            },
+            {
+              "nombre": "Mayra Regueira",
+              "empresa": "",
+              "img": ""
+            }
+          ]
         },
         {
           "hora": "18:00 - 18:30",
