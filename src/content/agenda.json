@@ -291,7 +291,7 @@
             },
             {
               "nombre": "Juan Manuel Zanabria",
-              "empresa": "",
+              "empresa": "PromArgentina",
               "img": "/participan/juan-manuel-zanabria.webp"
             },
             {
@@ -338,9 +338,15 @@
         },
         {
           "hora": "17:00 - 17:30",
-          "titulo": "Fireside chat",
-          "categoria": "Coming Soon",
-          "speakers": []
+          "titulo": "Oportunidades para la internacionalización",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Juan Manuel Zanabria",
+              "empresa": "PromArgentina",
+              "img": "/participan/juan-manuel-zanabria.webp"
+            }
+          ]
         },
         {
           "hora": "17:30 - 18:00",
