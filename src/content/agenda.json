@@ -310,13 +310,7 @@
           "hora": "15:30 - 16:00",
           "titulo": "Historias de fracaso",
           "categoria": "Charla",
-          "speakers": [
-            {
-              "nombre": "Hernán Schuster",
-              "empresa": "Spiquers",
-              "img": "/participan/hernan-schuster.webp"
-            }
-          ]
+          "speakers": []
         },
         {
           "hora": "16:00 - 16:30",
