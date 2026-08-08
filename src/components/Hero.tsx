@@ -247,11 +247,98 @@ function Hero() {
               </div>
             </div>
 
+            <Podio />
+
           </div>
         </div>
 
       </div>
     </section>
+  )
+}
+
+/**
+ * El podio de la primera edición, donde vivía el cronómetro.
+ *
+ * Ocupa ese lugar a propósito: es el mismo hueco que antes contestaba «cuánto
+ * falta» y ahora contesta «qué pasó». Quien entra al sitio después del evento
+ * llegaba a un contador en cero, que se lee como algo roto y no como un evento
+ * que ya sucedió.
+ *
+ * El ganador va grande y con su foto; el 2º y el 3º abajo y más chicos. No es
+ * sólo jerarquía visual: el que viaja a Silicon Valley es uno solo, y esa es la
+ * información que la mayoría viene a buscar.
+ */
+function Podio() {
+  const podio = content.config.podio
+  if (!podio?.puestos?.length) return null
+
+  const [ganador, ...resto] = podio.puestos
+  const canal = content.config.links.whatsapp
+
+  return (
+    <div className="w-full pb-4 sm:pb-6">
+      <div className="flex flex-col items-center gap-3 sm:gap-4">
+        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-[#d4af37]">
+          {podio.titulo}
+        </span>
+
+        <img
+          src={ganador.img}
+          alt={`${ganador.nombre}, ganador de la primera edición argentina`}
+          // Sin `lazy`: está en el hero. Diferirla deja el hueco vacío justo
+          // donde va lo primero que la persona vino a ver.
+          loading="eager"
+          className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover ring-2 ring-[#d4af37]/60 shadow-[0_0_40px_-8px_rgba(212,175,55,0.55)]"
+        />
+
+        <div className="text-center">
+          <p className="text-2xl sm:text-3xl lg:text-4xl font-black leading-none text-white">
+            {ganador.nombre}
+          </p>
+          <p className="mt-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-[0.16em] text-white/60">
+            {podio.bajada}
+          </p>
+        </div>
+
+        {resto.length > 0 && (
+          <div className="mt-1 flex items-center justify-center gap-3 sm:gap-4">
+            {resto.map(p => (
+              <div
+                key={p.nombre}
+                className="flex items-center gap-2 rounded-full border-[0.5px] border-white/12 bg-white/[0.06] py-1.5 pl-1.5 pr-3.5 backdrop-blur-sm"
+              >
+                <img
+                  src={p.img}
+                  alt=""
+                  loading="lazy"
+                  aria-hidden
+                  className="h-7 w-7 rounded-full object-cover"
+                />
+                <span className="text-xs sm:text-sm font-bold text-white/80">
+                  <span className="text-white/45">{p.puesto}º</span> {p.nombre}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p className="mt-2 max-w-sm text-center text-[11px] leading-relaxed text-white/50">
+          {podio.cierre}
+        </p>
+
+        {canal && (
+          <a
+            href={canal}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center rounded-full border border-white/20 bg-white/[0.06] px-5 py-2 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/[0.12] active:scale-95"
+          >
+            {podio.ctaCanal}
+          </a>
+        )}
+      </div>
+    </div>
   )
 }
 

@@ -15,11 +15,27 @@
     "ctaCerradaStartup": "Convocatoria cerrada"
   },
   "stats": [
-    { "valor": "1M USD", "label": "Premio final en Silicon Valley", "highlight": true },
-    { "valor": "+100", "label": "Ciudades compitiendo a nivel global" },
-    { "valor": "10", "label": "Startups finalistas en Argentina" },
-    { "valor": "1", "label": "Viaja a Silicon Valley" },
-    { "valor": "+20", "label": "Eventos en Buenos Aires" }
+    {
+      "valor": "1M USD",
+      "label": "Premio final en Silicon Valley",
+      "highlight": true
+    },
+    {
+      "valor": "+100",
+      "label": "Ciudades compitiendo a nivel global"
+    },
+    {
+      "valor": "10",
+      "label": "Startups finalistas en Argentina"
+    },
+    {
+      "valor": "1",
+      "label": "Viaja a Silicon Valley"
+    },
+    {
+      "valor": "+20",
+      "label": "Eventos en Buenos Aires"
+    }
   ],
   "links": {
     "startupGrindUrl": "https://www.startupgrind.com/events/details/startup-grind-buenos-aires-presents-startup-world-cup-argentina-2026/",
@@ -45,5 +61,28 @@
   "mysteryBox": {
     "perkCode": "SWC-AWS-2026",
     "claimText": "Guardá este código y escribinos a startupwc.arg@gmail.com (asunto: Mystery Box) para canjear tu perk."
+  },
+  "podio": {
+    "titulo": "Ganador nacional",
+    "bajada": "Representa a Argentina en la final mundial de Silicon Valley",
+    "cierre": "1ª edición argentina cerrada. Sumate al canal para enterarte de las próximas.",
+    "ctaCanal": "Seguir las próximas ediciones",
+    "puestos": [
+      {
+        "puesto": 1,
+        "nombre": "Cromodata",
+        "img": "/startups/cromodata.jpg"
+      },
+      {
+        "puesto": 2,
+        "nombre": "Beam",
+        "img": "/startups/beam.jpg"
+      },
+      {
+        "puesto": 3,
+        "nombre": "Rentennials",
+        "img": "/startups/rentenials.jpg"
+      }
+    ]
   }
 }
