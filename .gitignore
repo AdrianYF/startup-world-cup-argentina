@@ -20,6 +20,10 @@ dist-ssr
 !.env.example
 .vercel
 
+# Las listas que escupe `scripts/exportar-listas.mjs`: nombre, mail, teléfono y
+# empresa de todo el que sacó entrada. Es el padrón entero en texto plano.
+exportes/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
