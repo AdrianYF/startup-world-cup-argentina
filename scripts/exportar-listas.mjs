@@ -29,6 +29,9 @@ import { aCSV } from '../api/_lib/csv.js'
 // Los días del evento salen del mismo archivo que usa la app de la puerta: si
 // se corrige una fecha, se corrige en un solo lugar.
 import { DIAS } from '../api/_lib/puerta.js'
+// Y el criterio de VIP del mismo que usa el export del backoffice, o el CSV que
+// baja el organizador y el que sale de acá contarían distintos VIP.
+import { esVIP } from '../api/_lib/vip.js'
 
 // Igual que `prueba-produccion.mjs`: el archivo puede no estar y las variables
 // venir del ambiente. Si tampoco están ahí, el chequeo de abajo lo dice con
@@ -85,18 +88,6 @@ for (const c of ingresos || []) {
   const previo = primerIngreso.get(ref)
   if (!previo || c.creado_en < previo) primerIngreso.set(ref, c.creado_en)
 }
-
-/**
- * VIP se deduce del texto de `entrada`, que es lo único que hay.
- *
- * En la venta propia es exacto: la vista `acreditacion` traduce `tier_id = 'vip'`
- * a 'Entrada VIP'. En Luma y Startup Grind el nombre del ticket es texto libre
- * que escribió quien armó el evento allá ('VIP Pass', 'Entrada VIP', 'vip'), así
- * que la búsqueda es sin acentos ni mayúsculas y por subcadena. El resumen de
- * abajo imprime qué nombres de entrada quedaron marcados, que es la única forma
- * de verificar que el criterio no se comió ni se dejó ninguno.
- */
-const esVIP = entrada => /\bvip\b/i.test(String(entrada || ''))
 
 const sn = v => (v ? 'sí' : 'no')
 

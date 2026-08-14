@@ -5,6 +5,7 @@ import { Cargando, Chip, Roto, Tarjeta, Tarjetas } from '../ui/Estado'
 import { Bloque, Limite, Operacion } from '../ui/Operacion'
 import Tabla, { type Columna } from '../ui/Tabla'
 import { aCSV } from '../../../api/_lib/csv.js'
+import { esVIP } from '../../../api/_lib/vip.js'
 import { filtrar, ordenarPorApellido } from '../lib/buscar'
 import { nombreCanal, ordenarCanales } from '../lib/canales'
 import { fechaCorta, traerAsistentes, useRecurso, type Asistente } from '../lib/admin'
@@ -129,15 +130,22 @@ function Inscriptos({
    * terminal escapan las comas igual.
    */
   function exportar() {
-    const columnas = ['nombre', 'email', 'telefono', 'empresa', 'entrada', 'dias', 'canal', 'ingreso']
+    const columnas = ['nombre', 'email', 'telefono', 'empresa', 'entrada', 'vip', 'dias', 'canal', 'entro', 'ingreso']
     const csv = aCSV(columnas, visibles.map(p => ({
       nombre: p.nombre || '',
       email: p.email,
       telefono: p.telefono || '',
       empresa: p.empresa || '',
       entrada: p.entrada,
+      // La pregunta que llega siempre después del evento —a cuántos VIP
+      // tocamos— y que antes había que sacar leyendo `entrada` a ojo.
+      vip: esVIP(p.entrada) ? 'sí' : 'no',
       dias: p.dias,
       canal: nombreCanal(p.origen),
+      // Redundante con `ingreso`, que ya está vacío cuando no entró, pero es lo
+      // que hace que el archivo se pueda filtrar y sumar en una planilla sin
+      // escribir una fórmula sobre una celda de fecha.
+      entro: p.usadaEn ? 'sí' : 'no',
       ingreso: p.usadaEn ? fechaCorta(p.usadaEn) : '',
     })))
 
