@@ -61,28 +61,5 @@
   "mysteryBox": {
     "perkCode": "SWC-AWS-2026",
     "claimText": "Guardá este código y escribinos a startupwc.arg@gmail.com (asunto: Mystery Box) para canjear tu perk."
-  },
-  "podio": {
-    "titulo": "Ganador nacional",
-    "bajada": "Representa a Argentina en la final mundial de Silicon Valley",
-    "cierre": "1ª edición argentina cerrada. Sumate al canal para enterarte de las próximas.",
-    "ctaCanal": "Seguir las próximas ediciones",
-    "puestos": [
-      {
-        "puesto": 1,
-        "nombre": "Cromodata",
-        "img": "/startups/cromodata.jpg"
-      },
-      {
-        "puesto": 2,
-        "nombre": "Beam",
-        "img": "/startups/beam.jpg"
-      },
-      {
-        "puesto": 3,
-        "nombre": "Tucan",
-        "img": "/startups/tucan.jpg"
-      }
-    ]
   }
 }
