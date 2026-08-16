@@ -157,10 +157,14 @@ function Hero() {
 
           </div>
 
-          {/* === Columna derecha: H1+CTAs arriba (CTAs a altura del trofeo) / Countdown abajo (alineado con 1 Million) (lg: movida a la izquierda) === */}
-          <div className="lg:order-1 flex flex-col items-stretch text-center lg:text-left justify-between gap-8 lg:gap-12">
+          {/* === Columna derecha: H1 + CTAs (lg: movida a la izquierda) ===
+              Va centrada verticalmente, no `justify-between`: desde que salió el
+              bloque de abajo (primero el cronómetro, después el podio) es hijo
+              único, y `between` lo dejaba pegado arriba con el aire muerto
+              debajo, contra una columna izquierda —copa + 1 Million— más alta. */}
+          <div className="lg:order-1 flex flex-col items-stretch text-center lg:text-left justify-center gap-8 lg:gap-12">
 
-            {/* Top group: H1 + CTAs (alineados con el trofeo de col 1) */}
+            {/* H1 + CTAs (alineados con el trofeo de col 1) */}
             <div className="flex flex-col gap-8 lg:gap-10">
 
               {/* H1 + tagline */}
