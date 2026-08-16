@@ -116,12 +116,18 @@ export function Tarjeta({ label, valor, detalle, tono }: {
 }
 
 /** Un chip de estado. El color dice lo mismo que el texto, para no depender de él. */
-export function Chip({ children, tono }: { children: ReactNode; tono: 'ok' | 'warn' | 'coral' | 'neutro' }) {
+export function Chip({ children, tono }: {
+  children: ReactNode
+  tono: 'ok' | 'warn' | 'coral' | 'neutro' | 'oro'
+}) {
   const clases = {
     ok: 'border-swc-ok/40 bg-swc-ok/10 text-swc-ok',
     warn: 'border-swc-warn/40 bg-swc-warn/10 text-swc-warn',
     coral: 'border-swc-coral/40 bg-swc-coral/10 text-swc-coral',
     neutro: 'border-white/15 bg-white/[0.04] text-swc-muted',
+    // El mismo #d4af37 con el que se pinta la Entrada VIP en el sitio: quien la
+    // compró tiene que reconocer el color en la puerta.
+    oro: 'border-[#d4af37]/45 bg-[#d4af37]/15 text-[#d4af37]',
   }[tono]
 
   return (

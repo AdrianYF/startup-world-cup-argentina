@@ -11,7 +11,7 @@
 // encolar el alta cuando no hay señal y reintentarla sin duplicar.
 import { db } from './_lib/db.js'
 import { json, rejectMethod, readBody, esMailValido } from './_lib/http.js'
-import { dia as buscarDia, rejectSinSesion } from './_lib/puerta.js'
+import { DIAS, dia as buscarDia, rejectSinSesion } from './_lib/puerta.js'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const CAMPOS = 'id, origen, nombre, email, telefono, empresa, entrada, dias'
@@ -29,6 +29,22 @@ const CAMPOS = 'id, origen, nombre, email, telefono, empresa, entrada, dias'
  * exactamente lo que `dias` ya venía diciendo.
  */
 const eventoDe = d => `puerta-${d.fecha}`
+
+/**
+ * Un alta habilita TODO el evento, no sólo el día en que se hizo.
+ *
+ * Antes guardaba el día suelto —"Jue 6"— con la idea de que quien entra por la
+ * puerta se habilita para hoy y si vuelve mañana se lo agrega de nuevo. En la
+ * práctica eso significa que la persona vuelve al día siguiente, no aparece, y
+ * hay que darla de alta otra vez con alguien esperando adelante. La entrada del
+ * evento vale los dos días para todos los demás canales; no hay razón para que
+ * la de puerta valga menos.
+ *
+ * Se arma desde `DIAS` y no a mano para que corregir una fecha siga siendo
+ * tocar un solo archivo. Da "Jue 6 + Vie 7", que es el mismo texto que usan el
+ * importador y la vista.
+ */
+const DIAS_EVENTO = DIAS.map(d => `${d.label} ${Number(d.fecha.slice(-2))}`).join(' + ')
 
 /**
  * Por qué se dio de alta. Termina en `acreditacion.entrada`, así que se ve en la
@@ -81,7 +97,7 @@ export default async function handler(req, res) {
       email: email || null,
       estado: 'added at check-in',
       estado_norm: 'confirmado',
-      dias: `${d.label} ${Number(d.fecha.slice(-2))}`,
+      dias: DIAS_EVENTO,
       ticket: motivo,
       registrado_en: new Date().toISOString(),
       // Las claves son las que ya lee la vista `acreditacion` para los CSV de

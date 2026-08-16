@@ -43,8 +43,15 @@ const COMING_SOON = 'Coming Soon'
  */
 const FILTROS = ['Keynote', 'Pitch Battle', 'Builders Arena', 'Investors', 'Side Events']
 
-/** Bloques que se destacan (barra lateral + fondo tintado): los dos platos fuertes. */
-const DESTACADOS = new Set(['Builders Arena', 'Pitch Battle'])
+/**
+ * Bloques que se destacan: barra lateral de acento y fondo tintado.
+ *
+ * Va por categoría y no por bloque para que la regla se lea de una: son los
+ * formatos donde el asistente hace algo —pitchea, se sienta con un fondo— y no
+ * los que mira sentado. Sumar un bloque a la lista es cambiarle la categoría,
+ * no tocar este archivo.
+ */
+const DESTACADOS = new Set(['Builders Arena', 'Pitch Battle', 'Investors'])
 
 /** CTA del header de cada día: mismo botón, sea Luma (<a>) o ticketing (<button>). */
 const CTA_DIA =

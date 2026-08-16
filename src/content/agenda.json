@@ -139,11 +139,6 @@
               "nombre": "Fausto Geremia",
               "empresa": "",
               "img": "/participan/fausto-geremia.webp"
-            },
-            {
-              "nombre": "Francesca Petrazzini",
-              "empresa": "",
-              "img": "/participan/francesca-petrazzini.webp"
             }
           ]
         },
@@ -206,7 +201,7 @@
         {
           "hora": "19:00 - 19:30",
           "titulo": "Open Mic",
-          "categoria": "Coming Soon",
+          "categoria": "Charla",
           "speakers": []
         },
         {
@@ -296,7 +291,7 @@
             },
             {
               "nombre": "Juan Manuel Zanabria",
-              "empresa": "",
+              "empresa": "PromArgentina",
               "img": "/participan/juan-manuel-zanabria.webp"
             },
             {
@@ -313,15 +308,9 @@
         },
         {
           "hora": "15:30 - 16:00",
-          "titulo": "Historias de fracaso",
+          "titulo": "Open Mic",
           "categoria": "Charla",
-          "speakers": [
-            {
-              "nombre": "Hernán Schuster",
-              "empresa": "Spiquers",
-              "img": "/participan/hernan-schuster.webp"
-            }
-          ]
+          "speakers": []
         },
         {
           "hora": "16:00 - 16:30",
@@ -349,15 +338,37 @@
         },
         {
           "hora": "17:00 - 17:30",
-          "titulo": "Fireside chat",
-          "categoria": "Coming Soon",
-          "speakers": []
+          "titulo": "Oportunidades para la internacionalización",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Juan Manuel Zanabria",
+              "empresa": "PromArgentina",
+              "img": "/participan/juan-manuel-zanabria.webp"
+            }
+          ]
         },
         {
           "hora": "17:30 - 18:00",
-          "titulo": "Open Mic",
-          "categoria": "Coming Soon",
-          "speakers": []
+          "titulo": "Innovar donde más importa: la revolución de las HealthTech",
+          "categoria": "Charla",
+          "speakers": [
+            {
+              "nombre": "Claudio Cocconi",
+              "empresa": "",
+              "img": "/participan/claudio-cocconi.webp"
+            },
+            {
+              "nombre": "Mayra Regueira",
+              "empresa": "",
+              "img": "/participan/mayra-regueira.webp"
+            },
+            {
+              "nombre": "Daniel Miguez",
+              "empresa": "",
+              "img": ""
+            }
+          ]
         },
         {
           "hora": "18:00 - 18:30",
@@ -408,13 +419,13 @@
         {
           "hora": "21:20 - 21:30",
           "titulo": "Premiación y cierre",
-          "categoria": "Coming Soon",
+          "categoria": "Pitch Battle",
           "speakers": []
         },
         {
           "hora": "21:30 - 22:00",
           "titulo": "Networking de cierre",
-          "categoria": "Coming Soon",
+          "categoria": "Networking",
           "speakers": []
         }
       ]

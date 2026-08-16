@@ -18,9 +18,11 @@ import type { Pendiente } from '../lib/almacen'
  *   · descartados  — el servidor lo rechazó; no se arregla reintentando, y lo
  *                    tiene que mirar alguien
  */
-function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar, onCerrar }: {
+function Pendientes({ cola, descartados, trabada, onReintentar, onOlvidar, onSincronizar, onCerrar }: {
   cola: Pendiente[]
   descartados: Pendiente[]
+  /** Por qué no se vacía. `null` = está saliendo, o no hay nada. */
+  trabada?: 'sin-sesion' | 'sin-red' | null
   onReintentar: (p: Pendiente) => void
   onOlvidar: (p: Pendiente) => void
   onSincronizar: () => void
@@ -36,10 +38,27 @@ function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar,
         </Aviso>
       )}
 
+      {/* Sin sesión no se arregla esperando: alguien tiene que poner el PIN.
+          Decir «se reintenta solo» acá es prometer algo que no va a pasar, y
+          el 6 de agosto tuvo a la puerta dos horas mirando ese cartel con seis
+          cosas sin subir. */}
+      {trabada === 'sin-sesion' && cola.length > 0 && (
+        <Aviso tono="error" className="mb-4" titulo="The session expired">
+          None of this goes up until someone enters the PIN again. Log out and back
+          in: the queue sends itself the moment there is a session, nothing gets
+          lost.
+        </Aviso>
+      )}
+
       {cola.length > 0 && (
         <section className="mb-5">
-          <Rotulo className="mb-2 text-swc-warn">
-            {cola.length} queued · retries on its own
+          <Rotulo className={`mb-2 ${trabada === 'sin-sesion' ? 'text-swc-coral' : 'text-swc-warn'}`}>
+            {cola.length} queued ·{' '}
+            {trabada === 'sin-sesion'
+              ? 'waiting for the PIN'
+              : trabada === 'sin-red'
+                ? 'no connection, retries on its own'
+                : 'retries on its own'}
           </Rotulo>
           <ul className="flex flex-col gap-2">
             {cola.map(p => (

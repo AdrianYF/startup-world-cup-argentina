@@ -5,47 +5,8 @@ import { openStartupForm } from '../lib/ticketing'
 
 function Hero() {
   const navigate = useNavigate()
-  const [timeLeft, setTimeLeft] = useState({ dias: 0, horas: 0, mins: 0, segs: 0 })
   const [videoActivo, setVideoActivo] = useState(false)
   const [videoVisible, setVideoVisible] = useState(false)
-
-  useEffect(() => {
-    const target = new Date(content.config.evento.fechaInicioISO)
-    let interval: ReturnType<typeof setInterval> | undefined
-
-    const tick = () => {
-      const diff = target.getTime() - Date.now()
-      if (diff <= 0) { parar(); return }
-      setTimeLeft({
-        dias: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        horas: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        mins: Math.floor((diff / (1000 * 60)) % 60),
-        segs: Math.floor((diff / 1000) % 60),
-      })
-    }
-
-    const arrancar = () => {
-      if (interval) return
-      tick()  // pinta el valor real ya, sin esperar al primer segundo
-      interval = setInterval(tick, 1000)
-    }
-    function parar() {
-      if (!interval) return
-      clearInterval(interval)
-      interval = undefined
-    }
-
-    // Sin esto el setState de cada segundo sigue corriendo con la pestaña en
-    // segundo plano, para un contador que apunta a agosto de 2026.
-    const onVisibilidad = () => (document.hidden ? parar() : arrancar())
-
-    arrancar()
-    document.addEventListener('visibilitychange', onVisibilidad)
-    return () => {
-      parar()
-      document.removeEventListener('visibilitychange', onVisibilidad)
-    }
-  }, [])
 
   /**
    * El video de fondo es puramente decorativo, así que sólo se monta en sm+ y
@@ -196,10 +157,14 @@ function Hero() {
 
           </div>
 
-          {/* === Columna derecha: H1+CTAs arriba (CTAs a altura del trofeo) / Countdown abajo (alineado con 1 Million) (lg: movida a la izquierda) === */}
-          <div className="lg:order-1 flex flex-col items-stretch text-center lg:text-left justify-between gap-8 lg:gap-12">
+          {/* === Columna derecha: H1 + CTAs (lg: movida a la izquierda) ===
+              Va centrada verticalmente, no `justify-between`: desde que salió el
+              bloque de abajo (primero el cronómetro, después el podio) es hijo
+              único, y `between` lo dejaba pegado arriba con el aire muerto
+              debajo, contra una columna izquierda —copa + 1 Million— más alta. */}
+          <div className="lg:order-1 flex flex-col items-stretch text-center lg:text-left justify-center gap-8 lg:gap-12">
 
-            {/* Top group: H1 + CTAs (alineados con el trofeo de col 1) */}
+            {/* H1 + CTAs (alineados con el trofeo de col 1) */}
             <div className="flex flex-col gap-8 lg:gap-10">
 
               {/* H1 + tagline */}
@@ -285,32 +250,6 @@ function Hero() {
                 </a>
               </div>
             </div>
-
-            {/* Countdown — alineado con 1 Million de col 1 */}
-            <div className="w-full pb-4 sm:pb-6">
-                <div className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-white/60 mb-3 sm:mb-4 text-center">
-                  Faltan:
-                </div>
-                <div className="flex items-start justify-center gap-2 sm:gap-3">
-                  {[
-                    { val: timeLeft.dias, label: 'DÍAS' },
-                    { val: timeLeft.horas, label: 'HORAS' },
-                    { val: timeLeft.mins, label: 'MIN' },
-                    { val: timeLeft.segs, label: 'SEG' },
-                  ].map(({ val, label }) => (
-                    <div key={label} className="flex flex-col items-center gap-2 sm:gap-2.5">
-                      <div className="flex items-center justify-center min-w-[3.25rem] sm:min-w-[4.25rem] lg:min-w-[4.75rem] px-2.5 py-3 sm:py-4 rounded-md border-[0.5px] border-white/10 bg-white/[0.08] backdrop-blur-sm">
-                        <span className="text-3xl sm:text-4xl lg:text-5xl font-black leading-none tabular-nums text-white">
-                          {String(val).padStart(2, '0')}
-                        </span>
-                      </div>
-                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/55">
-                        {label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
           </div>
         </div>

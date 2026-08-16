@@ -68,13 +68,6 @@
     "img": "/participan/marcelo-de-vicenzi.webp"
   },
   {
-    "slug": "hernan-schuster",
-    "nombre": "Hernán Schuster",
-    "cargo": "Spiquers",
-    "tipo": "empresa",
-    "img": "/participan/hernan-schuster.webp"
-  },
-  {
     "slug": "guido-kuznicki",
     "nombre": "Guido Kuznicki",
     "cargo": "Lara AI",
@@ -210,11 +203,6 @@
     "img": "/participan/fausto-geremia.webp"
   },
   {
-    "slug": "francesca-petrazzini",
-    "nombre": "Francesca Petrazzini",
-    "img": "/participan/francesca-petrazzini.webp"
-  },
-  {
     "slug": "juan-manuel-zanabria",
     "nombre": "Juan Manuel Zanabria",
     "img": "/participan/juan-manuel-zanabria.webp"
@@ -237,5 +225,20 @@
     "cargo": "Lara AI",
     "tipo": "empresa",
     "img": "/participan/alan-szpigiel.webp"
+  },
+  {
+    "slug": "claudio-cocconi",
+    "nombre": "Claudio Cocconi",
+    "img": "/participan/claudio-cocconi.webp"
+  },
+  {
+    "slug": "mayra-regueira",
+    "nombre": "Mayra Regueira",
+    "img": "/participan/mayra-regueira.webp"
+  },
+  {
+    "slug": "daniel-miguez",
+    "nombre": "Daniel Miguez",
+    "img": ""
   }
 ]

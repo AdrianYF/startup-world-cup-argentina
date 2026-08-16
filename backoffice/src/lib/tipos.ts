@@ -26,6 +26,42 @@ export type Persona = {
   pagoDoble?: boolean
 }
 
+/**
+ * Si esa entrada es VIP.
+ *
+ * Por el texto y no por una lista de etiquetas conocidas: cada canal la nombra
+ * a su manera —«Entrada VIP» en Startup Grind, «Invitado VIP» en Luma, «Entrada
+ * VIP» en la venta propia— y una lista fija se desactualiza en silencio la
+ * próxima vez que alguien crea una tanda con otro nombre. Lo que no cambia es
+ * que diga VIP.
+ *
+ * Vive acá y no en cada pantalla porque lo usan la lista, la ficha y Ventas: si
+ * una lo decidiera distinto, la misma persona sería VIP en un lado y no en otro.
+ */
+export const esVip = (entrada: string | null | undefined) => /vip/i.test(entrada || '')
+
+/**
+ * Qué dice la chapa dorada: «VIP + comida» o «VIP» a secas.
+ *
+ * No todos los VIP comen. La comida viene con la Entrada VIP —el producto que
+ * se vende, en Startup Grind y en la venta propia— y no con las invitaciones
+ * VIP de Luma, que dan acceso pero no cubierto. En la puerta esa diferencia se
+ * resuelve en dos segundos si está en la chapa, y en una discusión incómoda si
+ * hay que ir a preguntar.
+ *
+ * Se distingue por «invitado» y no por el precio porque el precio no llega a
+ * esta pantalla, y porque tampoco alcanzaría: una Entrada VIP entregada con
+ * código de cortesía sale $0 y sigue siendo la entrada que incluye la comida.
+ *
+ * Devuelve `null` para quien no es VIP: no hay chapa que poner.
+ */
+export function etiquetaVip(entrada: string | null | undefined): string | null {
+  if (!esVip(entrada)) return null
+  // `invitad` se busca sobre el texto ORIGINAL del canal, que está en
+  // castellano («Invitado VIP»). Lo que se traduce es la chapa, no el criterio.
+  return /invitad/i.test(entrada || '') ? 'VIP' : 'VIP + food'
+}
+
 export type Checkin = {
   id: string
   /** El `id` de la persona en la lista. */

@@ -228,6 +228,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
           <Pendientes
             cola={cola.ver()}
             descartados={descartados.ver()}
+            trabada={estadoCola.trabada}
             onReintentar={p => reintentar(p).then(setEstadoCola)}
             onOlvidar={p => setEstadoCola(olvidar(p))}
             onSincronizar={recargar}
@@ -328,6 +329,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
         <Pendientes
           cola={cola.ver()}
           descartados={descartados.ver()}
+          trabada={estadoCola.trabada}
           onReintentar={p => reintentar(p).then(setEstadoCola)}
           onOlvidar={p => setEstadoCola(olvidar(p))}
           onSincronizar={recargar}

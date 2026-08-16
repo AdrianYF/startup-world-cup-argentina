@@ -246,25 +246,83 @@ async function traerOrdenes() {
   })
 }
 
+/** Cómo se llama cada canal en pantalla. */
+const NOMBRE_CANAL = {
+  web: 'Venta propia',
+  startupgrind: 'Startup Grind',
+  luma: 'Luma',
+  puerta: 'Alta en puerta',
+}
+
 /**
  * La plata, contada UNA vez.
  *
  * La usan Ventas y Métricas. Antes cada pantalla sumaba lo suyo, y bastaba con
  * que una tratara distinto a una orden reembolsada para que las dos pestañas
  * dieran cifras distintas sin que nadie supiera cuál creer.
+ *
+ * `recaudado` son los TRES canales, no sólo el nuestro. Con 4 entradas propias
+ * y 37 vendidas por Startup Grind, un cartel que dice "Recaudado" y muestra
+ * sólo lo que pasó por Mercado Pago contesta otra pregunta que la que promete:
+ * el evento movió cinco veces eso. Lo que cobró el sitio sigue estando, en
+ * `propia`, que es el número que importa para conciliar la cuenta de Mercado
+ * Pago.
+ *
+ * Un canal sin `precio_ars` NO suma cero: suma nada y se dice en `sinPrecio`.
+ * Cero es "esa entrada fue gratis"; ausente es "no sabemos cuánto salió", y
+ * mezclarlos convierte un import incompleto en un evento que no recaudó.
  */
-export function totalesVentas(filas) {
+export function totalesVentas(filas, externos = []) {
   const pagadas = filas.filter(o => o.status === 'paid')
-  const recaudado = Math.round(pagadas.reduce((a, o) => a + o.total, 0) * 100) / 100
+  const propia = Math.round(pagadas.reduce((a, o) => a + o.total, 0) * 100) / 100
+  const entradasPropias = pagadas.reduce((a, o) => a + o.cantidad, 0)
+
+  const confirmados = externos.filter(e => e.estado_norm === 'confirmado')
+  const porCanal = new Map()
+  for (const e of confirmados) {
+    const c = porCanal.get(e.origen) || { monto: 0, entradas: 0, sinPrecio: 0 }
+    if (e.precio_ars === null || e.precio_ars === undefined) c.sinPrecio++
+    else c.monto += Number(e.precio_ars)
+    c.entradas++
+    porCanal.set(e.origen, c)
+  }
+
+  const canales = [
+    { id: 'web', monto: propia, entradas: entradasPropias, sinPrecio: 0 },
+    ...[...porCanal].map(([id, c]) => ({ ...c, id, monto: Math.round(c.monto * 100) / 100 })),
+  ].map(c => ({
+    ...c,
+    nombre: NOMBRE_CANAL[c.id] || c.id,
+    montoTexto: formatARS(c.monto, { centavos: true }),
+  }))
+
+  const recaudado = Math.round(canales.reduce((a, c) => a + c.monto, 0) * 100) / 100
+
   return {
+    // Venta propia: es la que se concilia contra Mercado Pago.
     pagadas: pagadas.length,
-    entradas: pagadas.reduce((a, o) => a + o.cantidad, 0),
-    recaudado,
+    entradas: entradasPropias,
     pendientes: filas.filter(o => o.reservaCupo).length,
+    propia,
+    propiaTexto: formatARS(propia, { centavos: true }),
+    // Los tres canales.
+    recaudado,
     // Formateado del lado del server para que la pantalla no tenga que
     // conocer la moneda ni el locale.
     recaudadoTexto: formatARS(recaudado, { centavos: true }),
+    entradasTotales: canales.reduce((a, c) => a + c.entradas, 0),
+    sinPrecio: canales.reduce((a, c) => a + c.sinPrecio, 0),
+    canales,
   }
+}
+
+/** Los externos confirmados, con lo que pagaron. Para `totalesVentas`. */
+async function traerExternos() {
+  const { data, error } = await db()
+    .from('asistentes_externos')
+    .select('id, origen, nombre, email, ticket, precio_ars, estado_norm, checkin_en')
+  if (error) throw error
+  return data || []
 }
 
 /** El cupo, contado una vez. La usan Stock y Métricas. */
@@ -288,9 +346,93 @@ export function totalesCupo(filas) {
  * una orden abandonada se comía una entrada hasta que vencía sola, y no había
  * dónde verlo.
  */
+/**
+ * Todas las entradas del evento, vengan de donde vengan: una fila por entrada.
+ *
+ * Existe porque la lista de Ventas mostraba `orders` —9 filas— debajo de un
+ * total que dice 148 entradas, y leído de corrido parecían faltar 139. No
+ * faltaban: Startup Grind y Luma no generan una orden nuestra, sólo la persona.
+ *
+ * La unidad es la ENTRADA y no la compra, que es como cuenta el número de
+ * arriba: una compra de dos entradas son dos filas, con su nombre cada una.
+ * Las compras que nunca se pagaron no emitieron entrada, así que van igual pero
+ * marcadas — son las que cuentan cuánta gente quiso comprar y no pudo.
+ */
+async function traerVentas(ordenesWeb, externos) {
+  const { data: entradas, error } = await db()
+    .from('entradas')
+    .select('id, order_id, numero, nombre, usada_en')
+  if (error) throw error
+
+  const filas = []
+
+  for (const o of ordenesWeb) {
+    const suyas = (entradas || []).filter(e => e.order_id === o.id)
+    if (o.status === 'paid' && suyas.length) {
+      // El total de la compra repartido: dos entradas de una compra de $73.904
+      // son $36.952 cada una, y así la columna suma el mismo recaudado.
+      const unitario = Math.round((o.total / (o.cantidad || 1)) * 100) / 100
+      for (const e of suyas) {
+        filas.push({
+          id: e.id,
+          canal: 'MP',
+          nombre: e.nombre || `${o.nombre} (${e.numero})`,
+          email: o.email,
+          entrada: o.tier === 'vip' ? 'Entrada VIP' : 'Última tanda',
+          monto: unitario,
+          emitida: true,
+          estado: 'pagada',
+          usadaEn: e.usada_en,
+          ordenId: o.id,
+        })
+      }
+    } else {
+      filas.push({
+        id: o.id,
+        canal: 'MP',
+        nombre: o.nombre,
+        email: o.email,
+        entrada: o.tier === 'vip' ? 'Entrada VIP' : 'Última tanda',
+        monto: o.status === 'paid' ? o.total : 0,
+        emitida: false,
+        estado: o.reservaCupo ? 'reservando' : ESTADO_ORDEN[o.status] || o.status,
+        usadaEn: null,
+        ordenId: o.id,
+      })
+    }
+  }
+
+  for (const e of externos.filter(x => x.estado_norm === 'confirmado')) {
+    filas.push({
+      id: e.id,
+      canal: e.origen,
+      nombre: e.nombre,
+      email: e.email,
+      entrada: e.ticket || 'Entrada',
+      // `null` viaja como null: la pantalla lo muestra como "sin dato" y no
+      // como $0, que significaría que esa entrada fue gratis.
+      monto: e.precio_ars === null || e.precio_ars === undefined ? null : Number(e.precio_ars),
+      emitida: true,
+      estado: 'confirmada',
+      usadaEn: e.checkin_en,
+      ordenId: null,
+    })
+  }
+
+  return filas.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || '', 'es'))
+}
+
+const ESTADO_ORDEN = {
+  pending: 'sin pagar',
+  expired: 'sin pagar',
+  rejected: 'rechazada',
+  refunded: 'reembolsada',
+}
+
 export async function ordenes(res) {
-  const filas = await traerOrdenes()
-  json(res, 200, { ordenes: filas, totales: totalesVentas(filas) })
+  const [filas, externos] = await Promise.all([traerOrdenes(), traerExternos()])
+  const ventas = await traerVentas(filas, externos)
+  json(res, 200, { ordenes: filas, ventas, totales: totalesVentas(filas, externos) })
 }
 
 /**
@@ -484,6 +626,7 @@ export async function metricas(res) {
     { data: filas, error: errFilas },
     compras,
     cupos,
+    externos,
   ] = await Promise.all([
     // `entrada_id` / `externo_id` es a QUIÉN pertenece el ingreso: sin eso se
     // pueden contar ingresos pero no personas, y "cuántos vinieron los tres
@@ -494,6 +637,7 @@ export async function metricas(res) {
     db().from('acreditacion').select('id, origen, dias, entrada'),
     traerOrdenes(),
     traerTiers(),
+    traerExternos(),
   ])
   if (error) throw error
   if (errFilas) throw errFilas
@@ -527,7 +671,7 @@ export async function metricas(res) {
     // no había forma de enterarse.
     sinDia: (filas || []).filter(f => !esDiaConocido(f.dias)).length,
     // Las MISMAS cuentas que sirven Ventas y Stock, no unas parecidas.
-    ventas: totalesVentas(compras),
+    ventas: totalesVentas(compras, externos),
     cupo: totalesCupo(cupos),
     // El cruce entre días, que es lo único que no se puede leer mirando un día
     // a la vez.

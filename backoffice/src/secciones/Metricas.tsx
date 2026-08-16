@@ -88,7 +88,12 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
 
           <Bloque titulo="Money and caps" className="mt-6">
             <Datos>
-              <Dato label="Collected" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
+              <Dato label="Collected · whole event" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
+              {datos.ventas.canales.filter(c => c.entradas > 0).map(c => (
+                <Dato key={c.id} label={`· ${c.nombre}`}>
+                  {c.montoTexto} <span className="text-gray-500">· {c.entradas}</span>
+                </Dato>
+              ))}
               <Dato label="MP spots left" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
                 {datos.cupo.libre} of {datos.cupo.total}
               </Dato>
@@ -108,7 +113,7 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           label="Collected"
           valor={datos.ventas.recaudadoTexto}
           tono="ok"
-          detalle={`${datos.ventas.entradas} tickets through Mercado Pago`}
+          detalle={`${datos.ventas.entradasTotales} tickets · all channels`}
         />
         <Tarjeta
           label="MP spots left"

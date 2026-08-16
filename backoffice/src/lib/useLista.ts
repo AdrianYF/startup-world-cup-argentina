@@ -36,9 +36,12 @@ const DESHACER_MS = 7_000
 
 export type Ultimo = { checkin: Checkin; persona: Persona }
 
+// `trabada: null` al leer del almacenamiento: por qué no salió lo sabe el
+// último intento, y todavía no hubo ninguno en esta sesión de la pantalla.
 const leerCola = (): EstadoCola => ({
   enCola: cola.cuantos(),
   descartados: descartados.cuantos(),
+  trabada: null,
 })
 
 export function useLista(onSinSesion: () => void) {

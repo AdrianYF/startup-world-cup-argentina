@@ -14,9 +14,34 @@ import type { Checkin, Persona } from './tipos'
 const URL = '/api/puerta-checkin'
 const URL_AGREGAR = '/api/puerta-agregar'
 
-export type EstadoCola = { enCola: number; descartados: number }
+/**
+ * `trabada` dice POR QUÉ no se vacía, y existe porque el cartel mentía.
+ *
+ * La cola corta en dos casos y sólo uno se arregla solo. Sin red se reintenta
+ * cada minuto y en algún momento entra. Sin sesión, en cambio, no la va a
+ * arreglar nadie: hay que volver a poner el PIN, y hasta que alguien lo haga
+ * los reintentos son todos 401 contra la misma pared.
+ *
+ * Ese 401 se tragaba entero —`vaciarCola` corta y devuelve el estado como si
+ * nada— así que la pantalla seguía diciendo «se reintenta solo» mientras la
+ * cola crecía. En el evento del 6 de agosto eso dejó tres altas y tres
+ * ingresos sin subir durante casi dos horas, con el staff mirando un cartel
+ * que les decía que estaba todo bajo control.
+ */
+export type EstadoCola = {
+  enCola: number
+  descartados: number
+  trabada: 'sin-sesion' | 'sin-red' | null
+}
 
-const estado = (): EstadoCola => ({ enCola: cola.cuantos(), descartados: descartados.cuantos() })
+let trabada: EstadoCola['trabada'] = null
+
+const estado = (): EstadoCola => ({
+  enCola: cola.cuantos(),
+  descartados: descartados.cuantos(),
+  // Con la cola vacía no hay nada trabado, diga lo que diga el último intento.
+  trabada: cola.cuantos() ? trabada : null,
+})
 
 /**
  * Manda lo que quedó pendiente, en orden.
@@ -31,16 +56,18 @@ const estado = (): EstadoCola => ({ enCola: cola.cuantos(), descartados: descart
  */
 export async function vaciarCola(): Promise<EstadoCola> {
   let quedan = cola.ver()
+  trabada = null
 
   while (quedan.length) {
     try {
       await postear(quedan[0].url, quedan[0].cuerpo)
     } catch (err) {
       // Sin sesión no se sigue: lo que viene atrás va a fallar igual, y el PIN
-      // lo tiene que volver a poner alguien.
-      if (esSinSesion(err)) break
+      // lo tiene que volver a poner alguien. Se deja dicho, o la pantalla
+      // promete un reintento que no va a arreglar nada.
+      if (esSinSesion(err)) { trabada = 'sin-sesion'; break }
       // Sin red, o la API caída: se corta y el próximo intento retoma acá.
-      if (esReintentable(err)) break
+      if (esReintentable(err)) { trabada = 'sin-red'; break }
       descartados.sumar({ ...quedan[0], motivo: mensajeDeError(err) })
     }
     quedan = quedan.slice(1)

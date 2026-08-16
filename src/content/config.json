@@ -15,11 +15,27 @@
     "ctaCerradaStartup": "Convocatoria cerrada"
   },
   "stats": [
-    { "valor": "1M USD", "label": "Premio final en Silicon Valley", "highlight": true },
-    { "valor": "+100", "label": "Ciudades compitiendo a nivel global" },
-    { "valor": "10", "label": "Startups finalistas en Argentina" },
-    { "valor": "1", "label": "Viaja a Silicon Valley" },
-    { "valor": "+20", "label": "Eventos en Buenos Aires" }
+    {
+      "valor": "1M USD",
+      "label": "Premio final en Silicon Valley",
+      "highlight": true
+    },
+    {
+      "valor": "+100",
+      "label": "Ciudades compitiendo a nivel global"
+    },
+    {
+      "valor": "10",
+      "label": "Startups finalistas en Argentina"
+    },
+    {
+      "valor": "1",
+      "label": "Viaja a Silicon Valley"
+    },
+    {
+      "valor": "+20",
+      "label": "Eventos en Buenos Aires"
+    }
   ],
   "links": {
     "startupGrindUrl": "https://www.startupgrind.com/events/details/startup-grind-buenos-aires-presents-startup-world-cup-argentina-2026/",
