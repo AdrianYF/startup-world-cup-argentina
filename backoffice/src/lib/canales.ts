@@ -27,7 +27,7 @@ export const CANALES: Canal[] = [
   { id: 'web', nombre: 'Mercado Pago', sigla: 'MP' },
   { id: 'luma', nombre: 'Luma', sigla: 'LUMA' },
   { id: 'startupgrind', nombre: 'Startup Grind', sigla: 'SG' },
-  { id: 'puerta', nombre: 'Alta en puerta', sigla: 'PUERTA' },
+  { id: 'puerta', nombre: 'Added at the door', sigla: 'DOOR' },
 ]
 
 const POR_ID = new Map(CANALES.map(c => [c.id, c]))

@@ -29,17 +29,17 @@ function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar,
   const vacio = cola.length === 0 && descartados.length === 0
 
   return (
-    <Hoja titulo="Sin sincronizar" onCerrar={onCerrar} posicion="abajo">
+    <Hoja titulo="Unsynced" onCerrar={onCerrar} posicion="abajo">
       {vacio && (
         <Aviso tono="ok">
-          Todo lo que se anotó en este dispositivo llegó al servidor.
+          Everything taken on this device made it to the server.
         </Aviso>
       )}
 
       {cola.length > 0 && (
         <section className="mb-5">
           <Rotulo className="mb-2 text-swc-warn">
-            {cola.length} en cola · se reintenta solo
+            {cola.length} queued · retries on its own
           </Rotulo>
           <ul className="flex flex-col gap-2">
             {cola.map(p => (
@@ -55,7 +55,7 @@ function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar,
       {descartados.length > 0 && (
         <section className="mb-5">
           <Rotulo className="mb-2 text-swc-coral">
-            {descartados.length} rechazados por el servidor
+            {descartados.length} rejected by the server
           </Rotulo>
           <ul className="flex flex-col gap-2">
             {descartados.map(p => (
@@ -65,13 +65,13 @@ function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar,
                 <p className="mt-0.5 text-xs tabular-nums text-gray-500">{hora(p.en)}</p>
                 <div className="mt-2.5 flex gap-2">
                   <Boton tono="secundario" tam="sm" onClick={() => onReintentar(p)}>
-                    Reintentar
+                    Retry
                   </Boton>
                   {/* Darlo por perdido lo decide una persona, nunca el código: es
                       la línea que dice que ese ingreso no se va a poder
                       reconstruir. */}
                   <Boton tono="fantasma" tam="sm" onClick={() => onOlvidar(p)}>
-                    Descartar
+                    Discard
                   </Boton>
                 </div>
               </li>
@@ -82,7 +82,7 @@ function Pendientes({ cola, descartados, onReintentar, onOlvidar, onSincronizar,
 
       {cola.length > 0 && (
         <Boton tono="secundario" tam="lg" ancho onClick={onSincronizar}>
-          Sincronizar ahora
+          Sync now
         </Boton>
       )}
     </Hoja>

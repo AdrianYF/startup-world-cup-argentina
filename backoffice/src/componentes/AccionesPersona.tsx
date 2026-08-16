@@ -64,7 +64,7 @@ function AccionesPersona({ persona, onGuardado }: {
       <div className="flex flex-col gap-3">
         <Campo
           id="fp-nombre"
-          label="Nombre y apellido"
+          label="Full name"
           value={nombre}
           onChange={e => setNombre(e.target.value)}
           autoCapitalize="words"
@@ -80,20 +80,20 @@ function AccionesPersona({ persona, onGuardado }: {
           autoCapitalize="none"
           inputMode="email"
           ayuda={esWeb
-            ? 'Es el del comprador de Mercado Pago: lo comparten todas las entradas de la misma compra.'
+            ? "It's the Mercado Pago buyer's: every ticket in the same purchase shares it."
             : undefined}
         />
         <Campos>
           <Campo
             id="fp-telefono"
-            label={<>Teléfono<Opcional /></>}
+            label={<>Phone<Opcional /></>}
             value={telefono}
             onChange={e => setTelefono(e.target.value)}
             inputMode="tel"
           />
           <Campo
             id="fp-empresa"
-            label={<>Empresa<Opcional /></>}
+            label={<>Company<Opcional /></>}
             value={empresa}
             onChange={e => setEmpresa(e.target.value)}
           />
@@ -108,9 +108,9 @@ function AccionesPersona({ persona, onGuardado }: {
         ancho
         className="mt-4"
         disabled={nombre.trim().length < 2}
-        ocupado={ocupado === 'guardar' ? 'Guardando…' : undefined}
+        ocupado={ocupado === 'guardar' ? 'Saving…' : undefined}
       >
-        Guardar cambios
+        Save changes
       </Boton>
 
       <div className="mt-3 flex flex-wrap gap-2">
@@ -122,9 +122,9 @@ function AccionesPersona({ persona, onGuardado }: {
               type="button"
               tono="fantasma"
               tam="sm"
-              onClick={() => correr('copiar', () => navigator.clipboard.writeText(linkEntrada), 'Link copiado.')}
+              onClick={() => correr('copiar', () => navigator.clipboard.writeText(linkEntrada), 'Link copied.')}
             >
-              Copiar link
+              Copy link
             </Boton>
             <a
               href={linkEntrada}
@@ -132,16 +132,16 @@ function AccionesPersona({ persona, onGuardado }: {
               rel="noreferrer"
               className="rounded-full border border-white/15 bg-white/[0.02] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-swc-muted active:scale-[0.98]"
             >
-              Ver entrada
+              See ticket
             </a>
             <Boton
               type="button"
               tono="secundario"
               tam="sm"
-              onClick={() => correr('mail', () => reenviarMail({ entrada: persona.id }), 'Mail reenviado.')}
-              ocupado={ocupado === 'mail' ? 'Enviando…' : undefined}
+              onClick={() => correr('mail', () => reenviarMail({ entrada: persona.id }), 'Email resent.')}
+              ocupado={ocupado === 'mail' ? 'Sending…' : undefined}
             >
-              Reenviar mail
+              Resend email
             </Boton>
           </>
         )}
@@ -155,9 +155,9 @@ function AccionesPersona({ persona, onGuardado }: {
             tono="peligro"
             tam="sm"
             onClick={() => correr('baja', () => darDeBaja(persona.id, persona.origen))}
-            ocupado={ocupado === 'baja' ? 'Sacando…' : undefined}
+            ocupado={ocupado === 'baja' ? 'Removing…' : undefined}
           >
-            Sacar de la lista
+            Remove from the list
           </Boton>
         )}
       </div>

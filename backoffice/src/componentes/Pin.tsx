@@ -45,11 +45,11 @@ function Pin({ onListo }: { onListo: () => void }) {
             // queda abajo del formulario, que es lo que hay que alcanzar sin
             // scrollear cuando se abre parado en la fila.
             <div className="flex h-full flex-col justify-between gap-8">
-              <Bloque titulo="Qué es esto">
+              <Bloque titulo="What this is">
                 <p className="text-sm leading-relaxed text-swc-muted">
-                  La herramienta de acreditación del evento. Con este PIN se ve la lista
-                  completa de inscriptos —nombre, mail y teléfono de cada persona—, así que
-                  no se comparte fuera del staff.
+                  The check-in tool for the event. This PIN opens the full list of
+                  registrations — everyone's name, email and phone — so it doesn't
+                  leave the staff.
                 </p>
               </Bloque>
 
@@ -88,11 +88,11 @@ function Pin({ onListo }: { onListo: () => void }) {
 
               <Campo
                 id="alias"
-                label={<>Tu nombre<Opcional /></>}
+                label={<>Your name<Opcional /></>}
                 value={alias}
                 onChange={e => setAlias(e.target.value)}
-                placeholder="Para saber quién acreditó"
-                ayuda="Queda anotado en cada ingreso que registres. Sirve cuando dos puertas anotan a la misma persona."
+                placeholder="So we know who checked people in"
+                ayuda="It gets recorded on every check-in you take. It helps when two doors take the same person."
               />
             </div>
 
@@ -104,9 +104,9 @@ function Pin({ onListo }: { onListo: () => void }) {
               ancho
               className="mt-6"
               disabled={!pin}
-              ocupado={enviando ? 'Entrando…' : undefined}
+              ocupado={enviando ? 'Going in…' : undefined}
             >
-              Entrar
+              Go in
             </Boton>
           </form>
         </Operacion>

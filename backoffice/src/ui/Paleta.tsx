@@ -139,10 +139,10 @@ export function Paleta({ ruta, ir, onCerrar }: {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Buscar e ir a"
+      aria-label="Search and go to"
       className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-[12vh]"
     >
-      <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Cerrar" />
+      <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Close" />
 
       {/* El vidrio: desenfoque, un borde de 1px y un brillo interno arriba, que
           es lo que hace que se lea como una superficie y no como un rectángulo
@@ -155,8 +155,8 @@ export function Paleta({ ruta, ir, onCerrar }: {
             value={q}
             onChange={e => escribir(e.target.value)}
             onKeyDown={alTecla}
-            placeholder="Buscar una persona o ir a una sección…"
-            aria-label="Buscar una persona o ir a una sección"
+            placeholder="Search for a person or go to a section…"
+            aria-label="Search for a person or go to a section"
             autoComplete="off"
             spellCheck={false}
             className="w-full bg-transparent py-4 text-base text-swc-light outline-none placeholder:text-gray-600"
@@ -167,12 +167,12 @@ export function Paleta({ ruta, ir, onCerrar }: {
         </div>
 
         <ul ref={listaRef} className="max-h-[52vh] overflow-y-auto py-2">
-          {secciones.length > 0 && <Grupo>Ir a</Grupo>}
+          {secciones.length > 0 && <Grupo>Go to</Grupo>}
           {items.map((item, i) => (
             <li key={item.clave}>
               {item.tipo === 'persona' && i === secciones.length && (
                 <Grupo>
-                  {cargando ? 'Buscando…' : `${gente.length === TOPE ? `Primeras ${TOPE}` : gente.length} en la lista`}
+                  {cargando ? 'Searching…' : `${gente.length === TOPE ? `First ${TOPE}` : gente.length} on the list`}
                 </Grupo>
               )}
               <button
@@ -192,7 +192,7 @@ export function Paleta({ ruta, ir, onCerrar }: {
                   <span className="block truncate text-xs text-gray-500">{item.detalle}</span>
                 </span>
                 {item.tipo === 'persona' && item.entro && (
-                  <IconoTick tam={15} className="shrink-0 text-swc-ok" titulo="Ya entró" />
+                  <IconoTick tam={15} className="shrink-0 text-swc-ok" titulo="Already came in" />
                 )}
               </button>
             </li>
@@ -201,18 +201,18 @@ export function Paleta({ ruta, ir, onCerrar }: {
           {items.length === 0 && (
             <li className="px-4 py-8 text-center text-sm text-gray-500">
               {cargando
-                ? 'Cargando la lista…'
+                ? 'Loading the list…'
                 : q.trim().length < 2
-                  ? 'Escribí al menos dos letras para buscar una persona.'
-                  : `Nadie ni ninguna sección con «${q.trim()}».`}
+                  ? 'Type at least two letters to search for a person.'
+                  : `No one and no section matching “${q.trim()}”.`}
             </li>
           )}
         </ul>
 
         <div className="flex items-center gap-4 border-t border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-gray-600">
-          <span><Tecla>↑</Tecla><Tecla>↓</Tecla> moverse</span>
-          <span><Tecla>↵</Tecla> abrir</span>
-          {personas && <span className="ml-auto tabular-nums">{personas.length} inscriptos</span>}
+          <span><Tecla>↑</Tecla><Tecla>↓</Tecla> move</span>
+          <span><Tecla>↵</Tecla> open</span>
+          {personas && <span className="ml-auto tabular-nums">{personas.length} registered</span>}
         </div>
       </div>
     </div>

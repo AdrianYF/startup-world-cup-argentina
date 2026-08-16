@@ -24,7 +24,7 @@ export function Rotulo({ children, className = '' }: { children: ReactNode; clas
 
 /** Cuando algo es opcional se dice en el rótulo, no con un asterisco al lado. */
 export function Opcional() {
-  return <span className="font-normal normal-case tracking-normal text-gray-600"> (opcional)</span>
+  return <span className="font-normal normal-case tracking-normal text-gray-600"> (optional)</span>
 }
 
 const CONTROL =

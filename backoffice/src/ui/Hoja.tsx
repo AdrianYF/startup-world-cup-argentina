@@ -38,7 +38,7 @@ const CAJA: Record<Posicion, string> = {
 }
 
 export function Hoja({
-  titulo, subtitulo, chips, onCerrar, onSubmit, posicion = 'auto', cerrar = 'Cerrar', children,
+  titulo, subtitulo, chips, onCerrar, onSubmit, posicion = 'auto', cerrar = 'Close', children,
 }: {
   titulo: ReactNode
   subtitulo?: ReactNode
@@ -95,7 +95,7 @@ export function Hoja({
       aria-labelledby={id}
       className={`fixed inset-0 z-50 flex ${MARCO[posicion]}`}
     >
-      <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Cerrar" />
+      <button className="absolute inset-0 bg-black/70" onClick={onCerrar} aria-label="Close" />
       {onSubmit
         ? <form onSubmit={onSubmit} className={clases}>{contenido}</form>
         : <div className={clases}>{contenido}</div>}

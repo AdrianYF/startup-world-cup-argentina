@@ -4,6 +4,7 @@ import { Aviso } from '../ui/Aviso'
 import { Campo, Opcional, Rotulo } from '../ui/Campos'
 import { Hoja } from '../ui/Hoja'
 import { mensajeDeError } from '../lib/api'
+import { traducirEntrada } from '../lib/traducir'
 import type { Persona } from '../lib/tipos'
 
 /**
@@ -43,12 +44,12 @@ type Props = {
  * cerrar el evento, de dónde salió cada alta.
  */
 const MOTIVOS: Opcion<string>[] = [
-  { id: '', label: 'Sin especificar' },
-  { id: 'invitacion', label: 'Invitación' },
-  { id: 'prensa', label: 'Prensa' },
+  { id: '', label: 'Not specified' },
+  { id: 'invitacion', label: 'Invitation' },
+  { id: 'prensa', label: 'Press' },
   { id: 'speaker', label: 'Speaker' },
   { id: 'staff', label: 'Staff' },
-  { id: 'comprada', label: 'Compró, no figura' },
+  { id: 'comprada', label: 'Paid, not listed' },
 ]
 
 function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Props) {
@@ -87,20 +88,20 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
 
   return (
     <Hoja
-      titulo="Agregar a la lista"
-      subtitulo={`Queda acreditada para el ${dia}, como alta de check-in.`}
+      titulo="Add to the list"
+      subtitulo={`Checked in for ${dia}, as a door add.`}
       onCerrar={onCerrar}
       onSubmit={enviar}
       // Centrada en todos los anchos: son cinco campos y un aviso de duplicados,
       // y pegada abajo el teclado del celular se come la mitad del formulario.
       posicion="centrada"
-      cerrar="Cancelar"
+      cerrar="Cancel"
     >
       <div className="flex flex-col gap-4">
         <div>
           <Campo
             id="ag-nombre"
-            label="Nombre y apellido"
+            label="Full name"
             value={nombre}
             onChange={e => setNombre(e.target.value)}
             autoFocus
@@ -113,31 +114,31 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
             <Aviso
               tono="warn"
               className="mt-2"
-              titulo={parecidos.length === 1 ? 'Ya hay alguien parecido' : 'Ya hay gente parecida'}
+              titulo={parecidos.length === 1 ? 'Someone similar is already listed' : 'Similar people are already listed'}
             >
               <ul className="text-xs">
                 {parecidos.map(p => (
                   <li key={`${p.origen}-${p.id}`} className="truncate">
                     {p.nombre}
                     {p.empresa ? ` · ${p.empresa}` : ''}
-                    <span className="text-gray-500"> · {p.entrada}</span>
+                    <span className="text-gray-500"> · {traducirEntrada(p.entrada)}</span>
                   </li>
                 ))}
               </ul>
               <p className="mt-1 text-[11px] text-gray-500">
-                Si es la misma persona, cerrá y buscala por apellido.
+                If it's the same person, close this and search by last name.
               </p>
             </Aviso>
           )}
         </div>
 
         <div>
-          <Rotulo className="mb-1.5">Por qué entra</Rotulo>
+          <Rotulo className="mb-1.5">Why they get in</Rotulo>
           <Pildoras
             opciones={MOTIVOS}
             valor={motivo}
             onCambio={setMotivo}
-            etiqueta="Motivo del alta"
+            etiqueta="Reason for the add"
             tam="sm"
           />
         </div>
@@ -154,7 +155,7 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
         />
         <Campo
           id="ag-telefono"
-          label={<>Teléfono<Opcional /></>}
+          label={<>Phone<Opcional /></>}
           value={telefono}
           onChange={e => setTelefono(e.target.value)}
           autoComplete="off"
@@ -162,7 +163,7 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
         />
         <Campo
           id="ag-empresa"
-          label={<>Empresa<Opcional /></>}
+          label={<>Company<Opcional /></>}
           value={empresa}
           onChange={e => setEmpresa(e.target.value)}
           autoComplete="off"
@@ -178,9 +179,9 @@ function Agregar({ inicial = '', dia, buscarParecidos, onCerrar, onAgregar }: Pr
         ancho
         className="mt-6"
         disabled={nombre.trim().length < 2}
-        ocupado={enviando ? 'Agregando…' : undefined}
+        ocupado={enviando ? 'Adding…' : undefined}
       >
-        Agregar y acreditar
+        Add and check in
       </Boton>
     </Hoja>
   )

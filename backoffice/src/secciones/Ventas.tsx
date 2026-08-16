@@ -25,11 +25,11 @@ import {
  * volvía, no la destrababa nadie.
  */
 const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'coral' | 'neutro' }> = {
-  paid: { label: 'pagada', tono: 'ok' },
-  pending: { label: 'pendiente', tono: 'warn' },
-  rejected: { label: 'rechazada', tono: 'coral' },
-  expired: { label: 'vencida', tono: 'neutro' },
-  refunded: { label: 'reembolsada', tono: 'neutro' },
+  paid: { label: 'paid', tono: 'ok' },
+  pending: { label: 'pending', tono: 'warn' },
+  rejected: { label: 'rejected', tono: 'coral' },
+  expired: { label: 'expired', tono: 'neutro' },
+  refunded: { label: 'refunded', tono: 'neutro' },
 }
 
 type Filtro = 'todas' | 'paid' | 'pending' | 'problema'
@@ -61,26 +61,26 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   }, [ordenes, filtro])
 
   const columnas: Columna<Orden>[] = useMemo(() => [
-    { clave: 'nombre', titulo: 'Comprador', orden: o => o.nombre, celda: o => o.nombre },
+    { clave: 'nombre', titulo: 'Buyer', orden: o => o.nombre, celda: o => o.nombre },
     { clave: 'email', titulo: 'Email', orden: o => o.email, celda: o => o.email, soloTabla: true },
     { clave: 'tier', titulo: 'Tier', orden: o => o.tier, celda: o => o.tier },
-    { clave: 'cantidad', titulo: 'Entradas', orden: o => o.cantidad, celda: o => o.cantidad, numerica: true },
+    { clave: 'cantidad', titulo: 'Tickets', orden: o => o.cantidad, celda: o => o.cantidad, numerica: true },
     { clave: 'total', titulo: 'Total', orden: o => o.total, celda: o => pesos(o.total), numerica: true },
     {
       clave: 'status',
-      titulo: 'Estado',
+      titulo: 'Status',
       orden: o => o.status,
       celda: o => (
         <span className="flex flex-wrap items-center gap-1.5">
           <Chip tono={ESTADOS[o.status].tono}>{ESTADOS[o.status].label}</Chip>
-          {o.reservaCupo && <Chip tono="warn">reserva cupo</Chip>}
-          {o.status === 'paid' && !o.mailEnviado && <Chip tono="coral">sin mail</Chip>}
+          {o.reservaCupo && <Chip tono="warn">holds a spot</Chip>}
+          {o.status === 'paid' && !o.mailEnviado && <Chip tono="coral">no email</Chip>}
         </span>
       ),
     },
     {
       clave: 'creadaEn',
-      titulo: 'Fecha',
+      titulo: 'Date',
       orden: o => o.creadaEn,
       celda: o => fechaCorta(o.creadaEn),
       soloTabla: true,
@@ -93,10 +93,10 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   const t = datos?.totales
 
   const filtros: Opcion<Filtro>[] = [
-    { id: 'todas', label: 'Todas', cuenta: cuentas.todas },
-    { id: 'paid', label: 'Pagadas', cuenta: cuentas.paid },
-    { id: 'pending', label: 'Reservando cupo', cuenta: cuentas.pending },
-    { id: 'problema', label: 'Con problema', cuenta: cuentas.problema },
+    { id: 'todas', label: 'All', cuenta: cuentas.todas },
+    { id: 'paid', label: 'Paid', cuenta: cuentas.paid },
+    { id: 'pending', label: 'Holding a spot', cuenta: cuentas.pending },
+    { id: 'problema', label: 'With a problem', cuenta: cuentas.problema },
   ]
 
   return (
@@ -104,51 +104,51 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
       <Operacion
         contexto={
           <>
-            <Bloque titulo="La caja">
+            <Bloque titulo="The till">
               <Datos>
-                <Dato label="Recaudado" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
-                <Dato label="Compras pagadas">{t?.pagadas ?? 0}</Dato>
-                <Dato label="Entradas vendidas">{t?.entradas ?? 0}</Dato>
-                <Dato label="Reservando cupo" tono={t?.pendientes ? 'warn' : undefined}>
+                <Dato label="Collected" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
+                <Dato label="Paid purchases">{t?.pagadas ?? 0}</Dato>
+                <Dato label="Tickets sold">{t?.entradas ?? 0}</Dato>
+                <Dato label="Holding a spot" tono={t?.pendientes ? 'warn' : undefined}>
                   {t?.pendientes ?? 0}
                 </Dato>
               </Datos>
             </Bloque>
 
-            <Bloque titulo="Qué mirar primero" className="mt-6">
+            <Bloque titulo="What to look at first" className="mt-6">
               <p className="text-xs leading-relaxed text-gray-500">
-                «Con problema» junta las rechazadas y las pagadas cuyo mail nunca salió. Son
-                las dos que tienen a alguien esperando del otro lado: una porque no pudo
-                pagar y otra porque pagó y no recibió la entrada.
+                “With a problem” gathers the rejected ones and the paid ones whose email never
+                went out. Both have someone waiting on the other side: one because they couldn't
+                pay, the other because they paid and never got the ticket.
               </p>
               {cuentas.problema > 0 && (
                 <Boton tono="secundario" tam="sm" className="mt-3" onClick={() => setFiltro('problema')}>
-                  Ver las {cuentas.problema}
+                  See the {cuentas.problema}
                 </Boton>
               )}
             </Bloque>
 
             <Limite>
-              Marcar una orden como reembolsada saca sus entradas de la lista y devuelve el
-              cupo, pero <strong>no mueve plata</strong>: la devolución se hace en Mercado
-              Pago.
+              Marking an order refunded takes its tickets off the list and gives the spot
+              back, but it <strong>moves no money</strong>: the refund itself happens in
+              Mercado Pago.
             </Limite>
           </>
         }
       >
         <Tarjetas>
-          <Tarjeta label="Recaudado" valor={t?.recaudadoTexto || '—'} detalle="cargo de servicio incluido" tono="ok" />
-          <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} />
-          <Tarjeta label="Entradas vendidas" valor={t?.entradas ?? 0} detalle="por Mercado Pago" />
+          <Tarjeta label="Collected" valor={t?.recaudadoTexto || '—'} detalle="service fee included" tono="ok" />
+          <Tarjeta label="Paid purchases" valor={t?.pagadas ?? 0} />
+          <Tarjeta label="Tickets sold" valor={t?.entradas ?? 0} detalle="through Mercado Pago" />
           <Tarjeta
-            label="Reservando cupo"
+            label="Holding a spot"
             valor={t?.pendientes ?? 0}
             tono={t?.pendientes ? 'warn' : undefined}
-            detalle="pendientes sin vencer"
+            detalle="pending, not expired"
           />
         </Tarjetas>
 
-        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar las compras" />
+        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filter the purchases" />
 
         <div className="mt-4">
           <Tabla
@@ -156,7 +156,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
             filas={visibles}
             claveDe={o => o.id}
             onFila={setAbierta}
-            vacio="No hay compras con ese filtro."
+            vacio="No purchases with that filter."
           />
         </div>
       </Operacion>
@@ -205,7 +205,7 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
     >
       <Recurso
         titulo={orden.tier}
-        subtitulo={`${orden.cantidad} ${orden.cantidad === 1 ? 'entrada' : 'entradas'} · ${fechaCorta(orden.creadaEn)}`}
+        subtitulo={`${orden.cantidad} ${orden.cantidad === 1 ? 'ticket' : 'tickets'} · ${fechaCorta(orden.creadaEn)}`}
         valor={pesos(orden.total, true)}
         detalle="total"
         tono={orden.status === 'paid' ? 'ok' : 'accent'}
@@ -214,12 +214,12 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
       <div className="mt-5">
         <Datos>
           <Dato label="Subtotal">{pesos(orden.subtotal, true)}</Dato>
-          <Dato label="Cargo de servicio">{pesos(orden.cargo, true)}</Dato>
-          {orden.status === 'pending' && <Dato label="Vence">{fechaCorta(orden.venceEn)}</Dato>}
-          {orden.pagoId && <Dato label="Pago en MP">{orden.pagoId}</Dato>}
-          {orden.detalle && <Dato label="Detalle">{orden.detalle}</Dato>}
-          <Dato label="Mail de la entrada" tono={orden.mailEnviado ? undefined : 'coral'}>
-            {orden.mailEnviado ? fechaCorta(orden.mailEnviado) : 'no salió'}
+          <Dato label="Service fee">{pesos(orden.cargo, true)}</Dato>
+          {orden.status === 'pending' && <Dato label="Expires">{fechaCorta(orden.venceEn)}</Dato>}
+          {orden.pagoId && <Dato label="MP payment">{orden.pagoId}</Dato>}
+          {orden.detalle && <Dato label="Detail">{orden.detalle}</Dato>}
+          <Dato label="Ticket email" tono={orden.mailEnviado ? undefined : 'coral'}>
+            {orden.mailEnviado ? fechaCorta(orden.mailEnviado) : "didn't go out"}
           </Dato>
         </Datos>
       </div>
@@ -236,10 +236,10 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tam="lg"
             ancho
             onClick={() => correr('rec', () => accionOrden(orden.id, 'reconciliar'))}
-            ocupado={ocupado === 'rec' ? 'Preguntando a Mercado Pago…' : undefined}
+            ocupado={ocupado === 'rec' ? 'Asking Mercado Pago…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Reconciliar contra Mercado Pago
+            Reconcile against Mercado Pago
           </Boton>
         )}
 
@@ -248,11 +248,11 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tono="secundario"
             tam="lg"
             ancho
-            onClick={() => correr('mail', () => reenviarMail({ orden: orden.id }), 'Mail reenviado.')}
-            ocupado={ocupado === 'mail' ? 'Enviando…' : undefined}
+            onClick={() => correr('mail', () => reenviarMail({ orden: orden.id }), 'Email resent.')}
+            ocupado={ocupado === 'mail' ? 'Sending…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Reenviar el mail de la entrada
+            Resend the ticket email
           </Boton>
         )}
 
@@ -265,10 +265,10 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tam="lg"
             ancho
             onClick={() => correr('lib', () => accionOrden(orden.id, 'liberar'))}
-            ocupado={ocupado === 'lib' ? 'Liberando…' : undefined}
+            ocupado={ocupado === 'lib' ? 'Releasing…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Liberar el cupo que reserva
+            Release the spot it holds
           </Boton>
         )}
 
@@ -278,18 +278,18 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tam="lg"
             ancho
             onClick={() => correr('ree', () => accionOrden(orden.id, 'reembolsar'))}
-            ocupado={ocupado === 'ree' ? 'Marcando…' : undefined}
+            ocupado={ocupado === 'ree' ? 'Marking…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Marcar como reembolsada
+            Mark as refunded
           </Boton>
         )}
       </div>
 
       {orden.status === 'paid' && (
         <Aviso tono="info" className="mt-4">
-          Marcarla reembolsada saca sus {orden.cantidad === 1 ? 'entrada' : `${orden.cantidad} entradas`} de
-          la lista de la puerta y devuelve el cupo. La plata se devuelve en Mercado Pago, no acá.
+          Marking it refunded takes its {orden.cantidad === 1 ? 'ticket' : `${orden.cantidad} tickets`} off
+          the door list and gives the spot back. The money is refunded in Mercado Pago, not here.
         </Aviso>
       )}
     </Hoja>

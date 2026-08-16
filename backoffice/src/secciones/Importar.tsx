@@ -25,19 +25,19 @@ const CANALES = [
   {
     id: 'luma',
     label: 'Luma',
-    ayuda: 'slug del evento, ej. quzhnee8',
+    ayuda: 'event slug, e.g. quzhnee8',
     // Sin prefijo de días a propósito: Luma corre un evento por día y no hay uno
     // que esté bien la mayoría de las veces. Antes había un default de «Mié 5» y
     // era una trampa: importar el CSV del jueves sin tocar nada etiquetaba a esa
     // gente con el día equivocado, no aparecían en ninguna lista, y como el día
     // existe tampoco saltaba la alarma de «sin día».
     dias: [] as string[],
-    aviso: 'Luma tiene un evento por día. Elegí cuál estás importando — no hay valor por defecto justamente porque adivinarlo mal deja a esa gente afuera de la puerta.',
+    aviso: 'Luma runs one event per day. Pick which one you are importing — there is no default precisely because guessing wrong leaves those people outside the door.',
   },
   {
     id: 'startupgrind',
     label: 'Startup Grind',
-    ayuda: 'id del evento, ej. 31263',
+    ayuda: 'event id, e.g. 31263',
     // Una sola tanda que habilita los dos días. Viene marcado, pero se ve y se
     // puede desmarcar: es un prefijo, no un default invisible.
     dias: ['Jue 6', 'Vie 7'],
@@ -65,9 +65,9 @@ const DIAS_IMPORT: Opcion<string>[] = [
 ]
 
 const PASOS: Paso[] = [
-  { id: 'archivo', label: 'Canal y archivo', detalle: 'De dónde salió el export y a qué evento pertenece.' },
-  { id: 'previa', label: 'Vista previa', detalle: 'Qué columnas detectó y a cuánta gente toca. No escribe nada.' },
-  { id: 'escribir', label: 'Importar', detalle: 'Upsert por canal + evento + mail. Actualiza, nunca duplica.' },
+  { id: 'archivo', label: 'Channel and file', detalle: 'Where the export came from and which event it belongs to.' },
+  { id: 'previa', label: 'Preview', detalle: 'Which columns it found and how many people it touches. Writes nothing.' },
+  { id: 'escribir', label: 'Import', detalle: 'Upsert by channel + event + email. Updates, never duplicates.' },
 ]
 
 function Importar({ onSinSesion }: { onSinSesion: () => void }) {
@@ -100,7 +100,7 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
     setPrevia(null)
     setEscrito(false)
     setError('')
-    f.text().then(setCsv).catch(() => setError('No pudimos leer ese archivo.'))
+    f.text().then(setCsv).catch(() => setError("We couldn't read that file."))
   }
 
   /** Cambiar cualquier entrada invalida la previa: describía otro import. */
@@ -115,7 +115,7 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
     try {
       const r = await importarCSV({ csv, origen, evento: evento.trim(), dias: textoDias, seco })
       if (r.error) {
-        setError(r.error + (r.columnas ? ` · columnas del archivo: ${r.columnas.join(', ')}` : ''))
+        setError(r.error + (r.columnas ? ` · columns in the file: ${r.columnas.join(', ')}` : ''))
         setPrevia(null)
       } else {
         setPrevia(r)
@@ -136,31 +136,31 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
     <Operacion
       contexto={
         <>
-          <Bloque titulo="Flujo del import">
+          <Bloque titulo="Import flow">
             <Pasos pasos={PASOS} actual={paso} />
           </Bloque>
 
-          <Bloque titulo="Qué escribe" className="mt-6">
+          <Bloque titulo="What it writes" className="mt-6">
             <Datos>
-              <Dato label="Clave del upsert">canal + evento + mail</Dato>
-              <Dato label="Mail repetido">actualiza la fila</Dato>
-              <Dato label="Días" tono={dias.length ? undefined : 'coral'}>
-                {textoDias || 'sin elegir'}
+              <Dato label="Upsert key">channel + event + email</Dato>
+              <Dato label="Repeated email">updates the row</Dato>
+              <Dato label="Days" tono={dias.length ? undefined : 'coral'}>
+                {textoDias || 'none picked'}
               </Dato>
             </Datos>
           </Bloque>
 
           <Limite>
-            Reimportar el mismo evento actualiza por mail, no duplica. Pero quien deja de
-            aparecer en el CSV —un reembolso en Startup Grind— <strong>no</strong> se da de
-            baja solo: eso se hace desde «Personas», sacándolo de la lista.
+            Re-importing the same event updates by email, it doesn't duplicate. But whoever
+            stops showing up in the CSV — a refund in Startup Grind — is <strong>not</strong>
+            removed on their own: that happens from “Registered”, taking them off the list.
           </Limite>
         </>
       }
     >
       <div className="flex max-w-xl flex-col gap-4">
         <div>
-          <Rotulo className="mb-1.5">Canal</Rotulo>
+          <Rotulo className="mb-1.5">Channel</Rotulo>
           <Pildoras
             opciones={opcionesCanal}
             valor={origen}
@@ -171,48 +171,48 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
               setDias(CANALES.find(c => c.id === id)!.dias)
               invalidar()
             }}
-            etiqueta="Canal del export"
+            etiqueta="Export channel"
           />
         </div>
 
         <Campo
           id="im-evento"
-          label="Id del evento"
+          label="Event id"
           value={evento}
           onChange={e => { setEvento(e.target.value); invalidar() }}
           placeholder={canal.ayuda}
           autoComplete="off"
-          ayuda="Es la clave del upsert junto con el canal y el mail: reimportar el mismo evento actualiza en vez de duplicar."
+          ayuda="It is the upsert key together with the channel and the email: re-importing the same event updates instead of duplicating."
         />
 
         <div>
-          <Rotulo className="mb-1.5">Días que habilita esta tanda</Rotulo>
+          <Rotulo className="mb-1.5">Days this batch enables</Rotulo>
           <PildorasMulti
             opciones={DIAS_IMPORT}
             valores={dias}
             onCambio={ids => { setDias(ids); invalidar() }}
-            etiqueta="Días que habilita esta tanda"
+            etiqueta="Days this batch enables"
           />
           <p className="mt-1 text-xs text-gray-500">
             {dias.length
-              ? <>Se guarda como «<span className="text-gray-300">{textoDias}</span>».{' '}</>
-              : 'Elegí al menos uno: sin días, esa gente no aparece en ninguna lista. '}
-            El miércoles 5 es el side event en otro venue — entra al padrón pero no abre
-            puerta acá.
+              ? <>Stored as “<span className="text-gray-300">{textoDias}</span>”.{' '}</>
+              : "Pick at least one: with no days, those people show up on no list. "}
+            Wednesday the 5th is the side event at another venue — it enters the master list but
+            opens no door here.
           </p>
         </div>
 
         {canal.aviso && <Aviso tono="info">{canal.aviso}</Aviso>}
 
         <div>
-          <Rotulo className="mb-1.5">Archivo CSV</Rotulo>
+          <Rotulo className="mb-1.5">CSV file</Rotulo>
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/20 bg-white/[0.02] px-4 py-4">
             <input type="file" accept=".csv,text/csv" onChange={elegir} className="hidden" />
             <span className="rounded-full border border-swc-accent/40 px-4 py-1.5 text-xs font-black text-swc-accent">
-              Elegir
+              Choose
             </span>
             <span className="min-w-0 flex-1 truncate text-sm text-gray-400">
-              {archivo || 'El export del panel de organizador'}
+              {archivo || 'The export from the organizer panel'}
             </span>
           </label>
         </div>
@@ -226,9 +226,9 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
           tam="lg"
           disabled={!listo}
           onClick={() => correr(true)}
-          ocupado={ocupado === 'previa' ? 'Leyendo…' : undefined}
+          ocupado={ocupado === 'previa' ? 'Reading…' : undefined}
         >
-          Ver qué va a pasar
+          See what will happen
         </Boton>
         {/* Escribir sólo se habilita después de la vista previa: es la lista de
             acreditación del evento y no hay «deshacer». */}
@@ -237,9 +237,9 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
           tam="lg"
           disabled={!previa || escrito || Boolean(ocupado)}
           onClick={() => correr(false)}
-          ocupado={ocupado === 'import' ? 'Importando…' : undefined}
+          ocupado={ocupado === 'import' ? 'Importing…' : undefined}
         >
-          Importar
+          Import
         </Boton>
       </div>
 
@@ -247,35 +247,35 @@ function Importar({ onSinSesion }: { onSinSesion: () => void }) {
         <div className="mt-6 max-w-xl rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
           <div className="mb-3 flex items-center gap-2">
             <h2 className="text-sm font-black text-swc-light">
-              {escrito ? 'Importado' : 'Vista previa'}
+              {escrito ? 'Imported' : 'Preview'}
             </h2>
             <Chip tono={escrito ? 'ok' : 'warn'}>
-              {escrito ? 'escrito en la base' : 'no se escribió nada'}
+              {escrito ? 'written to the database' : 'nothing was written'}
             </Chip>
           </div>
 
           <Datos>
-            <Dato label="Filas en el archivo">{previa.resumen.filas}</Dato>
-            <Dato label="Personas">{previa.resumen.registros}</Dato>
-            <Dato label="Entran a la puerta" tono="ok">{previa.resumen.confirmados}</Dato>
+            <Dato label="Rows in the file">{previa.resumen.filas}</Dato>
+            <Dato label="People">{previa.resumen.registros}</Dato>
+            <Dato label="Get into the door" tono="ok">{previa.resumen.confirmados}</Dato>
             {previa.resumen.pendientes > 0 && (
-              <Dato label="Pendientes (no entran)" tono="warn">{previa.resumen.pendientes}</Dato>
+              <Dato label="Pending (they don't get in)" tono="warn">{previa.resumen.pendientes}</Dato>
             )}
             {previa.resumen.rechazados > 0 && (
-              <Dato label="Rechazados (no entran)">{previa.resumen.rechazados}</Dato>
+              <Dato label="Rejected (they don't get in)">{previa.resumen.rechazados}</Dato>
             )}
             {previa.resumen.sinEmail > 0 && (
-              <Dato label="Sin mail (se saltean)" tono="coral">{previa.resumen.sinEmail}</Dato>
+              <Dato label="No email (skipped)" tono="coral">{previa.resumen.sinEmail}</Dato>
             )}
             {previa.resumen.repetidos > 0 && (
-              <Dato label="Mail repetido (queda el último)">{previa.resumen.repetidos}</Dato>
+              <Dato label="Repeated email (last one wins)">{previa.resumen.repetidos}</Dato>
             )}
-            <Dato label="Días asignados">{previa.dias || '—'}</Dato>
+            <Dato label="Days assigned">{previa.dias || '—'}</Dato>
           </Datos>
 
           {previa.mapa && (
             <>
-              <Rotulo className="mt-4 mb-1.5">Columnas detectadas</Rotulo>
+              <Rotulo className="mt-4 mb-1.5">Columns detected</Rotulo>
               <ul className="text-xs text-gray-400">
                 {Object.entries(previa.mapa)
                   .filter(([k]) => !k.startsWith('_'))

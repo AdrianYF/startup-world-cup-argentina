@@ -30,7 +30,7 @@ function BarraAcciones({ ultimo, onDeshacer, onEscanear, onAgregar }: {
               className="flex shrink-0 items-center gap-1.5 text-xs font-extrabold uppercase tracking-[0.12em] text-gray-300 underline"
              >
               <IconoDeshacer tam={14} />
-              Deshacer
+              Undo
             </button>
           </div>
         )}
@@ -43,15 +43,15 @@ function BarraAcciones({ ultimo, onDeshacer, onEscanear, onAgregar }: {
             className="flex flex-1 items-center justify-center gap-2 rounded-full border border-swc-accent/40 bg-white/[0.04] px-6 py-3.5 text-sm font-black text-swc-accent active:scale-[0.98]"
            >
             <IconoQR tam={18} />
-            Escanear QR
+            Scan QR
           </button>
           <button
             onClick={onAgregar}
-            aria-label="Agregar a alguien que no está en la lista"
+            aria-label="Add someone who is not on the list"
             className="flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3.5 text-sm font-black text-swc-muted active:scale-[0.98]"
            >
             <IconoSumarPersona tam={18} />
-            Agregar
+            Add
           </button>
         </div>
       </div>

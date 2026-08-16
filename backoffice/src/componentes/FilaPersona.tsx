@@ -33,9 +33,9 @@ function FilaPersona({ persona, ingresos, onClick, activa }: {
       >
         <div className="min-w-0 flex-1">
           <p className="truncate font-bold text-swc-light">
-            {persona.nombre || <span className="text-gray-500">(sin nombre)</span>}
+            {persona.nombre || <span className="text-gray-500">(no name)</span>}
             {persona.pagoDoble && (
-              <IconoAlerta tam={14} className="ml-1.5 inline-block align-[-2px] text-swc-warn" titulo="También compró en Startup Grind" />
+              <IconoAlerta tam={14} className="ml-1.5 inline-block align-[-2px] text-swc-warn" titulo="Also bought through Startup Grind" />
             )}
           </p>
           <p className="truncate text-xs text-gray-500">

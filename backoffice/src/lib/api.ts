@@ -38,22 +38,22 @@ export function esReintentable(err: unknown): boolean {
 }
 
 const MENSAJES: Record<string, string> = {
-  pin_invalido: 'Ese PIN no es.',
-  puerta_no_configurada: 'Falta configurar el PIN en el servidor.',
-  sin_sesion: 'La sesión venció. Volvé a poner el PIN.',
-  api_no_disponible: 'La API no está respondiendo.',
-  entrada_inexistente: 'Ese QR no es de acá.',
-  persona_inexistente: 'No encontramos a esa persona en la lista.',
-  dia_no_habilitado: 'Esa entrada no es de este día.',
-  nombre_requerido: 'Falta el nombre.',
-  email_invalido: 'Ese mail no es válido.',
+  pin_invalido: "That's not the PIN.",
+  puerta_no_configurada: "The PIN isn't set up on the server.",
+  sin_sesion: 'Session expired. Enter the PIN again.',
+  api_no_disponible: "The API isn't responding.",
+  entrada_inexistente: "That QR isn't from this event.",
+  persona_inexistente: "We couldn't find that person on the list.",
+  dia_no_habilitado: "That ticket isn't for this day.",
+  nombre_requerido: 'The name is missing.',
+  email_invalido: "That email isn't valid.",
 }
 
 export function mensajeDeError(err: unknown): string {
   if (err instanceof PuertaError) {
-    return MENSAJES[err.codigo] || 'Algo falló. Probá de nuevo.'
+    return MENSAJES[err.codigo] || 'Something failed. Try again.'
   }
-  return 'Sin conexión.'
+  return 'No connection.'
 }
 
 export function esSinSesion(err: unknown): boolean {

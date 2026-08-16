@@ -217,18 +217,26 @@ export function useRecurso<T>(cargar: () => Promise<T>, onSinSesion: () => void)
   return { datos, error, cargando, recargar }
 }
 
-/** `2026-08-06T14:32:00Z` → `6 ago 14:32`, en hora de Buenos Aires. */
+/** `2026-08-06T14:32:00Z` → `6 Aug, 14:32`, en hora de Buenos Aires. */
 export function fechaCorta(iso: string | null): string {
   if (!iso) return '—'
-  return new Date(iso).toLocaleString('es-AR', {
+  // `en-GB` y no `en-US`: la interfaz está en inglés, pero quien la lee escribe
+  // la fecha con el día adelante. Es el único locale inglés que mantiene el
+  // orden de acá y además da 24 horas — `es-AR` con día y mes armaba «6 ago
+  // 02:27 p. m.», que en esta pantalla es mes en castellano y meridiano español.
+  // La zona sigue clavada en Buenos Aires: es donde pasó el evento.
+  return new Date(iso).toLocaleString('en-GB', {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
+    hourCycle: 'h23',
     timeZone: 'America/Argentina/Buenos_Aires',
   })
 }
 
+// La plata NO se traduce: son pesos argentinos y se escriben $1.234,56. En
+// `en-GB` saldrían $1,234.56, que es otro número para quien lo lee acá.
 export function pesos(n: number, centavos = false): string {
   return '$' + n.toLocaleString('es-AR', {
     minimumFractionDigits: centavos ? 2 : 0,

@@ -2,6 +2,7 @@ import { Buscador } from '../ui/Campos'
 import { IconoRecargar } from '../ui/Iconos'
 import { Pildoras, type Opcion } from '../ui/Acciones'
 import type { EstadoCola } from '../lib/acreditar'
+import { traducirDias } from '../lib/traducir'
 import type { Dia } from '../lib/tipos'
 
 /**
@@ -52,9 +53,11 @@ function Cabecera({
 }: Props) {
   const pendientes = estadoCola.enCola + estadoCola.descartados
 
+  // El `label` que viaja del servidor es el que se busca dentro del texto de
+  // `acreditacion.dias` («Jue»), así que sigue en castellano. Acá sólo se pinta.
   const opciones: Opcion<string>[] = dias.map(d => ({
     id: d.id,
-    label: `${d.label} ${d.fecha.slice(-2).replace(/^0/, '')}`,
+    label: traducirDias(`${d.label} ${d.fecha.slice(-2).replace(/^0/, '')}`),
   }))
 
   return (
@@ -64,11 +67,11 @@ function Cabecera({
             toca durante una acreditación. */}
         <div className="mb-2.5 flex items-center justify-between gap-3">
           <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-swc-accent">
-            Acreditación
+            Check-in
           </p>
           <div className="flex items-center gap-3 text-[11px] font-bold text-swc-muted">
             <button onClick={onAdmin} className="hover:text-swc-light">Admin</button>
-            {onSalir && <button onClick={onSalir} className="hover:text-swc-light">Salir</button>}
+            {onSalir && <button onClick={onSalir} className="hover:text-swc-light">Log out</button>}
           </div>
         </div>
 
@@ -77,15 +80,15 @@ function Cabecera({
             opciones={opciones}
             valor={vista}
             onCambio={onVista}
-            etiqueta="Día del evento"
+            etiqueta="Event day"
             tam="sm"
           />
           {/* Recargar. Tocar el día ya activo no hace nada, así que sin esto la
               única forma de volver a bajar la lista era recargar la página. */}
           <button
             onClick={onRecargar}
-            title="Recargar la lista"
-            aria-label="Recargar la lista"
+            title="Reload the list"
+            aria-label="Reload the list"
             className="shrink-0 rounded-full border border-white/15 p-2 text-swc-muted active:scale-[0.98]"
           >
             <IconoRecargar tam={14} className={sincronizando ? 'animate-spin' : undefined} />
@@ -98,7 +101,7 @@ function Cabecera({
             valor={busqueda}
             onCambio={onBusqueda}
             onKeyDown={onTecla}
-            placeholder="Buscar por apellido, mail o empresa"
+            placeholder="Search by last name, email or company"
             autoFocus
           />
         </div>
@@ -115,10 +118,10 @@ function Cabecera({
               : 'bg-swc-warn/15 text-swc-warn'
           }`}
         >
-          {sinConexion ? 'Sin conexión' : 'Sincronizando'}
-          {estadoCola.enCola > 0 && ` · ${estadoCola.enCola} sin mandar`}
-          {estadoCola.descartados > 0 && ` · ${estadoCola.descartados} rechazados`}
-          <span className="ml-1.5 underline">Ver</span>
+          {sinConexion ? 'No connection' : 'Syncing'}
+          {estadoCola.enCola > 0 && ` · ${estadoCola.enCola} not sent`}
+          {estadoCola.descartados > 0 && ` · ${estadoCola.descartados} rejected`}
+          <span className="ml-1.5 underline">See</span>
         </button>
       )}
 
@@ -127,7 +130,7 @@ function Cabecera({
           que alguien se queda afuera. */}
       {Boolean(sinDia) && (
         <p className="bg-swc-coral/15 px-4 py-1.5 text-center text-[11px] font-bold text-swc-coral">
-          {sinDia} {sinDia === 1 ? 'persona no cae' : 'personas no caen'} en ningún día — revisar el import
+          {sinDia} {sinDia === 1 ? 'person matches' : 'people match'} no event day — check the import
         </p>
       )}
     </header>

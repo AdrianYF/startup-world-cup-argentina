@@ -26,28 +26,28 @@ export const INSCRIPTOS = 'inscriptos'
 export const SECCIONES: Seccion[] = [
   {
     id: INSCRIPTOS,
-    label: 'Inscriptos',
-    bajada: 'La lista entera de los tres días: corregir un dato, reenviar la entrada, dar de baja — y acreditar, sin volver a la puerta.',
+    label: 'Registered',
+    bajada: 'The whole list for all three days: fix a detail, resend a ticket, remove someone — and check people in, without going back to the door.',
   },
   {
     id: 'ventas',
-    label: 'Ventas',
-    bajada: 'Las compras por Mercado Pago: destrabar un pago, reenviar la entrada, liberar un cupo reservado.',
+    label: 'Sales',
+    bajada: 'Mercado Pago purchases: unblock a payment, resend a ticket, release a held spot.',
   },
   {
     id: 'stock',
     label: 'Stock',
-    bajada: 'El cupo y el precio de cada tier que se vende por Mercado Pago. Luma y Startup Grind manejan el suyo.',
+    bajada: 'The cap and the price of each tier sold through Mercado Pago. Luma and Startup Grind handle their own.',
   },
   {
     id: 'importar',
-    label: 'Importar',
-    bajada: 'El CSV de Luma o Startup Grind, siempre con vista previa antes de escribir.',
+    label: 'Import',
+    bajada: 'The Luma or Startup Grind CSV, always with a preview before writing anything.',
   },
   {
     id: 'metricas',
-    label: 'Métricas',
-    bajada: 'Cómo viene el evento: cuánto entró, por qué canal y a qué hora.',
+    label: 'Metrics',
+    bajada: 'How the event is going: how many came in, through which channel and at what time.',
   },
 ]
 

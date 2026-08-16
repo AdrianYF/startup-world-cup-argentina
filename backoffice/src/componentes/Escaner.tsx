@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import jsQR from 'jsqr'
 import { acreditarPorToken } from '../lib/acreditar'
 import { PuertaError, mensajeDeError } from '../lib/api'
+import { traducirDias, traducirEntrada } from '../lib/traducir'
 import type { Checkin, Persona } from '../lib/tipos'
 import { IconoAlerta, IconoCamara, IconoCruz, IconoQR, IconoTick } from '../ui/Iconos'
 
@@ -71,7 +72,7 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
   const [flash, setFlash] = useState<'ok' | 'mal' | null>(null)
 
   const hora = () =>
-    new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+    new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 
   /**
    * Deja constancia arriba de la lista y pega el destello.
@@ -116,7 +117,7 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
         setEstado('buscando')
         timer = window.setInterval(mirar, MS_ENTRE_LECTURAS)
       } catch {
-        if (vivo) setAviso('No pudimos abrir la cámara. Buscá por apellido.')
+        if (vivo) setAviso("We couldn't open the camera. Search by last name.")
       }
     }
 
@@ -155,8 +156,8 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
         // Se muestra un pedazo de lo leído: sin eso, este caso y el de "el token
         // no está en la base" daban el MISMO texto y no había forma de saber
         // cuál de los dos estabas mirando.
-        setAviso(`Ese QR no es una entrada nuestra (${recortar(texto)}). Buscá por apellido.`)
-        anotar.current('QR ajeno', false)
+        setAviso(`That QR is not one of our tickets (${recortar(texto)}). Search by last name.`)
+        anotar.current('Foreign QR', false)
         ocupado.current = true
         window.setTimeout(() => { ocupado.current = false }, ESPERA_TRAS_ERROR_MS)
         return
@@ -169,7 +170,7 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
       try {
         const r = await acreditarPorToken({ dia, token })
         avisar.current(r.checkin, r.persona)
-        anotar.current(r.persona.nombre || r.persona.email || 'Acreditada', true)
+        anotar.current(r.persona.nombre || r.persona.email || 'Checked in', true)
         // NO se cierra: la cámara sigue abierta para el que viene atrás. Cerrar
         // entre persona y persona era lo que frenaba la fila.
         setEstado('buscando')
@@ -195,10 +196,10 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
         // `npm run dev:local` con un QR emitido en producción.
         setAviso(
           codigo === 'entrada_inexistente'
-            ? 'Entrada válida, pero no está en esta base. ¿La app apunta al Supabase correcto?'
+            ? 'Valid ticket, but it is not in this database. Is the app pointing at the right Supabase?'
             : mensajeDeError(err),
         )
-        anotar.current(codigo === 'entrada_inexistente' ? 'No está en la base' : 'No se pudo', false)
+        anotar.current(codigo === 'entrada_inexistente' ? 'Not in the database' : "Couldn't do it", false)
         setEstado('buscando')
         // Se olvida el token: si falló por red, el próximo intento tiene que poder.
         vistos.current.delete(token)
@@ -270,9 +271,9 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
           />
         </div>
         <p className="mt-5 flex items-center gap-2 text-sm font-bold text-white drop-shadow">
-          {estado === 'pidiendo' && <><IconoCamara tam={18} /> Abriendo la cámara…</>}
-          {estado === 'buscando' && <><IconoQR tam={18} /> Apuntá al QR de la entrada</>}
-          {estado === 'enviando' && <><IconoTick tam={18} animar /> Acreditando…</>}
+          {estado === 'pidiendo' && <><IconoCamara tam={18} /> Opening the camera…</>}
+          {estado === 'buscando' && <><IconoQR tam={18} /> Point at the ticket QR</>}
+          {estado === 'enviando' && <><IconoTick tam={18} animar /> Checking in…</>}
         </p>
         {aviso && (
           <p className="mx-8 mt-3 flex items-start gap-2 rounded-xl bg-black/70 px-4 py-2 text-center text-sm font-bold text-swc-warn">
@@ -309,13 +310,13 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
       {conflicto && (
         <div className="absolute inset-x-0 bottom-0 z-10 border-t border-swc-warn/40 bg-swc-surface px-5 pt-5 pb-8">
           <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-swc-warn">
-            Esa entrada no es de este día
+            That ticket isn't for this day
           </p>
           <h2 className="mt-1.5 text-lg font-black text-swc-light">
             {conflicto.persona.nombre || conflicto.persona.email}
           </h2>
           <p className="mt-0.5 text-sm text-swc-muted">
-            {conflicto.persona.entrada} · habilita {conflicto.persona.dias}
+            {traducirEntrada(conflicto.persona.entrada)} · valid for {traducirDias(conflicto.persona.dias)}
           </p>
 
           <div className="mt-5 flex gap-2">
@@ -323,14 +324,14 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
               onClick={descartarConflicto}
               className="flex-1 rounded-full border border-white/20 px-5 py-3.5 text-sm font-black text-gray-300 active:scale-[0.98]"
             >
-              No acreditar
+              Don't check in
             </button>
             <button
               onClick={forzar}
               disabled={estado === 'enviando'}
               className="flex-1 rounded-full bg-swc-warn px-5 py-3.5 text-sm font-black text-swc-bg disabled:opacity-40 active:scale-[0.98]"
             >
-              {estado === 'enviando' ? 'Acreditando…' : 'Acreditar igual'}
+              {estado === 'enviando' ? 'Checking in…' : 'Check in anyway'}
             </button>
           </div>
         </div>
@@ -341,7 +342,7 @@ function Escaner({ dia, onCerrar, onAcreditado }: Props) {
           onClick={onCerrar}
           className="absolute inset-x-0 bottom-8 mx-auto w-40 rounded-full bg-white/15 px-6 py-3 text-sm font-black text-white backdrop-blur"
         >
-          Cerrar
+          Close
         </button>
       )}
     </div>

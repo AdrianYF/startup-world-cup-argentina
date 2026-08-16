@@ -177,7 +177,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
       <div className="flex min-h-[60vh] items-center justify-center px-5 text-center">
         {error
           ? <p className="text-sm font-bold text-swc-coral">{error}</p>
-          : <p className="text-sm text-gray-500">Cargando la lista…</p>}
+          : <p className="text-sm text-gray-500">Loading the list…</p>}
       </div>
     )
   }
@@ -204,7 +204,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
       <>
         <div className="mb-5">
           <Boton tono="fantasma" tam="sm" onClick={irALaPuerta}>
-            ← Volver a la puerta
+            ← Back to the door
           </Boton>
         </div>
 
@@ -264,10 +264,10 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
           // tipeado, en vez de obligar a escribirlo dos veces.
           <div className="pt-10">
             <Vacio
-              titulo={busqueda ? `No está en la lista del ${lista.dia.nombre.toLowerCase()}` : 'La lista de este día está vacía'}
+              titulo={busqueda ? `Not on the ${lista.dia.nombre} list` : "This day's list is empty"}
               accion={
                 <Boton tono="ok" tam="lg" onClick={() => setAgregando(true)}>
-                  {busqueda ? `Agregar a "${busqueda}"` : 'Agregar a alguien'}
+                  {busqueda ? `Add "${busqueda}"` : 'Add someone'}
                 </Boton>
               }
             >
@@ -275,13 +275,13 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
                 // Inscriptos es la otra respuesta posible a «no está»: puede
                 // estar en la lista de otro día, o dado de baja.
                 <>
-                  Puede estar anotada para otro día.{' '}
+                  They may be signed up for another day.{' '}
                   <button onClick={irAInscriptos} className="text-swc-accent underline">
-                    Buscar en la lista completa
+                    Search the full list
                   </button>
                 </>
               ) : (
-                'Todavía no hay nadie anotado para este día.'
+                "Nobody is signed up for this day yet."
               )}
             </Vacio>
           </div>
@@ -312,7 +312,7 @@ function Personas({ modo, ir, onSalir, onSinSesion }: {
       {agregando && (
         <Agregar
           inicial={busqueda}
-          dia={lista.dia.nombre.toLowerCase()}
+          dia={lista.dia.nombre}
           buscarParecidos={buscarParecidos}
           onCerrar={() => setAgregando(false)}
           // El alta la espera el formulario: si falla la validación tiene que
