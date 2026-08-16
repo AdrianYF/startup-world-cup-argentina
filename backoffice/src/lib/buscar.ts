@@ -63,5 +63,5 @@ export function porPersona(checkins: Checkin[]): Map<string, Checkin[]> {
 }
 
 export function hora(iso: string): string {
-  return new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 }

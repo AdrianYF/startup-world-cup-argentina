@@ -1,5 +1,6 @@
 import { hora } from '../lib/buscar'
 import { siglaCanal } from '../lib/canales'
+import { traducirEntrada } from '../lib/traducir'
 import { etiquetaVip, type Checkin, type Persona } from '../lib/tipos'
 import { Chip } from '../ui/Estado'
 import { IconoAlerta, IconoTick } from '../ui/Iconos'
@@ -38,13 +39,13 @@ function FilaPersona({ persona, ingresos, onClick, activa }: {
                 pasa la persona antes de terminar de leer quién es, y un cartel
                 al final de un nombre largo se pierde en el truncado. */}
             {etiquetaVip(persona.entrada) && (
-              <span className="mr-1.5 align-[1px]" title={persona.entrada}>
+              <span className="mr-1.5 align-[1px]" title={traducirEntrada(persona.entrada)}>
                 <Chip tono="oro">{etiquetaVip(persona.entrada)}</Chip>
               </span>
             )}
-            {persona.nombre || <span className="text-gray-500">(sin nombre)</span>}
+            {persona.nombre || <span className="text-gray-500">(no name)</span>}
             {persona.pagoDoble && (
-              <IconoAlerta tam={14} className="ml-1.5 inline-block align-[-2px] text-swc-warn" titulo="También compró en Startup Grind" />
+              <IconoAlerta tam={14} className="ml-1.5 inline-block align-[-2px] text-swc-warn" titulo="Also bought through Startup Grind" />
             )}
           </p>
           <p className="truncate text-xs text-gray-500">

@@ -134,7 +134,7 @@ export async function acreditar(args: {
       por: optimista.por,
       ...(args.forzar ? { forzar: true } : {}),
     },
-    `Ingreso de ${args.persona.nombre || args.persona.email || 'alguien'}`,
+    `Check-in for ${args.persona.nombre || args.persona.email || 'someone'}`,
   )
 
   return optimista
@@ -157,7 +157,7 @@ export function acreditarPorToken(args: {
 }
 
 export function anular(id: string, quien?: string): Promise<void> {
-  return postearOEncolar(URL, { anular: id }, `Anular el ingreso de ${quien || 'alguien'}`)
+  return postearOEncolar(URL, { anular: id }, `Undo the check-in for ${quien || 'someone'}`)
 }
 
 /**
@@ -199,7 +199,7 @@ export async function agregar(args: {
     cola.sumar({
       url: URL_AGREGAR,
       cuerpo,
-      que: `Alta de ${cuerpo.nombre}`,
+      que: `Add ${cuerpo.nombre}`,
       en: new Date().toISOString(),
     })
     return {

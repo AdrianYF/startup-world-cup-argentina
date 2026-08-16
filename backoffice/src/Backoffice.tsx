@@ -87,8 +87,8 @@ function Seccion({ ruta, ir, onSinSesion }: {
       // se ofrece el camino de vuelta.
       return (
         <p className="text-sm text-gray-500">
-          Esa sección no existe.{' '}
-          <a href="/backoffice/" className="text-swc-accent underline">Volver a la puerta</a>
+          That section doesn't exist.{' '}
+          <a href="/backoffice/" className="text-swc-accent underline">Back to the door</a>
         </p>
       )
   }

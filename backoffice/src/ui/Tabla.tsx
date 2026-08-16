@@ -59,8 +59,8 @@ function Tabla<T>({ columnas, filas, claveDe, onFila, vacio }: Props<T>) {
 
   if (!filas.length) {
     return (
-      <Vacio titulo="Sin resultados">
-        {vacio || 'No hay nada para mostrar.'}
+      <Vacio titulo="No results">
+        {vacio || 'Nothing to show.'}
       </Vacio>
     )
   }

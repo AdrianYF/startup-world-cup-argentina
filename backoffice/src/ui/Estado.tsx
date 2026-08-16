@@ -36,7 +36,7 @@ export function Cargando({ filas = 6, metricas = true }: {
 }) {
   return (
     <div aria-busy="true" aria-live="polite">
-      <span className="sr-only">Cargando…</span>
+      <span className="sr-only">Loading…</span>
 
       {metricas && (
         <div className="mb-6 grid grid-cols-2 border-y border-white/10 md:grid-cols-4">
@@ -72,7 +72,7 @@ export function Roto({ error, onReintentar }: { error: string; onReintentar: () 
         onClick={onReintentar}
         className="mt-4 rounded-full border border-white/20 px-5 py-2 text-xs font-extrabold uppercase tracking-[0.12em] text-swc-light transition-transform active:scale-[0.98]"
       >
-        Reintentar
+        Retry
       </button>
     </div>
   )

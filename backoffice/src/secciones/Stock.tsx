@@ -34,40 +34,40 @@ function Stock({ onSinSesion }: { onSinSesion: () => void }) {
     <Operacion
       contexto={
         <>
-          <Bloque titulo="Cupo de Mercado Pago">
+          <Bloque titulo="Mercado Pago cap">
             <Datos>
               <Dato label="Total">{t?.total ?? 0}</Dato>
-              <Dato label="Tomado" tono="warn">{t?.tomado ?? 0}</Dato>
-              <Dato label="Libre" tono={t?.libre === 0 ? 'coral' : 'ok'}>{t?.libre ?? 0}</Dato>
-              <Dato label="Tiers activos">{t?.activos ?? 0}</Dato>
+              <Dato label="Taken" tono="warn">{t?.tomado ?? 0}</Dato>
+              <Dato label="Free" tono={t?.libre === 0 ? 'coral' : 'ok'}>{t?.libre ?? 0}</Dato>
+              <Dato label="Active tiers">{t?.activos ?? 0}</Dato>
             </Datos>
             <p className="mt-2 text-xs leading-relaxed text-gray-500">
-              «Tomado» son las compras pagadas más las pendientes que todavía no vencieron:
-              esas le están reservando una entrada a alguien que quizá no pague.
+              “Taken” is paid purchases plus the pending ones that haven't expired yet: those
+              are holding a ticket for someone who may never pay.
             </p>
           </Bloque>
 
-          <Bloque titulo="Qué NO cambia" className="mt-6">
+          <Bloque titulo="What does NOT change" className="mt-6">
             <Datos>
-              <Dato label="Compras hechas">quedan como están</Dato>
-              <Dato label="Precio cobrado">congelado en cada orden</Dato>
-              <Dato label="Stock de Luma y SG">independiente</Dato>
+              <Dato label="Purchases made">stay as they are</Dato>
+              <Dato label="Price charged">frozen on each order</Dato>
+              <Dato label="Luma and SG stock">independent</Dato>
             </Datos>
           </Bloque>
 
           <Limite>
-            Cortar la venta de un tier lo saca del sitio, pero no toca lo ya vendido ni
-            devuelve plata. Los reembolsos se marcan desde «Ventas» y se pagan en Mercado
-            Pago.
+            Cutting off a tier takes it off the site, but it doesn't touch what's already
+            sold and it doesn't refund anything. Refunds get marked from “Sales” and are paid
+            in Mercado Pago.
           </Limite>
         </>
       }
     >
       <Tarjetas>
-        <Tarjeta label="Cupo Mercado Pago" valor={t?.total ?? 0} detalle="total" />
-        <Tarjeta label="Tomado" valor={t?.tomado ?? 0} detalle="pagadas + pendientes sin vencer" />
-        <Tarjeta label="Libre" valor={t?.libre ?? 0} tono={t?.libre === 0 ? 'coral' : 'ok'} />
-        <Tarjeta label="Tiers activos" valor={t?.activos ?? 0} />
+        <Tarjeta label="Mercado Pago cap" valor={t?.total ?? 0} detalle="total" />
+        <Tarjeta label="Taken" valor={t?.tomado ?? 0} detalle="paid + pending not expired" />
+        <Tarjeta label="Free" valor={t?.libre ?? 0} tono={t?.libre === 0 ? 'coral' : 'ok'} />
+        <Tarjeta label="Active tiers" valor={t?.activos ?? 0} />
       </Tarjetas>
 
       <div className="flex flex-col gap-3">
@@ -103,14 +103,14 @@ function FilaTier({ tier, onCambio }: { tier: Tier; onCambio: () => void }) {
     <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-4">
       <Recurso
         titulo={tier.nombre}
-        subtitulo={`${tier.disponible} libres · ${pesos(tier.precio)} + ${pesos(tier.cargo, true)} de cargo = ${pesos(tier.total, true)}`}
+        subtitulo={`${tier.disponible} free · ${pesos(tier.precio)} + ${pesos(tier.cargo, true)} fee = ${pesos(tier.total, true)}`}
         valor={`${tomadas} / ${tier.stockTotal}`}
-        detalle="tomadas"
+        detalle="taken"
         tono={tier.activo ? 'accent' : 'neutro'}
         chips={
           <>
-            <Chip tono={tier.activo ? 'ok' : 'neutro'}>{tier.activo ? 'a la venta' : 'cortado'}</Chip>
-            {tier.activo && tier.disponible === 0 && <Chip tono="coral">agotado</Chip>}
+            <Chip tono={tier.activo ? 'ok' : 'neutro'}>{tier.activo ? 'on sale' : 'cut off'}</Chip>
+            {tier.activo && tier.disponible === 0 && <Chip tono="coral">sold out</Chip>}
           </>
         }
       />
@@ -123,7 +123,7 @@ function FilaTier({ tier, onCambio }: { tier: Tier; onCambio: () => void }) {
         <Campos>
           <Campo
             id={`tier-stock-${tier.id}`}
-            label="Cupo total"
+            label="Total cap"
             value={stock}
             onChange={e => setStock(e.target.value)}
             inputMode="numeric"
@@ -131,7 +131,7 @@ function FilaTier({ tier, onCambio }: { tier: Tier; onCambio: () => void }) {
           />
           <Campo
             id={`tier-precio-${tier.id}`}
-            label="Precio (ARS)"
+            label="Price (ARS)"
             value={precio}
             onChange={e => setPrecio(e.target.value)}
             inputMode="numeric"
@@ -145,8 +145,8 @@ function FilaTier({ tier, onCambio }: { tier: Tier; onCambio: () => void }) {
           decirlo antes de que alguien crea que canceló ventas. */}
       {Number(stock) < tomadas && (
         <Aviso tono="warn" className="mt-3 max-w-md">
-          Menor a las {tomadas} ya tomadas: la venta queda cerrada, pero las compras hechas
-          siguen valiendo.
+          Lower than the {tomadas} already taken: sales close, but the purchases already made
+          still stand.
         </Aviso>
       )}
 
@@ -161,9 +161,9 @@ function FilaTier({ tier, onCambio }: { tier: Tier; onCambio: () => void }) {
             stockTotal: Number(stock),
             precio: Number(precio),
           })}
-          ocupado={ocupado === 'guardar' ? 'Guardando…' : undefined}
+          ocupado={ocupado === 'guardar' ? 'Saving…' : undefined}
         >
-          Guardar
+          Save
         </Boton>
         <Boton
           tono="fantasma"
@@ -171,7 +171,7 @@ function FilaTier({ tier, onCambio }: { tier: Tier; onCambio: () => void }) {
           onClick={() => correr('activo', { id: tier.id, activo: !tier.activo })}
           ocupado={ocupado === 'activo' ? '…' : undefined}
         >
-          {tier.activo ? 'Cortar la venta' : 'Volver a vender'}
+          {tier.activo ? 'Cut off sales' : 'Sell again'}
         </Boton>
       </div>
     </div>

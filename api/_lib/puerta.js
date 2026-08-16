@@ -14,10 +14,14 @@ import { valorDe } from './entorno.js'
  * es el formato que ya usan las migraciones y el importador.
  *
  * `fecha` es lo que se guarda en `checkins.dia`.
+ *
+ * `nombre` es lo ÚNICO traducible de acá: es lo que se muestra en el backoffice,
+ * que está en inglés. `label` NO se toca — se busca dentro del texto libre de
+ * `acreditacion.dias` ('Jue 6 + Vie 7'), que lo escribe cada canal en castellano.
  */
 export const DIAS = [
-  { id: 'jue', fecha: '2026-08-06', label: 'Jue', nombre: 'Jueves 6' },
-  { id: 'vie', fecha: '2026-08-07', label: 'Vie', nombre: 'Viernes 7' },
+  { id: 'jue', fecha: '2026-08-06', label: 'Jue', nombre: 'Thursday 6' },
+  { id: 'vie', fecha: '2026-08-07', label: 'Vie', nombre: 'Friday 7' },
 ]
 
 /**
@@ -34,7 +38,7 @@ export const DIAS = [
  * evento».
  */
 export const DIAS_AJENOS = [
-  { id: 'mie', fecha: '2026-08-05', label: 'Mié', nombre: 'Miércoles 5' },
+  { id: 'mie', fecha: '2026-08-05', label: 'Mié', nombre: 'Wednesday 5' },
 ]
 
 /** El día por su id ('jue'), o null. */

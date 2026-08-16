@@ -31,10 +31,10 @@ function Pendientes({ cola, descartados, trabada, onReintentar, onOlvidar, onSin
   const vacio = cola.length === 0 && descartados.length === 0
 
   return (
-    <Hoja titulo="Sin sincronizar" onCerrar={onCerrar} posicion="abajo">
+    <Hoja titulo="Unsynced" onCerrar={onCerrar} posicion="abajo">
       {vacio && (
         <Aviso tono="ok">
-          Todo lo que se anotó en este dispositivo llegó al servidor.
+          Everything taken on this device made it to the server.
         </Aviso>
       )}
 
@@ -43,22 +43,22 @@ function Pendientes({ cola, descartados, trabada, onReintentar, onOlvidar, onSin
           el 6 de agosto tuvo a la puerta dos horas mirando ese cartel con seis
           cosas sin subir. */}
       {trabada === 'sin-sesion' && cola.length > 0 && (
-        <Aviso tono="error" className="mb-4" titulo="La sesión venció">
-          Nada de esto va a subir hasta que alguien vuelva a poner el PIN. Salí y
-          entrá de nuevo: la cola se manda sola apenas haya sesión, no se pierde
-          nada.
+        <Aviso tono="error" className="mb-4" titulo="The session expired">
+          None of this goes up until someone enters the PIN again. Log out and back
+          in: the queue sends itself the moment there is a session, nothing gets
+          lost.
         </Aviso>
       )}
 
       {cola.length > 0 && (
         <section className="mb-5">
           <Rotulo className={`mb-2 ${trabada === 'sin-sesion' ? 'text-swc-coral' : 'text-swc-warn'}`}>
-            {cola.length} en cola ·{' '}
+            {cola.length} queued ·{' '}
             {trabada === 'sin-sesion'
-              ? 'esperando el PIN'
+              ? 'waiting for the PIN'
               : trabada === 'sin-red'
-                ? 'sin conexión, se reintenta solo'
-                : 'se reintenta solo'}
+                ? 'no connection, retries on its own'
+                : 'retries on its own'}
           </Rotulo>
           <ul className="flex flex-col gap-2">
             {cola.map(p => (
@@ -74,7 +74,7 @@ function Pendientes({ cola, descartados, trabada, onReintentar, onOlvidar, onSin
       {descartados.length > 0 && (
         <section className="mb-5">
           <Rotulo className="mb-2 text-swc-coral">
-            {descartados.length} rechazados por el servidor
+            {descartados.length} rejected by the server
           </Rotulo>
           <ul className="flex flex-col gap-2">
             {descartados.map(p => (
@@ -84,13 +84,13 @@ function Pendientes({ cola, descartados, trabada, onReintentar, onOlvidar, onSin
                 <p className="mt-0.5 text-xs tabular-nums text-gray-500">{hora(p.en)}</p>
                 <div className="mt-2.5 flex gap-2">
                   <Boton tono="secundario" tam="sm" onClick={() => onReintentar(p)}>
-                    Reintentar
+                    Retry
                   </Boton>
                   {/* Darlo por perdido lo decide una persona, nunca el código: es
                       la línea que dice que ese ingreso no se va a poder
                       reconstruir. */}
                   <Boton tono="fantasma" tam="sm" onClick={() => onOlvidar(p)}>
-                    Descartar
+                    Discard
                   </Boton>
                 </div>
               </li>
@@ -101,7 +101,7 @@ function Pendientes({ cola, descartados, trabada, onReintentar, onOlvidar, onSin
 
       {cola.length > 0 && (
         <Boton tono="secundario" tam="lg" ancho onClick={onSincronizar}>
-          Sincronizar ahora
+          Sync now
         </Boton>
       )}
     </Hoja>

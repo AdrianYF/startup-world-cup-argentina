@@ -57,7 +57,9 @@ export const esVip = (entrada: string | null | undefined) => /vip/i.test(entrada
  */
 export function etiquetaVip(entrada: string | null | undefined): string | null {
   if (!esVip(entrada)) return null
-  return /invitad/i.test(entrada || '') ? 'VIP' : 'VIP + comida'
+  // `invitad` se busca sobre el texto ORIGINAL del canal, que está en
+  // castellano («Invitado VIP»). Lo que se traduce es la chapa, no el criterio.
+  return /invitad/i.test(entrada || '') ? 'VIP' : 'VIP + food'
 }
 
 export type Checkin = {

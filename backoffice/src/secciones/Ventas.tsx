@@ -38,11 +38,11 @@ const TONO_ESTADO: Record<string, 'ok' | 'warn' | 'coral' | 'neutro'> = {
 
 /** El estado de una orden de Mercado Pago, para la ficha. */
 const ESTADOS: Record<Orden['status'], { label: string; tono: 'ok' | 'warn' | 'coral' | 'neutro' }> = {
-  paid: { label: 'pagada', tono: 'ok' },
-  pending: { label: 'pendiente', tono: 'warn' },
-  rejected: { label: 'rechazada', tono: 'coral' },
-  expired: { label: 'vencida', tono: 'neutro' },
-  refunded: { label: 'reembolsada', tono: 'neutro' },
+  paid: { label: 'paid', tono: 'ok' },
+  pending: { label: 'pending', tono: 'warn' },
+  rejected: { label: 'rejected', tono: 'coral' },
+  expired: { label: 'expired', tono: 'neutro' },
+  refunded: { label: 'refunded', tono: 'neutro' },
 }
 
 const NOMBRE_CANAL: Record<string, string> = {
@@ -94,17 +94,17 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   }, [ventas, ordenes, filtro])
 
   const columnas: Columna<Venta>[] = useMemo(() => [
-    { clave: 'nombre', titulo: 'Persona', orden: v => v.nombre, celda: v => v.nombre },
+    { clave: 'nombre', titulo: 'Person', orden: v => v.nombre, celda: v => v.nombre },
     { clave: 'email', titulo: 'Email', orden: v => v.email, celda: v => v.email, soloTabla: true },
     {
       clave: 'canal',
-      titulo: 'Canal',
+      titulo: 'Channel',
       orden: v => v.canal,
       celda: v => NOMBRE_CANAL[v.canal] || v.canal,
     },
     {
       clave: 'entrada',
-      titulo: 'Entrada',
+      titulo: 'Ticket',
       // Los VIP primero al ordenar: son 10 sobre 154 y es lo que se busca.
       orden: v => `${esVip(v.entrada) ? 0 : 1}${v.entrada}`,
       celda: v => (
@@ -116,7 +116,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
     },
     {
       clave: 'monto',
-      titulo: 'Precio',
+      titulo: 'Price',
       orden: v => v.monto ?? -1,
       // `null` no es $0: el canal no informó el precio. Decirlo con un guion
       // evita que una lista sin dato se lea como un evento regalado.
@@ -125,7 +125,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
     },
     {
       clave: 'estado',
-      titulo: 'Estado',
+      titulo: 'Status',
       orden: v => v.estado,
       celda: v => {
         const o = ordenDe(v)
@@ -141,7 +141,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
     },
     {
       clave: 'creadaEn',
-      titulo: 'Fecha',
+      titulo: 'Date',
       orden: v => ordenDe(v)?.creadaEn || '',
       celda: v => {
         const o = ordenDe(v)
@@ -161,13 +161,13 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
   // problema» son miradas transversales: caen dentro de Mercado Pago, que es el
   // único canal donde una compra puede quedar a mitad de camino.
   const filtros: Opcion<Filtro>[] = [
-    { id: 'todas', label: 'Todas', cuenta: cuentas.todas },
+    { id: 'todas', label: 'All', cuenta: cuentas.todas },
     { id: 'vip', label: 'VIP', cuenta: cuentas.vip },
     { id: 'MP', label: 'Mercado Pago', cuenta: cuentas.MP },
     { id: 'startupgrind', label: 'Startup Grind', cuenta: cuentas.startupgrind },
     { id: 'luma', label: 'Luma', cuenta: cuentas.luma },
-    { id: 'sinPagar', label: 'Sin pagar', cuenta: cuentas.sinPagar },
-    { id: 'problema', label: 'Con problema', cuenta: cuentas.problema },
+    { id: 'sinPagar', label: 'Unpaid', cuenta: cuentas.sinPagar },
+    { id: 'problema', label: 'With a problem', cuenta: cuentas.problema },
   ]
 
   return (
@@ -175,9 +175,9 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
       <Operacion
         contexto={
           <>
-            <Bloque titulo="La caja">
+            <Bloque titulo="The till">
               <Datos>
-                <Dato label="Recaudado · todo el evento" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
+                <Dato label="Collected · whole event" tono="ok">{t?.recaudadoTexto || '—'}</Dato>
                 {/* Los canales por separado: sin esto, «recaudado» es un número
                     que no se puede conciliar contra ninguna cuenta, porque
                     ninguna cuenta cobró ese total. */}
@@ -186,71 +186,71 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
                     {c.montoTexto} <span className="text-gray-500">· {c.entradas}</span>
                   </Dato>
                 ))}
-                <Dato label="Compras pagadas">{t?.pagadas ?? 0}</Dato>
-                <Dato label="Reservando cupo" tono={t?.pendientes ? 'warn' : undefined}>
+                <Dato label="Paid purchases">{t?.pagadas ?? 0}</Dato>
+                <Dato label="Holding a spot" tono={t?.pendientes ? 'warn' : undefined}>
                   {t?.pendientes ?? 0}
                 </Dato>
               </Datos>
             </Bloque>
 
-            <Bloque titulo="Qué mirar primero" className="mt-6">
+            <Bloque titulo="What to look at first" className="mt-6">
               <p className="text-xs leading-relaxed text-gray-500">
-                La lista son <strong>los tres canales</strong>, una fila por entrada: las{' '}
-                {t?.entradasTotales ?? 0} emitidas más {cuentas.sinPagar} compras que nunca se
-                pagaron. Sólo las de Mercado Pago se pueden abrir — lo que le pase a una de
-                Startup Grind o de Luma se arregla en la plataforma del canal.
+                The list is <strong>all three channels</strong>, one row per ticket: the{' '}
+                {t?.entradasTotales ?? 0} issued plus {cuentas.sinPagar} purchases that were never
+                paid. Only the Mercado Pago ones can be opened — whatever happens to a Startup
+                Grind or Luma one gets fixed in that channel's platform.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-gray-500">
-                «VIP» junta los {cuentas.vip} de los tres canales, que cada uno nombra a su
-                manera: «Entrada VIP» en Startup Grind, «Invitado VIP» en Luma. Ordenando la
-                columna quedaban separados.
+                “VIP” gathers the {cuentas.vip} from all three channels, each of which names them
+                its own way: «Entrada VIP» in Startup Grind, «Invitado VIP» in Luma. Sorting the
+                column left them apart.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-gray-500">
-                «Sin pagar» son las que se empezaron y vencieron. No cuestan cupo ni plata,
-                pero son gente que quiso comprar y no pudo: vale mirar por qué.
+                “Unpaid” are the ones that were started and expired. They cost no spot and no
+                money, but they are people who tried to buy and couldn't: worth looking into.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-gray-500">
-                «Con problema» junta las rechazadas y las pagadas cuyo mail nunca salió. Son
-                las dos que tienen a alguien esperando del otro lado: una porque no pudo
-                pagar y otra porque pagó y no recibió la entrada.
+                “With a problem” gathers the rejected ones and the paid ones whose email never
+                went out. Both have someone waiting on the other side: one because they couldn't
+                pay, the other because they paid and never got the ticket.
               </p>
               {cuentas.problema > 0 && (
                 <Boton tono="secundario" tam="sm" className="mt-3" onClick={() => setFiltro('problema')}>
-                  Ver las {cuentas.problema}
+                  See the {cuentas.problema}
                 </Boton>
               )}
             </Bloque>
 
             <Limite>
-              Marcar una orden como reembolsada saca sus entradas de la lista y devuelve el
-              cupo, pero <strong>no mueve plata</strong>: la devolución se hace en Mercado
-              Pago.
+              Marking an order refunded takes its tickets off the list and gives the spot
+              back, but it <strong>moves no money</strong>: the refund itself happens in
+              Mercado Pago.
             </Limite>
           </>
         }
       >
         <Tarjetas>
           <Tarjeta
-            label="Recaudado"
+            label="Collected"
             valor={t?.recaudadoTexto || '—'}
-            detalle={`los ${t?.canales?.filter(c => c.entradas > 0).length ?? 0} canales · ${t?.entradasTotales ?? 0} entradas`}
+            detalle={`${t?.canales?.filter(c => c.entradas > 0).length ?? 0} channels · ${t?.entradasTotales ?? 0} tickets`}
             tono="ok"
           />
           <Tarjeta
-            label="Por Mercado Pago"
+            label="Through Mercado Pago"
             valor={t?.propiaTexto || '—'}
-            detalle={`${t?.entradas ?? 0} entradas · lo que cobró el sitio`}
+            detalle={`${t?.entradas ?? 0} tickets · what the site charged`}
           />
-          <Tarjeta label="Compras pagadas" valor={t?.pagadas ?? 0} detalle="venta propia" />
+          <Tarjeta label="Paid purchases" valor={t?.pagadas ?? 0} detalle="own sales" />
           <Tarjeta
-            label="Reservando cupo"
+            label="Holding a spot"
             valor={t?.pendientes ?? 0}
             tono={t?.pendientes ? 'warn' : undefined}
-            detalle="pendientes sin vencer"
+            detalle="pending, not expired"
           />
         </Tarjetas>
 
-        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filtrar las entradas" />
+        <Tabs opciones={filtros} valor={filtro} onCambio={setFiltro} etiqueta="Filter the tickets" />
 
         <div className="mt-4">
           <Tabla
@@ -261,7 +261,7 @@ function Ventas({ onSinSesion }: { onSinSesion: () => void }) {
             // hacer. Lo que le pase a una entrada de Startup Grind o de Luma se
             // arregla en la plataforma del canal, no acá.
             onFila={v => setAbierta(ordenDe(v))}
-            vacio="No hay entradas con ese filtro."
+            vacio="No tickets with that filter."
           />
         </div>
       </Operacion>
@@ -310,7 +310,7 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
     >
       <Recurso
         titulo={orden.tier}
-        subtitulo={`${orden.cantidad} ${orden.cantidad === 1 ? 'entrada' : 'entradas'} · ${fechaCorta(orden.creadaEn)}`}
+        subtitulo={`${orden.cantidad} ${orden.cantidad === 1 ? 'ticket' : 'tickets'} · ${fechaCorta(orden.creadaEn)}`}
         valor={pesos(orden.total, true)}
         detalle="total"
         tono={orden.status === 'paid' ? 'ok' : 'accent'}
@@ -319,12 +319,12 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
       <div className="mt-5">
         <Datos>
           <Dato label="Subtotal">{pesos(orden.subtotal, true)}</Dato>
-          <Dato label="Cargo de servicio">{pesos(orden.cargo, true)}</Dato>
-          {orden.status === 'pending' && <Dato label="Vence">{fechaCorta(orden.venceEn)}</Dato>}
-          {orden.pagoId && <Dato label="Pago en MP">{orden.pagoId}</Dato>}
-          {orden.detalle && <Dato label="Detalle">{orden.detalle}</Dato>}
-          <Dato label="Mail de la entrada" tono={orden.mailEnviado ? undefined : 'coral'}>
-            {orden.mailEnviado ? fechaCorta(orden.mailEnviado) : 'no salió'}
+          <Dato label="Service fee">{pesos(orden.cargo, true)}</Dato>
+          {orden.status === 'pending' && <Dato label="Expires">{fechaCorta(orden.venceEn)}</Dato>}
+          {orden.pagoId && <Dato label="MP payment">{orden.pagoId}</Dato>}
+          {orden.detalle && <Dato label="Detail">{orden.detalle}</Dato>}
+          <Dato label="Ticket email" tono={orden.mailEnviado ? undefined : 'coral'}>
+            {orden.mailEnviado ? fechaCorta(orden.mailEnviado) : "didn't go out"}
           </Dato>
         </Datos>
       </div>
@@ -341,10 +341,10 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tam="lg"
             ancho
             onClick={() => correr('rec', () => accionOrden(orden.id, 'reconciliar'))}
-            ocupado={ocupado === 'rec' ? 'Preguntando a Mercado Pago…' : undefined}
+            ocupado={ocupado === 'rec' ? 'Asking Mercado Pago…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Reconciliar contra Mercado Pago
+            Reconcile against Mercado Pago
           </Boton>
         )}
 
@@ -353,11 +353,11 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tono="secundario"
             tam="lg"
             ancho
-            onClick={() => correr('mail', () => reenviarMail({ orden: orden.id }), 'Mail reenviado.')}
-            ocupado={ocupado === 'mail' ? 'Enviando…' : undefined}
+            onClick={() => correr('mail', () => reenviarMail({ orden: orden.id }), 'Email resent.')}
+            ocupado={ocupado === 'mail' ? 'Sending…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Reenviar el mail de la entrada
+            Resend the ticket email
           </Boton>
         )}
 
@@ -370,10 +370,10 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tam="lg"
             ancho
             onClick={() => correr('lib', () => accionOrden(orden.id, 'liberar'))}
-            ocupado={ocupado === 'lib' ? 'Liberando…' : undefined}
+            ocupado={ocupado === 'lib' ? 'Releasing…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Liberar el cupo que reserva
+            Release the spot it holds
           </Boton>
         )}
 
@@ -383,18 +383,18 @@ function FichaOrden({ orden, onCerrar, onCambio }: {
             tam="lg"
             ancho
             onClick={() => correr('ree', () => accionOrden(orden.id, 'reembolsar'))}
-            ocupado={ocupado === 'ree' ? 'Marcando…' : undefined}
+            ocupado={ocupado === 'ree' ? 'Marking…' : undefined}
             disabled={Boolean(ocupado)}
           >
-            Marcar como reembolsada
+            Mark as refunded
           </Boton>
         )}
       </div>
 
       {orden.status === 'paid' && (
         <Aviso tono="info" className="mt-4">
-          Marcarla reembolsada saca sus {orden.cantidad === 1 ? 'entrada' : `${orden.cantidad} entradas`} de
-          la lista de la puerta y devuelve el cupo. La plata se devuelve en Mercado Pago, no acá.
+          Marking it refunded takes its {orden.cantidad === 1 ? 'ticket' : `${orden.cantidad} tickets`} off
+          the door list and gives the spot back. The money is refunded in Mercado Pago, not here.
         </Aviso>
       )}
     </Hoja>

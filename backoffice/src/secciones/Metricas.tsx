@@ -34,18 +34,18 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
     <Operacion
       contexto={
         <>
-          <Bloque titulo="El evento entero">
+          <Bloque titulo="The whole event">
             <Datos>
-              <Dato label="Personas">{datos.resumen.personas}</Dato>
-              <Dato label="Entraron" tono="ok">{datos.resumen.entraron}</Dato>
+              <Dato label="People">{datos.resumen.personas}</Dato>
+              <Dato label="Came in" tono="ok">{datos.resumen.entraron}</Dato>
               <Dato label="No show" tono={datos.resumen.noShow ? 'warn' : undefined}>
                 {datos.resumen.noShow}
               </Dato>
-              <Dato label="Ingresos registrados">{entradosTotal}</Dato>
+              <Dato label="Check-ins recorded">{entradosTotal}</Dato>
             </Datos>
             <p className="mt-2 text-xs leading-relaxed text-gray-500">
-              Acá se cuentan personas. El número de ingresos es mayor: quien salió y volvió
-              aparece dos veces.
+              This counts people. The check-in number is higher: whoever stepped out and came
+              back shows up twice.
             </p>
           </Bloque>
 
@@ -54,7 +54,7 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
               propia» como bucket único, Mercado Pago no se podía cruzar contra
               Luma ni contra Startup Grind. */}
           {datos.resumen.porCanal.length > 0 && (
-            <Bloque titulo="Por canal" className="mt-6">
+            <Bloque titulo="By channel" className="mt-6">
               <ul className="flex flex-col gap-2.5">
                 {datos.resumen.porCanal.map(c => (
                   <li key={c.clave}>
@@ -75,10 +75,10 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           )}
 
           {datos.resumen.recurrencia.length > 0 && (
-            <Bloque titulo="Cuántos días vino cada uno" className="mt-6">
+            <Bloque titulo="How many days each one came" className="mt-6">
               <Datos>
                 {datos.resumen.recurrencia.map(r => (
-                  <Dato key={r.dias} label={r.dias === 1 ? '1 día' : `${r.dias} días`}>
+                  <Dato key={r.dias} label={r.dias === 1 ? '1 day' : `${r.dias} days`}>
                     {r.personas}
                   </Dato>
                 ))}
@@ -86,47 +86,47 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
             </Bloque>
           )}
 
-          <Bloque titulo="Plata y cupo" className="mt-6">
+          <Bloque titulo="Money and caps" className="mt-6">
             <Datos>
-              <Dato label="Recaudado · todo el evento" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
+              <Dato label="Collected · whole event" tono="ok">{datos.ventas.recaudadoTexto}</Dato>
               {datos.ventas.canales.filter(c => c.entradas > 0).map(c => (
                 <Dato key={c.id} label={`· ${c.nombre}`}>
                   {c.montoTexto} <span className="text-gray-500">· {c.entradas}</span>
                 </Dato>
               ))}
-              <Dato label="Cupo MP libre" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
-                {datos.cupo.libre} de {datos.cupo.total}
+              <Dato label="MP spots left" tono={datos.cupo.libre === 0 ? 'coral' : undefined}>
+                {datos.cupo.libre} of {datos.cupo.total}
               </Dato>
             </Datos>
           </Bloque>
 
           <Limite>
-            Todo sale de las mismas cuentas que sirven «Ventas» y «Stock», calculadas una
-            sola vez en el servidor. Si un número no cierra, el problema está en el dato,
-            no en esta pantalla.
+            Everything comes from the same numbers behind “Sales” and “Stock”, computed once
+            on the server. If a number doesn't add up, the problem is in the data, not on this
+            screen.
           </Limite>
         </>
       }
     >
       <Tarjetas>
         <Tarjeta
-          label="Recaudado"
+          label="Collected"
           valor={datos.ventas.recaudadoTexto}
           tono="ok"
-          detalle={`${datos.ventas.entradasTotales} entradas · todos los canales`}
+          detalle={`${datos.ventas.entradasTotales} tickets · all channels`}
         />
         <Tarjeta
-          label="Cupo MP libre"
+          label="MP spots left"
           valor={datos.cupo.libre}
           tono={datos.cupo.libre === 0 ? 'coral' : datos.cupo.libre <= 5 ? 'warn' : undefined}
-          detalle={`de ${datos.cupo.total} · ${datos.cupo.tomado} tomado`}
+          detalle={`of ${datos.cupo.total} · ${datos.cupo.tomado} taken`}
         />
-        <Tarjeta label="En la lista" valor={datos.total} detalle="los tres canales" />
+        <Tarjeta label="On the list" valor={datos.total} detalle="all three channels" />
         <Tarjeta
-          label="Sin día reconocido"
+          label="No recognized day"
           valor={datos.sinDia}
           tono={datos.sinDia ? 'coral' : undefined}
-          detalle="no aparecen en ninguna puerta"
+          detalle="they show up at no door"
         />
       </Tarjetas>
 
@@ -135,9 +135,9 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
           opciones={opcionesDia}
           valor={String(dia)}
           onCambio={id => setDia(Number(id))}
-          etiqueta="Día del evento"
+          etiqueta="Event day"
         />
-        <Boton tono="fantasma" tam="sm" onClick={recargar}>Actualizar</Boton>
+        <Boton tono="fantasma" tam="sm" onClick={recargar}>Refresh</Boton>
       </div>
 
       {activo && (
@@ -146,28 +146,28 @@ function Metricas({ onSinSesion }: { onSinSesion: () => void }) {
             <div className="mb-2 flex items-baseline justify-between gap-3">
               <h2 className="text-sm font-black text-swc-light">{activo.nombre}</h2>
               <p className="text-sm font-bold tabular-nums text-swc-muted">
-                <span className="text-swc-ok">{activo.entraron}</span> de {activo.esperados}
+                <span className="text-swc-ok">{activo.entraron}</span> of {activo.esperados}
               </p>
             </div>
             <Barra valor={activo.entraron} maximo={activo.esperados} tono="ok" />
             <p className="mt-2 text-xs text-gray-500">
-              Faltan {Math.max(0, activo.esperados - activo.entraron)}. El total cuenta
-              ingresos, no personas: quien salió y volvió aparece dos veces.
+              {Math.max(0, activo.esperados - activo.entraron)} to go. The total counts
+              check-ins, not people: whoever stepped out and came back shows up twice.
             </p>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
-            <Serie titulo="Por hora" datos={activo.porHora} vacio="Todavía no entró nadie." />
+            <Serie titulo="By hour" datos={activo.porHora} vacio="Nobody has come in yet." />
             <Serie
-              titulo="Por canal"
+              titulo="By channel"
               datos={activo.porCanal.map(c => ({ ...c, clave: nombreCanal(c.clave) }))}
-              vacio="Sin ingresos."
+              vacio="No check-ins."
             />
             <Serie
-              titulo="Por quién acreditó"
+              titulo="By who checked them in"
               datos={activo.porPuerta}
-              vacio="Sin ingresos."
-              nota="Sale de quién cargó su nombre al entrar al backoffice."
+              vacio="No check-ins."
+              nota="Comes from whoever typed their name when logging into the backoffice."
             />
           </div>
         </>

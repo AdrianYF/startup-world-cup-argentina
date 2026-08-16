@@ -55,13 +55,13 @@ const DIAS_EVENTO = DIAS.map(d => `${d.label} ${Number(d.fecha.slice(-2))}`).joi
  * y no aparece, para buscar su orden después.
  */
 const MOTIVOS = {
-  invitacion: 'Invitación',
-  prensa: 'Prensa',
+  invitacion: 'Invitation',
+  prensa: 'Press',
   speaker: 'Speaker',
   staff: 'Staff',
-  comprada: 'Compró, no figura',
+  comprada: 'Paid, not listed',
 }
-const MOTIVO_DEFAULT = 'Alta en check-in'
+const MOTIVO_DEFAULT = 'Added at check-in'
 
 export default async function handler(req, res) {
   if (rejectMethod(req, res, 'POST')) return
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
       // Vacío queda NULL, no cadena vacía: el índice único trata a los NULL como
       // distintos, así que varios altas sin mail conviven.
       email: email || null,
-      estado: 'alta en check-in',
+      estado: 'added at check-in',
       estado_norm: 'confirmado',
       dias: DIAS_EVENTO,
       ticket: motivo,

@@ -66,7 +66,7 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
 
   const enlaces = (vertical: boolean) => (
     <nav
-      aria-label="Secciones"
+      aria-label="Sections"
       className={vertical ? 'flex flex-col gap-0.5' : 'flex items-center gap-0.5'}
     >
       {SECCIONES.map(s => (
@@ -97,7 +97,7 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
           <button
             onClick={() => irYCerrar(PUERTA)}
             className="flex shrink-0 items-baseline gap-2"
-            aria-label="Volver a la acreditación"
+            aria-label="Back to check-in"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-swc-accent">
               SWC
@@ -112,7 +112,7 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
             className="ml-auto hidden items-center gap-2 rounded-lg border border-white/12 bg-white/[0.03] px-3 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:border-white/25 hover:text-swc-muted sm:flex"
           >
             <IconoBuscar tam={14} />
-            Buscar
+            Search
             <kbd className="rounded border border-white/15 px-1 text-[10px] tracking-wide">{CMD}</kbd>
           </button>
 
@@ -124,16 +124,16 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
             )}
             <Boton tono="fantasma" tam="sm" onClick={onSalir} className="hidden items-center gap-1.5 sm:inline-flex">
               <IconoSalir tam={13} />
-              Salir
+              Log out
             </Boton>
             <Boton
               tono="fantasma"
               tam="sm"
               onClick={() => setMenu(true)}
-              aria-label="Abrir el menú"
+              aria-label="Open the menu"
               className="lg:hidden"
             >
-              Menú
+              Menu
             </Boton>
           </div>
         </div>
@@ -144,7 +144,7 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
           <button
             className="absolute inset-0 bg-black/70"
             onClick={() => setMenu(false)}
-            aria-label="Cerrar el menú"
+            aria-label="Close the menu"
           />
           <div className="relative ml-auto flex h-full w-64 flex-col justify-between border-l border-white/10 bg-swc-surface px-3 py-5">
             <div>
@@ -158,7 +158,7 @@ function Shell({ ruta, ir, quien, onSalir, children }: {
               {quien && (
                 <p className="mb-2 truncate px-3 text-xs font-bold text-swc-light">{quien}</p>
               )}
-              <Boton tono="fantasma" tam="sm" ancho onClick={onSalir}>Salir</Boton>
+              <Boton tono="fantasma" tam="sm" ancho onClick={onSalir}>Log out</Boton>
             </div>
           </div>
         </div>
@@ -187,8 +187,8 @@ function Pie() {
   return (
     <footer className="hidden border-t border-white/10 px-4 py-5 lg:block">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-[11px] text-gray-600">
-        <p>Startup World Cup Argentina 2026 · backoffice del evento</p>
-        <p>La lista trae mail y teléfono de cada persona: no la proyectes ni la compartas.</p>
+        <p>Startup World Cup Argentina 2026 · event backoffice</p>
+        <p>The list carries everyone's email and phone: don't project it and don't share it.</p>
       </div>
     </footer>
   )

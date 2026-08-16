@@ -6,6 +6,7 @@ import { Chip } from '../ui/Estado'
 import { Hoja } from '../ui/Hoja'
 import { hora } from '../lib/buscar'
 import { nombreCanal } from '../lib/canales'
+import { traducirDias, traducirEntrada } from '../lib/traducir'
 import { esAsistente, fechaCorta, type Asistente } from '../lib/admin'
 import { etiquetaVip, type Checkin, type Dia, type Persona } from '../lib/tipos'
 
@@ -50,7 +51,7 @@ function FichaPersona({
 
   return (
     <Hoja
-      titulo={persona.nombre || 'Sin nombre'}
+      titulo={persona.nombre || 'No name'}
       subtitulo={persona.email}
       // En la puerta va pegada abajo —el botón de acreditar tiene que caer donde
       // está el pulgar—; en Inscriptos se lee sentado y se centra.
@@ -62,35 +63,35 @@ function FichaPersona({
               además come. */}
           {etiquetaVip(persona.entrada) && <Chip tono="oro">{etiquetaVip(persona.entrada)}</Chip>}
           <Chip tono="neutro">{canal}</Chip>
-          {persona.pagoDoble && <Chip tono="warn">2 pagos</Chip>}
-          {completa?.sinDia && <Chip tono="coral">sin día</Chip>}
+          {persona.pagoDoble && <Chip tono="warn">2 payments</Chip>}
+          {completa?.sinDia && <Chip tono="coral">no day</Chip>}
         </>
       }
     >
       {completa?.sinDia && (
-        <Aviso tono="error" className="mb-4" titulo="No aparece en ninguna puerta">
-          Sus días son «{persona.dias}» y eso no coincide con ningún día del evento.
-          Se corrige en el canal de origen, o reimportando el CSV desde «Importar».
+        <Aviso tono="error" className="mb-4" titulo="Doesn't show up at any door">
+          Their days are “{persona.dias}”, which matches no day of the event. Fix it in
+          the source channel, or by re-importing the CSV from “Import”.
         </Aviso>
       )}
 
       {persona.pagoDoble && (
-        <Aviso tono="warn" className="mb-4" titulo="Pagó dos veces la misma entrada">
-          Figura en Startup Grind y en Mercado Pago. El reembolso se hace en el canal
-          donde se cobró de más; acá se marca desde «Ventas».
+        <Aviso tono="warn" className="mb-4" titulo="Paid twice for the same ticket">
+          They show up in both Startup Grind and Mercado Pago. The refund goes through
+          the channel that overcharged; here it gets marked from “Sales”.
         </Aviso>
       )}
 
       <Datos>
-        <Dato label="Entrada">{persona.entrada}</Dato>
-        <Dato label="Días">{persona.dias}</Dato>
-        <Dato label="Canal">{canal}</Dato>
-        {persona.empresa && <Dato label="Empresa">{persona.empresa}</Dato>}
-        {persona.telefono && <Dato label="Teléfono">{persona.telefono}</Dato>}
-        {completa && <Dato label="Registrada">{fechaCorta(completa.registradoEn)}</Dato>}
+        <Dato label="Ticket">{traducirEntrada(persona.entrada)}</Dato>
+        <Dato label="Days">{traducirDias(persona.dias)}</Dato>
+        <Dato label="Channel">{canal}</Dato>
+        {persona.empresa && <Dato label="Company">{persona.empresa}</Dato>}
+        {persona.telefono && <Dato label="Phone">{persona.telefono}</Dato>}
+        {completa && <Dato label="Registered">{fechaCorta(completa.registradoEn)}</Dato>}
         {completa && (
-          <Dato label="Último ingreso" tono={completa.usadaEn ? 'ok' : undefined}>
-            {completa.usadaEn ? fechaCorta(completa.usadaEn) : 'no entró'}
+          <Dato label="Last check-in" tono={completa.usadaEn ? 'ok' : undefined}>
+            {completa.usadaEn ? fechaCorta(completa.usadaEn) : "didn't come in"}
           </Dato>
         )}
       </Datos>
@@ -101,7 +102,7 @@ function FichaPersona({
       {yaEntro && (
         <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
           <Rotulo className="mb-2">
-            {ingresos.length === 1 ? 'Ingreso de hoy' : `${ingresos.length} ingresos hoy`}
+            {ingresos.length === 1 ? "Today's check-in" : `${ingresos.length} check-ins today`}
           </Rotulo>
           <ul className="flex flex-col gap-1.5">
             {ingresos.map(c => (
@@ -110,7 +111,7 @@ function FichaPersona({
                   <span className="font-bold tabular-nums text-swc-ok">{hora(c.creadoEn)}</span>
                   {c.por ? <span className="text-gray-500"> · {c.por}</span> : null}
                 </span>
-                <Boton tono="fantasma" tam="sm" onClick={() => onAnular(c)}>Anular</Boton>
+                <Boton tono="fantasma" tam="sm" onClick={() => onAnular(c)}>Undo</Boton>
               </li>
             ))}
           </ul>
@@ -133,12 +134,12 @@ function FichaPersona({
           // la acción de la pantalla es corregir datos, no dejar entrar.
           autoFocus={!editable}
         >
-          {yaEntro ? 'Acreditar igual' : `Acreditar${editable ? ` para el ${dia.nombre}` : ''}`}
+          {yaEntro ? 'Check in anyway' : `Check in${editable ? ` for ${dia.nombre}` : ''}`}
         </Boton>
       )}
 
       {editable && (
-        <Suspense fallback={<p className="mt-5 text-xs text-gray-600">Cargando acciones…</p>}>
+        <Suspense fallback={<p className="mt-5 text-xs text-gray-600">Loading actions…</p>}>
           <AccionesPersona persona={persona} onGuardado={onGuardado} />
         </Suspense>
       )}
