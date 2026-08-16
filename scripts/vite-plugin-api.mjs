@@ -223,6 +223,20 @@ export function apiFunctions({ raiz }) {
         // /api/foo → api/foo.js. Las funciones son archivos planos; api/_lib/
         // queda fuera del alcance a propósito.
         const nombre = url.pathname.slice('/api/'.length)
+
+        // Salvo cuando lo que pide no es una función sino un MÓDULO. El front
+        // importa de `api/_lib/` —el criterio de VIP y el armador de CSV viven
+        // ahí para no tener dos copias— y en desarrollo Vite sirve cada módulo
+        // por su ruta en disco, así que ese import llega acá como
+        // `/api/_lib/vip.js` y se comía el 404 de abajo: la sección entera
+        // quedaba en el ErrorBoundary con «Failed to fetch dynamically imported
+        // module». En producción no pasa, porque el build lo inlinea y nunca
+        // sale por HTTP — por eso se rompía sólo en local.
+        //
+        // La extensión alcanza para distinguirlos: una función se invoca por su
+        // ruta y sin extensión (`/api/puerta`), nunca `/api/puerta.js`.
+        if (/\.(js|mjs|ts|tsx|json)$/.test(nombre)) return next()
+
         const archivo = join(raiz, 'api', `${nombre}.js`)
 
         if (nombre.includes('/') || nombre.startsWith('_') || !existsSync(archivo)) {
