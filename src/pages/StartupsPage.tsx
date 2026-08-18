@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 // Directo desde content/: sólo lo usa esta ruta, así queda en su propio chunk.
 import startupsJson from '../content/startups.json'
 import { PageLayout } from '../components/ui/PageLayout'
@@ -24,12 +25,21 @@ if (import.meta.env.DEV && Object.keys(STARTUP_POR_CODE).length !== startupsJson
   console.warn('[Startups] colisión de códigos entre startups: revisá los slugs/imágenes en startups.json')
 }
 
-const STARTUP_DEL_LINK: Startup | null = (() => {
+/**
+ * La startup que pide la URL, si pide alguna.
+ *
+ * Es una función y no una constante de módulo a propósito. Como constante se
+ * evaluaba una sola vez, al importar el chunk: alcanzaba cuando el único camino
+ * era pegar `/swc/<code>` en la barra, pero desde el podio del blog se llega
+ * navegando dentro de la SPA, y la segunda vez el chunk ya estaba cargado — el
+ * valor era el de la primera visita y abría la card equivocada.
+ */
+function startupDelLink(): Startup | null {
   const code = codeFromUrl('s')
   if (!code) return null
   const img = STARTUP_POR_CODE[code.toUpperCase()]
   return img ? startupsJson.find(s => s.img === img) ?? null : null
-})()
+}
 
 const alt = (nombre: string) => `${nombre} — Startup seleccionada · Startup World Cup Argentina 2026`
 
@@ -72,11 +82,14 @@ function GrillaConReparto({ items, onOpen }: { items: Startup[]; onOpen: (s: Sta
 
 function Seleccion() {
   const startups = startupsJson
-  const [open, setOpen] = useState<Startup | null>(STARTUP_DEL_LINK)
+  // En el estado inicial y no en un efecto: el código ya está en la URL en el
+  // primer render, así que la card abre sin un frame de parpadeo. Que se vuelva
+  // a leer en cada navegación lo resuelve el `key` de arriba, no un setState.
+  const [open, setOpen] = useState<Startup | null>(startupDelLink)
 
   useEffect(() => {
-    // Llegó por short link: limpiar la URL para que un refresh no reabra sola.
-    if (STARTUP_DEL_LINK) window.history.replaceState({}, '', '/startups')
+    // Llegó por link: limpiar la URL para que un refresh no reabra sola.
+    if (codeFromUrl('s')) window.history.replaceState({}, '', '/startups')
   }, [])
 
   return (
@@ -126,6 +139,7 @@ function Seleccion() {
 }
 
 function StartupsPage() {
+  const { search } = useLocation()
   return (
     <PageLayout>
       <FadeInSection>
@@ -135,7 +149,10 @@ function StartupsPage() {
         <Comite />
       </FadeInSection>
       <FadeInSection>
-        <Seleccion />
+        {/* `key` con la query: llegar de nuevo con otro `?s=` reinicia el estado
+            de la sección y la card correcta abre desde el primer render. Sin
+            esto, el valor inicial era el de la primera visita al chunk. */}
+        <Seleccion key={search} />
       </FadeInSection>
     </PageLayout>
   )
