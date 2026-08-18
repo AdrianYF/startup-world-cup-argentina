@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { PageLayout } from '../components/ui/PageLayout'
 import { SectionGlow } from '../components/ui/SectionGlow'
-import { Felicitacion, type Nota } from '../components/Blog'
+import { Felicitacion, Podio, type Nota } from '../components/Blog'
 import { fechaLarga } from '../lib/fecha'
 import { content } from '../lib/content'
 
@@ -92,8 +92,9 @@ function BlogNota() {
             </figure>
           )}
 
-          <div className="mt-10 flex justify-center">
+          <div className="mt-10 flex flex-col items-center gap-8">
             <Felicitacion nota={nota} />
+            <Podio nota={nota} />
           </div>
 
           <div className="mt-12 flex flex-col gap-5">

@@ -12,6 +12,26 @@
       "El gran ganador de la jornada fue Cromodata, una plataforma para el intercambio y la monetización de datos de salud anonimizados de Latinoamérica, con acceso rápido y regulatorio a datasets clave para modelos de IA, investigación clínica y ensayos de fármacos.",
       "Ahora representará a la Argentina en la gran final global de la Startup World Cup, en Silicon Valley, donde compite por una inversión de USD 1.000.000 del grupo Pegasus Tech Ventures.",
       "Gracias a las startups que se subieron al escenario, al jurado, a los sponsors y a cada persona que vino a bancar. La primera edición argentina quedó cerrada; las próximas se anuncian en el canal."
+    ],
+    "podio": [
+      {
+        "puesto": 1,
+        "nombre": "Cromodata",
+        "img": "/startups/logo-cromodata.webp",
+        "que": "Campeón nacional"
+      },
+      {
+        "puesto": 2,
+        "nombre": "Beam",
+        "img": "/startups/logo-beam.webp",
+        "que": "Segundo puesto"
+      },
+      {
+        "puesto": 3,
+        "nombre": "Tucan",
+        "img": "/startups/logo-tucan.webp",
+        "que": "Tercer puesto"
+      }
     ]
   }
 ]
