@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { PageLayout } from '../components/ui/PageLayout'
 import { SectionGlow } from '../components/ui/SectionGlow'
-import { Chapitas, Felicitacion, type Nota } from '../components/Blog'
+import { Felicitacion, type Nota } from '../components/Blog'
 import { fechaLarga } from '../lib/fecha'
 import { content } from '../lib/content'
 
@@ -68,8 +68,7 @@ function BlogNota() {
             </p>
           </header>
 
-          {/* La foto grande y arriba de todo: es la que cuenta qué pasó. El
-              podio queda debajo, en chapitas, con el dato que la foto no da. */}
+          {/* La foto grande y arriba de todo: es la que cuenta qué pasó. */}
           {nota.imagen && (
             <figure className="mt-10">
               <img
@@ -93,9 +92,8 @@ function BlogNota() {
             </figure>
           )}
 
-          <div className="mt-10 flex flex-col items-center gap-6">
+          <div className="mt-10 flex justify-center">
             <Felicitacion nota={nota} />
-            <Chapitas nota={nota} />
           </div>
 
           <div className="mt-12 flex flex-col gap-5">
