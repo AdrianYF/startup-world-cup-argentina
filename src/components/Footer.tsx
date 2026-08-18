@@ -20,6 +20,7 @@ const NAV_LINKS = [
   { to: '/startups', label: 'Startups' },
   { to: '/voluntarios', label: 'Voluntarios' },
   { to: '/galeria', label: 'Galería' },
+  { to: '/blog', label: 'Blog' },
   { to: '/#faq', label: 'FAQ' },
 ] as const
 

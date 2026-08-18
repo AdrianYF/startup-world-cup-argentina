@@ -7,6 +7,7 @@ import Tickets from './components/Tickets'
 import Participan from './components/Participan'
 import Imatchin from './components/Imatchin'
 import Apoyan from './components/Apoyan'
+import Blog from './components/Blog'
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import { FadeInSection } from './components/ui/FadeInSection'
@@ -68,6 +69,11 @@ function App() {
       <Navbar />
       <main id="main" tabIndex={-1}>
         <Hero />
+        {/* Arriba de Entradas: el evento ya pasó, y lo primero que hay para
+            contarle a quien entra hoy es quién ganó. */}
+        <FadeInSection>
+          <Blog resumida />
+        </FadeInSection>
         <FadeInSection>
           <Tickets />
         </FadeInSection>

@@ -9,6 +9,7 @@ import agenda from '../content/agenda.json'
 import speakers from '../content/speakers.json'
 import comite from '../content/comite.json'
 import participan from '../content/participan.json'
+import blog from '../content/blog.json'
 
 /**
  * Datos que usa el landing (y que por lo tanto viven en el bundle inicial).
@@ -33,6 +34,7 @@ export const content = {
   speakers,
   comite,
   participan,
+  blog,
 }
 
 // Los tipos de perks/startups/partners viven en sus consumidores: derivarlos acá

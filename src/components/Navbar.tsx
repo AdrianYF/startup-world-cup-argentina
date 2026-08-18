@@ -9,6 +9,7 @@ const links = [
   { to: '/pitch-battle', label: 'Pitch Battle' },
   { to: '/startups', label: 'Startups' },
   { to: '/galeria', label: 'Galería' },
+  { to: '/blog', label: 'Blog' },
 ]
 
 function Navbar() {

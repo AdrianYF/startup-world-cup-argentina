@@ -23,6 +23,7 @@ Esta carpeta contiene **todo el contenido del sitio** en archivos JSON. Editá e
 | `apoyan.json` | Partners ya confirmados con logo (3 categorías: Presenting / Community / Institutional). |
 | `faqs.json` | Preguntas frecuentes. |
 | `agenda.json` | Agenda de los 3 días (5/6/7 ago). |
+| `blog.json` | Las notas del blog (`/blog`). La más nueva por fecha es la que se ve en el landing. |
 | `speakers.json` | Speakers del evento. Cada entrada tiene `slug`, `nombre`, `rol`, `image`, `linkedin?`, `bio?`. |
 
 ## Agregar un speaker
@@ -86,3 +87,22 @@ Los logos viven en `/public/`. Para agregar uno nuevo:
 
 Si rompés el JSON, el sitio falla al buildear. Para validar antes de commitear:
 - Pegá el contenido en https://jsonlint.com/ y verificá que diga "Valid JSON".
+
+## Agregar una nota al blog
+
+1. Sumá un objeto a `blog.json`. La nota más nueva por `fecha` es la que sale en el landing y arriba de todo en `/blog`, así que el orden dentro del archivo no importa.
+
+```json
+{
+  "slug": "como-se-ve-en-la-url",
+  "fecha": "2026-08-07",
+  "titulo": "El título de la nota",
+  "copete": "Una o dos líneas que resumen de qué se trata.",
+  "imagen": "/startups/cromodata.jpg",
+  "alt": "Qué se ve en la imagen, para quien no la ve",
+  "cuerpo": ["Un párrafo.", "Otro párrafo."]
+}
+```
+
+2. `felicitacion` y `podio` son opcionales: el saludo grande en dorado y el podio con foto. Una nota sin ellos se ve igual de bien, sólo con título, copete y cuerpo.
+3. El `slug` es la URL (`/blog/como-se-ve-en-la-url`). Una vez que se compartió, no lo cambies: el link viejo deja de funcionar.
