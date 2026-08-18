@@ -34,6 +34,7 @@ export type Nota = {
   imagen?: string
   alt?: string
   cuerpo: string[]
+  podio?: { puesto: number; nombre: string; img: string; que: string }[]
 }
 
 const NOTAS = content.blog as Nota[]
@@ -45,6 +46,57 @@ export function Felicitacion({ nota }: { nota: Nota }) {
     <p className="text-2xl sm:text-3xl font-black text-[#d4af37] text-balance">
       {nota.felicitacion}
     </p>
+  )
+}
+
+/**
+ * El podio: un círculo con el logo de cada startup, y su nombre debajo.
+ *
+ * Sin chapita alrededor. La chapita metía una píldora gris que competía con el
+ * logo justo cuando el logo es lo que se quiere mirar; el círculo solo apoya
+ * sobre el fondo oscuro y no pelea con nada.
+ *
+ * Los logos salen recortados del círculo que las tarjetas «STARTUP
+ * SELECCIONADA» tienen arriba, medido sobre el arte —el aro mide 286 px y su
+ * centro cae en (450, 324) en las tres— y no estimado a ojo: si el recorte no
+ * queda concéntrico, el `rounded-full` corta el aro de un lado y se ve torcido.
+ *
+ * El campeón se distingue por el aro dorado y el nombre en dorado, no por
+ * tamaño: los tres círculos iguales se leen como un podio y no como un ranking
+ * con letra chica.
+ */
+export function Podio({ nota }: { nota: Nota }) {
+  if (!nota.podio?.length) return null
+  return (
+    <ul className="flex flex-wrap items-start justify-center gap-x-8 gap-y-6 sm:gap-x-10">
+      {nota.podio.map(p => {
+        const campeon = p.puesto === 1
+        return (
+          <li key={p.nombre} className="flex w-32 flex-col items-center gap-2.5 text-center">
+            <img
+              src={p.img}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              aria-hidden
+              className={`h-16 w-16 rounded-full object-cover ring-2 ${
+                campeon
+                  ? 'ring-[#d4af37]/70 shadow-[0_0_30px_-6px_rgba(212,175,55,0.55)]'
+                  : 'ring-white/15'
+              }`}
+            />
+            <div>
+              <p className={`text-sm font-black leading-tight ${campeon ? 'text-[#d4af37]' : 'text-white/85'}`}>
+                {p.nombre}
+              </p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/40">
+                {p.que}
+              </p>
+            </div>
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
@@ -78,6 +130,10 @@ function NotaCard({ nota }: { nota: Nota }) {
 
         <div className="mt-5">
           <Felicitacion nota={nota} />
+        </div>
+
+        <div className="mt-6 sm:flex sm:justify-start">
+          <Podio nota={nota} />
         </div>
 
         <Link

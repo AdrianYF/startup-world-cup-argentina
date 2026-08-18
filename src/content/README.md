@@ -104,5 +104,5 @@ Si rompés el JSON, el sitio falla al buildear. Para validar antes de commitear:
 }
 ```
 
-2. `felicitacion` es opcional: el saludo grande en dorado. Una nota sin él se ve igual de bien, sólo con título, copete y cuerpo.
+2. `felicitacion` y `podio` son opcionales: el saludo grande en dorado y los círculos con el logo de cada startup. Una nota sin ellos se ve igual de bien, sólo con título, copete y cuerpo.
 3. El `slug` es la URL (`/blog/como-se-ve-en-la-url`). Una vez que se compartió, no lo cambies: el link viejo deja de funcionar.
