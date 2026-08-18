@@ -34,7 +34,6 @@ export type Nota = {
   imagen?: string
   alt?: string
   cuerpo: string[]
-  podio?: { puesto: number; nombre: string; img: string; que: string }[]
 }
 
 const NOTAS = content.blog as Nota[]
@@ -46,53 +45,6 @@ export function Felicitacion({ nota }: { nota: Nota }) {
     <p className="text-2xl sm:text-3xl font-black text-[#d4af37] text-balance">
       {nota.felicitacion}
     </p>
-  )
-}
-
-/**
- * El podio en chapitas, los tres puestos en una línea.
- *
- * Antes el 1º iba aparte y enorme, con su foto recortada en un círculo. Eso era
- * cuando la única imagen de la nota era esa; con la foto de la entrega arriba,
- * repetir al ganador en grande es decir dos veces lo mismo y encima peor: la
- * foto de la copa cuenta quién ganó mucho mejor que un avatar. Queda el dato
- * —quiénes fueron 2º y 3º— que la foto no da.
- */
-export function Chapitas({ nota }: { nota: Nota }) {
-  if (!nota.podio?.length) return null
-  return (
-    <div className="flex flex-wrap items-center gap-2.5">
-      {nota.podio.map(p => (
-        <div
-          key={p.nombre}
-          className={`flex items-center gap-2 rounded-full border-[0.5px] py-1.5 pl-1.5 pr-3.5 backdrop-blur-sm ${
-            p.puesto === 1
-              ? 'border-[#d4af37]/40 bg-[#d4af37]/10'
-              : 'border-white/12 bg-white/[0.06]'
-          }`}
-        >
-          <img
-            src={p.img}
-            alt=""
-            loading="lazy"
-            aria-hidden
-            className={`h-7 w-7 rounded-full object-cover ${
-              p.puesto === 1 ? 'ring-1 ring-[#d4af37]/60' : ''
-            }`}
-          />
-          <span
-            className={`text-xs sm:text-sm font-bold ${
-              p.puesto === 1 ? 'text-[#d4af37]' : 'text-white/80'
-            }`}
-          >
-            <span className={p.puesto === 1 ? 'text-[#d4af37]/60' : 'text-white/45'}>
-              {p.puesto}º
-            </span>{' '}
-            {p.nombre}
-          </span>
-        </div>
-      ))}
-    </div>
   )
 }
 
@@ -126,10 +78,6 @@ function NotaCard({ nota }: { nota: Nota }) {
 
         <div className="mt-5">
           <Felicitacion nota={nota} />
-        </div>
-
-        <div className="mt-5">
-          <Chapitas nota={nota} />
         </div>
 
         <Link
