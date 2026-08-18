@@ -8,28 +8,28 @@
     "imagen": "/blog/cromodata-campeon.webp",
     "alt": "La entrega de la copa en el escenario, al cierre de la primera edición argentina",
     "cuerpo": [
-      "Tres días en Workplace by IRSA, un Pitch Battle con jurado internacional y un solo pasaje en juego. Se lo llevó Cromodata.",
-      "Cromodata es una plataforma para el intercambio y la monetización de datos de salud anonimizados de Latinoamérica, con acceso rápido y regulatorio a datasets clave para modelos de IA, investigación clínica y ensayos de fármacos.",
-      "Ahora representa a la Argentina en la gran final global de la Startup World Cup, en Silicon Valley, donde compite por una inversión de USD 1.000.000 del grupo Pegasus Tech Ventures.",
+      "Tres días en Workplace by IRSA, un Pitch Battle con jurado internacional y un solo pasaje en juego por una inversión de hasta $1MM USD.",
+      "El gran ganador de la jornada fue Cromodata, una plataforma para el intercambio y la monetización de datos de salud anonimizados de Latinoamérica, con acceso rápido y regulatorio a datasets clave para modelos de IA, investigación clínica y ensayos de fármacos.",
+      "Ahora representará a la Argentina en la gran final global de la Startup World Cup, en Silicon Valley, donde compite por una inversión de USD 1.000.000 del grupo Pegasus Tech Ventures.",
       "Gracias a las startups que se subieron al escenario, al jurado, a los sponsors y a cada persona que vino a bancar. La primera edición argentina quedó cerrada; las próximas se anuncian en el canal."
     ],
     "podio": [
       {
         "puesto": 1,
         "nombre": "Cromodata",
-        "img": "/startups/cromodata.jpg",
+        "img": "/startups/logo-cromodata.webp",
         "que": "Campeón nacional"
       },
       {
         "puesto": 2,
         "nombre": "Beam",
-        "img": "/startups/beam.jpg",
+        "img": "/startups/logo-beam.webp",
         "que": "Segundo puesto"
       },
       {
         "puesto": 3,
         "nombre": "Tucan",
-        "img": "/startups/tucan.jpg",
+        "img": "/startups/logo-tucan.webp",
         "que": "Tercer puesto"
       }
     ]
