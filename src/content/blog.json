@@ -18,19 +18,22 @@
         "puesto": 1,
         "nombre": "Cromodata",
         "img": "/startups/logo-cromodata.webp",
-        "que": "Campeón nacional"
+        "que": "Campeón nacional",
+        "card": "/startups/cromodata.jpg"
       },
       {
         "puesto": 2,
         "nombre": "Beam",
         "img": "/startups/logo-beam.webp",
-        "que": "Segundo puesto"
+        "que": "Segundo puesto",
+        "card": "/startups/beam.jpg"
       },
       {
         "puesto": 3,
         "nombre": "Tucan",
         "img": "/startups/logo-tucan.webp",
-        "que": "Tercer puesto"
+        "que": "Tercer puesto",
+        "card": "/startups/tucan.jpg"
       }
     ]
   }

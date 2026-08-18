@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { SectionGlow } from './ui/SectionGlow'
 import { content } from '../lib/content'
 import { fechaLarga } from '../lib/fecha'
+import { codeFromSrc } from '../lib/shortlink'
 
 /**
  * El blog: lo que pasó, contado acá y no en el feed de alguien.
@@ -34,7 +36,15 @@ export type Nota = {
   imagen?: string
   alt?: string
   cuerpo: string[]
-  podio?: { puesto: number; nombre: string; img: string; que: string }[]
+  podio?: {
+    puesto: number
+    nombre: string
+    /** El logo recortado, para el círculo. */
+    img: string
+    /** La card de la startup en `/startups`. Sin esto, el puesto no es un link. */
+    card?: string
+    que: string
+  }[]
 }
 
 const NOTAS = content.blog as Nota[]
@@ -46,6 +56,32 @@ export function Felicitacion({ nota }: { nota: Nota }) {
     <p className="text-2xl sm:text-3xl font-black text-[#d4af37] text-balance">
       {nota.felicitacion}
     </p>
+  )
+}
+
+/**
+ * El puesto: link a su card cuando la tiene, y si no, texto y nada más.
+ *
+ * Que sea `<Link>` y no `<a>` es lo que hace que el salto no recargue la
+ * página. Depende de que `/startups` lea el código de la URL en cada
+ * navegación y no una sola vez al importar el módulo — ver el comentario en
+ * `StartupsPage`.
+ */
+function Contenedor({ to, label, children }: {
+  to?: string
+  label: string
+  children: ReactNode
+}) {
+  const clases = 'group flex flex-col items-center gap-2.5 text-center'
+  if (!to) return <div className={clases}>{children}</div>
+  return (
+    <Link
+      to={to}
+      aria-label={label}
+      className={`${clases} rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-[#75AADB]`}
+    >
+      {children}
+    </Link>
   )
 }
 
@@ -72,27 +108,35 @@ export function Podio({ nota }: { nota: Nota }) {
       {nota.podio.map(p => {
         const campeon = p.puesto === 1
         return (
-          <li key={p.nombre} className="flex w-32 flex-col items-center gap-2.5 text-center">
-            <img
-              src={p.img}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              aria-hidden
-              className={`h-16 w-16 rounded-full object-cover ring-2 ${
-                campeon
-                  ? 'ring-[#d4af37]/70 shadow-[0_0_30px_-6px_rgba(212,175,55,0.55)]'
-                  : 'ring-white/15'
-              }`}
-            />
-            <div>
-              <p className={`text-sm font-black leading-tight ${campeon ? 'text-[#d4af37]' : 'text-white/85'}`}>
-                {p.nombre}
-              </p>
-              <p className="mt-0.5 text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/40">
-                {p.que}
-              </p>
-            </div>
+          <li key={p.nombre} className="w-32">
+            <Contenedor
+              // `?s=` y no `/swc/<code>`: la ruta corta la sirve el OG de
+              // Vercel, que existe para que el link pegado en WhatsApp muestre
+              // la card. Desde adentro del sitio no hace falta ese rodeo.
+              to={p.card ? `/startups?s=${codeFromSrc(p.card)}` : undefined}
+              label={`Ver la card de ${p.nombre}`}
+            >
+              <img
+                src={p.img}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                aria-hidden
+                className={`h-16 w-16 rounded-full object-cover ring-2 transition-transform duration-200 group-hover:scale-105 ${
+                  campeon
+                    ? 'ring-[#d4af37]/70 shadow-[0_0_30px_-6px_rgba(212,175,55,0.55)]'
+                    : 'ring-white/15 group-hover:ring-white/35'
+                }`}
+              />
+              <div>
+                <p className={`text-sm font-black leading-tight ${campeon ? 'text-[#d4af37]' : 'text-white/85'}`}>
+                  {p.nombre}
+                </p>
+                <p className="mt-0.5 text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/40">
+                  {p.que}
+                </p>
+              </div>
+            </Contenedor>
           </li>
         )
       })}
