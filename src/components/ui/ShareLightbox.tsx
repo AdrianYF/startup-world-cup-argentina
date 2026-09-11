@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 
 /**
  * Lightbox con barra de compartir (nativo / X / LinkedIn / copiar link).
- * Lo usan la galería y el comité de selección.
+ * Lo usan la galería, el comité de selección, las startups y los certificados.
  */
 
 /** Abre una URL en una ventana pop-up centrada (UX típica de "compartir"). */
@@ -43,6 +43,11 @@ const CheckIcon = () => (
     <path d="M20 6 9 17l-5-5" />
   </svg>
 )
+const DownloadIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" />
+  </svg>
+)
 
 type Props = {
   /** Imagen que se muestra en grande (puede diferir de la que linkea el short link). */
@@ -62,10 +67,14 @@ type Props = {
   titulo?: string
   /** Bio / descripción opcional que se muestra bajo la imagen al hacer zoom. */
   descripcion?: string
+  /** Imagen apaisada (ej. un certificado): se le da más ancho que a una card vertical. */
+  apaisada?: boolean
+  /** Botón de descarga opcional (ej. el PDF del certificado) debajo de la barra de compartir. */
+  descarga?: { href: string; label: string }
   onClose: () => void
 }
 
-export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetText, eyebrow, titulo, descripcion, onClose }: Props) {
+export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetText, eyebrow, titulo, descripcion, apaisada, descarga, onClose }: Props) {
   const [copied, setCopied] = useState(false)
   const canNativeShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
@@ -104,6 +113,11 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
 
   const iconBtn = 'grid place-items-center w-11 h-11 rounded-full transition-colors cursor-pointer'
 
+  const conTexto = Boolean(eyebrow || titulo || descripcion)
+  // Apaisada, la imagen ya ocupa casi todo el ancho de una tablet: el texto al
+  // costado recién entra en lg. Si no, se pisan.
+  const fila = !conTexto ? 'flex-col' : apaisada ? 'flex-col lg:flex-row' : 'flex-col sm:flex-row'
+
   // Portal a <body>: el lightbox escapa del stacking context de FadeInSection y
   // cubre todo (incluido el navbar) — sin eso el navbar queda por encima.
   return createPortal(
@@ -127,11 +141,7 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
       {/* Wrapper centrado; con min-h-full permite scroll cuando el contenido no entra (mobile). */}
       <div className="min-h-full flex flex-col items-center justify-center gap-4 px-4 py-12 sm:py-10">
       {/* Card (imagen + compartir) + nombre/bio al costado (apilado en mobile). */}
-      <div
-        className={`flex items-center justify-center gap-4 sm:gap-6 ${
-          eyebrow || titulo || descripcion ? 'flex-col sm:flex-row' : 'flex-col'
-        }`}
-      >
+      <div className={`flex items-center justify-center gap-4 sm:gap-6 ${fila}`}>
         {/* Columna de la card: imagen + barra de compartir centrada debajo. */}
         <div className="flex flex-col items-center gap-4">
           {/* La imagen en grande (el click no cierra) */}
@@ -139,7 +149,9 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
             src={src}
             alt={alt}
             onClick={e => e.stopPropagation()}
-            className="block max-h-[48vh] sm:max-h-[62vh] max-w-[78vw] sm:max-w-md w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain"
+            className={`block max-h-[48vh] sm:max-h-[62vh] w-auto rounded-2xl shadow-2xl shadow-black/60 object-contain ${
+              apaisada ? 'max-w-[90vw] sm:max-w-3xl' : 'max-w-[78vw] sm:max-w-md'
+            }`}
           />
 
           {/* Barra de compartir (íconos) — centrada debajo de la card */}
@@ -162,6 +174,19 @@ export function ShareLightbox({ src, alt, ariaLabel, shareUrl, shareText, tweetT
               {copied ? <CheckIcon /> : <LinkIcon />}
             </button>
           </div>
+
+          {/* Descarga (el click no cierra: el archivo baja y el lightbox sigue abierto) */}
+          {descarga && (
+            <a
+              href={descarga.href}
+              download
+              onClick={e => e.stopPropagation()}
+              className="inline-flex items-center gap-2 rounded-full border border-[#75AADB]/40 px-5 py-2 text-xs font-bold uppercase tracking-wide text-[#75AADB] hover:bg-[#75AADB]/10 transition-colors"
+            >
+              <DownloadIcon />
+              {descarga.label}
+            </a>
+          )}
         </div>
 
         {/* Eyebrow + nombre + bio (al hacer zoom) */}
