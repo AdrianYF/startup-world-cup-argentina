@@ -1,14 +1,14 @@
 // Vercel Serverless Function — preview social (Open Graph) para los short links
-// de la galería (/swc/<CODE>) y del comité de selección (/swc/c-<slug>)
-// (rewrite en vercel.json → /api/og?code=<CODE>).
+// (/swc/<CODE>) de la galería, del comité de selección, de las startups y de los
+// certificados de participación (rewrite en vercel.json → /api/og?code=<CODE>).
 //
 // Los bots de WhatsApp/X/etc NO ejecutan JS: leen el HTML crudo. Por eso acá
 // devolvemos un HTML con los meta tags OG apuntando a ESA imagen, y redirigimos
 // a los humanos a la SPA (que la abre en el lightbox).
 //
-// Galería y comité usan el MISMO código opaco (/swc/<CODE>): el mapeo code→imagen
-// replica el algoritmo de src/lib/shortlink.ts (FNV-1a → xorshift32 → base26 A–Z,
-// largo 6). Mantener en sync.
+// Las cuatro secciones usan el MISMO código opaco (/swc/<CODE>): el mapeo
+// code→imagen replica el algoritmo de src/lib/shortlink.ts (FNV-1a → xorshift32 →
+// base26 A–Z, largo 6). Mantener en sync.
 //
 // La lista del comité NO se duplica acá: se importa comite.json (el bundler de
 // Vercel sigue el import). El import va protegido: si por lo que sea la lista no
@@ -72,6 +72,20 @@ try {
   /* startups sin previews; el resto intacto */
 }
 
+// Certificados: code → la entrada entera de certificados.json (hace falta el
+// nombre y el rol para la description, no sólo la imagen). El link redirige a
+// /certificados?cert=<CODE>.
+let CERT_BY_CODE = {}
+try {
+  const { default: certificados } = await import('../src/content/certificados.json', { with: { type: 'json' } })
+  CERT_BY_CODE = Object.fromEntries(certificados.map(c => [codeFromSrc(c.img), c]))
+} catch {
+  /* certificados sin previews; el resto intacto */
+}
+
+// Cómo se lee el rol en la description: «participó … como startup / como jurado».
+const ROL_COMO = { startup: 'startup', jurado: 'jurado' }
+
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
 export default function handler(req, res) {
@@ -94,28 +108,34 @@ export default function handler(req, res) {
     /* sin origen las URLs quedan relativas; el redirect de abajo funciona igual */
   }
 
-  // Mismo código para las tres secciones: probamos galería, comité y startups.
+  // Mismo código para las cuatro secciones: probamos galería, comité, startups y
+  // certificados, en ese orden.
   const photo = SRC_BY_CODE[code] || null
   const card = photo ? null : COMITE_BY_CODE[code] || null
   const startup = photo || card ? null : STARTUP_BY_CODE[code] || null
+  const cert = photo || card || startup ? null : CERT_BY_CODE[code] || null
 
-  const image = origin + (photo || card || startup || '/cup.png')
+  const image = origin + (photo || card || startup || (cert && cert.img) || '/cup.png')
   // La card ya lleva el nombre impreso, así que el título no lo repite.
   let title = 'Startup World Cup Argentina · Galería'
   if (card) title = 'Comité de Selección · Startup World Cup Argentina'
   else if (startup) title = 'Startup seleccionada · Startup World Cup Argentina'
+  else if (cert) title = 'Certificado de participación · Startup World Cup Argentina'
   // LinkedIn (y otras redes) no permiten prellenar el texto del post: muestran la
   // preview (OG). Por eso ponemos el mismo mensaje que el tweet en la description.
   let description = 'Yo también participo de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   if (card) description = 'Comité de Selección de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
   else if (startup) description = 'Startup seleccionada de la Startup World Cup Argentina @StartupWC_arg @StartupGrindBA'
+  else if (cert) description = `${cert.nombre} participó de la Startup World Cup Argentina 2026 como ${ROL_COMO[cert.rol] || cert.rol} @StartupWC_arg @StartupGrindBA`
   const pageUrl = `${origin}/swc/${code}`
   // Humanos → la ruta que muestra esa imagen y abre el lightbox. Bots se quedan con los meta tags.
-  // Galería → /galeria ; Comité → /startups ; Startups → /startups (cada página lee su query).
+  // Galería → /galeria ; Comité → /startups ; Startups → /startups ; Certificados → /certificados
+  // (cada página lee su query).
   let dest = '/galeria'
   if (photo) dest = `/galeria?g=${encodeURIComponent(code)}`
   else if (card) dest = `/startups?c=${encodeURIComponent(code)}`
   else if (startup) dest = `/startups?s=${encodeURIComponent(code)}`
+  else if (cert) dest = `/certificados?cert=${encodeURIComponent(code)}`
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
   res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=600')

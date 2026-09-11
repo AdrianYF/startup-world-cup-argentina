@@ -25,6 +25,7 @@ Esta carpeta contiene **todo el contenido del sitio** en archivos JSON. Editá e
 | `agenda.json` | Agenda de los 3 días (5/6/7 ago). |
 | `blog.json` | Las notas del blog (`/blog`). La más nueva por fecha es la que se ve en el landing. |
 | `speakers.json` | Speakers del evento. Cada entrada tiene `slug`, `nombre`, `rol`, `image`, `linkedin?`, `bio?`. |
+| `certificados.json` | Los certificados de participación que lista `/certificados` (la página a la que apunta el QR de cada PDF). No se edita a mano: lo escribe `scripts/certificados.mjs` a partir de los PDFs. |
 
 ## Agregar un speaker
 
@@ -106,3 +107,9 @@ Si rompés el JSON, el sitio falla al buildear. Para validar antes de commitear:
 
 2. `felicitacion` y `podio` son opcionales: el saludo grande en dorado y los círculos con el logo de cada startup. Una nota sin ellos se ve igual de bien, sólo con título, copete y cuerpo.
 3. El `slug` es la URL (`/blog/como-se-ve-en-la-url`). Una vez que se compartió, no lo cambies: el link viejo deja de funcionar.
+
+## Agregar certificados
+
+1. Dejá los PDFs (uno por persona, la plantilla oficial) en una carpeta cualquiera.
+2. Corré `node scripts/certificados.mjs <carpeta>`. Necesita poppler (`brew install poppler`). El script lee el nombre y el rol de cada PDF, copia el PDF y genera la preview en `public/certificados/`, y actualiza `certificados.json`. Se puede correr las veces que haga falta: la misma persona no se duplica.
+3. Hacé commit de `public/certificados/` y de `certificados.json`.

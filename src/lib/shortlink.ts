@@ -44,8 +44,9 @@ export function codeTable(srcs: string[]): Record<string, string> {
 
 /**
  * Código presente en la URL, ya sea por ruta (/swc/CODE, /g/CODE) o query.
- * Galería usa queryKey 'g', comité 'c'; la ruta /swc/CODE la leen las dos y cada
- * una la resuelve contra su propia tabla (los códigos no colisionan).
+ * Galería usa queryKey 'g', comité 'c', startups 's' y certificados 'cert'; la
+ * ruta /swc/CODE la leen todas y cada una la resuelve contra su propia tabla
+ * (los códigos no colisionan).
  */
 export function codeFromUrl(queryKey: string): string | null {
   const fromPath = window.location.pathname.match(/^\/(?:swc|g)\/([A-Za-z]+)\/?$/i)

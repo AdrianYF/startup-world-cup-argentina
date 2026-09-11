@@ -14,6 +14,7 @@ const PitchBattlePage = lazy(() => import('./pages/PitchBattlePage.tsx'))
 const StartupsPage = lazy(() => import('./pages/StartupsPage.tsx'))
 const VoluntariosPage = lazy(() => import('./pages/VoluntariosPage.tsx'))
 const GaleriaPage = lazy(() => import('./pages/GaleriaPage.tsx'))
+const CertificadosPage = lazy(() => import('./pages/CertificadosPage.tsx'))
 const BlogPage = lazy(() => import('./pages/BlogPage.tsx'))
 const BlogNota = lazy(() => import('./pages/BlogNota.tsx'))
 const SpeakersAll = lazy(() => import('./pages/SpeakersAll.tsx'))
@@ -62,6 +63,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/startups" element={<StartupsPage />} />
             <Route path="/voluntarios" element={<VoluntariosPage />} />
             <Route path="/galeria" element={<GaleriaPage />} />
+            {/* El QR impreso en cada certificado de participación apunta acá. */}
+            <Route path="/certificados" element={<CertificadosPage />} />
             {/* El blog y su nota. `/blog/:slug` es el link que se comparte;
                 un slug que no existe lo contesta la propia página. */}
             <Route path="/blog" element={<BlogPage />} />

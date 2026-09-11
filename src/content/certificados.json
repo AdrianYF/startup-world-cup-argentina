@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "francis-perelman",
+    "nombre": "Francis Perelman",
+    "rol": "jurado",
+    "img": "/certificados/francis-perelman.jpg",
+    "pdf": "/certificados/francis-perelman.pdf"
+  },
+  {
+    "slug": "facundo-buela-alvarado",
+    "nombre": "Facundo Buela Alvarado",
+    "rol": "startup",
+    "img": "/certificados/facundo-buela-alvarado.jpg",
+    "pdf": "/certificados/facundo-buela-alvarado.pdf"
+  },
+  {
+    "slug": "nicolas-pita-pellegrini",
+    "nombre": "Nicolás Pita Pellegrini",
+    "rol": "startup",
+    "img": "/certificados/nicolas-pita-pellegrini.jpg",
+    "pdf": "/certificados/nicolas-pita-pellegrini.pdf"
+  },
+  {
+    "slug": "santiago-matias-kunz",
+    "nombre": "Santiago Matías Kunz",
+    "rol": "startup",
+    "img": "/certificados/santiago-matias-kunz.jpg",
+    "pdf": "/certificados/santiago-matias-kunz.pdf"
+  },
+  {
+    "slug": "thiago-benjamin-maldonado",
+    "nombre": "Thiago Benjamín Maldonado",
+    "rol": "startup",
+    "img": "/certificados/thiago-benjamin-maldonado.jpg",
+    "pdf": "/certificados/thiago-benjamin-maldonado.pdf"
+  }
+]
